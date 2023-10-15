@@ -19,6 +19,13 @@ export function getCity(address_component: AddressComponent[]) {
   if (!r) return 'UNKNOWN'
   return r
 }
+export function getRegion(r: GeocodeResult | undefined | null): string {
+  if (!r?.results?.[0]?.address_components) return 'לא ידוע'
+  for (const x of r.results[0].address_components) {
+    if (x.types.includes('administrative_area_level_1')) return x.short_name
+  }
+  return 'לא ידוע'
+}
 export function getAddress(result: {
   formatted_address?: string
   address_components?: AddressComponent[]

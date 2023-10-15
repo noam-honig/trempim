@@ -15,6 +15,7 @@ import {
   getLongLat,
   getLocation,
   getCurrentLocation,
+  getRegion,
 } from '../common/address-input/google-api-helpers'
 const AllCategories = {
   id: 'asdfaetfsafads',
@@ -45,7 +46,7 @@ export class EventCardComponent implements OnInit {
     return remult.isAllowed(Roles.dispatcher)
   }
   dates: dateEvents[] = []
-  cities: { id: string; count: number; caption: string }[] = []
+  regions: { id: string; count: number; caption: string }[] = []
   types: { id: string; count: number; caption: string }[] = []
   trackBy(i: number, e: { id: any }): any {
     return e.id as any
@@ -54,7 +55,7 @@ export class EventCardComponent implements OnInit {
   @Fields.string({
     caption: 'איפה?',
   })
-  city: string = ''
+  region: string = ''
   @Field(() => Category, { caption: 'קטגוריה' })
   category = AllCategories
   area!: DataAreaSettings
@@ -73,7 +74,7 @@ export class EventCardComponent implements OnInit {
 
     let firstLongLat: string | undefined
 
-    this.cities.splice(0)
+    this.regions.splice(0)
     this.types.splice(0)
     for (const e of this._tasks) {
       if (!firstLongLat) firstLongLat = getLongLat(e.addressApiResult)
@@ -82,14 +83,16 @@ export class EventCardComponent implements OnInit {
       let d = this.dates.find((d) => d.date == eventDisplayDate(e))
       if (!d) this.dates.push((d = { date: eventDisplayDate(e), events: [] }))
       d.events.push(e)
-      let city = this.cities.find((c) => c.id == this.eventCity(e))
-      if (!city) {
-        this.cities.push({
-          id: this.eventCity(e),
+      let region = this.regions.find(
+        (c) => c.id == getRegion(e.addressApiResult)
+      )
+      if (!region) {
+        this.regions.push({
+          id: getRegion(e.addressApiResult),
           count: 1,
           caption: '',
         })
-      } else city.count++
+      } else region.count++
       let type = this.types.find((c) => c.id == e.category?.id)
       if (!type) {
         this.types.push({
@@ -99,9 +102,9 @@ export class EventCardComponent implements OnInit {
         })
       } else type.count++
     }
-    this.cities.sort((b, a) => a.count - b.count)
-    this.cities.forEach((c) => (c.caption = c.id + ' - ' + c.count))
-    this.cities.splice(0, 0, {
+    this.regions.sort((b, a) => a.count - b.count)
+    this.regions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
+    this.regions.splice(0, 0, {
       id: '',
       count: this._tasks.length,
       caption: 'כל הארץ' + ' - ' + this._tasks.length,
@@ -118,9 +121,9 @@ export class EventCardComponent implements OnInit {
       fields: () => [
         [
           {
-            field: this.$.city,
-            valueList: this.cities,
-            visible: () => this.cities.length > 2,
+            field: this.$.region,
+            valueList: this.regions,
+            visible: () => this.regions.length > 2,
           },
           {
             field: this.$.category,
@@ -134,7 +137,7 @@ export class EventCardComponent implements OnInit {
 
   filter(e: Task) {
     return (
-      (this.city == '' || this.eventCity(e) == this.city) &&
+      (this.region == '' || getRegion(e.addressApiResult) == this.region) &&
       (this.category == undefined ||
         this.category == AllCategories ||
         e.category?.id == this.category.id)
