@@ -1,0 +1,83 @@
+<div>
+  <data-area [settings]="area"></data-area>
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row-reverse;
+    "
+  >
+    <div>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="sortByDistance()"
+        *ngIf="showLocation"
+      >
+        {{ !volunteerLocation ? 'הצג לפי מרחק' : 'הצג לפי תאריך' }}
+      </button>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+</div>
+<div>
+  <div *ngFor="let d of dates">
+    <ng-container *ngIf="hasEvents(d)">
+      <h3>{{ d.date }}</h3>
+      <div class="events-container" [transition-group]="'flip-list'">
+        <ng-container *ngFor="let e of d.events; trackBy: trackBy">
+          <mat-card
+            transition-group-item
+            class="event-card"
+            [class.registered]="isRegisteredToEvent(e)"
+            *ngIf="filter(e)"
+          >
+            <div
+              *ngIf="isDispatcher()"
+              style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+              "
+            >
+              <strong *ngIf="isDispatcher()">{{ getStatus(e) }}</strong>
+              <app-dots-menu
+                [item]="e"
+                [buttons]="menuOptions"
+                *ngIf="isDispatcher()"
+              ></app-dots-menu>
+            </div>
+            <div class="event-info">
+              <!-- <div style="text-align: center" (click)="eventDetails(e)">
+                <img class="event-image" [src]="e.eventLogo" />
+              </div> -->
+              <div class="event-detail">
+                <strong (click)="eventDetails(e)">
+                  <mat-icon *ngIf="isRegisteredToEvent(e)" style="color: green"
+                    >done</mat-icon
+                  >
+                  {{ e.title }}
+                </strong>
+                {{ e.category?.caption || '' }} {{ distance(e) }}
+                <span (click)="eventDetails(e)">
+                  {{ eventCity(e) }}
+                  <span *ngIf="e.toAddressApiResult">
+                    => {{ eventToCity(e) }} ({{ travelDistance(e) }})</span
+                  >
+                </span>
+                <div (click)="eventDetails(e)">
+                  <strong>{{ displayDate(e) }}</strong>
+                  <span *ngIf="e.startTime"> - {{ e.startTime }}</span>
+                </div>
+
+                <a (click)="eventDetails(e)" *ngIf="!isFull(e)">{{
+                  'לפרטים והרשמה'
+                }}</a>
+              </div>
+            </div>
+          </mat-card>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>

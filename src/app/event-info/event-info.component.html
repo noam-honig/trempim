@@ -1,0 +1,177 @@
+<div
+  mat-dialog-title
+  style="display: flex; justify-content: space-between; align-items: center"
+>
+  <h2 style="margin-bottom: 0">{{ e.title }}</h2>
+  <div display="flex">
+    <app-dots-menu
+      [buttons]="menuOptions"
+      *ngIf="isDispatcher()"
+    ></app-dots-menu>
+
+    <button mat-icon-button *ngIf="!noClose" [mat-dialog-close]>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<mat-dialog-content class="dialog-container" [style.padding-bottom]="'30px'">
+  {{ e.category?.caption }}
+
+  <span
+    >{{ displayDate() }} <span *ngIf="e.startTime"> - {{ e.startTime }}</span>
+  </span>
+
+  <div *ngIf="e.address" class="space-above">
+    <strong>כתובת מוצא</strong>
+    <div class="phone-container" style="justify-content: space-between">
+      <span (click)="openSourceWaze()">
+        <img src="assets/waze.png" />
+      </span>
+      <div style="flex-grow: 1">
+        <a (click)="openSourceWaze()">
+          <span style="display: block"> {{ e.address }} </span>
+        </a>
+      </div>
+      <span (click)="openSourceGoogleMap()">
+        <img src="assets/google_maps_icon.png" />
+      </span>
+    </div>
+
+    <div *ngIf="contactInfo?.origin?.phone" class="space-above">
+      <div class="phone-container">
+        <span
+          mat-mini-fab
+          style="vertical-align: middle; cursor: pointer"
+          color="primary"
+          (click)="sendWhatsapp(contactInfo?.origin?.phone!)"
+        >
+          <img src="assets/whatsapp.png" />
+        </span>
+        <a href="tel:{{ contactInfo?.origin?.phone }}">
+          <button mat-mini-fab style="vertical-align: middle" color="primary">
+            <mat-icon>call</mat-icon>
+          </button>
+        </a>
+        <div>
+          <a href="tel:{{ contactInfo?.origin?.phone }}"
+            >{{ contactInfo?.origin?.name }},
+            {{ contactInfo?.origin?.formattedPhone }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="space-above" style="white-space: pre-line">
+    <strong>הערות</strong>
+    {{ e.description }}
+  </div>
+
+  <div *ngIf="e.toAddress" class="space-above">
+    <strong>כתובת יעד</strong>
+    <div class="phone-container" style="justify-content: space-between">
+      <span (click)="openTargetWaze()">
+        <img src="assets/waze.png" />
+      </span>
+      <div style="flex-grow: 1">
+        <a (click)="openTargetWaze()">
+          <span style="display: block"> {{ e.toAddress }} </span>
+        </a>
+      </div>
+      <span (click)="openTargetGoogleMap()">
+        <img src="assets/google_maps_icon.png" />
+      </span>
+    </div>
+    <div *ngIf="contactInfo?.target?.phone" class="space-above">
+      <div class="phone-container">
+        <span
+          mat-mini-fab
+          style="vertical-align: middle; cursor: pointer"
+          color="primary"
+          (click)="sendWhatsapp(contactInfo?.target?.phone!)"
+        >
+          <img src="assets/whatsapp.png" />
+        </span>
+        <a href="tel:{{ contactInfo?.target?.phone }}">
+          <button mat-mini-fab style="vertical-align: middle" color="primary">
+            <mat-icon>call</mat-icon>
+          </button>
+        </a>
+        <div>
+          <a href="tel:{{ contactInfo?.target?.phone }}"
+            >{{ contactInfo?.target?.name }}
+            ,
+            {{ contactInfo?.target?.formattedPhone }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="driver">
+    <hr />
+    <strong>נהג: {{ driver.name }}</strong>
+    <div *ngIf="driver.phone" class="space-above">
+      <div class="phone-container">
+        <span
+          mat-mini-fab
+          style="vertical-align: middle; cursor: pointer"
+          color="primary"
+          (click)="sendWhatsapp(driver.phone!)"
+        >
+          <img src="assets/whatsapp.png" />
+        </span>
+        <a href="tel:{{ driver.phone }}">
+          <button mat-mini-fab style="vertical-align: middle" color="primary">
+            <mat-icon>call</mat-icon>
+          </button>
+        </a>
+        <div>
+          <a href="tel:{{ driver.phone }}"
+            >{{ driver.name }},
+            {{ driver.$.phone.displayValue }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions
+  style="
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    position: sticky;
+    bottom: 0;
+  "
+>
+  <button
+    [disabled]="inProgress"
+    mat-raised-button
+    color="primary"
+    *ngIf="showAssign()"
+    (click)="registerToEvent()"
+  >
+    אני אבצע
+  </button>
+  <button
+    mat-raised-button
+    style="background-color: green; color: white"
+    *ngIf="isAssigned()"
+    (click)="completed()"
+  >
+    הושלם בהצלחה
+  </button>
+  <button
+    mat-raised-button
+    color="error"
+    *ngIf="isAssigned()"
+    (click)="problem()"
+  >
+    נתקלתי בבעיה
+  </button>
+  <ng-container *ngIf="showCancel()">
+    <strong>{{ e.taskStatus.caption }} </strong>
+    <button mat-raised-button color="error" (click)="clickedByMistake()">
+      נלחץ בטעות
+    </button>
+  </ng-container>
+</mat-dialog-actions>

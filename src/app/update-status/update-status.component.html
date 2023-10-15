@@ -1,0 +1,20 @@
+<mat-dialog-content>
+  <div *ngIf="args.showFailStatus">מה לא הסתדר?</div>
+  <div *ngIf="args.showFailStatus">
+    <mat-radio-group
+      [(ngModel)]="whatWentWrong"
+      style="display: flex; flex-direction: column"
+    >
+      <mat-radio-button [value]="0"
+        >לא אוכל לבצע, שייכו לנהג אחר
+      </mat-radio-button>
+      <mat-radio-button [value]="21">כבר לא רלוונטי </mat-radio-button>
+      <mat-radio-button [value]="22">בעיה אחרת </mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <data-control [field]="$.notes"></data-control>
+</mat-dialog-content>
+<mat-dialog-actions style="justify-content: space-between">
+  <button mat-raised-button color="primary" (click)="save()">שמור</button>
+  <button mat-raised-button color="error" mat-dialog-close>בטל</button>
+</mat-dialog-actions>
