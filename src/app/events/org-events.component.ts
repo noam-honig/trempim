@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 
 import { remult, repo, Unsubscribe } from 'remult'
 import { Roles } from '../users/roles'
-import { Task } from './tasks'
+import { Task, taskStatus } from './tasks'
 import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs'
@@ -78,10 +78,12 @@ export class OrgEventsComponent implements OnInit {
     } else
       repo(Task)
         .find({
-          where: {
-            driverId: this.activeTab ? undefined : remult.user!.id,
-            $and: [Task.filterActiveTasks()],
-          },
+          where:
+            this.activeTab == 0
+              ? {
+                  driverId: remult.user!.id,
+                }
+              : { taskStatus: taskStatus.active },
         })
         .then((items) => {
           this.events = items
