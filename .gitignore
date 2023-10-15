@@ -48,3 +48,4 @@ Thumbs.db
 
 .env
 .vscode/settings.json
+src/server/read-excel.ts

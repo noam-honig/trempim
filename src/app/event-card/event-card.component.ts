@@ -195,10 +195,10 @@ export class EventCardComponent implements OnInit {
     return task.driverId === remult.user?.id
   }
   eventCity(e: Task) {
-    return getCity(e.addressApiResult?.results[0].address_components!)
+    return getCity(e.addressApiResult?.results?.[0]?.address_components!)
   }
   eventToCity(e: Task) {
-    return getCity(e.toAddressApiResult?.results[0].address_components!)
+    return getCity(e.toAddressApiResult?.results?.[0]?.address_components!)
   }
   travelDistance(e: Task) {
     return (

@@ -73,7 +73,7 @@ export interface Result {
   formatted_address?: string
   geometry: Geometry
   partial_match: boolean
-  place_id: string
+  place_id?: string
   types: string[]
 }
 
@@ -196,8 +196,9 @@ export function getLongLat(addressApiResult: GeocodeResult | null): string {
   return toLongLat(getLocation(addressApiResult)!)!
 }
 export function getLocation(addressApiResult: GeocodeResult | null): Location {
-  if (!addressApiResult?.results) return { lat: 32.0922212, lng: 34.8731951 }
-  return addressApiResult?.results[0].geometry.location
+  return (
+    addressApiResult?.results?.[0]?.geometry?.location || { lat: 0, lng: 0 }
+  )
 }
 
 export function GetDistanceBetween(a: Location, b: Location) {
@@ -227,4 +228,20 @@ export async function getCurrentLocation(
     })
   }
   return result
+}
+
+export async function GetGeoInformation(address: string) {
+  if (!address || address == '' || address.trim() == '') return undefined
+  const fetch = await import('node-fetch')
+  address = address.trim()
+  let u = 'https://maps.googleapis.com/maps/api/geocode/json?'
+  const params = new URLSearchParams({
+    key: process.env['GOOGLE_GECODE_API_KEY']!,
+    address,
+    language: 'he',
+  })
+  const url = u + params.toString()
+  console.log(url)
+  let r = await fetch.default(url).then((x) => x.json())
+  return r
 }
