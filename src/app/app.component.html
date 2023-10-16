@@ -1,11 +1,16 @@
 <div *ngIf="!remult.authenticated()">
-  <app-card-in-middle
-    ><h1>{{ title }}</h1>
-    <h2>כניסה</h2>
-    <data-area [settings]="area"> </data-area>
-    <button mat-raised-button color="primary" (click)="doSignIn()">
-      כניסה
-    </button>
+  <app-card-in-middle>
+    <div style="display: flex; flex-direction: column">
+      <div style="align-self: center">
+        <img src="assets/logo.png" height="150px" />
+      </div>
+
+      <h2>כניסה</h2>
+      <data-area [settings]="area"> </data-area>
+      <button mat-raised-button color="primary" (click)="doSignIn()">
+        כניסה
+      </button>
+    </div>
   </app-card-in-middle>
 </div>
 
