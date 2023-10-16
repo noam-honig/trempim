@@ -39,7 +39,8 @@ import {
 } from './event-card/transition-group'
 import { UpdateStatusComponent } from './update-status/update-status.component';
 import { NoamTestComponent } from './noam-test/noam-test.component';
-import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
+import { DraftOverviewComponent } from './draft-overview/draft-overview.component';
+import { LocationErrorComponent } from './location-error/location-error.component'
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { DraftOverviewComponent } from './draft-overview/draft-overview.componen
     UpdateStatusComponent,
     NoamTestComponent,
     DraftOverviewComponent,
+    LocationErrorComponent,
   ],
   imports: [
     BrowserModule,

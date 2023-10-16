@@ -1,5 +1,5 @@
 export async function sendSms(phone: string, message: string): Promise<any> {
-  if (process.env['disable_sms'] && false) {
+  if (process.env['disable_sms']) {
     console.log({ phone, message })
     return
   }

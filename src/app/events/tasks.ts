@@ -29,7 +29,7 @@ import moment from 'moment'
 import { Roles } from '../users/roles'
 import { UITools } from '../common/UITools'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
-import { PhoneField, TaskContactInfo, formatPhone } from './phone'
+import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
 import { User } from '../users/user'
 
 @ValueListFieldType({
@@ -74,6 +74,7 @@ export class Category {
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
   },
   validation: (task) => {
+    if (phoneConfig.disableValidation) return
     if (!task.addressApiResult?.results) task.$.address.error = 'כתובת לא נמצאה'
     if (!task.toAddressApiResult?.results)
       task.$.toAddress.error = 'כתובת לא נמצאה'
@@ -157,7 +158,7 @@ export class Task extends IdEntity {
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
     includeInApi: Roles.dispatcher,
-    validate: Validators.required,
+    //validate: Validators.required,
   })
   phone1 = ''
   @Fields.string({ caption: 'איש קשר מוצא', includeInApi: Roles.dispatcher })

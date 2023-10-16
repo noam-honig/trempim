@@ -17,6 +17,7 @@ import {
   getCurrentLocation,
   getRegion,
 } from '../common/address-input/google-api-helpers'
+import { LocationErrorComponent } from '../location-error/location-error.component'
 const AllCategories = {
   id: 'asdfaetfsafads',
   caption: 'הכל',
@@ -191,10 +192,12 @@ export class EventCardComponent implements OnInit {
   async sortByDistance() {
     try {
       if (!this.volunteerLocation)
-        this.volunteerLocation = await getCurrentLocation(true, this.dialog)
+        this.volunteerLocation = await getCurrentLocation()
       else this.volunteerLocation = undefined
       this.sortEvents()
-    } catch {}
+    } catch (err: any) {
+      openDialog(LocationErrorComponent, (x) => (x.args = { err }))
+    }
   }
   isRegisteredToEvent(task: Task) {
     return task.driverId === remult.user?.id

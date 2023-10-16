@@ -16,7 +16,7 @@ import { DataControl } from '../common-ui-elements/interfaces'
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,
   allowApiUpdate: Allow.authenticated,
-  allowApiDelete: Roles.admin,
+  allowApiDelete: false,
   allowApiInsert: Roles.admin,
   apiPrefilter: () =>
     !remult.isAllowed(Roles.admin) ? { id: [remult.user?.id!] } : {},

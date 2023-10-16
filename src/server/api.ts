@@ -20,5 +20,5 @@ export const api = remultExpress({
       disableSsl: Boolean(process.env['dev']),
       schema: process.env['DB_SCHEMA']!,
     }),
-  //initApi: readExcelVolunteers,
+  //initApi: readTripExcel,
 })

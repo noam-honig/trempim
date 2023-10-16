@@ -212,29 +212,15 @@ export function GetDistanceBetween(a: Location, b: Location) {
   return computeDistanceBetween(a, b) / 1000
 }
 
-export async function getCurrentLocation(
-  useCurrentLocation: boolean,
-  dialog: UIToolsService
-) {
-  let result: Location | undefined = undefined
-  if (useCurrentLocation) {
-    await new Promise((res, rej) => {
-      navigator.geolocation.getCurrentPosition(
-        (x) => {
-          result = {
-            lat: x.coords.latitude,
-            lng: x.coords.longitude,
-          }
-          res({})
-        },
-        (error) => {
-          console.log(error)
-          dialog.error('שליפת מיקום נכשלה' + error.message)
-        }
-      )
-    })
-  }
-  return result
+export async function getCurrentLocation() {
+  return await new Promise<Location>((res, rej) => {
+    navigator.geolocation.getCurrentPosition((x) => {
+      res({
+        lat: x.coords.latitude,
+        lng: x.coords.longitude,
+      })
+    }, rej)
+  })
 }
 
 export async function GetGeoInformation(address: string) {
