@@ -31,7 +31,6 @@ import { UITools } from '../common/UITools'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
 import { PhoneField, TaskContactInfo, formatPhone } from './phone'
 import { User } from '../users/user'
-import { addresses } from '../../../tmp/data'
 
 @ValueListFieldType({
   caption: 'סטטוס',
