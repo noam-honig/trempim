@@ -14,7 +14,11 @@
         (click)="sortByDistance()"
         *ngIf="showLocation"
       >
-        {{ !volunteerLocation ? 'הצג לפי מרחק' : 'הצג לפי תאריך' }}
+        {{
+          !volunteerLocation
+            ? 'למעבר לתצוגה לפי מרחק'
+            : 'למעבר לתצוגה לפי תאריך'
+        }}
       </button>
     </div>
   </div>
