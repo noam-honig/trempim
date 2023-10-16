@@ -75,7 +75,6 @@ export class AddressInputComponent
       () => {
         const place = autocomplete.getPlace()
         if (!place) return
-        //     console.log(place)
 
         this.zone.run(() => {
           this.field.value = this.addressInput.nativeElement.value
@@ -83,38 +82,48 @@ export class AddressInputComponent
             formatted_address: this.field.value,
             address_components: place.address_components,
           })
-          consumer({
-            autoCompleteResult: {
-              results: [
-                {
-                  address_components: place.address_components,
-                  formatted_address: place.formatted_address,
-                  partial_match: false,
-                  geometry: {
-                    location_type: '',
-                    location: toLocation(place.geometry!.location)!,
-                    viewport: {
-                      northeast: toLocation(
-                        place.geometry!.viewport.getNorthEast()
-                      ),
-                      southwest: toLocation(
-                        place.geometry!.viewport.getSouthWest()
-                      ),
-                    },
+
+          consumer(
+            !place.address_components
+              ? {
+                  autoCompleteResult: undefined!,
+                  location: undefined!,
+                  addressByGoogle: undefined!,
+                  city: undefined!,
+                }
+              : {
+                  autoCompleteResult: {
+                    results: [
+                      {
+                        address_components: place.address_components,
+                        formatted_address: place.formatted_address,
+                        partial_match: false,
+                        geometry: {
+                          location_type: '',
+                          location: toLocation(place.geometry!.location)!,
+                          viewport: {
+                            northeast: toLocation(
+                              place.geometry!.viewport.getNorthEast()
+                            ),
+                            southwest: toLocation(
+                              place.geometry!.viewport.getSouthWest()
+                            ),
+                          },
+                        },
+                        place_id: place.place_id!,
+                        types: place.types!,
+                      },
+                    ],
+                    status: 'OK',
                   },
-                  place_id: place.place_id!,
-                  types: place.types!,
-                },
-              ],
-              status: 'OK',
-            },
-            location: {
-              lat: place.geometry!.location.lat(),
-              lng: place.geometry!.location.lng(),
-            },
-            addressByGoogle: getAddress(place),
-            city: getCity(place.address_components!),
-          })
+                  location: {
+                    lat: place.geometry!.location.lat(),
+                    lng: place.geometry!.location.lng(),
+                  },
+                  addressByGoogle: getAddress(place),
+                  city: getCity(place.address_components!),
+                }
+          )
         })
       }
     )

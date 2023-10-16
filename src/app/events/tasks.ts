@@ -31,6 +31,7 @@ import { UITools } from '../common/UITools'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
 import { PhoneField, TaskContactInfo, formatPhone } from './phone'
 import { User } from '../users/user'
+import { addresses } from '../../../tmp/data'
 
 @ValueListFieldType({
   caption: 'סטטוס',
@@ -72,6 +73,11 @@ export class Category {
   allowApiDelete: false,
   saving: (task) => {
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
+  },
+  validation: (task) => {
+    if (!task.addressApiResult?.results) task.$.address.error = 'כתובת לא נמצאה'
+    if (!task.toAddressApiResult?.results)
+      task.$.toAddress.error = 'כתובת לא נמצאה'
   },
 
   apiPrefilter: () => {
@@ -149,7 +155,11 @@ export class Task extends IdEntity {
   })
   toAddress = ''
 
-  @PhoneField<Task>({ caption: 'טלפון מוצא', includeInApi: Roles.dispatcher })
+  @PhoneField<Task>({
+    caption: 'טלפון מוצא',
+    includeInApi: Roles.dispatcher,
+    validate: Validators.required,
+  })
   phone1 = ''
   @Fields.string({ caption: 'איש קשר מוצא', includeInApi: Roles.dispatcher })
   phone1Description = ''
