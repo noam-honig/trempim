@@ -9,6 +9,7 @@ import { UIToolsService } from '../common/UIToolsService'
 import { Task, eventDisplayDate, taskStatus } from '../events/tasks'
 import {
   getCity,
+  getGoogleMapLink,
   getLongLat,
   openWaze,
 } from '../common/address-input/google-api-helpers'
@@ -49,20 +50,10 @@ export class EventInfoComponent implements OnInit {
   }
 
   openSourceGoogleMap() {
-    window.open(
-      'https://maps.google.com/maps?q=' +
-        getLongLat(this.e.addressApiResult) +
-        '&hl=he',
-      '_blank'
-    )
+    window.open(getGoogleMapLink(this.e.addressApiResult), '_blank')
   }
   openTargetGoogleMap() {
-    window.open(
-      'https://maps.google.com/maps?q=' +
-        getLongLat(this.e.toAddressApiResult) +
-        '&hl=he',
-      '_blank'
-    )
+    window.open(getGoogleMapLink(this.e.toAddressApiResult), '_blank')
   }
   sendWhatsapp(phone: string) {
     sendWhatsappToPhone(phone, '')

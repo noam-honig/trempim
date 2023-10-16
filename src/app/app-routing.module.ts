@@ -1,22 +1,28 @@
 import { CommonUIElementsModule } from 'common-ui-elements'
 import { NgModule, ErrorHandler } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
-import { HomeComponent } from './home/home.component'
-
 import { UsersComponent } from './users/users.component'
-import { AdminGuard } from './users/AdminGuard'
+import { AdminGuard, DispatchGuard } from './users/AdminGuard'
 import { ShowDialogOnErrorErrorHandler } from './common/UIToolsService'
 import { terms } from './terms'
 import { OrgEventsComponent } from './events/org-events.component'
+import { NoamTestComponent } from './noam-test/noam-test.component'
+import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
 
 const defaultRoute = 'משימות'
 const routes: Routes = [
   { path: defaultRoute, component: OrgEventsComponent },
   {
+    path: 'טיוטות',
+    component: DraftOverviewComponent,
+    canActivate: [DispatchGuard],
+  },
+  {
     path: terms.userAccounts,
     component: UsersComponent,
     canActivate: [AdminGuard],
   },
+  { path: 'noam-test/:1', component: NoamTestComponent },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' },
 ]
 
@@ -24,6 +30,7 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes), CommonUIElementsModule],
   providers: [
     AdminGuard,
+    DispatchGuard,
     { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },
   ],
   exports: [RouterModule],

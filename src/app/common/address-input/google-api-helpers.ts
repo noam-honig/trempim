@@ -252,3 +252,8 @@ export async function GetGeoInformation(address: string) {
   let r = await fetch.default(url).then((x) => x.json())
   return r
 }
+
+export function getGoogleMapLink(api?: GeocodeResult | null) {
+  if (!api) return ''
+  return 'https://maps.google.com/maps?q=' + getLongLat(api) + '&hl=he'
+}

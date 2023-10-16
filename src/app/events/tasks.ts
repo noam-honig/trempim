@@ -182,6 +182,8 @@ export class Task extends IdEntity {
   statusNotes = ''
   @Fields.string({ caption: 'מזהה נסיעה' })
   externalId = ''
+  @Fields.boolean({ caption: 'טיוטה' })
+  draft = false
 
   @BackendMethod({ allowed: Allow.authenticated })
   async assignToMe() {
@@ -276,6 +278,7 @@ export class Task extends IdEntity {
         e.phone1Description,
         e.toPhone1,
         e.tpPhone1Description,
+        e.draft,
         e.externalId,
       ],
       ok: () => this.save().then(() => saved && saved()),

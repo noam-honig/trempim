@@ -1,0 +1,67 @@
+<mat-card *ngFor="let t of tasks" style="margin-bottom: 8px">
+  <table>
+    <tr>
+      <td>כותרת:</td>
+      <td>{{ t.title }}</td>
+    </tr>
+    <tr>
+      <td>קטגוריה:</td>
+      <td>{{ t.category?.caption }}</td>
+    </tr>
+    <tr>
+      <td>כתובת מוצא:</td>
+      <td>{{ t.address }}</td>
+    </tr>
+    <tr>
+      <td>לפי גוגל:</td>
+      <td>
+        <a
+          [href]="getMapsLink(t.addressApiResult)"
+          target="_blank"
+          [style.color]="errorColor(t.addressApiResult)"
+        >
+          {{ getGoogleAddress(t.addressApiResult) }}</a
+        >
+      </td>
+    </tr>
+    <tr>
+      <td>כתובת יעד:</td>
+      <td>{{ t.toAddress }}</td>
+    </tr>
+    <tr>
+      <td>לפי גוגל:</td>
+      <td>
+        <a
+          [href]="getMapsLink(t.toAddressApiResult)"
+          target="_blank"
+          [style.color]="errorColor(t.toAddressApiResult)"
+        >
+          {{ getGoogleAddress(t.toAddressApiResult) }}</a
+        >
+      </td>
+    </tr>
+  </table>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="show(t)"
+    style="margin-left: 16px"
+  >
+    הצג
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="edit(t)"
+    style="margin-left: 16px"
+  >
+    ערוך
+  </button>
+  <button
+    mat-raised-button
+    [color]="t.draft ? 'primary' : 'error'"
+    (click)="confirm(t)"
+  >
+    {{ t.draft ? 'אשר טיוטא' : 'בטל אישור' }}
+  </button>
+</mat-card>

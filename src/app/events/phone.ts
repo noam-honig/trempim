@@ -47,7 +47,9 @@ export function isPhoneValidForIsrael(input: string) {
   }
   return false
 }
-
+export const phoneConfig = {
+  disableValidation: false,
+}
 export function PhoneField<entityType>(
   options?: StringFieldOptions<entityType>
 ) {
@@ -63,6 +65,7 @@ export function PhoneField<entityType>(
     (_, f) => {
       if (!f.value) return
       f.value = fixPhoneInput(f.value)
+      if (phoneConfig.disableValidation) return
       if (!isPhoneValidForIsrael(f.value)) throw new Error('טלפון לא תקין')
     },
   ]

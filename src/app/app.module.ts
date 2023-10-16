@@ -37,7 +37,9 @@ import {
   TransitionGroupComponent,
   TransitionGroupItemDirective,
 } from './event-card/transition-group'
-import { UpdateStatusComponent } from './update-status/update-status.component'
+import { UpdateStatusComponent } from './update-status/update-status.component';
+import { NoamTestComponent } from './noam-test/noam-test.component';
+import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
 
 @NgModule({
   declarations: [
@@ -56,6 +58,8 @@ import { UpdateStatusComponent } from './update-status/update-status.component'
     TransitionGroupItemDirective,
     TransitionGroupComponent,
     UpdateStatusComponent,
+    NoamTestComponent,
+    DraftOverviewComponent,
   ],
   imports: [
     BrowserModule,
