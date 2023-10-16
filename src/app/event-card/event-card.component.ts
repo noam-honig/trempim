@@ -53,7 +53,7 @@ export class EventCardComponent implements OnInit {
   }
 
   @Fields.string({
-    caption: 'איפה?',
+    caption: 'מאיפה?',
   })
   region: string = ''
   @Field(() => Category, { caption: 'קטגוריה' })
