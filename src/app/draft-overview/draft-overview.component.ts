@@ -31,7 +31,9 @@ export class DraftOverviewComponent implements OnInit {
       })
   }
   getGoogleAddress(address?: GeocodeResult | null) {
-    let result = address?.results?.[0]?.formatted_address || 'כלל לא מצא'
+    if (!address?.results?.[0]) return 'כלל לא מצא'
+    let result = address?.results?.[0]?.formatted_address!
+    if (result == '' && address?.results?.[0]?.geometry) return 'נצ על מפה'
     if (result.endsWith('ישראל')) {
       result = result.slice(0, -'ישראל'.length).trim()
     }
@@ -51,7 +53,7 @@ export class DraftOverviewComponent implements OnInit {
     await t.save()
   }
   errorColor(address?: GeocodeResult | null) {
-    if (!address?.results?.[0]?.formatted_address) return 'red'
+    if (!address?.results?.[0]?.geometry) return 'red'
     return ''
   }
 }

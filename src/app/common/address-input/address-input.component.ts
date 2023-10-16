@@ -84,7 +84,7 @@ export class AddressInputComponent
           })
 
           consumer(
-            !place.address_components
+            !place.geometry
               ? {
                   autoCompleteResult: undefined!,
                   location: undefined!,
