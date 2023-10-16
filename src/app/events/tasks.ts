@@ -160,15 +160,28 @@ export class Task extends IdEntity {
 
   @Fields.createdAt()
   createdAt = new Date()
-  @Fields.string({ includeInApi: Roles.dispatcher, allowApiUpdate: false })
+  @Fields.string<Task>({
+    includeInApi: Roles.dispatcher,
+    allowApiUpdate: false,
+    caption: 'משתמש מוסיף',
+    displayValue: (u) => u.createUser?.name || '',
+  })
   createUserId = remult.user?.id!
+  @Relations.toOne<Task, User>(() => User, 'createUserId')
+  createUser?: User
 
-  @Fields.string({ allowApiUpdate: false, caption: 'נהג' })
+  @Fields.string({
+    allowApiUpdate: false,
+    caption: 'נהג',
+    displayValue: (u) => u.createUser?.name || '',
+  })
   driverId = ''
   @Relations.toOne<Task, User>(() => User, 'driverId')
   driver?: User
   @Fields.string({ allowApiUpdate: false })
   statusNotes = ''
+  @Fields.string({ caption: 'מזהה נסיעה' })
+  externalId = ''
 
   @BackendMethod({ allowed: Allow.authenticated })
   async assignToMe() {
@@ -263,6 +276,7 @@ export class Task extends IdEntity {
         e.phone1Description,
         e.toPhone1,
         e.tpPhone1Description,
+        e.externalId,
       ],
       ok: () => this.save().then(() => saved && saved()),
       cancel: () => {

@@ -43,6 +43,7 @@ export class OrgEventsComponent implements OnInit {
       this.allRides = new GridSettings<Task>(repo(Task), {
         include: {
           driver: true,
+          createUser: true,
         },
         gridButtons: [
           {
@@ -59,6 +60,8 @@ export class OrgEventsComponent implements OnInit {
           t.startTime,
 
           t.statusChangeDate,
+          t.externalId,
+          t.createUserId,
         ],
         rowButtons: [
           {
