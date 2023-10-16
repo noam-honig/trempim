@@ -5,6 +5,7 @@
   <h2 style="margin-bottom: 0">{{ e.title }}</h2>
   <div display="flex">
     <app-dots-menu
+      [item]="e"
       [buttons]="menuOptions"
       *ngIf="isDispatcher()"
     ></app-dots-menu>

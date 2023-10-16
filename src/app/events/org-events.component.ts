@@ -84,9 +84,10 @@ export class OrgEventsComponent implements OnInit {
           where:
             this.activeTab == 0
               ? {
+                  draft: false,
                   driverId: remult.user!.id,
                 }
-              : { taskStatus: taskStatus.active },
+              : { draft: false, taskStatus: taskStatus.active },
         })
         .then((items) => {
           this.events = items
