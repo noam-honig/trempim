@@ -29,35 +29,27 @@
           <mat-card
             transition-group-item
             class="event-card"
-            [class.registered]="isRegisteredToEvent(e)"
+            [class.registered]="isRegisteredToEvent(e) && showingAllTasks"
             *ngIf="filter(e)"
           >
             <div
-              *ngIf="isDispatcher()"
               style="
                 display: flex;
                 justify-content: space-between;
                 margin-bottom: 10px;
               "
             >
-              <strong *ngIf="isDispatcher()">{{ getStatus(e) }}</strong>
+              <strong (click)="eventDetails(e)">
+                {{ e.title }}
+              </strong>
               <app-dots-menu
                 [item]="e"
                 [buttons]="menuOptions"
                 *ngIf="isDispatcher()"
               ></app-dots-menu>
             </div>
-            <div class="event-info">
-              <!-- <div style="text-align: center" (click)="eventDetails(e)">
-                <img class="event-image" [src]="e.eventLogo" />
-              </div> -->
+            <div class="event-info" (click)="eventDetails(e)">
               <div class="event-detail">
-                <strong (click)="eventDetails(e)">
-                  <mat-icon *ngIf="isRegisteredToEvent(e)" style="color: green"
-                    >done</mat-icon
-                  >
-                  {{ e.title }}
-                </strong>
                 {{ e.category?.caption || '' }} {{ distance(e) }}
                 <span (click)="eventDetails(e)">
                   {{ eventCity(e) }}
@@ -73,6 +65,9 @@
                 <a (click)="eventDetails(e)" *ngIf="!isFull(e)">{{
                   'לפרטים והרשמה'
                 }}</a>
+                <strong (click)="eventDetails(e)" *ngIf="isFull(e)">
+                  {{ e.taskStatus.caption }}
+                </strong>
               </div>
             </div>
           </mat-card>

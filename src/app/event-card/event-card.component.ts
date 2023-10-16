@@ -63,6 +63,8 @@ export class EventCardComponent implements OnInit {
   _tasks!: Task[]
 
   @Input()
+  showingAllTasks = false
+  @Input()
   set tasks(val: Task[]) {
     this._tasks = val
     this.refresh()

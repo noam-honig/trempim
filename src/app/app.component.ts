@@ -43,8 +43,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  signOut() {
-    SignInController.signOut()
+  async signOut() {
+    await SignInController.signOut()
 
     remult.user = undefined
     location.reload()

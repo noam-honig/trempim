@@ -23,7 +23,10 @@
     ></data-grid>
     <ng-container *ngIf="activeTab != 2">
       <ng-container *ngIf="events.length != 1 || isDispatcher()">
-        <app-event-card [tasks]="events"></app-event-card>
+        <app-event-card
+          [tasks]="events"
+          [showingAllTasks]="activeTab == 1"
+        ></app-event-card>
       </ng-container>
       <div style="display: flex; justify-content: center">
         <mat-card
