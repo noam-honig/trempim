@@ -47,29 +47,37 @@
         >
       </td>
     </tr>
+    <tr>
+      <td>נוצר ע"י:</td>
+      <td>
+        {{ t.createUser?.name }}
+      </td>
+    </tr>
   </table>
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="show(t)"
-    style="margin-left: 16px"
-  >
-    הצג
-  </button>
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="edit(t)"
-    style="margin-left: 16px"
-  >
-    ערוך
-  </button>
-  <button
-    *ngIf="isDispatcher()"
-    mat-raised-button
-    [color]="t.draft ? 'primary' : 'error'"
-    (click)="confirm(t)"
-  >
-    {{ t.draft ? 'אשר טיוטא' : 'בטל אישור' }}
-  </button>
+  <div>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="show(t)"
+      style="margin-left: 16px"
+    >
+      הצג
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="edit(t)"
+      style="margin-left: 16px"
+    >
+      ערוך
+    </button>
+    <button
+      *ngIf="isDispatcher()"
+      mat-raised-button
+      [color]="t.draft ? 'primary' : 'error'"
+      (click)="confirm(t)"
+    >
+      {{ t.draft ? 'אשר טיוטא' : 'בטל אישור' }}
+    </button>
+  </div>
 </mat-card>

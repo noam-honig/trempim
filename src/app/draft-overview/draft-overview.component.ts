@@ -26,6 +26,9 @@ export class DraftOverviewComponent implements OnInit {
           draft: true,
           taskStatus: taskStatus.active,
         },
+        include: {
+          createUser: true,
+        },
       })
       .then((tasks) => {
         this.tasks = tasks
