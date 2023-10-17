@@ -170,13 +170,14 @@ export class EventCardComponent implements OnInit {
       if (time.startsWith('0')) time = time.substring(1)
       result += ' ' + time
     }
-    if (e.validUntil.getDate() == e.eventDate.getDate()) {
-      result +=
-        ' - ' +
-        e.validUntil.getHours() +
-        ':' +
-        e.validUntil.getMinutes().toString().padStart(2, '0')
-    }
+    // if (e.validUntil.getDate() == e.eventDate.getDate()) {
+    //   result +=
+    //     ' - ' +
+    //     e.validUntil.getHours() +
+    //     ':' +
+    //     e.validUntil.getMinutes().toString().padStart(2, '0')
+    // }
+
     return result
   }
 

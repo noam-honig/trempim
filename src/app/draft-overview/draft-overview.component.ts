@@ -29,6 +29,9 @@ export class DraftOverviewComponent implements OnInit {
         include: {
           createUser: true,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       })
       .then((tasks) => {
         this.tasks = tasks
