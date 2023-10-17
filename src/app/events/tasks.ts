@@ -105,7 +105,7 @@ export class Task extends IdEntity {
   }
 
   @Fields.string<Task>({
-    caption: 'כותרת',
+    caption: 'מה משנעים',
     validate: (s, c) => Validators.required(s, c),
   })
   title = ''
