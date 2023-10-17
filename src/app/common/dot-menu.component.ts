@@ -8,16 +8,22 @@ import { RowButton } from '../common-ui-elements/interfaces'
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item *ngFor="let b of buttons" (click)="b.click!(item)">
-        <mat-icon *ngIf="!b.icon?.includes('/')">{{ b.icon }}</mat-icon>
-        <img
-          [src]="b.icon"
-          *ngIf="b.icon?.includes('/')"
-          style="height: 24px; margin-left: 16px; vertical-align: middle"
-        />
+      <ng-container *ngFor="let b of buttons">
+        <button
+          mat-menu-item
+          *ngIf="b.visible === undefined || b.visible(item)"
+          (click)="b.click!(item)"
+        >
+          <mat-icon *ngIf="!b.icon?.includes('/')">{{ b.icon }}</mat-icon>
+          <img
+            [src]="b.icon"
+            *ngIf="b.icon?.includes('/')"
+            style="height: 24px; margin-left: 16px; vertical-align: middle"
+          />
 
-        <span>{{ getButtonName(b) }}</span>
-      </button>
+          <span>{{ getButtonName(b) }}</span>
+        </button>
+      </ng-container>
     </mat-menu>
   `,
 })

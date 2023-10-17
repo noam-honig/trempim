@@ -296,8 +296,9 @@ export class Task extends IdEntity {
   async returnToActive() {
     if (this.taskStatus != taskStatus.notRelevant)
       throw new Error('לא ניתן לבצע עבור נסיעה ב: ' + this.taskStatus.caption)
-    if (this.driverId) throw new Error('יש לבצע על ידי הנהג')
+
     this.taskStatus = taskStatus.active
+    this.driverId = ''
     await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
     await this.save()
   }
@@ -417,7 +418,7 @@ export class Task extends IdEntity {
           e.taskStatus === taskStatus.active
             ? 'סמן כלא רלוונטי'
             : 'החזר למשימה פעילה',
-        visible: (e) => e.taskStatus == taskStatus.active,
+
         click: async (e) => {
           if (e.taskStatus === taskStatus.active)
             await e.noLongerRelevant('על ידי מוקדן')
