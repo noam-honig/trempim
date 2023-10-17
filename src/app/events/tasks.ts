@@ -16,6 +16,7 @@ import {
   repo,
   Remult,
   BackendMethod,
+  EntityFilter,
 } from 'remult'
 import {
   DataControl,
@@ -103,21 +104,36 @@ export class Category {
   apiPrefilter: () => {
     if (remult.isAllowed(Roles.dispatcher)) return {}
     if (remult.isAllowed(Roles.trainee))
-      return { draft: true, $and: [Task.filterActiveTasks] }
+      return {
+        $or: [
+          {
+            draft: true,
+            createUser: remult.user!.id,
+          },
+          Task.filterActiveTasks(),
+        ],
+      }
+
+    // {
+    //   $or: [
+    //     { draft: true, createUser: remult.user!.id },
+    //     Task.filterActiveTasks,
+    //   ],
+    // }
     return Task.filterActiveTasks()
   },
 })
 export class Task extends IdEntity {
-  static filterActiveTasks() {
+  static filterActiveTasks(): EntityFilter<Task> {
     const d = new Date()
     d.setDate(d.getDate() + 1)
     return {
+      draft: false,
       $or: [
         {
           taskStatus: taskStatus.active,
-          eventDate: { $lte: d },
         },
-        { driverId: remult.user!.id!, statusChangeDate: { $lte: d } },
+        { driverId: remult.user!.id!, statusChangeDate: { $gte: d } },
       ],
     }
   }
