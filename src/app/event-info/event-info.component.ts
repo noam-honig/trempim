@@ -113,11 +113,13 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
   contactInfo?: TaskContactInfo
   ngOnInit(): void {
-    if (this.e.driverId && this.isDispatcher())
-      this.e._.relations.driver.findOne().then((x) => (this.driver = x))
-    if (this.e.driverId === remult.user?.id || this.isDispatcher()) {
-      this.e.getContactInfo().then((x) => (this.contactInfo = x))
-    }
+    this.e._.reload().then(() => {
+      if (this.e.driverId && this.isDispatcher())
+        this.e._.relations.driver.findOne().then((x) => (this.driver = x))
+      if (this.e.driverId === remult.user?.id || this.isDispatcher()) {
+        this.e.getContactInfo().then((x) => (this.contactInfo = x))
+      }
+    })
   }
 
   edit() {
