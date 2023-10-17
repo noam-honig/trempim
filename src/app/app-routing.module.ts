@@ -9,7 +9,7 @@ import { OrgEventsComponent } from './events/org-events.component'
 import { NoamTestComponent } from './noam-test/noam-test.component'
 import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
 
-const defaultRoute = 'משימות'
+const defaultRoute = 'נסיעות'
 const routes: Routes = [
   { path: defaultRoute, component: OrgEventsComponent },
   {

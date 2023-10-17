@@ -278,7 +278,7 @@ export class Task extends IdEntity {
   openEditDialog(ui: UITools, saved?: VoidFunction) {
     const e = this.$
     ui.areaDialog({
-      title: 'פרטי משימה',
+      title: 'פרטי נסיעה',
       fields: [
         e.category!,
         e.title,
@@ -312,7 +312,7 @@ export class Task extends IdEntity {
   ): RowButton<Task>[] {
     return [
       {
-        name: 'ערוך משימה',
+        name: 'ערוך נסיעה',
         click: async (e) => {
           e.openEditDialog(ui, () => args?.taskSaved?.(e))
         },
@@ -343,13 +343,13 @@ export class Task extends IdEntity {
         },
       },
       {
-        name: 'שכפול משימה',
+        name: 'שכפול נסיעה',
         click: async (oldE) => {
           const e = remult.repo(Task).create(oldE)
           e.eventDate = new Date()
           e.eventDate.setDate(e.eventDate.getDate() + 1)
           ui.areaDialog({
-            title: 'שכפול משימה',
+            title: 'שכפול נסיעה',
             fields: [e.$.eventDate],
             ok: async () => {
               await e.save()
