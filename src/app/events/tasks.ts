@@ -32,6 +32,7 @@ import { UITools } from '../common/UITools'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
 import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
 import { User } from '../users/user'
+import { Locks } from './locks'
 
 @ValueListFieldType({
   caption: 'סטטוס',
@@ -369,7 +370,23 @@ export class Task extends IdEntity {
       }
     return undefined
   }
-  openEditDialog(ui: UITools, saved?: VoidFunction) {
+
+  async openEditDialog(ui: UITools, saved?: VoidFunction) {
+    const doLocks = !this.isNew()
+    if (doLocks)
+      try {
+        await Locks.lock(this.id, false)
+      } catch (err: any) {
+        if (remult.isAllowed(Roles.admin)) {
+          if (await ui.yesNoQuestion(err.message + ', לפתוח בכל זאת?')) {
+            await Locks.lock(this.id, true)
+          } else return
+        } else {
+          ui.error(err.message)
+          return
+        }
+      }
+
     const e = this.$
     ui.areaDialog({
       title: 'פרטי נסיעה',
@@ -389,9 +406,14 @@ export class Task extends IdEntity {
         e.draft,
         e.externalId,
       ],
-      ok: () => this.save().then(() => saved && saved()),
+      ok: () =>
+        this.save().then(() => {
+          saved?.()
+          if (doLocks) Locks.unlock(this.id)
+        }),
       cancel: () => {
         this._.undoChanges()
+        if (doLocks) Locks.unlock(this.id)
       },
       buttons: [],
     })

@@ -7,13 +7,15 @@ import { createPostgresDataProviderWithSchema } from './PostgresSchemaWrapper'
 import { config } from 'dotenv'
 import { SqlDatabase, repo } from 'remult'
 import { VersionInfo } from './version'
+import { Locks } from '../app/events/locks'
+
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
 
 config() //loads the configuration from the .env file
 
 //SqlDatabase.LogToConsole = 'oneLiner'
-const entities = [User, Task, TaskStatusChanges, VersionInfo]
+const entities = [User, Task, TaskStatusChanges, VersionInfo, Locks]
 export const api = remultExpress({
   controllers: [SignInController],
   entities,
