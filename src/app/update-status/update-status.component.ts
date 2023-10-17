@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core'
 import { Fields, getFields } from 'remult'
 import { Task } from '../events/tasks'
 import { DialogRef } from '@angular/cdk/dialog'
+import { UITools } from '../common/UITools'
+import { UIToolsService } from '../common/UIToolsService'
 
 @Component({
   selector: 'app-update-status',
@@ -9,7 +11,7 @@ import { DialogRef } from '@angular/cdk/dialog'
   styleUrls: ['./update-status.component.scss'],
 })
 export class UpdateStatusComponent implements OnInit {
-  constructor(private dialogRef: DialogRef<any>) {}
+  constructor(private dialogRef: DialogRef<any>, private ui: UIToolsService) {}
 
   args!: {
     showFailStatus: boolean
@@ -25,21 +27,25 @@ export class UpdateStatusComponent implements OnInit {
   }
   ngOnInit(): void {}
   async save() {
-    if (this.args.showFailStatus) {
-      switch (this.whatWentWrong) {
-        case 0:
-          await this.args.task.cancelAssignment(this.notes)
-          break
-        case 21:
-          await this.args.task.noLongerRelevant(this.notes)
-          break
-        case 22:
-          await this.args.task.otherProblem(this.notes)
-          break
+    try {
+      if (this.args.showFailStatus) {
+        switch (this.whatWentWrong) {
+          case 0:
+            await this.args.task.cancelAssignment(this.notes)
+            break
+          case 21:
+            await this.args.task.noLongerRelevant(this.notes)
+            break
+          case 22:
+            await this.args.task.otherProblem(this.notes)
+            break
+        }
+      } else {
+        await this.args.task.completed(this.notes)
       }
-    } else {
-      await this.args.task.completed(this.notes)
+      this.dialogRef.close()
+    } catch (err: any) {
+      this.ui.error(err)
     }
-    this.dialogRef.close()
   }
 }

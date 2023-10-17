@@ -290,11 +290,13 @@ export class Task extends IdEntity {
       throw new Error('נסיעה זו לא משוייכת לך')
     this.driverId = ''
     this.taskStatus = taskStatus.active
+    this.statusNotes = notes
     await this.insertStatusChange('נהג ביטל שיוך', notes)
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async noLongerRelevant(notes: string) {
+    if (!notes) throw Error('אנא הזן הערות, שנדע מה קרה')
     if (
       this.driverId != remult.user?.id! &&
       !(
@@ -305,6 +307,7 @@ export class Task extends IdEntity {
     )
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.notRelevant
+    this.statusNotes = notes
     await this.insertStatusChange(this.taskStatus.caption, notes)
     await this.save()
   }
@@ -320,9 +323,11 @@ export class Task extends IdEntity {
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async otherProblem(notes: string) {
+    if (!notes) throw Error('אנא הזן הערות, שנדע מה קרה')
     if (this.driverId != remult.user?.id!)
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.otherProblem
+    this.statusNotes = notes
     await this.insertStatusChange(this.taskStatus.caption, notes)
     await this.save()
   }
@@ -331,6 +336,7 @@ export class Task extends IdEntity {
     if (this.driverId != remult.user?.id!)
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.completed
+    this.statusNotes = notes
     await this.insertStatusChange(this.taskStatus.caption, notes)
     await this.save()
   }
