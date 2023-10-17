@@ -38,14 +38,36 @@ export class OrgEventsComponent implements OnInit {
 
   events: Task[] = []
   allRides?: GridSettings<Task>
+  onlyShowRelevant = true
   async ngOnInit() {
     if (this.activeTab == 2) {
       this.allRides = new GridSettings<Task>(repo(Task), {
+        where: () => {
+          if (this.onlyShowRelevant)
+            return {
+              taskStatus: {
+                $ne: [taskStatus.notRelevant, taskStatus.completed],
+              },
+            }
+          return {}
+        },
+        orderBy: {
+          taskStatus: 'desc',
+          statusChangeDate: 'desc',
+        },
         include: {
           driver: true,
           createUser: true,
         },
         gridButtons: [
+          {
+            textInMenu: () =>
+              this.onlyShowRelevant ? 'הצג הכל' : 'הצג רק רלוונטיות',
+            click: () => {
+              this.onlyShowRelevant = !this.onlyShowRelevant
+              this.allRides?.reloadData()
+            },
+          },
           {
             name: 'יצוא לאקסל',
             click: () => saveToExcel(this.allRides!, 'rides', this.busy),
