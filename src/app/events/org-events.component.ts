@@ -58,7 +58,12 @@ export class OrgEventsComponent implements OnInit {
           t.category!,
           t.eventDate,
           t.startTime,
-
+          t.address,
+          t.phone1,
+          t.phone1Description,
+          t.toAddress,
+          t.toPhone1,
+          t.tpPhone1Description,
           t.statusChangeDate,
           t.externalId,
           t.createUserId,

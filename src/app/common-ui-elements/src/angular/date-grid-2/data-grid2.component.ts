@@ -174,9 +174,11 @@ export class DataGrid2Component implements OnChanges {
   }
 
   showSaveAllButton() {
-    return this.settings.items.find((x) =>
-      this.settings.getRowHelper(x).wasChanged()
-    )
+    if (this.settings.allowUpdate)
+      return this.settings.items.find((x) =>
+        this.settings.getRowHelper(x).wasChanged()
+      )
+    return false
   }
   saveAllText() {
     return this.rightToLeft

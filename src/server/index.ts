@@ -15,7 +15,7 @@ async function startup() {
       secret:
         process.env['NODE_ENV'] === 'production'
           ? process.env['SESSION_SECRET']
-          : 'my secret',
+          : 'my secret1',
     })
   )
   app.use(compression())
