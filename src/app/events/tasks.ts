@@ -216,9 +216,29 @@ export class Task extends IdEntity {
 
   @BackendMethod({ allowed: Allow.authenticated })
   async assignToMe() {
+    if (
+      (await repo(Task).count({
+        driverId: remult.user!.id!,
+        taskStatus: taskStatus.assigned,
+      })) >= 5
+    )
+      throw Error('ניתן להרשם במקביל לעד 5 נסיעות')
+    const assignedChangeType = 'שוייך לנהג'
+    if (
+      (await repo(TaskStatusChanges).count({
+        driverId: remult.user!.id!,
+        what: assignedChangeType,
+        createdAt: {
+          $gt: new Date(new Date().getTime() - 1000 * 60 * 60),
+        },
+      })) >= 7
+    ) {
+      throw Error('ניתן להרשם לעד 7 נסיעות בשעה')
+    }
+
     this.driverId = remult.user?.id!
     this.taskStatus = taskStatus.assigned
-    await this.insertStatusChange('שוייך לנהג')
+    await this.insertStatusChange(assignedChangeType)
     await this.save()
     return this.getContactInfo()
   }

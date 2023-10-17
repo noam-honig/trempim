@@ -1,5 +1,9 @@
 import { Component, Input, OnInit, Output } from '@angular/core'
-import { BusyService, openDialog } from '../common-ui-elements'
+import {
+  BusyService,
+  WantsToCloseDialog,
+  openDialog,
+} from '../common-ui-elements'
 import { EventEmitter } from 'events'
 
 import { remult, repo } from 'remult'
@@ -26,7 +30,7 @@ import { User } from '../users/user'
   templateUrl: './event-info.component.html',
   styleUrls: ['./event-info.component.scss'],
 })
-export class EventInfoComponent implements OnInit {
+export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   constructor(public dialog: UIToolsService, private busy: BusyService) {}
   @Output() phoneChanged = new EventEmitter()
   @Input()
@@ -65,6 +69,7 @@ export class EventInfoComponent implements OnInit {
     this.inProgress = true
     try {
       this.contactInfo = await this.e.assignToMe()
+      this.closeDialog()
     } finally {
       this.inProgress = false
     }
@@ -118,4 +123,5 @@ export class EventInfoComponent implements OnInit {
   getCity() {
     return getCity(this.e.addressApiResult?.results[0]?.address_components!)
   }
+  closeDialog = () => {}
 }

@@ -113,11 +113,15 @@ export async function openDialog<T, C>(
 ): Promise<T> {
   let ref = _matDialog.open(component, (component as any)[dialogConfigMember])
   if (setParameters) setParameters(ref.componentInstance)
+  ;(ref.componentInstance as WantsToCloseDialog).closeDialog = () => ref.close()
   var r
   if (ref.beforeClosed) r = await ref.beforeClosed().toPromise()
   //@ts-ignore
   else r = await ref.beforeClose().toPromise()
-
   if (returnAValue) return returnAValue(ref.componentInstance)
   return r
+}
+
+export interface WantsToCloseDialog {
+  closeDialog: VoidFunction
 }
