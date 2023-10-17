@@ -72,7 +72,8 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
       this.closeDialog()
     } catch (err: any) {
       this.dialog.error(err)
-      await this.e._.reload()
+      this.e.taskStatus = taskStatus.assigned
+      this.closeDialog()
     } finally {
       this.inProgress = false
     }
@@ -118,6 +119,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
       .then((x) => {
         if (!x) {
           this.dialog.error('הנסיעה כנראה כבר נלקחה על ידי נהג אחר')
+          this.e.taskStatus = taskStatus.assigned
           this.closeDialog()
         }
       })

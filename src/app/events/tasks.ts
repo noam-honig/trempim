@@ -486,15 +486,10 @@ export class Task extends IdEntity {
         },
       },
       {
-        name: 'החזר לנסיעה פעילה',
+        name: 'החזר לפתוח לרישום',
         icon: 'check_circle',
-        textInMenu: (e) =>
-          e.taskStatus === taskStatus.active
-            ? 'סמן כלא רלוונטי'
-            : 'החזר למשימה פעילה',
 
-        visible: (e) =>
-          ![taskStatus.active, taskStatus.assigned].includes(e.taskStatus),
+        visible: (e) => ![taskStatus.active].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
         },
