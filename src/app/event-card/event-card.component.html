@@ -54,9 +54,7 @@
             </div>
             <div class="event-info" (click)="eventDetails(e)">
               <div class="event-detail">
-                {{ e.category?.caption || '' }} {{ distance(e) }} - ({{
-                  e.externalId
-                }})
+                {{ e.category?.caption || '' }} {{ distance(e) }}
                 <span>
                   {{ eventCity(e) }}
                   <span *ngIf="e.toAddressApiResult">
@@ -66,6 +64,7 @@
                 <div>
                   <strong>{{ displayDate(e) }}</strong>
                 </div>
+                <div style="color: gray">מספר {{ e.externalId }}</div>
 
                 <a *ngIf="!isFull(e)">{{ 'לפרטים והרשמה' }}</a>
                 <strong *ngIf="isFull(e)">
