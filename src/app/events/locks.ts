@@ -24,7 +24,7 @@ export class Locks {
     if (l) {
       if (force) {
         await Locks.unlock(lockId)
-      } else throw 'משימה נעולה על ידי ' + l.lockUser?.name
+      } else throw 'נסיעה נעולה על ידי ' + l.lockUser?.name
     }
     l = await repo(Locks).insert({ lockId, lockUserId: remult.user!.id })
     return true
