@@ -62,12 +62,12 @@ export class User extends IdEntity {
   admin = false
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
-    caption: 'מוקדן',
+    caption: 'אחמ"ש מוקד',
   })
   dispatcher = false
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
-    caption: 'מתלמד',
+    caption: 'מוקדן חרבות',
   })
   trainee = false
 
