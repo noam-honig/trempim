@@ -70,6 +70,9 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     try {
       this.contactInfo = await this.e.assignToMe()
       this.closeDialog()
+    } catch (err: any) {
+      this.dialog.error(err)
+      await this.e._.reload()
     } finally {
       this.inProgress = false
     }

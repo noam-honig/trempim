@@ -268,8 +268,9 @@ export class Task extends IdEntity {
     ) {
       throw Error('ניתן להרשם לעד 7 נסיעות בשעה')
     }
-
-    this.driverId = remult.user?.id!
+    await this._.reload()
+    if (this.driverId) throw Error('מתנדב אחר כבר לקח משימה זו')
+    this.driverId = remult.user!.id!
     this.taskStatus = taskStatus.assigned
     await this.insertStatusChange(assignedChangeType)
     await this.save()
