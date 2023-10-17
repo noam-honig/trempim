@@ -58,6 +58,8 @@ export class OrgEventsComponent implements OnInit {
           t.category!,
           t.eventDate,
           t.startTime,
+          t.relevantHours,
+          t.validUntil,
           t.address,
           t.phone1,
           t.phone1Description,

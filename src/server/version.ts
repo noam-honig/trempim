@@ -5,8 +5,11 @@ import {
   getValueList,
   IdEntity,
   remult,
+  repo,
   SqlDatabase,
 } from 'remult'
+import { calcValidUntil, Task } from '../app/events/tasks'
+import { phoneConfig } from '../app/events/phone'
 
 @Entity(undefined!, {
   dbName: 'versionInfo',
@@ -38,5 +41,22 @@ export async function versionUpdate() {
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;`)
+  })
+  version(2, async () => {
+    phoneConfig.disableValidation = true
+    for await (const task of repo(Task).query()) {
+      task.validUntil = calcValidUntil(
+        task.eventDate,
+        task.startTime,
+        task.relevantHours
+      )
+      try {
+        await task.save()
+      } catch (err: any) {
+        console.error(err.message)
+        throw err
+      }
+    }
+    phoneConfig.disableValidation = false
   })
 }

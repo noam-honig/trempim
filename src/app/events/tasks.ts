@@ -76,6 +76,17 @@ export class Category {
       task.externalId = (
         await SqlDatabase.getDb().execute("select nextval('task_seq')")
       ).rows[0].nextval
+    if (
+      task.$.eventDate.valueChanged() ||
+      task.$.startTime.valueChanged() ||
+      task.$.relevantHours.valueChanged()
+    ) {
+      task.validUntil = calcValidUntil(
+        task.eventDate,
+        task.startTime,
+        task.relevantHours
+      )
+    }
   },
   validation: (task) => {
     if (phoneConfig.disableValidation) return
@@ -112,6 +123,7 @@ export class Task extends IdEntity {
 
   @Field(() => taskStatus, { allowApiUpdate: false })
   taskStatus: taskStatus = taskStatus.active
+  @DataControl({ width: '240' })
   @Fields.date({ allowApiUpdate: false, caption: 'סטטוס עדכון אחרון' })
   statusChangeDate = new Date()
   @Fields.string({
@@ -134,6 +146,9 @@ export class Task extends IdEntity {
 
   @Fields.integer({ caption: 'כמה שעות זה רלוונטי' })
   relevantHours = 12
+  @DataControl({ width: '240' })
+  @Fields.date({ caption: 'בתוקף עד', allowApiUpdate: false })
+  validUntil = new Date()
 
   @Fields.json<GeocodeResult>()
   addressApiResult: GeocodeResult | null = null
@@ -350,7 +365,7 @@ export class Task extends IdEntity {
                 { field: x.what, width: '130' },
                 { field: x.driverId, getValue: (x) => x.driver?.name },
                 x.notes,
-                { field: x.createdAt, width: '220px' },
+                { field: x.createdAt, width: '240px' },
                 { field: x.createUserId, getValue: (x) => x.createUser?.name },
                 x.eventStatus,
               ],
@@ -472,4 +487,19 @@ export class TaskStatusChanges extends IdEntity {
   createUser?: User
   @Fields.createdAt({ caption: 'מתי' })
   createdAt = new Date()
+}
+export function calcValidUntil(
+  date: Date,
+  startTime: string,
+  validUntil: number
+) {
+  const hours = +startTime.substring(0, 2)
+  const minutes = +startTime.substring(3, 5)
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    hours + validUntil,
+    minutes
+  )
 }

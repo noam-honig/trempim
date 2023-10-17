@@ -164,8 +164,22 @@ export class EventCardComponent implements OnInit {
     })
   }
   displayDate(e: Task) {
-    return eventDisplayDate(e)
+    let result = eventDisplayDate(e)
+    if (e.startTime) {
+      let time = e.startTime
+      if (time.startsWith('0')) time = time.substring(1)
+      result += ' ' + time
+    }
+    if (e.validUntil.getDate() == e.eventDate.getDate()) {
+      result +=
+        ' - ' +
+        e.validUntil.getHours() +
+        ':' +
+        e.validUntil.getMinutes().toString().padStart(2, '0')
+    }
+    return result
   }
+
   clickButton(b: RowButton<Task>, e: Task) {
     b.click!(e)
   }
