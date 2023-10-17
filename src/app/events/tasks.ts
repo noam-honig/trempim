@@ -70,8 +70,12 @@ export class Category {
   allowApiCrud: Roles.dispatcher,
   allowApiRead: Allow.authenticated,
   allowApiDelete: false,
-  saving: (task) => {
+  saving: async (task) => {
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
+    if (task.isNew() && !task.externalId)
+      task.externalId = (
+        await SqlDatabase.getDb().execute("select nextval('task_seq')")
+      ).rows[0].nextval
   },
   validation: (task) => {
     if (phoneConfig.disableValidation) return

@@ -5,12 +5,15 @@ import { initRequest } from './server-session'
 import { Task, TaskStatusChanges } from '../app/events/tasks'
 import { createPostgresDataProviderWithSchema } from './PostgresSchemaWrapper'
 import { config } from 'dotenv'
+import { SqlDatabase, repo } from 'remult'
+import { VersionInfo } from './version'
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
 
 config() //loads the configuration from the .env file
 
-const entities = [User, Task, TaskStatusChanges]
+//SqlDatabase.LogToConsole = 'oneLiner'
+const entities = [User, Task, TaskStatusChanges, VersionInfo]
 export const api = remultExpress({
   controllers: [SignInController],
   entities,
@@ -20,5 +23,5 @@ export const api = remultExpress({
       disableSsl: Boolean(process.env['dev']),
       schema: process.env['DB_SCHEMA']!,
     }),
-  //initApi: readTripExcel,
+  initApi: async () => {},
 })

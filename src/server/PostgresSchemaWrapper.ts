@@ -5,6 +5,7 @@ import {
   PostgresPool,
   PostgresSchemaBuilder,
 } from 'remult/postgres'
+import { versionUpdate } from './version'
 
 export class PostgresSchemaWrapper implements PostgresPool {
   constructor(private pool: Pool, private schema: string) {}
@@ -43,8 +44,8 @@ export async function createPostgresDataProviderWithSchema(args: {
   )
   result.ensureSchema = async (entities) => {
     const sb = new PostgresSchemaBuilder(result, args.schema)
-    sb.ensureSchema(entities)
+    await sb.ensureSchema(entities)
+    await versionUpdate()
   }
-
   return result
 }

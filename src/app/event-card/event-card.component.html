@@ -54,22 +54,22 @@
             </div>
             <div class="event-info" (click)="eventDetails(e)">
               <div class="event-detail">
-                {{ e.category?.caption || '' }} {{ distance(e) }}
-                <span (click)="eventDetails(e)">
+                {{ e.category?.caption || '' }} {{ distance(e) }} - ({{
+                  e.externalId
+                }})
+                <span>
                   {{ eventCity(e) }}
                   <span *ngIf="e.toAddressApiResult">
                     => {{ eventToCity(e) }} ({{ travelDistance(e) }})</span
                   >
                 </span>
-                <div (click)="eventDetails(e)">
+                <div>
                   <strong>{{ displayDate(e) }}</strong>
                   <span *ngIf="e.startTime"> - {{ e.startTime }}</span>
                 </div>
 
-                <a (click)="eventDetails(e)" *ngIf="!isFull(e)">{{
-                  'לפרטים והרשמה'
-                }}</a>
-                <strong (click)="eventDetails(e)" *ngIf="isFull(e)">
+                <a *ngIf="!isFull(e)">{{ 'לפרטים והרשמה' }}</a>
+                <strong *ngIf="isFull(e)">
                   {{ e.taskStatus.caption }}
                 </strong>
               </div>
