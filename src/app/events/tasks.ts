@@ -58,7 +58,7 @@ export class taskStatus {
   ],
 })
 export class Category {
-  static delivery = new Category('שינוע אנשים', 'שינוע')
+  static delivery = new Category('שינוע חיילים', 'שינוע')
   constructor(
     public caption: string,
     public id: string | undefined = undefined
