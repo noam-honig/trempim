@@ -14,7 +14,7 @@ import { Locks } from '../app/events/locks'
 
 config() //loads the configuration from the .env file
 
-//SqlDatabase.LogToConsole = 'oneLiner'
+//SqlDatabase.LogToConsole = true
 const entities = [User, Task, TaskStatusChanges, VersionInfo, Locks]
 export const api = remultExpress({
   controllers: [SignInController],

@@ -77,7 +77,7 @@ export class Category {
   allowApiRead: Allow.authenticated,
   allowApiDelete: false,
   saving: async (task) => {
-    if (!remult.isAllowed(Roles.dispatcher)) task.draft = true
+    if (!remult.isAllowed(Roles.dispatcher) && task.isNew()) task.draft = true
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
     if (task.isNew() && !task.externalId)
       task.externalId = (
@@ -127,12 +127,16 @@ export class Category {
 export class Task extends IdEntity {
   static filterActiveTasks(): EntityFilter<Task> {
     const d = new Date()
-    d.setDate(d.getDate() + 1)
+    d.setDate(d.getDate() - 1)
     return {
       draft: false,
       $or: [
         {
           taskStatus: taskStatus.active,
+        },
+        {
+          driverId: remult.user!.id!,
+          taskStatus: taskStatus.assigned,
         },
         { driverId: remult.user!.id!, statusChangeDate: { $gte: d } },
       ],
@@ -244,7 +248,7 @@ export class Task extends IdEntity {
   statusNotes = ''
   @Fields.string({ caption: 'מזהה נסיעה' })
   externalId = ''
-  @Fields.boolean({ caption: 'טיוטה' })
+  @Fields.boolean({ caption: 'טיוטה', allowApiUpdate: [Roles.dispatcher] })
   draft = false
 
   @BackendMethod({ allowed: Allow.authenticated })
