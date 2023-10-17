@@ -10,8 +10,8 @@ export class AdminGuard extends AuthenticatedGuard {
 }
 
 @Injectable()
-export class DispatchGuard extends AuthenticatedGuard {
+export class DraftsGuard extends AuthenticatedGuard {
   override isAllowed() {
-    return Roles.dispatcher
+    return [Roles.dispatcher, Roles.trainee]
   }
 }

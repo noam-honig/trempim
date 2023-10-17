@@ -35,6 +35,7 @@ export class UsersComponent implements OnInit {
       users.name,
       users.phone,
       users.dispatcher,
+      users.trainee,
       users.admin,
     ],
     gridButtons: [

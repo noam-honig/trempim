@@ -1,3 +1,6 @@
+<button mat-raised-button color="primary" (click)="addTask()">
+  הוספת נסיעה
+</button>
 <mat-card *ngFor="let t of tasks" style="margin-bottom: 8px">
   <table>
     <tr>
@@ -24,7 +27,7 @@
         >
       </td>
     </tr>
-    <tr>
+    <tr *ngIf="isDispatcher()">
       <td [style.color]="!t.phone1 ? 'red' : ''">טלפון מוצא:</td>
       <td>{{ t.phone1 }}</td>
     </tr>
@@ -62,6 +65,7 @@
     ערוך
   </button>
   <button
+    *ngIf="isDispatcher()"
     mat-raised-button
     [color]="t.draft ? 'primary' : 'error'"
     (click)="confirm(t)"

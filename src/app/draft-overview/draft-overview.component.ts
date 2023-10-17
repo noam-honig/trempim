@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { repo } from 'remult'
+import { remult, repo } from 'remult'
 import { Task, taskStatus } from '../events/tasks'
 import {
   GeocodeResult,
@@ -9,6 +9,7 @@ import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
 import { openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
+import { Roles } from '../users/roles'
 
 @Component({
   selector: 'app-draft-overview',
@@ -29,6 +30,13 @@ export class DraftOverviewComponent implements OnInit {
       .then((tasks) => {
         this.tasks = tasks
       })
+  }
+  isDispatcher() {
+    return remult.isAllowed(Roles.dispatcher)
+  }
+  addTask() {
+    const t = repo(Task).create({ draft: true })
+    t.openEditDialog(this.ui, () => (this.tasks = [t, ...this.tasks]))
   }
   getGoogleAddress(address?: GeocodeResult | null) {
     if (!address?.results?.[0]) return 'כלל לא מצא'

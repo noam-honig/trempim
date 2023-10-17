@@ -67,10 +67,15 @@ export class Category {
   }
 }
 @Entity<Task>('tasks', {
-  allowApiCrud: Roles.dispatcher,
+  allowApiInsert: [Roles.dispatcher, Roles.trainee],
+  allowApiUpdate: (t) => {
+    if (t!.draft) return remult.isAllowed([Roles.trainee, Roles.dispatcher])
+    return remult.isAllowed(Roles.dispatcher)
+  },
   allowApiRead: Allow.authenticated,
   allowApiDelete: false,
   saving: async (task) => {
+    if (!remult.isAllowed(Roles.dispatcher)) task.draft = true
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
     if (task.isNew() && !task.externalId)
       task.externalId = (
@@ -94,9 +99,11 @@ export class Category {
     if (!task.toAddressApiResult?.results)
       task.$.toAddress.error = 'כתובת לא נמצאה'
   },
-
+  //@ts-ignore
   apiPrefilter: () => {
     if (remult.isAllowed(Roles.dispatcher)) return {}
+    if (remult.isAllowed(Roles.trainee))
+      return { draft: true, $and: [Task.filterActiveTasks] }
     return Task.filterActiveTasks()
   },
 })
@@ -176,15 +183,24 @@ export class Task extends IdEntity {
 
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
-    includeInApi: Roles.dispatcher,
+    includeInApi: [Roles.trainee, Roles.dispatcher],
     //validate: Validators.required,
   })
   phone1 = ''
-  @Fields.string({ caption: 'איש קשר מוצא', includeInApi: Roles.dispatcher })
+  @Fields.string({
+    caption: 'איש קשר מוצא',
+    includeInApi: [Roles.trainee, Roles.dispatcher],
+  })
   phone1Description = ''
-  @PhoneField({ caption: 'טלפון ליעד', includeInApi: Roles.dispatcher })
+  @PhoneField({
+    caption: 'טלפון ליעד',
+    includeInApi: [Roles.trainee, Roles.dispatcher],
+  })
   toPhone1 = ''
-  @Fields.string({ caption: 'איש קשר ליעד', includeInApi: Roles.dispatcher })
+  @Fields.string({
+    caption: 'איש קשר ליעד',
+    includeInApi: [Roles.trainee, Roles.dispatcher],
+  })
   tpPhone1Description = ''
 
   @Fields.createdAt()

@@ -81,7 +81,11 @@ export class SignInController extends ControllerBase {
     if (user.admin) {
       roles.push(Roles.admin)
       roles.push(Roles.dispatcher)
-    } else if (user.dispatcher) roles.push(Roles.dispatcher)
+      roles.push(Roles.trainee)
+    } else if (user.dispatcher) {
+      roles.push(Roles.dispatcher)
+      roles.push(Roles.trainee)
+    } else if (user.trainee) roles.push(Roles.trainee)
 
     return setSessionUser(
       {

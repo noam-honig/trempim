@@ -65,6 +65,11 @@ export class User extends IdEntity {
     caption: 'מוקדן',
   })
   dispatcher = false
+  @Fields.boolean({
+    allowApiUpdate: Roles.admin,
+    caption: 'מתלמד',
+  })
+  trainee = false
 
   editDialog(ui: UITools, onOk?: () => void) {
     const v = this
