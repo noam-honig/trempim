@@ -75,7 +75,14 @@ export class User extends IdEntity {
     const v = this
     ui.areaDialog({
       title: 'פרטי מתנדב',
-      fields: [v.$.name, v.$.phone, v.$.dispatcher, v.$.admin, v.$.adminNotes],
+      fields: [
+        v.$.name,
+        v.$.phone,
+        v.$.dispatcher,
+        v.$.trainee,
+        v.$.admin,
+        v.$.adminNotes,
+      ],
       ok: async () => {
         await v.save()
         onOk?.()
