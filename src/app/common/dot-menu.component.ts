@@ -16,7 +16,7 @@ import { RowButton } from '../common-ui-elements/interfaces'
           style="height: 24px; margin-left: 16px; vertical-align: middle"
         />
 
-        <span>{{ b.name }}</span>
+        <span>{{ getButtonName(b) }}</span>
       </button>
     </mat-menu>
   `,
@@ -26,4 +26,11 @@ export class DotsMenuComponent implements OnInit {
   @Input() buttons!: RowButton<any>[]
   @Input() item: any
   ngOnInit(): void {}
+  getButtonName(b: RowButton<any>) {
+    if (b.textInMenu) {
+      if (typeof b.textInMenu === 'function') return b.textInMenu(this.item)
+      return b.textInMenu
+    }
+    return b.name
+  }
 }

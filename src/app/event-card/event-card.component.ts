@@ -174,7 +174,7 @@ export class EventCardComponent implements OnInit {
     e.openEditDialog(this.dialog, () => this.refresh())
   }
   isFull(e: Task) {
-    return e.driverId != ''
+    return e.taskStatus !== taskStatus.active
   }
 
   distance(e: Task) {

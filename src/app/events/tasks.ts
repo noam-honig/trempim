@@ -228,10 +228,26 @@ export class Task extends IdEntity {
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async noLongerRelevant(notes: string) {
-    if (this.driverId != remult.user?.id!)
+    if (
+      this.driverId != remult.user?.id! &&
+      !(
+        !this.driverId &&
+        remult.isAllowed(Roles.dispatcher) &&
+        this.taskStatus === taskStatus.active
+      )
+    )
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.notRelevant
     await this.insertStatusChange(this.taskStatus.caption, notes)
+    await this.save()
+  }
+  @BackendMethod({ allowed: Roles.dispatcher })
+  async returnToActive() {
+    if (this.taskStatus != taskStatus.notRelevant)
+      throw new Error('לא ניתן לבצע עבור נסיעה ב: ' + this.taskStatus.caption)
+    if (this.driverId) throw new Error('יש לבצע על ידי הנהג')
+    this.taskStatus = taskStatus.active
+    await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
@@ -313,6 +329,7 @@ export class Task extends IdEntity {
     return [
       {
         name: 'ערוך נסיעה',
+        icon: 'edit',
         click: async (e) => {
           e.openEditDialog(ui, () => args?.taskSaved?.(e))
         },
@@ -340,6 +357,20 @@ export class Task extends IdEntity {
             }),
             title: 'היסטורית נסיעה',
           })
+        },
+      },
+      {
+        name: '',
+        icon: 'thumb_down',
+        textInMenu: (e) =>
+          e.taskStatus === taskStatus.active
+            ? 'סמן כלא רלוונטי'
+            : 'החזר למשימה פעילה',
+        visible: (e) => e.taskStatus == taskStatus.active,
+        click: async (e) => {
+          if (e.taskStatus === taskStatus.active)
+            await e.noLongerRelevant('על ידי מוקדן')
+          else await e.returnToActive()
         },
       },
       {
