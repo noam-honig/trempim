@@ -1,6 +1,7 @@
 <button mat-raised-button color="primary" (click)="addTask()">
   הוספת נסיעה
 </button>
+<strong> {{ tasks.length }} טיוטות</strong>
 <mat-card *ngFor="let t of tasks" style="margin-bottom: 8px">
   <table>
     <tr>
