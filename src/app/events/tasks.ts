@@ -312,12 +312,16 @@ export class Task extends IdEntity {
     await this.save()
   }
   @BackendMethod({ allowed: Roles.dispatcher })
+  async returnToDriver() {
+    if (!this.driverId) throw Error('לא נמצא נהג')
+    this.taskStatus = taskStatus.assigned
+    await this.insertStatusChange('מוקדן החזיר לנהג', 'על ידי מוקדן')
+    await this.save()
+  }
+  @BackendMethod({ allowed: Roles.dispatcher })
   async returnToActive() {
-    if (this.taskStatus != taskStatus.notRelevant)
-      throw new Error('לא ניתן לבצע עבור נסיעה ב: ' + this.taskStatus.caption)
-
-    this.taskStatus = taskStatus.active
     this.driverId = ''
+    this.taskStatus = taskStatus.active
     await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
     await this.save()
   }
@@ -434,17 +438,38 @@ export class Task extends IdEntity {
         },
       },
       {
-        name: '',
+        name: 'סמן כלא רלוונטי',
         icon: 'thumb_down',
+        visible: (e) =>
+          [taskStatus.active, taskStatus.assigned].includes(e.taskStatus),
+        click: async (e) => {
+          if (e.taskStatus === taskStatus.active)
+            await e.noLongerRelevant('על ידי מוקדן')
+        },
+      },
+      {
+        name: 'החזר לנהג',
+        icon: 'badge',
+        visible: (e) =>
+          ![taskStatus.active, taskStatus.assigned].includes(e.taskStatus) &&
+          e.driverId !== '',
+
+        click: async (e) => {
+          await e.returnToDriver()
+        },
+      },
+      {
+        name: 'החזר לנסיעה פעילה',
+        icon: 'check_circle',
         textInMenu: (e) =>
           e.taskStatus === taskStatus.active
             ? 'סמן כלא רלוונטי'
             : 'החזר למשימה פעילה',
 
+        visible: (e) =>
+          ![taskStatus.active, taskStatus.assigned].includes(e.taskStatus),
         click: async (e) => {
-          if (e.taskStatus === taskStatus.active)
-            await e.noLongerRelevant('על ידי מוקדן')
-          else await e.returnToActive()
+          await e.returnToActive()
         },
       },
       {
