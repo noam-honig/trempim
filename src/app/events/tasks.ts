@@ -33,6 +33,7 @@ import { GeocodeResult } from '../common/address-input/google-api-helpers'
 import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
 import { User } from '../users/user'
 import { Locks } from './locks'
+import { CreatedAtField, DateField, formatDate } from './date-utils'
 
 @ValueListFieldType({
   caption: 'סטטוס',
@@ -155,7 +156,7 @@ export class Task extends IdEntity {
   @Field(() => taskStatus, { allowApiUpdate: false })
   taskStatus: taskStatus = taskStatus.active
   @DataControl({ width: '120' })
-  @Fields.date({
+  @DateField({
     allowApiUpdate: false,
     caption: 'סטטוס עדכון אחרון',
     displayValue: (_, d) => formatDate(d),
@@ -182,7 +183,7 @@ export class Task extends IdEntity {
   @Fields.integer({ caption: 'כמה שעות זה רלוונטי' })
   relevantHours = 12
   @DataControl({ width: '240' })
-  @Fields.date({ caption: 'בתוקף עד', allowApiUpdate: false })
+  @DateField({ caption: 'בתוקף עד', allowApiUpdate: false })
   validUntil = new Date()
 
   @Fields.json<GeocodeResult>()
@@ -231,7 +232,7 @@ export class Task extends IdEntity {
   })
   tpPhone1Description = ''
 
-  @Fields.createdAt()
+  @CreatedAtField()
   createdAt = new Date()
   @Fields.string<Task>({
     includeInApi: Roles.dispatcher,
@@ -599,7 +600,7 @@ export class TaskStatusChanges extends IdEntity {
   createUserId = remult.user?.id!
   @Relations.toOne<TaskStatusChanges, User>(() => User, 'createUserId')
   createUser?: User
-  @Fields.createdAt({ caption: 'מתי' })
+  @CreatedAtField({ caption: 'מתי' })
   createdAt = new Date()
 }
 export function calcValidUntil(
@@ -615,24 +616,5 @@ export function calcValidUntil(
     date.getDate(),
     hours + validUntil,
     minutes
-  )
-}
-export function formatDate(d: Date) {
-  const now = new Date()
-
-  let result = d.toLocaleTimeString('he-il', {
-    hour: 'numeric',
-    minute: '2-digit',
-  })
-  if (now.toDateString() == d.toDateString()) return result
-  return (
-    result +
-    ' ' +
-    d
-      .toLocaleDateString('he-il', {
-        day: 'numeric',
-        month: 'numeric',
-      })
-      .replace('.', '/')
   )
 }

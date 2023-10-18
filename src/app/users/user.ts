@@ -12,6 +12,7 @@ import { terms } from '../terms'
 import { PhoneField } from '../events/phone'
 import { UITools } from '../common/UITools'
 import { DataControl } from '../common-ui-elements/interfaces'
+import { CreatedAtField } from '../events/date-utils'
 
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,
@@ -49,7 +50,7 @@ export class User extends IdEntity {
   })
   adminNotes = ''
 
-  @Fields.createdAt()
+  @CreatedAtField()
   createDate = new Date()
 
   @Fields.string({ allowApiUpdate: false, includeInApi: Roles.admin })

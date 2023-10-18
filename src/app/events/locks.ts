@@ -1,6 +1,7 @@
 import { BackendMethod, Entity, Fields, Relations, remult, repo } from 'remult'
 import { Roles } from '../users/roles'
 import { User } from '../users/user'
+import { CreatedAtField } from './date-utils'
 
 @Entity('locks', {
   allowApiCrud: false,
@@ -9,7 +10,7 @@ import { User } from '../users/user'
 export class Locks {
   @Fields.string()
   lockId = ''
-  @Fields.createdAt()
+  @CreatedAtField()
   createdAt = new Date()
   @Fields.string()
   lockUserId = ''
