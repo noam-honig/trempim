@@ -48,6 +48,7 @@ export class EventCardComponent implements OnInit {
   }
   dates: dateEvents[] = []
   regions: { id: string; count: number; caption: string }[] = []
+  toRegions: { id: string; count: number; caption: string }[] = []
   types: { id: string; count: number; caption: string }[] = []
   trackBy(i: number, e: { id: any }): any {
     return e.id as any
@@ -57,6 +58,8 @@ export class EventCardComponent implements OnInit {
     caption: 'מאיפה?',
   })
   region: string = ''
+  @Fields.string({ caption: 'לאן?' })
+  toRegion: string = ''
   @Field(() => Category, { caption: 'קטגוריה' })
   category = AllCategories
   area!: DataAreaSettings
@@ -78,6 +81,7 @@ export class EventCardComponent implements OnInit {
     let firstLongLat: string | undefined
 
     this.regions.splice(0)
+    this.toRegions.splice(0)
     this.types.splice(0)
     for (const e of this._tasks) {
       if (!firstLongLat) firstLongLat = getLongLat(e.addressApiResult)
@@ -96,6 +100,17 @@ export class EventCardComponent implements OnInit {
           caption: '',
         })
       } else region.count++
+      let toRegion = this.toRegions.find(
+        (c) => c.id == getRegion(e.toAddressApiResult)
+      )
+      if (!toRegion) {
+        this.toRegions.push({
+          id: getRegion(e.toAddressApiResult),
+          count: 1,
+          caption: '',
+        })
+      } else toRegion.count++
+
       let type = this.types.find((c) => c.id == e.category?.id)
       if (!type) {
         this.types.push({
@@ -108,6 +123,13 @@ export class EventCardComponent implements OnInit {
     this.regions.sort((b, a) => a.count - b.count)
     this.regions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
     this.regions.splice(0, 0, {
+      id: '',
+      count: this._tasks.length,
+      caption: 'כל הארץ' + ' - ' + this._tasks.length,
+    })
+    this.toRegions.sort((b, a) => a.count - b.count)
+    this.toRegions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
+    this.toRegions.splice(0, 0, {
       id: '',
       count: this._tasks.length,
       caption: 'כל הארץ' + ' - ' + this._tasks.length,
@@ -129,6 +151,11 @@ export class EventCardComponent implements OnInit {
             visible: () => this.regions.length > 2,
           },
           {
+            field: this.$.toRegion,
+            valueList: this.toRegions,
+            visible: () => this.toRegions.length > 2,
+          },
+          {
             field: this.$.category,
             valueList: this.types,
             visible: () => this.types.length > 2,
@@ -141,6 +168,8 @@ export class EventCardComponent implements OnInit {
   filter(e: Task) {
     return (
       (this.region == '' || getRegion(e.addressApiResult) == this.region) &&
+      (this.toRegion == '' ||
+        getRegion(e.toAddressApiResult) == this.toRegion) &&
       (this.category == undefined ||
         this.category == AllCategories ||
         e.category?.id == this.category.id)
