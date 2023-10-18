@@ -94,6 +94,9 @@ export class Category {
         task.relevantHours
       )
     }
+    for (const f of [task.$.createUserId, task.$.driverId]) {
+      if (f.value === null) f.value = f.originalValue
+    }
   },
   validation: (task) => {
     if (phoneConfig.disableValidation) return
@@ -148,11 +151,15 @@ export class Task extends IdEntity {
     validate: (s, c) => Validators.required(s, c),
   })
   title = ''
-
+  @DataControl({ width: '120' })
   @Field(() => taskStatus, { allowApiUpdate: false })
   taskStatus: taskStatus = taskStatus.active
-  @DataControl({ width: '240' })
-  @Fields.date({ allowApiUpdate: false, caption: 'סטטוס עדכון אחרון' })
+  @DataControl({ width: '120' })
+  @Fields.date({
+    allowApiUpdate: false,
+    caption: 'סטטוס עדכון אחרון',
+    displayValue: (_, d) => formatDate(d),
+  })
   statusChangeDate = new Date()
   @Fields.string({
     caption: 'הערות',
@@ -608,5 +615,24 @@ export function calcValidUntil(
     date.getDate(),
     hours + validUntil,
     minutes
+  )
+}
+export function formatDate(d: Date) {
+  const now = new Date()
+
+  let result = d.toLocaleTimeString('he-il', {
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+  if (now.toDateString() == d.toDateString()) return result
+  return (
+    result +
+    ' ' +
+    d
+      .toLocaleDateString('he-il', {
+        day: 'numeric',
+        month: 'numeric',
+      })
+      .replace('.', '/')
   )
 }

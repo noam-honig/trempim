@@ -40,75 +40,78 @@ export class OrgEventsComponent implements OnInit {
   allRides?: GridSettings<Task>
   onlyShowRelevant = true
   async ngOnInit() {
+    this.events = []
     if (this.activeTab == 2) {
-      this.allRides = new GridSettings<Task>(repo(Task), {
-        where: () => {
-          if (this.onlyShowRelevant)
-            return {
-              taskStatus: {
-                $ne: [taskStatus.notRelevant, taskStatus.completed],
+      if (!this.allRides) {
+        this.allRides = new GridSettings<Task>(repo(Task), {
+          where: () => {
+            if (this.onlyShowRelevant)
+              return {
+                taskStatus: {
+                  $ne: [taskStatus.notRelevant, taskStatus.completed],
+                },
+              }
+            return {}
+          },
+          orderBy: {
+            taskStatus: 'desc',
+            statusChangeDate: 'desc',
+          },
+          include: {
+            driver: true,
+            createUser: true,
+          },
+          gridButtons: [
+            {
+              textInMenu: () =>
+                this.onlyShowRelevant ? 'הצג הכל' : 'הצג רק רלוונטיות',
+              click: () => {
+                this.onlyShowRelevant = !this.onlyShowRelevant
+                this.allRides?.reloadData()
               },
-            }
-          return {}
-        },
-        orderBy: {
-          taskStatus: 'desc',
-          statusChangeDate: 'desc',
-        },
-        include: {
-          driver: true,
-          createUser: true,
-        },
-        gridButtons: [
-          {
-            textInMenu: () =>
-              this.onlyShowRelevant ? 'הצג הכל' : 'הצג רק רלוונטיות',
-            click: () => {
-              this.onlyShowRelevant = !this.onlyShowRelevant
-              this.allRides?.reloadData()
             },
-          },
-          {
-            name: 'יצוא לאקסל',
-            click: () => saveToExcel(this.allRides!, 'rides', this.busy),
-          },
-        ],
-        columnSettings: (t) => [
-          t.title,
-          t.taskStatus,
-          { field: t.driverId, getValue: (t) => t.driver?.name },
-          t.category!,
-          t.eventDate,
-          t.startTime,
-          t.relevantHours,
-          t.validUntil,
-          t.address,
-          t.phone1,
-          t.phone1Description,
-          t.toAddress,
-          t.toPhone1,
-          t.tpPhone1Description,
-          t.draft,
+            {
+              name: 'יצוא לאקסל',
+              click: () => saveToExcel(this.allRides!, 'rides', this.busy),
+            },
+          ],
+          columnSettings: (t) => [
+            t.title,
+            t.taskStatus,
+            t.statusChangeDate,
+            { field: t.driverId, getValue: (t) => t.driver?.name },
+            t.category!,
+            t.eventDate,
+            t.startTime,
+            t.relevantHours,
+            t.validUntil,
+            t.address,
+            t.phone1,
+            t.phone1Description,
+            t.toAddress,
+            t.toPhone1,
+            t.tpPhone1Description,
+            t.draft,
 
-          t.statusChangeDate,
-          t.externalId,
-          t.createUserId,
-        ],
-        rowButtons: [
-          {
-            name: 'הצג נסיעה',
-            click: (e) => {
-              openDialog(EventInfoComponent, (x) => {
-                x.e = e
-                //x.refresh = () => this.refresh()
-              })
+            t.externalId,
+            t.createUserId,
+          ],
+          rowButtons: [
+            {
+              name: 'הצג נסיעה',
+              click: (e) => {
+                openDialog(EventInfoComponent, (x) => {
+                  x.e = e
+                  //x.refresh = () => this.refresh()
+                })
+              },
             },
-          },
-          ...Task.rowButtons(this.tools, {
-            taskAdded: (t) => this.allRides!.items.push(t),
-          }),
-        ],
-      })
+            ...Task.rowButtons(this.tools, {
+              taskAdded: (t) => this.allRides!.items.push(t),
+            }),
+          ],
+        })
+      } else this.allRides.reloadData()
     } else
       repo(Task)
         .find({
