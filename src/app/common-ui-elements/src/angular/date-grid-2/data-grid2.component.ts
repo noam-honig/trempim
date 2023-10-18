@@ -16,6 +16,13 @@ import { CommonUIElementsPluginsService } from '../CommonUIElementsPluginsServic
   styleUrls: ['./data-grid2.component.scss'],
 })
 export class DataGrid2Component implements OnChanges {
+  async clickRowButton(b: RowButton<any>, r: any) {
+    try {
+      await b.click!(r)
+    } catch (err: any) {
+      alert(err.message)
+    }
+  }
   constructor(
     private remult: Remult,
     dir: Directionality,

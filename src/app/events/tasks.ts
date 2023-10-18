@@ -314,11 +314,7 @@ export class Task extends IdEntity {
     if (!notes) throw Error('אנא הזן הערות, שנדע מה קרה')
     if (
       this.driverId != remult.user?.id! &&
-      !(
-        !this.driverId &&
-        remult.isAllowed(Roles.dispatcher) &&
-        this.taskStatus === taskStatus.active
-      )
+      !remult.isAllowed(Roles.dispatcher)
     )
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.notRelevant
@@ -483,7 +479,7 @@ export class Task extends IdEntity {
             taskStatus.otherProblem,
           ].includes(e.taskStatus),
         click: async (e) => {
-          if (e.taskStatus === taskStatus.active)
+          if (e.taskStatus !== taskStatus.completed)
             await e.noLongerRelevant('על ידי מוקדן')
         },
       },

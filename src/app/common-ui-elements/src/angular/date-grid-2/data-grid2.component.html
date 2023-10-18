@@ -135,7 +135,7 @@
               <button
                 mat-menu-item
                 *ngIf="b.visible!(record)"
-                (click)="b.click!(record)"
+                (click)="clickRowButton(b, record)"
               >
                 <mat-icon *ngIf="b.icon">{{ b.icon }}</mat-icon
                 >{{ getButtonText(b, record) }}

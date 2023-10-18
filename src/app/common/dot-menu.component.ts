@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { RowButton } from '../common-ui-elements/interfaces'
+import { async } from 'rxjs'
+import { UIToolsService } from './UIToolsService'
 
 @Component({
   selector: 'app-dots-menu',
@@ -12,7 +14,7 @@ import { RowButton } from '../common-ui-elements/interfaces'
         <button
           mat-menu-item
           *ngIf="b.visible === undefined || b.visible(item)"
-          (click)="b.click!(item)"
+          (click)="click(b)"
         >
           <mat-icon *ngIf="!b.icon?.includes('/')">{{ b.icon }}</mat-icon>
           <img
@@ -28,7 +30,7 @@ import { RowButton } from '../common-ui-elements/interfaces'
   `,
 })
 export class DotsMenuComponent implements OnInit {
-  constructor() {}
+  constructor(private ui: UIToolsService) {}
   @Input() buttons!: RowButton<any>[]
   @Input() item: any
   ngOnInit(): void {}
@@ -38,5 +40,12 @@ export class DotsMenuComponent implements OnInit {
       return b.textInMenu
     }
     return b.name
+  }
+  async click(b: RowButton<any>) {
+    try {
+      await b.click!(this.item)
+    } catch (err) {
+      this.ui.error(err)
+    }
   }
 }
