@@ -75,3 +75,7 @@ a:hover {
     background-color: lightgray !important;
   }
 }
+
+.flip-list-move {
+  transition: transform 1s !important;
+}
