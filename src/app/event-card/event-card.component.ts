@@ -257,7 +257,7 @@ function compareEventDate(a: Task, b: Task) {
   let r = a.eventDate.valueOf() - b.eventDate.valueOf()
 
   if (r != 0) return r
-  return (a.createdAt?.valueOf() || 0) - (b.createdAt?.valueOf() || 0)
+  return (b.createdAt?.valueOf() || 0) - (a.createdAt?.valueOf() || 0)
 }
 
 interface dateEvents {
