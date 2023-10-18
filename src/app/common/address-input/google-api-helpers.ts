@@ -22,8 +22,23 @@ export function getCity(address_component: AddressComponent[]) {
 export function getRegion(r: GeocodeResult | undefined | null): string {
   if (!r?.results?.[0]?.address_components) return 'לא ידוע'
   for (const x of r.results[0].address_components) {
-    if (x.types.includes('administrative_area_level_1')) return x.short_name
+    if (x.types.includes('administrative_area_level_1')) {
+      let result = x.short_name
+      switch (result) {
+        case 'Center District':
+          result = 'מחוז המרכז'
+          break
+        case 'South District':
+          result = 'מחוז הדרום'
+          break
+        case 'North District':
+          result = 'מחוז הצפון'
+          break
+      }
+      return result.replace(/מחוז ה/g, '').replace(/מחוז /g, '')
+    }
   }
+
   return 'לא ידוע'
 }
 export function getAddress(result: {
