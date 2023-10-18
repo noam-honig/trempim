@@ -477,7 +477,11 @@ export class Task extends IdEntity {
         name: 'סמן כלא רלוונטי',
         icon: 'thumb_down',
         visible: (e) =>
-          [taskStatus.active, taskStatus.assigned].includes(e.taskStatus),
+          [
+            taskStatus.active,
+            taskStatus.assigned,
+            taskStatus.otherProblem,
+          ].includes(e.taskStatus),
         click: async (e) => {
           if (e.taskStatus === taskStatus.active)
             await e.noLongerRelevant('על ידי מוקדן')
