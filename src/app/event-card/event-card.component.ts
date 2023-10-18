@@ -195,12 +195,13 @@ export class EventCardComponent implements OnInit {
   distance(e: Task) {
     if (!this.volunteerLocation) return undefined
     return (
+      ', ' +
       GetDistanceBetween(
         this.volunteerLocation,
         getLocation(e.addressApiResult)
       ).toFixed(1) +
       ' ' +
-      'ק"מ'
+      'ק"מ ממיקום נוכחי'
     )
   }
   volunteerLocation?: Location
