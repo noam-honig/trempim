@@ -18,24 +18,24 @@
 
   <div class="grow-item">
     <data-grid
-      *ngIf="allRides && activeTab == 2"
+      [hidden]="activeTab != 2"
+      *ngIf="allRides"
       [settings]="allRides"
     ></data-grid>
-    <ng-container *ngIf="activeTab != 2">
-      <ng-container *ngIf="events.length != 1 || isDispatcher()">
-        <app-event-card
-          [tasks]="events"
-          [showingAllTasks]="activeTab == 1"
-        ></app-event-card>
-      </ng-container>
-      <div style="display: flex; justify-content: center">
-        <mat-card
-          *ngIf="events.length == 1 && !isDispatcher()"
-          style="max-width: 300px"
-        >
-          <app-event-info [e]="events[0]" [noClose]="true"></app-event-info>
-        </mat-card>
-      </div>
-    </ng-container>
+
+    <app-event-card
+      [hidden]="activeTab == 2"
+      [tasks]="events"
+      [showingAllTasks]="activeTab == 1"
+    ></app-event-card>
+
+    <!-- <div style="display: flex; justify-content: center">
+      <mat-card
+        *ngIf="events.length == 1 && !isDispatcher()"
+        style="max-width: 300px"
+      >
+        <app-event-info [e]="events[0]" [noClose]="true"></app-event-info>
+      </mat-card>
+    </div> -->
   </div>
 </div>
