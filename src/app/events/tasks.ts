@@ -242,7 +242,6 @@ export class Task extends IdEntity {
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
     includeInApi: [Roles.trainee, Roles.dispatcher],
-    validate: Validators.required,
   })
   phone1 = ''
   @Fields.string({
