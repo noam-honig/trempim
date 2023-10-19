@@ -308,7 +308,14 @@ export class Task extends IdEntity {
   externalId = ''
 
   @BackendMethod({ allowed: Allow.authenticated })
-  async assignToMe() {
+  async assignToMe(userId?: string) {
+    if (userId) {
+      if ((await repo(User).count({ id: userId })) == 0)
+        throw Error('משתמש לא קיים')
+      if (userId != remult.user?.id && !remult.isAllowed(Roles.dispatcher))
+        throw Error('אינך רשאי לשייך לנהג אחר')
+    }
+
     if (
       (await repo(Task).count({
         driverId: remult.user!.id!,
@@ -386,7 +393,7 @@ export class Task extends IdEntity {
   @BackendMethod({ allowed: Roles.dispatcher })
   async markAsDraft() {
     this.driverId = ''
-    this.taskStatus = taskStatus.active
+    this.taskStatus = taskStatus.draft
     await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
     await this.save()
   }
@@ -499,6 +506,17 @@ export class Task extends IdEntity {
         icon: 'edit',
         click: async (e) => {
           e.openEditDialog(ui, () => args?.taskSaved?.(e))
+        },
+      },
+      {
+        name: 'בחר נהג',
+        visible: (x) => x.taskStatus === taskStatus.active,
+        click: async (e) => {
+          ui.selectUser({
+            onSelect: async (user) => {
+              await e.assignToMe(user.id)
+            },
+          })
         },
       },
       {

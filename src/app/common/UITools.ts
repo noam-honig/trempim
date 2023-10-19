@@ -27,6 +27,7 @@ export interface UITools {
     onSelect: (selected: T) => void
     title?: string
   }): Promise<void>
+  selectUser(args: { onSelect: (selected: User) => void }): Promise<void>
 }
 
 export interface customInputOptions<entityType> {

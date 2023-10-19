@@ -20,6 +20,7 @@ import { AddressInputComponent } from './address-input/address-input.component'
 import { Task } from '../events/tasks'
 import { User } from '../users/user'
 import { UserDetailsComponent } from '../user-details/user-details.component'
+import { SelectUserComponent } from '../users/select-user.component'
 
 @Injectable()
 export class UIToolsService implements UITools {
@@ -85,6 +86,11 @@ export class UIToolsService implements UITools {
     return await this.yesNoQuestion(
       terms.areYouSureYouWouldLikeToDelete + ' ' + of + '?'
     )
+  }
+  async selectUser(args: {
+    onSelect: (selected: User) => void
+  }): Promise<void> {
+    openDialog(SelectUserComponent, (x) => (x.args = args))
   }
   async selectValuesDialog<T extends { caption?: string }>(args: {
     values: T[]

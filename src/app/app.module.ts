@@ -37,11 +37,12 @@ import {
   TransitionGroupComponent,
   TransitionGroupItemDirective,
 } from './event-card/transition-group'
-import { UpdateStatusComponent } from './update-status/update-status.component';
-import { NoamTestComponent } from './noam-test/noam-test.component';
-import { DraftOverviewComponent } from './draft-overview/draft-overview.component';
-import { LocationErrorComponent } from './location-error/location-error.component';
+import { UpdateStatusComponent } from './update-status/update-status.component'
+import { NoamTestComponent } from './noam-test/noam-test.component'
+import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
+import { LocationErrorComponent } from './location-error/location-error.component'
 import { UserDetailsComponent } from './user-details/user-details.component'
+import { SelectUserComponent } from './users/select-user.component'
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { UserDetailsComponent } from './user-details/user-details.component'
     NoamTestComponent,
     DraftOverviewComponent,
     LocationErrorComponent,
+    SelectUserComponent,
     UserDetailsComponent,
   ],
   imports: [
