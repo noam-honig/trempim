@@ -120,7 +120,7 @@ export class Category {
       return {
         $or: [
           {
-            draft: true,
+            taskStatus: taskStatus.draft,
             createUser: remult.user!.id,
           },
           Task.filterActiveTasks(),
