@@ -76,6 +76,7 @@ export class OrgEventsComponent implements OnInit {
             },
           ],
           columnSettings: (t) => [
+            t.externalId,
             t.title,
             t.taskStatus,
             t.statusChangeDate,
@@ -93,7 +94,6 @@ export class OrgEventsComponent implements OnInit {
             t.tpPhone1Description,
             t.draft,
 
-            t.externalId,
             t.createUserId,
           ],
           rowButtons: [

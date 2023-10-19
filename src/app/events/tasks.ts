@@ -275,8 +275,8 @@ export class Task extends IdEntity {
   driver?: User
   @Fields.string({ allowApiUpdate: false })
   statusNotes = ''
-  @DataControl<Task>({ visible: (t) => !t.isNew() })
-  @Fields.string({ caption: 'מזהה נסיעה', allowApiUpdate: false })
+  @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
+  @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
   @Fields.boolean({ caption: 'טיוטה', allowApiUpdate: [Roles.dispatcher] })
   draft = false
