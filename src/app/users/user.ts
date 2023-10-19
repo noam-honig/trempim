@@ -74,7 +74,7 @@ export class User extends IdEntity {
   })
   trainee = false
   @DataControl({ width: '130px' })
-  @Fields.boolean({ caption: 'מחוק', allowApiUpdate: Roles.admin })
+  @Fields.boolean({ caption: 'לא פעיל', allowApiUpdate: Roles.admin })
   deleted = false
 
   editDialog(ui: UITools, onOk?: () => void) {
