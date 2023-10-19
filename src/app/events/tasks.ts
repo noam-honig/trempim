@@ -242,7 +242,7 @@ export class Task extends IdEntity {
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
     includeInApi: [Roles.trainee, Roles.dispatcher],
-    //validate: Validators.required,
+    validate: Validators.required,
   })
   phone1 = ''
   @Fields.string({
@@ -250,6 +250,16 @@ export class Task extends IdEntity {
     includeInApi: [Roles.trainee, Roles.dispatcher],
   })
   phone1Description = ''
+  @PhoneField<Task>({
+    caption: 'טלפון מוצא 2',
+    includeInApi: [Roles.trainee, Roles.dispatcher],
+  })
+  phone2 = ''
+  @Fields.string({
+    caption: 'איש קשר מוצא 2',
+    includeInApi: [Roles.trainee, Roles.dispatcher],
+  })
+  phone2Description = ''
   @PhoneField({
     caption: 'טלפון ליעד',
     includeInApi: [Roles.trainee, Roles.dispatcher],
@@ -260,6 +270,16 @@ export class Task extends IdEntity {
     includeInApi: [Roles.trainee, Roles.dispatcher],
   })
   tpPhone1Description = ''
+  @PhoneField({
+    caption: 'טלפון ליעד 2',
+    includeInApi: [Roles.trainee, Roles.dispatcher],
+  })
+  toPhone2 = ''
+  @Fields.string({
+    caption: 'איש קשר ליעד 2',
+    includeInApi: [Roles.trainee, Roles.dispatcher],
+  })
+  tpPhone2Description = ''
 
   @CreatedAtField()
   createdAt = new Date()
@@ -445,8 +465,12 @@ export class Task extends IdEntity {
         e.relevantHours,
         e.phone1,
         e.phone1Description,
+        e.phone2,
+        e.phone2Description,
         e.toPhone1,
         e.tpPhone1Description,
+        e.toPhone2,
+        e.tpPhone2Description,
         e.externalId,
       ],
       ok: () =>
