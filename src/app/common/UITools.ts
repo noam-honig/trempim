@@ -51,7 +51,6 @@ declare module 'remult' {
 export interface InputAddressResult {
   addressByGoogle: string
   location: Location
-  city: string
   autoCompleteResult: GeocodeResult
 }
 

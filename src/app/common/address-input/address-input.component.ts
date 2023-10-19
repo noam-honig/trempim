@@ -89,7 +89,6 @@ export class AddressInputComponent
                   autoCompleteResult: undefined!,
                   location: undefined!,
                   addressByGoogle: undefined!,
-                  city: undefined!,
                 }
               : {
                   autoCompleteResult: {
@@ -121,7 +120,6 @@ export class AddressInputComponent
                     lng: place.geometry!.location.lng(),
                   },
                   addressByGoogle: getAddress(place),
-                  city: getCity(place.address_components!),
                 }
           )
         })

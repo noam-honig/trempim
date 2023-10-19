@@ -134,7 +134,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     this.e.openEditDialog(this.dialog, () => this.refresh())
   }
   getCity() {
-    return getCity(this.e.addressApiResult?.results[0]?.address_components!)
+    return getCity(this.e.addressApiResult!)
   }
   closeDialog = () => {}
 }
