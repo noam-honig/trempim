@@ -1,6 +1,7 @@
-import { UserInfo, remult } from 'remult'
+import { UserInfo, remult, repo } from 'remult'
 import type { Request } from 'express'
 import type from 'cookie-session' //needed for build - do not remove
+import { User } from '../app/users/user'
 
 declare module 'remult' {
   export interface RemultContext {
@@ -12,7 +13,9 @@ declare module 'remult' {
 export async function initRequest(req: Request) {
   remult.context.session = req.session!
   remult.context.sessionOptions = req.sessionOptions
-  remult.user = req.session!['user']
+  const user = req.session!['user']
+  if (user && (await repo(User).findFirst({ id: user.id, deleted: false })))
+    remult.user = user
 }
 
 export function setSessionUser(user: UserInfo, remember: boolean): UserInfo {

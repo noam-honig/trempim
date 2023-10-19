@@ -46,7 +46,7 @@ export class SignInController extends ControllerBase {
    */
   async signIn() {
     const userRepo = remult.repo(User)
-    let u = await userRepo.findFirst({ phone: this.phone })
+    let u = await userRepo.findFirst({ phone: this.phone, deleted: false })
     if (!u) {
       if ((await userRepo.count()) === 0) {
         //first ever user is the admin
@@ -75,7 +75,10 @@ export class SignInController extends ControllerBase {
       throw Error('פג תוקף הקוד, נסה שנית')
     }
     if (otp != this.otp) throw Error('קוד לא תקין')
-    const user = await repo(User).findFirst({ phone: this.phone })
+    const user = await repo(User).findFirst({
+      phone: this.phone,
+      deleted: false,
+    })
     if (!user) throw 'מספר טלפון לא מוכר'
     const roles: string[] = []
     if (user.admin) {

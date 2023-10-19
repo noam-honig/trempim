@@ -30,14 +30,14 @@ import { CreatedAtField } from '../events/date-utils'
   },
 })
 export class User extends IdEntity {
-  @DataControl({ width: '110px' })
+  @DataControl({ width: '130px' })
   @Fields.string({
     validate: [Validators.required],
     caption: terms.username,
   })
   name = ''
 
-  @DataControl({ width: '110px' })
+  @DataControl({ width: '130px' })
   @PhoneField({
     validate: [Validators.required, Validators.uniqueOnBackend],
     inputType: 'tel',
@@ -55,22 +55,27 @@ export class User extends IdEntity {
 
   @Fields.string({ allowApiUpdate: false, includeInApi: Roles.admin })
   createUserId = remult.user?.id || 'no user'
-
+  @DataControl({ width: '130px' })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
     caption: terms.admin,
   })
   admin = false
+  @DataControl({ width: '130px' })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
     caption: 'אחמ"ש מוקד',
   })
   dispatcher = false
+  @DataControl({ width: '130px' })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
     caption: 'מוקדן חרבות',
   })
   trainee = false
+  @DataControl({ width: '130px' })
+  @Fields.boolean({ caption: 'מחוק', allowApiUpdate: Roles.admin })
+  deleted = false
 
   editDialog(ui: UITools, onOk?: () => void) {
     const v = this
@@ -83,6 +88,7 @@ export class User extends IdEntity {
         v.$.trainee,
         v.$.admin,
         v.$.adminNotes,
+        v.$.deleted,
       ],
       ok: async () => {
         await v.save()

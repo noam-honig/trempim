@@ -37,7 +37,9 @@ export class UsersComponent implements OnInit {
       users.dispatcher,
       users.trainee,
       users.admin,
+      users.deleted,
     ],
+    rowCssClass: (row) => (row.deleted ? 'canceled' : ''),
     gridButtons: [
       {
         name: 'Excel',
