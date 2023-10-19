@@ -178,7 +178,10 @@ export class Task extends IdEntity {
   eventDate: Date = new Date()
   @Fields.string({ inputType: 'time', caption: 'שעה' })
   @DataControl({ width: '110' })
-  startTime = '08:00'
+  startTime = new Date().toLocaleTimeString('he-il', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
   @Fields.integer({ caption: 'כמה שעות זה רלוונטי' })
   relevantHours = 12
