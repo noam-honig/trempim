@@ -88,6 +88,11 @@ export class EventCardComponent implements OnInit {
       if (getLongLat(e.addressApiResult) != firstLongLat)
         this.showLocation = true
       let d = this.dates.find((d) => d.date == eventDisplayDate(e))
+      if (1 == 1) {
+        if (this.dates.length == 0)
+          this.dates.push((d = { date: '', events: [] }))
+        d = this.dates[0]
+      }
       if (!d) this.dates.push((d = { date: eventDisplayDate(e), events: [] }))
       d.events.push(e)
       let region = this.regions.find(
