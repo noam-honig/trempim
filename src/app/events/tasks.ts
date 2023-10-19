@@ -196,20 +196,20 @@ export class Task extends IdEntity {
   @Field(() => Category)
   category? = Category.delivery
   @Fields.dateOnly<Task>({
-    caption: 'תאריך',
+    caption: 'תאריך הסיוע המבוקש',
     validate: (s, c) => {
       if (!c.value || c.value.getFullYear() < 2018) c.error = 'תאריך שגוי'
     },
   })
   eventDate: Date = new Date()
-  @Fields.string({ inputType: 'time', caption: 'שעה' })
+  @Fields.string({ inputType: 'time', caption: 'רלוונטי החל משעה' })
   @DataControl({ width: '110' })
   startTime = new Date().toLocaleTimeString('he-il', {
     hour: '2-digit',
     minute: '2-digit',
   })
 
-  @Fields.integer({ caption: 'כמה שעות זה רלוונטי' })
+  @Fields.integer({ caption: 'למשך כמה שעות הסיוע רלוונטי' })
   relevantHours = 12
   @DataControl({ width: '240' })
   @DateField({ caption: 'בתוקף עד', allowApiUpdate: false })
