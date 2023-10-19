@@ -386,8 +386,8 @@ export class Task extends IdEntity {
   @BackendMethod({ allowed: Roles.dispatcher })
   async markAsDraft() {
     this.driverId = ''
-    this.taskStatus = taskStatus.active
-    await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
+    this.taskStatus = taskStatus.draft
+    await this.insertStatusChange('סמן כטיוטא', 'על ידי מוקדן')
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
