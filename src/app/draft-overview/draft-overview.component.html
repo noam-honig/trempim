@@ -51,7 +51,9 @@
     <tr>
       <td>נוצר ע"י:</td>
       <td>
-        {{ t.createUser?.name }}
+        <a href="tel:{{ t.createUser?.phone }}" target="_blank">
+          {{ t.createUser?.name }} {{ t.createUser?.$?.phone?.displayValue }}</a
+        >
       </td>
     </tr>
   </table>

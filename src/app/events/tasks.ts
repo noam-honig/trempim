@@ -456,6 +456,21 @@ export class Task extends IdEntity {
                 createUser: true,
                 driver: true,
               },
+              rowButtons: [
+                {
+                  name: 'פרטי מבצע',
+                  click: (e) =>
+                    ui.showUserInfo({ userId: e.createUserId, title: 'מבצע' }),
+                },
+                {
+                  name: 'פרטי נהג',
+                  icon: 'local_taxi',
+                  visible: (e) => !!e.driverId,
+                  click: (e) =>
+                    ui.showUserInfo({ userId: e.driverId, title: 'נהג' }),
+                },
+              ],
+
               columnSettings: (x) => [
                 { field: x.what, width: '130' },
                 { field: x.driverId, getValue: (x) => x.driver?.name },
@@ -468,6 +483,18 @@ export class Task extends IdEntity {
             title: 'היסטורית נסיעה',
           })
         },
+      },
+      {
+        name: 'פרטי מוקדן',
+        icon: 'contact_emergency',
+        click: (e) =>
+          ui.showUserInfo({ userId: e.createUserId, title: 'מוקדן' }),
+      },
+      {
+        name: 'פרטי נהג',
+        icon: 'local_taxi',
+        visible: (e) => !!e.driverId,
+        click: (e) => ui.showUserInfo({ userId: e.driverId, title: 'נהג' }),
       },
       {
         name: 'סמן כלא רלוונטי',

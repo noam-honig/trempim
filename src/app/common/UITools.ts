@@ -5,7 +5,7 @@ import {
   GridSettings,
   RowButton,
 } from '../common-ui-elements/interfaces'
-import { Task } from '../events/tasks'
+import type { User } from '../users/user'
 
 export interface UITools {
   yesNoQuestion: (question: string) => Promise<boolean>
@@ -13,6 +13,11 @@ export interface UITools {
   error: (err: any) => void
   gridDialog(args: GridDialogArgs): Promise<void>
   areaDialog(args: AreaDialogArgs): Promise<void>
+  showUserInfo(args: {
+    userId?: string
+    user?: User
+    title: string
+  }): Promise<void>
   selectValuesDialog<
     T extends {
       caption?: string

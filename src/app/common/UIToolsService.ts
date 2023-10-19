@@ -18,6 +18,8 @@ import {
 import { TextAreaDataControlComponent } from './textarea-data-control/textarea-data-control.component'
 import { AddressInputComponent } from './address-input/address-input.component'
 import { Task } from '../events/tasks'
+import { User } from '../users/user'
+import { UserDetailsComponent } from '../user-details/user-details.component'
 
 @Injectable()
 export class UIToolsService implements UITools {
@@ -31,7 +33,13 @@ export class UIToolsService implements UITools {
     )
     this.enhanceFieldOptionsAndDataControlOptions(commonUIPlugin)
   }
-
+  showUserInfo(args: {
+    userId?: string | undefined
+    user?: User | undefined
+    title: string
+  }): Promise<void> {
+    return openDialog(UserDetailsComponent, (x) => (x.args = args))
+  }
   info(info: string): any {
     this.snackBar.open(info, 'close', { duration: 4000 })
   }

@@ -1,0 +1,32 @@
+<ng-container *ngIf="args.user">
+  <div
+    matDialogTitle
+    style="display: flex; justify-content: space-between; align-items: center"
+  >
+    <strong> {{ args.title }} {{ args.user!.name }} </strong>
+    <button mat-icon-button (click)="closeDialog()" *ngIf="closeDialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px">
+    <span
+      mat-mini-fab
+      style="vertical-align: middle; cursor: pointer"
+      color="primary"
+      (click)="sendWhatsapp()"
+    >
+      <img src="assets/whatsapp.png" />
+    </span>
+    <a href="tel:{{ args.user.phone }}">
+      <button mat-mini-fab style="vertical-align: middle" color="primary">
+        <mat-icon>call</mat-icon>
+      </button>
+    </a>
+    <div>
+      <a href="tel:{{ args.user.phone }}">
+        {{ args.user.$.phone.displayValue }}
+      </a>
+    </div>
+  </div>
+</ng-container>

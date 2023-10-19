@@ -40,7 +40,8 @@ import {
 import { UpdateStatusComponent } from './update-status/update-status.component';
 import { NoamTestComponent } from './noam-test/noam-test.component';
 import { DraftOverviewComponent } from './draft-overview/draft-overview.component';
-import { LocationErrorComponent } from './location-error/location-error.component'
+import { LocationErrorComponent } from './location-error/location-error.component';
+import { UserDetailsComponent } from './user-details/user-details.component'
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { LocationErrorComponent } from './location-error/location-error.componen
     NoamTestComponent,
     DraftOverviewComponent,
     LocationErrorComponent,
+    UserDetailsComponent,
   ],
   imports: [
     BrowserModule,
