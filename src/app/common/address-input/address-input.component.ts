@@ -14,13 +14,7 @@ import {
 
 import { FieldRef } from 'remult'
 
-import {
-  getAddress,
-  Location,
-  getCity,
-  GeocodeResult,
-  parseUrlInAddress,
-} from './google-api-helpers'
+import { getAddress, Location, parseUrlInAddress } from './google-api-helpers'
 import { InputAddressResult } from '../UITools'
 
 @Component({

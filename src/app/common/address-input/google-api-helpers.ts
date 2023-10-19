@@ -2,7 +2,7 @@
 import geometry, { computeDistanceBetween } from 'spherical-geometry-js'
 import { UIToolsService } from '../UIToolsService'
 
-export function getCity(g: GeocodeResult | undefined | null) {
+export function getCity(g: GeocodeResult | undefined | null, address: string) {
   const address_component = g?.results[0]?.address_components
   let r = undefined
   if (!address_component) return g?.results?.[0]?.formatted_address || ''
