@@ -39,7 +39,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   driver?: User
   @Input() noClose = false
   displayDate() {
-    return eventDisplayDate(this.e)
+    return this.e.displayDate()
   }
 
   menuOptions = Task.rowButtons(this.dialog, {

@@ -129,6 +129,24 @@ export class Category {
   },
 })
 export class Task extends IdEntity {
+  displayDate() {
+    const e = this
+    let result = eventDisplayDate(e)
+    if (e.startTime) {
+      let time = e.startTime
+      if (time.startsWith('0')) time = time.substring(1)
+      result += ' ' + time
+    }
+    // if (e.validUntil.getDate() == e.eventDate.getDate()) {
+    //   result +=
+    //     ' - ' +
+    //     e.validUntil.getHours() +
+    //     ':' +
+    //     e.validUntil.getMinutes().toString().padStart(2, '0')
+    // }
+
+    return 'רלוונטי מ: ' + result
+  }
   static filterActiveTasks(): EntityFilter<Task> {
     const d = new Date()
     d.setDate(d.getDate() - 1)

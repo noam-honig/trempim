@@ -18,9 +18,7 @@
 <mat-dialog-content class="dialog-container" [style.padding-bottom]="'30px'">
   {{ e.category?.caption }} - ({{ e.externalId }})
 
-  <span
-    >{{ displayDate() }} <span *ngIf="e.startTime"> - {{ e.startTime }}</span>
-  </span>
+  <span>{{ displayDate() }} </span>
 
   <div *ngIf="e.address" class="space-above">
     <strong>כתובת מוצא</strong>
