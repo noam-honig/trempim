@@ -70,4 +70,7 @@ export class DraftOverviewComponent implements OnInit {
     if (!address?.results?.[0]?.geometry) return 'red'
     return ''
   }
+  showUser(t: Task) {
+    this.ui.showUserInfo({ user: t.createUser, title: 'פרטי מוקדן' })
+  }
 }
