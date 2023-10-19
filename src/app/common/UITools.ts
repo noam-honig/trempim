@@ -24,9 +24,9 @@ export interface UITools {
   }): Promise<void>
 }
 
-export interface customInputOptions {
+export interface customInputOptions<entityType> {
   inputAddress(
-    onSelect?: (result: InputAddressResult, entityInstance: any) => void
+    onSelect?: (result: InputAddressResult, entityInstance: entityType) => void
   ): void
   textarea(): void
 }
@@ -39,7 +39,7 @@ declare module 'remult' {
       entity: entityType,
       fieldRef: FieldRef<valueType>
     ) => void
-    customInput?: (inputOptions: customInputOptions) => void
+    customInput?: (inputOptions: customInputOptions<entityType>) => void
   }
 }
 

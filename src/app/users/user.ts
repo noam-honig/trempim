@@ -20,7 +20,7 @@ import { CreatedAtField } from '../events/date-utils'
   allowApiDelete: false,
   allowApiInsert: Roles.admin,
   apiPrefilter: () =>
-    !remult.isAllowed(Roles.admin) ? { id: [remult.user?.id!] } : {},
+    !remult.isAllowed(Roles.dispatcher) ? { id: [remult.user?.id!] } : {},
   saving: async (user) => {
     if (isBackend()) {
       if (user._.isNew()) {
