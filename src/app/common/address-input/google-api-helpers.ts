@@ -17,7 +17,7 @@ export function getCity(g: GeocodeResult | undefined | null) {
     address_component.forEach((x) => {
       if (x.types.includes('administrative_area_level_1')) r = x.long_name
     })
-  if (!r) return address_component[0].short_name
+  if (!r) return address_component?.[0]?.short_name || ''
   return r
 }
 export function getRegion(r: GeocodeResult | undefined | null): string {

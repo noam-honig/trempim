@@ -92,7 +92,6 @@ export class OrgEventsComponent implements OnInit {
             t.toAddress,
             t.toPhone1,
             t.tpPhone1Description,
-            t.draft,
 
             t.createUserId,
           ],
@@ -118,10 +117,12 @@ export class OrgEventsComponent implements OnInit {
           where:
             this.activeTab == 0
               ? {
-                  draft: false,
+                  taskStatus: { $ne: taskStatus.draft },
                   driverId: remult.user!.id,
                 }
-              : { draft: false, taskStatus: taskStatus.active },
+              : {
+                  taskStatus: taskStatus.active,
+                },
         })
         .then((items) => {
           this.events = items

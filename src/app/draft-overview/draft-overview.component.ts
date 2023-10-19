@@ -23,8 +23,7 @@ export class DraftOverviewComponent implements OnInit {
     repo(Task)
       .find({
         where: {
-          draft: true,
-          taskStatus: taskStatus.active,
+          taskStatus: taskStatus.draft,
         },
         include: {
           createUser: true,
@@ -41,7 +40,7 @@ export class DraftOverviewComponent implements OnInit {
     return remult.isAllowed(Roles.dispatcher)
   }
   addTask() {
-    const t = repo(Task).create({ draft: true })
+    const t = repo(Task).create({ taskStatus: taskStatus.draft })
     t.openEditDialog(this.ui, () => (this.tasks = [t, ...this.tasks]))
   }
   getGoogleAddress(address?: GeocodeResult | null) {
@@ -63,8 +62,8 @@ export class DraftOverviewComponent implements OnInit {
     })
   }
   async confirm(t: Task) {
-    t.draft = !t.draft
-    await t.save()
+    if (t.taskStatus === taskStatus.active) await t.markAsDraft()
+    else await t.returnToActive()
   }
   errorColor(address?: GeocodeResult | null) {
     if (!address?.results?.[0]?.geometry) return 'red'
@@ -72,5 +71,8 @@ export class DraftOverviewComponent implements OnInit {
   }
   showUser(t: Task) {
     this.ui.showUserInfo({ user: t.createUser, title: 'פרטי מוקדן' })
+  }
+  isDraft(t: Task) {
+    return t.taskStatus === taskStatus.draft
   }
 }

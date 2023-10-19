@@ -8,7 +8,12 @@ import {
   repo,
   SqlDatabase,
 } from 'remult'
-import { calcValidUntil, Task } from '../app/events/tasks'
+import {
+  calcValidUntil,
+  Task,
+  taskStatus,
+  TaskStatusChanges,
+} from '../app/events/tasks'
 import { phoneConfig } from '../app/events/phone'
 
 @Entity(undefined!, {
@@ -58,5 +63,19 @@ export async function versionUpdate() {
       }
     }
     phoneConfig.disableValidation = false
+  })
+  version(3, async () => {
+    const tasks = await dbNamesOf(Task)
+    await db.execute(
+      `update ${tasks} set ${tasks.taskStatus} = ${taskStatus.draft.id} where draft=true`
+    )
+  })
+  version(5, async () => {
+    const t = await dbNamesOf(Task)
+    const s = await dbNamesOf(TaskStatusChanges)
+    await db.execute(
+      `insert into ${s} (${s.id}, ${s.taskId},${s.what},${s.eventStatus},${s.driverId},${s.createUserId},${s.createdAt}) 
+      select ${t.id},${t.id},'יצירה',${t.taskStatus},${t.driverId},${t.createUserId},${t.createdAt} from ${t}`
+    )
   })
 }

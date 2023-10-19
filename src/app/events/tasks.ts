@@ -40,7 +40,8 @@ import { CreatedAtField, DateField, formatDate } from './date-utils'
   defaultValue: () => taskStatus.active,
 })
 export class taskStatus {
-  static active = new taskStatus(0, 'פתוח לרישום')
+  static draft = new taskStatus(-10, '📝 טיוטא')
+  static active = new taskStatus(0, ' פתוח לרישום')
 
   static assigned = new taskStatus(1, '🚘 שוייך לנהג')
   static completed = new taskStatus(11, '✅ הושלם')
@@ -72,13 +73,15 @@ export class Category {
 @Entity<Task>('tasks', {
   allowApiInsert: [Roles.dispatcher, Roles.trainee],
   allowApiUpdate: (t) => {
-    if (t!.draft) return remult.isAllowed([Roles.trainee, Roles.dispatcher])
+    if (t!.taskStatus === taskStatus.draft)
+      return remult.isAllowed([Roles.trainee, Roles.dispatcher])
     return remult.isAllowed(Roles.dispatcher)
   },
   allowApiRead: Allow.authenticated,
   allowApiDelete: false,
   saving: async (task) => {
-    if (!remult.isAllowed(Roles.dispatcher) && task.isNew()) task.draft = true
+    if (!remult.isAllowed(Roles.dispatcher) && task.isNew())
+      task.taskStatus = taskStatus.draft
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
     if (task.isNew() && !task.externalId)
       task.externalId = (
@@ -97,6 +100,11 @@ export class Category {
     }
     for (const f of [task.$.createUserId, task.$.driverId]) {
       if (f.value === null) f.value = f.originalValue
+    }
+  },
+  saved: async (task, { isNew }) => {
+    if (isNew) {
+      await task.insertStatusChange('יצירה')
     }
   },
   validation: (task) => {
@@ -151,7 +159,7 @@ export class Task extends IdEntity {
     const d = new Date()
     d.setDate(d.getDate() - 1)
     return {
-      draft: false,
+      taskStatus: { $ne: taskStatus.draft },
       $or: [
         {
           taskStatus: taskStatus.active,
@@ -278,8 +286,6 @@ export class Task extends IdEntity {
   @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
-  @Fields.boolean({ caption: 'טיוטה', allowApiUpdate: [Roles.dispatcher] })
-  draft = false
 
   @BackendMethod({ allowed: Allow.authenticated })
   async assignToMe() {
@@ -352,6 +358,13 @@ export class Task extends IdEntity {
   }
   @BackendMethod({ allowed: Roles.dispatcher })
   async returnToActive() {
+    this.driverId = ''
+    this.taskStatus = taskStatus.active
+    await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
+    await this.save()
+  }
+  @BackendMethod({ allowed: Roles.dispatcher })
+  async markAsDraft() {
     this.driverId = ''
     this.taskStatus = taskStatus.active
     await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
@@ -434,7 +447,6 @@ export class Task extends IdEntity {
         e.phone1Description,
         e.toPhone1,
         e.tpPhone1Description,
-        e.draft,
         e.externalId,
       ],
       ok: () =>
@@ -549,6 +561,13 @@ export class Task extends IdEntity {
         visible: (e) => ![taskStatus.active].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
+        },
+      },
+      {
+        name: 'סמן כטיוטא',
+        visible: (e) => e.taskStatus == taskStatus.active,
+        click: async (e) => {
+          await e.markAsDraft()
         },
       },
       {

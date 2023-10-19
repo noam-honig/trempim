@@ -75,10 +75,10 @@
     <button
       *ngIf="isDispatcher()"
       mat-raised-button
-      [color]="t.draft ? 'primary' : 'error'"
+      [color]="isDraft(t) ? 'primary' : 'error'"
       (click)="confirm(t)"
     >
-      {{ t.draft ? 'אשר טיוטא' : 'בטל אישור' }}
+      {{ isDraft(t) ? 'אשר טיוטא' : 'בטל אישור' }}
     </button>
   </div>
 </mat-card>
