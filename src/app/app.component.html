@@ -16,7 +16,7 @@
 </div>
 <div
   style="display: flex; flex-direction: column"
-  *ngIf="doesNotRequireLogin()"
+  *ngIf="doesNotRequireLogin() && !remult.authenticated()"
 >
   <div style="align-self: center">
     <img src="assets/logo.png" height="150px" />

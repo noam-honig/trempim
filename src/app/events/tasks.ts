@@ -103,6 +103,7 @@ export class Category {
         throw new Error('לא ניתן להוסיף בקשות חדשות')
       }
       remult.user = { id: user.id }
+      task.createUserId = remult.user.id
     }
     if (!remult.isAllowed(Roles.dispatcher) && task.isNew())
       task.taskStatus = taskStatus.draft

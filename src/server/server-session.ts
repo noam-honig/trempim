@@ -14,7 +14,7 @@ export async function initRequest(req: Request) {
   remult.context.session = req.session!
   remult.context.sessionOptions = req.sessionOptions
   const user = req.session!['user']
-  if (user && (await repo(User).findFirst({ id: user.id, deleted: false })))
+  if (user && (await repo(User).findFirst({ id: [user.id], deleted: false })))
     remult.user = user
 }
 
