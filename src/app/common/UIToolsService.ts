@@ -21,6 +21,7 @@ import { Task } from '../events/tasks'
 import { User } from '../users/user'
 import { UserDetailsComponent } from '../user-details/user-details.component'
 import { SelectUserComponent } from '../users/select-user.component'
+import { InputImageComponent } from './input-image/input-image.component'
 
 @Injectable()
 export class UIToolsService implements UITools {
@@ -123,6 +124,13 @@ export class UIToolsService implements UITools {
       }
       if (fieldMetadata.options.customInput) {
         fieldMetadata.options.customInput({
+          image() {
+            {
+              options.customComponent = {
+                component: InputImageComponent,
+              }
+            }
+          },
           textarea() {
             options.customComponent = {
               component: TextAreaDataControlComponent,

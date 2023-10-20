@@ -24,6 +24,7 @@ import {
 } from '../events/phone'
 import { UpdateStatusComponent } from '../update-status/update-status.component'
 import { User } from '../users/user'
+import { getImageUrl } from '../events/getImageUrl'
 
 @Component({
   selector: 'app-event-info',
@@ -40,6 +41,9 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   @Input() noClose = false
   displayDate() {
     return this.e.displayDate()
+  }
+  getImageUrl() {
+    return getImageUrl(this.e.imageId)
   }
 
   menuOptions = Task.rowButtons(this.dialog, {

@@ -42,9 +42,10 @@ import { NoamTestComponent } from './noam-test/noam-test.component'
 import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
 import { LocationErrorComponent } from './location-error/location-error.component'
 import { UserDetailsComponent } from './user-details/user-details.component'
-import { SelectUserComponent } from './users/select-user.component';
-import { PhoneDetailsComponent } from './phone-details/phone-details.component';
+import { SelectUserComponent } from './users/select-user.component'
+import { PhoneDetailsComponent } from './phone-details/phone-details.component'
 import { IntakeComponent } from './intake/intake.component'
+import { InputImageComponent } from './common/input-image/input-image.component'
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { IntakeComponent } from './intake/intake.component'
     UserDetailsComponent,
     PhoneDetailsComponent,
     IntakeComponent,
+    InputImageComponent,
   ],
   imports: [
     BrowserModule,

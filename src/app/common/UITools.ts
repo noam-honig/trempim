@@ -35,6 +35,7 @@ export interface customInputOptions<entityType> {
     onSelect?: (result: InputAddressResult, entityInstance: entityType) => void
   ): void
   textarea(): void
+  image(): void
 }
 
 declare module 'remult' {

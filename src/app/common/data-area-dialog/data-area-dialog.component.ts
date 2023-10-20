@@ -8,6 +8,7 @@ import {
 import { getFields } from 'remult'
 import { terms } from '../../terms'
 import { button } from '../UITools'
+import { DialogConfig } from '../../common-ui-elements/src/angular/DialogConfig'
 
 @Component({
   templateUrl: './data-area-dialog.component.html',

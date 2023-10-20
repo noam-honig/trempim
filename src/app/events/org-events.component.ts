@@ -12,6 +12,7 @@ import { BusyService, openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
+import { getImageUrl } from './getImageUrl'
 
 @Component({
   selector: 'app-org-events',

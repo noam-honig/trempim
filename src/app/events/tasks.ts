@@ -347,7 +347,7 @@ export class Task extends IdEntity {
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
 
-  @Fields.string()
+  @Fields.string({ customInput: (c) => c.image() })
   imageId = ''
 
   @BackendMethod({ allowed: Allow.authenticated })
@@ -530,11 +530,13 @@ export class Task extends IdEntity {
         e.address,
         e.toAddress,
         e.description,
-        [e.eventDate, e.startTime, e.relevantHours],
+        e.eventDate,
+        [e.startTime, e.relevantHours],
         [e.phone1, e.phone1Description],
         [e.phone2, e.phone2Description],
         [e.toPhone1, e.tpPhone1Description],
         [e.toPhone2, e.tpPhone2Description],
+        e.imageId,
         e.externalId,
       ],
       ok: () =>
