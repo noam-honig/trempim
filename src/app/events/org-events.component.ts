@@ -80,7 +80,16 @@ export class OrgEventsComponent implements OnInit {
             t.title,
             t.taskStatus,
             t.statusChangeDate,
-            { field: t.driverId, getValue: (t) => t.driver?.name },
+            {
+              field: t.driverId,
+              getValue: (t) => t.driver?.name,
+              customFilter: (select) => {
+                this.tools.selectUser({
+                  onSelect: (x) => select(x.id),
+                  onCancel: () => select(undefined),
+                })
+              },
+            },
             t.category!,
             t.eventDate,
             t.startTime,

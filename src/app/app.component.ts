@@ -103,6 +103,5 @@ export class AppComponent implements OnInit {
   }
 }
 
-//[ ] - add categorues
 //[ ] - add data to demo environment
 //[ ] - add select driver for my trips

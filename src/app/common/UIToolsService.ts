@@ -89,8 +89,20 @@ export class UIToolsService implements UITools {
   }
   async selectUser(args: {
     onSelect: (selected: User) => void
+    onCancel: VoidFunction
   }): Promise<void> {
-    openDialog(SelectUserComponent, (x) => (x.args = args))
+    let selected = false
+    await openDialog(
+      SelectUserComponent,
+      (x) =>
+        (x.args = {
+          onSelect: (u) => {
+            selected = true
+            args.onSelect(u)
+          },
+        })
+    )
+    if (!selected) args.onCancel?.()
   }
   async selectValuesDialog<T extends { caption?: string }>(args: {
     values: T[]

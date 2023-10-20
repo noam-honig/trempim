@@ -13,6 +13,7 @@ export type DataControlInfo<rowType> =
   | DataControlSettings<rowType>
   | FieldRef<any, any>
 export interface DataControlSettings<entityType = any, valueType = any> {
+  customFilter?: (select: (val: any) => void) => void
   field?: FieldMetadata | FieldRef<any, any>
   getValue?: (row: entityType, val: FieldRef<entityType, valueType>) => any
   readonly?: ValueOrEntityExpression<boolean, entityType>
