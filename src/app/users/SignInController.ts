@@ -71,7 +71,10 @@ export class SignInController extends ControllerBase {
     )
     otps.set(this.phone, { otp: otp, expire: d })
     this.askForOtp = true
-    if (await setUserToSelfSignInIfAllowed()) this.askForName = true
+    if (await setUserToSelfSignInIfAllowed()) {
+      if (!(await repo(User).count({ phone: this.phone })))
+        this.askForName = true
+    }
   }
   @BackendMethod({ allowed: true })
   async signInWithOtp(): Promise<UserInfo | undefined> {
