@@ -1,6 +1,10 @@
 <div class="full-page">
   <div>
-    <mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)">
+    <mat-tab-group
+      #tabGroup
+      (selectedTabChange)="onTabChange($event)"
+      [selectedIndex]="activeTab"
+    >
       <mat-tab label="נסיעות שלי"></mat-tab>
       <mat-tab label="חיפוש נסיעה"></mat-tab>
       <mat-tab label="כל הנסיעות" *ngIf="isDispatcher()"> </mat-tab>

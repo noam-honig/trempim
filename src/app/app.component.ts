@@ -31,6 +31,7 @@ export class AppComponent implements OnInit {
     fields: () => [
       { field: this.signIn.$.phone, visible: () => !this.signIn.askForOtp },
       { field: this.signIn.$.otp, visible: () => this.signIn.askForOtp },
+      { field: this.signIn.$.name, visible: () => this.signIn.askForName },
       { field: this.signIn.$.rememberOnThisDevice },
     ],
   })
@@ -38,6 +39,9 @@ export class AppComponent implements OnInit {
     if (!this.signIn.askForOtp) await this.signIn.signIn()
     else {
       remult.user = await this.signIn.signInWithOtp()
+      if (!remult.user) {
+        this.signIn.$.name.error = 'אנא הזן שם'
+      }
     }
   }
 

@@ -26,6 +26,7 @@ import {
   GridSettings,
   RowButton,
 } from '../common-ui-elements/interfaces'
+import copy from 'copy-to-clipboard'
 
 import moment from 'moment'
 import { Roles } from '../users/roles'
@@ -40,6 +41,7 @@ import {
   TaskContactInfo,
   formatPhone,
   phoneConfig,
+  sendWhatsappToPhone,
 } from './phone'
 import { User } from '../users/user'
 import { Locks } from './locks'
@@ -564,6 +566,23 @@ export class Task extends IdEntity {
         },
       },
       {
+        name: 'העתק קישור רישום לנסיעה',
+        icon: 'content_copy',
+        visible: (x) => x.taskStatus === taskStatus.active,
+        click: (e) => {
+          copy(e.getLink())
+          ui.info('הקישור הועתק ללוח, ניתן לשלוח בקבוצה')
+        },
+      },
+      {
+        name: 'שלח קישור רישום בווטסאפ',
+        icon: 'message',
+        visible: (x) => x.taskStatus === taskStatus.active,
+        click: (e) => {
+          sendWhatsappToPhone('', e.getShortDescription() + '\n' + e.getLink())
+        },
+      },
+      {
         name: 'בחר נהג',
         icon: 'directions_car',
         visible: (x) => x.taskStatus === taskStatus.active,
@@ -686,6 +705,9 @@ export class Task extends IdEntity {
         },
       },
     ]
+  }
+  getLink(): string {
+    return document.location.origin + '/t/' + this.id
   }
 }
 function allowPhoneOnlyForInsertOrTrainee() {

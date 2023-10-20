@@ -4,7 +4,6 @@ import { EventInfoComponent } from '../event-info/event-info.component'
 import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
 
-import * as copy from 'copy-to-clipboard'
 import { UIToolsService } from '../common/UIToolsService'
 import { Category, Task, eventDisplayDate, taskStatus } from '../events/tasks'
 import { Roles } from '../users/roles'

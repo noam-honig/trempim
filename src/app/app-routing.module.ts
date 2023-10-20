@@ -20,6 +20,7 @@ const routes: Routes = [
   {
     path: 't/:id',
     component: OrgEventsComponent,
+    data: { name: 'נסיעות' },
   },
   {
     path: 'טיוטות',

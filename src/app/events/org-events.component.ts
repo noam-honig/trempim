@@ -10,6 +10,8 @@ import { GridSettings } from '../common-ui-elements/interfaces'
 import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExcel'
 import { BusyService, openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
+import { ActivatedRoute } from '@angular/router'
+import { Location } from '@angular/common'
 
 @Component({
   selector: 'app-org-events',
@@ -17,7 +19,12 @@ import { EventInfoComponent } from '../event-info/event-info.component'
   styleUrls: ['./org-events.component.scss'],
 })
 export class OrgEventsComponent implements OnInit {
-  constructor(private tools: UIToolsService, private busy: BusyService) {}
+  constructor(
+    private tools: UIToolsService,
+    private busy: BusyService,
+    private route: ActivatedRoute,
+    private location: Location
+  ) {}
 
   addTask() {
     const t = repo(Task).create()
@@ -26,8 +33,10 @@ export class OrgEventsComponent implements OnInit {
   @ViewChild('tabGroup')
   tabGroup!: MatTabGroup
   onTabChange(event: MatTabChangeEvent) {
-    this.activeTab = event.index
-    this.ngOnInit()
+    if (event.index != this.activeTab) {
+      this.activeTab = event.index
+      this.loadEvents()
+    }
   }
 
   isDispatcher() {
@@ -39,8 +48,17 @@ export class OrgEventsComponent implements OnInit {
   events: Task[] = []
   allRides?: GridSettings<Task>
   onlyShowRelevant = true
+  tripId = ''
   async ngOnInit() {
     this.events = []
+    this.route.paramMap.subscribe((param) => {
+      this.tripId = param.get('id')!
+      if (this.tripId) this.activeTab = 1
+      this.loadEvents()
+    })
+  }
+
+  private loadEvents() {
     if (this.activeTab == 2) {
       if (!this.allRides) {
         this.allRides = new GridSettings<Task>(repo(Task), {
@@ -133,12 +151,28 @@ export class OrgEventsComponent implements OnInit {
                   taskStatus: taskStatus.active,
                 },
         })
-        .then((items) => {
+        .then(async (items) => {
           this.events = items
           if (this.firstLoad) {
             this.firstLoad = false
-            if (this.events.length == 0) this.tabGroup.selectedIndex = 1
+            if (this.tripId) {
+              this.location.replaceState('/')
+              let t = items.find((x) => x.id == this.tripId)
+              if (!t) {
+                t = await repo(Task).findId(this.tripId)
+              }
+              if (t)
+                openDialog(EventInfoComponent, (x) => {
+                  x.e = t!
+                })
+              else this.tools.error('לנסיעה זו כבר משוייך נהג')
+            }
+            if (this.events.length == 0) this.gotoSearchEvents()
           }
         })
+  }
+
+  private gotoSearchEvents() {
+    this.tabGroup.selectedIndex = 1
   }
 }

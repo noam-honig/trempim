@@ -37,6 +37,11 @@ export class SignInController extends ControllerBase {
 
   @Fields.boolean()
   askForOtp = false
+  @Fields.boolean()
+  askForName = false
+
+  @Fields.string({ caption: 'שם ושם משפחה בבקשה' })
+  name = ''
 
   @BackendMethod({ allowed: true })
   /**
@@ -66,19 +71,30 @@ export class SignInController extends ControllerBase {
     )
     otps.set(this.phone, { otp: otp, expire: d })
     this.askForOtp = true
+    if (await setUserToSelfSignInIfAllowed()) this.askForName = true
   }
   @BackendMethod({ allowed: true })
-  async signInWithOtp(): Promise<UserInfo> {
+  async signInWithOtp(): Promise<UserInfo | undefined> {
     const otp = getOtp(this.phone)
     if (!otp) {
       this.askForOtp = false
       throw Error('פג תוקף הקוד, נסה שנית')
     }
     if (otp != this.otp) throw Error('קוד לא תקין')
-    const user = await repo(User).findFirst({
+    let user = await repo(User).findFirst({
       phone: this.phone,
       deleted: false,
     })
+    if (!user) {
+      if (await setUserToSelfSignInIfAllowed()) {
+        if (!this.name) {
+          this.askForName = true
+          return undefined
+        }
+        user = await repo(User).insert({ phone: this.phone, name: this.name })
+      }
+    }
+
     if (!user) throw 'מספר טלפון לא מוכר'
     const roles: string[] = []
     if (user.admin) {
@@ -116,6 +132,18 @@ export class SignInController extends ControllerBase {
     return 'הקוד הוא ' + otp
   }
 }
+async function setUserToSelfSignInIfAllowed() {
+  const user = await repo(User).findFirst({
+    phone: '0500000001',
+    deleted: false,
+  })
+  if (user) {
+    remult.user = { id: user.id, name: user.name }
+    return true
+  }
+  return false
+}
+
 function generateRandomSixDigitNumber() {
   // Generate a random number between 100,000 (inclusive) and 1,000,000 (exclusive)
   const min = 100000
@@ -136,3 +164,4 @@ function getOtp(phone: string) {
   if (!otp || otp.expire < new Date()) return undefined
   return otp.otp
 }
+// [ ] - להציג את התמונה במשימה ואפשר להעלות תמונה חדשה
