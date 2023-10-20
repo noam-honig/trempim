@@ -2,7 +2,7 @@ import { remultExpress } from 'remult/remult-express'
 import { User } from '../app/users/user'
 import { SignInController } from '../app/users/SignInController'
 import { initRequest } from './server-session'
-import { Task, TaskStatusChanges } from '../app/events/tasks'
+import { Task, TaskStatusChanges, TaskImage } from '../app/events/tasks'
 import { createPostgresDataProviderWithSchema } from './PostgresSchemaWrapper'
 import { config } from 'dotenv'
 import { SqlDatabase, repo } from 'remult'
@@ -17,7 +17,7 @@ config() //loads the configuration from the .env file
 export const schema = process.env['DB_SCHEMA']!
 
 //SqlDatabase.LogToConsole = true
-const entities = [User, Task, TaskStatusChanges, VersionInfo, Locks]
+const entities = [User, Task, TaskStatusChanges, VersionInfo, Locks, TaskImage]
 export const api = remultExpress({
   controllers: [SignInController],
   entities,

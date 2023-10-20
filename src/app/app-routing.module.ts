@@ -18,6 +18,10 @@ const routes: Routes = [
     data: { name: 'נסיעות' },
   },
   {
+    path: 't/:id',
+    component: OrgEventsComponent,
+  },
+  {
     path: 'טיוטות',
     component: DraftOverviewComponent,
     canActivate: [DraftsGuard],

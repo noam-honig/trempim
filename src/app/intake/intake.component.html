@@ -1,6 +1,24 @@
 <h2>בקשת נסיעה</h2>
 <ng-container *ngIf="!result">
   <data-area [settings]="area"></data-area>
+  <div>
+    <button mat-button>
+      <label for="uploadImage" style="display: flex; align-items: center">
+        <mat-icon>photo_camera</mat-icon>&nbsp; נא לצרף תמונה של הציוד
+        <span *ngIf="r.imageId">✅</span>
+      </label>
+    </button>
+
+    <input
+      #fileInput
+      type="file"
+      (input)="onFileInput($event)"
+      accept="image/*"
+      id="uploadImage"
+      style="display: none"
+    />
+  </div>
+
   <button mat-raised-button (click)="send()">שלח בקשה</button>
 </ng-container>
 <h2 *ngIf="result">{{ result }}</h2>

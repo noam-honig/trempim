@@ -1,6 +1,5 @@
 import {
   IdEntity,
-  Entity,
   Allow,
   EntityRef,
   FieldMetadata,
@@ -17,6 +16,8 @@ import {
   Remult,
   BackendMethod,
   EntityFilter,
+  Entity,
+  EntityBase,
 } from 'remult'
 import {
   DataControl,
@@ -29,7 +30,10 @@ import {
 import moment from 'moment'
 import { Roles } from '../users/roles'
 import { UITools } from '../common/UITools'
-import { GeocodeResult } from '../common/address-input/google-api-helpers'
+import {
+  GeocodeResult,
+  getCity,
+} from '../common/address-input/google-api-helpers'
 import {
   ContactInfo,
   PhoneField,
@@ -116,6 +120,11 @@ export class Category {
         task.relevantHours
       )
     }
+    if (task.imageId?.includes('data:image/')) {
+      task.imageId = (
+        await repo(TaskImage).insert({ id: task.id, image: task.imageId })
+      ).id
+    }
     for (const f of [task.$.createUserId, task.$.driverId]) {
       if (f.value === null) f.value = f.originalValue
     }
@@ -155,6 +164,15 @@ export class Category {
   },
 })
 export class Task extends IdEntity {
+  getShortDescription(): string {
+    return (
+      (this.category?.caption || '') +
+      ' מ' +
+      getCity(this.addressApiResult!, this.address) +
+      ' ל' +
+      getCity(this.toAddressApiResult, this.toAddress)
+    )
+  }
   displayDate() {
     const e = this
     let result = eventDisplayDate(e)
@@ -326,6 +344,9 @@ export class Task extends IdEntity {
   @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
+
+  @Fields.string()
+  imageId = ''
 
   @BackendMethod({ allowed: Allow.authenticated })
   async assignToMe(userId?: string) {
@@ -768,6 +789,15 @@ export function calcValidUntil(
     hours + validUntil,
     minutes
   )
+}
+@Entity(undefined!, { allowApiCrud: false, dbName: 'images' })
+export class TaskImage extends IdEntity {
+  @Fields.string()
+  image = ''
+  @Fields.createdAt()
+  createdAt = new Date()
+  @Fields.string()
+  createUser = remult.user?.id
 }
 
 //[ ] test phone with different user roles (update status etc...)
