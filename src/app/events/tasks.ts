@@ -46,6 +46,7 @@ import {
 import { User } from '../users/user'
 import { Locks } from './locks'
 import { CreatedAtField, DateField, formatDate } from './date-utils'
+import { getSite } from '../users/sites'
 
 @ValueListFieldType({
   caption: 'סטטוס',
@@ -65,25 +66,44 @@ export class taskStatus {
 
 @ValueListFieldType({
   caption: 'קטגוריה',
-  getValues: () => [
-    Category.delivery,
+  getValues: () =>
+    getSite().categories || [
+      Category.delivery,
 
-    new Category('שינוע ציוד'),
-    new Category('שינוע במשאית'),
-    new Category('מתאים גם לאופנוע'),
-    new Category('שינוע רכב'),
-    new Category('אחר'),
-  ],
+      new Category('שינוע ציוד'),
+      Category.truck,
+      Category.bike,
+      new Category('שינוע רכב'),
+      Category.other,
+    ],
 })
 export class Category {
   static delivery = new Category('שינוע חיילים', 'שינוע')
+  static bike = new Category(
+    'מתאים גם לאופנוע',
+    undefined,
+    () => getSite().bikeCategoryCaption
+  )
+  static truck = new Category(
+    'שינוע במשאית',
+    undefined,
+    () => getSite().truckCategoryCaption
+  )
+  static other = new Category('אחר')
+  _caption: string
   constructor(
-    public caption: string,
-    public id: string | undefined = undefined
+    caption: string,
+    public id: string | undefined = undefined,
+    private getCaption?: () => string | undefined
   ) {
+    this._caption = caption
     if (!id) this.id = caption
   }
+  get caption() {
+    return this.getCaption?.() || this._caption
+  }
 }
+
 @Entity<Task>('tasks', {
   allowApiInsert: true,
   allowApiUpdate: (t) => {
@@ -233,7 +253,7 @@ export class Task extends IdEntity {
   })
   description = ''
   @Field(() => Category)
-  category? = Category.delivery
+  category? = getSite().defaultCategory
   @Fields.dateOnly<Task>({
     caption: 'תאריך הסיוע המבוקש',
     validate: (s, c) => {

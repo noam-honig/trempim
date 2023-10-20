@@ -15,6 +15,7 @@ import { User } from './user'
 import { setSessionUser } from '../../server/server-session'
 import { sendSms } from '../../server/send-sms'
 import { PhoneField } from '../events/phone'
+import { getTitle } from './sites'
 
 const otp = '123456'
 @Controller('signIn')
@@ -156,12 +157,7 @@ function generateRandomSixDigitNumber() {
 }
 
 const otps = new Map<string, { otp: string; expire: Date }>()
-export function getTitle() {
-  if (typeof localStorage !== 'undefined') return document.title
-  return process.env['NAME'] || DEFAULT_NAME
-}
-
-const DEFAULT_NAME = 'עוזרים לצה״ל במה שאפשר'
+export const DEFAULT_NAME = 'עוזרים לצה״ל במה שאפשר'
 function getOtp(phone: string) {
   const otp = otps.get(phone)
   if (!otp || otp.expire < new Date()) return undefined

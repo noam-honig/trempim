@@ -46,6 +46,7 @@ import { SelectUserComponent } from './users/select-user.component'
 import { PhoneDetailsComponent } from './phone-details/phone-details.component'
 import { IntakeComponent } from './intake/intake.component'
 import { InputImageComponent } from './common/input-image/input-image.component'
+import { initSite } from './users/sites'
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import { InputImageComponent } from './common/input-image/input-image.component'
 })
 export class AppModule {
   constructor(zone: NgZone) {
+    initSite()
     remult.apiClient.wrapMessageHandling = (handler) =>
       zone.run(() => handler())
   }

@@ -2,11 +2,13 @@ import { UserInfo, remult, repo } from 'remult'
 import type { Request } from 'express'
 import type from 'cookie-session' //needed for build - do not remove
 import { User } from '../app/users/user'
+import { Site } from '../app/users/sites'
 
 declare module 'remult' {
   export interface RemultContext {
     session: CookieSessionInterfaces.CookieSessionObject
     sessionOptions: CookieSessionInterfaces.CookieSessionOptions
+    site: Site
   }
 }
 

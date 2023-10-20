@@ -15,7 +15,7 @@ import { UITools } from '../common/UITools'
 import { DataControl } from '../common-ui-elements/interfaces'
 import { CreatedAtField } from '../events/date-utils'
 import { sendSms } from '../../server/send-sms'
-import { getTitle } from './SignInController'
+import { getTitle } from './sites'
 
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,

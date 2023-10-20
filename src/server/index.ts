@@ -5,7 +5,7 @@ import compression from 'compression'
 import { api, schema } from './api'
 import session from 'cookie-session'
 import fs from 'fs'
-import { getTitle } from '../app/users/SignInController'
+import { getTitle } from 'src/app/users/sites'
 import { remult, repo } from 'remult'
 import { Task, TaskImage, taskStatus } from '../app/events/tasks'
 
@@ -99,6 +99,7 @@ async function startup() {
       .readFileSync(process.cwd() + '/dist/angular-starter-project/index.html')
       .toString()
       .replace(/!!!NAME!!!/g, getTitle())
+      .replace(/!!!ORG!!!/g, schema)
     if (args?.image) {
       result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
     }

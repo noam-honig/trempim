@@ -5,9 +5,10 @@ import { initRequest } from './server-session'
 import { Task, TaskStatusChanges, TaskImage } from '../app/events/tasks'
 import { createPostgresDataProviderWithSchema } from './PostgresSchemaWrapper'
 import { config } from 'dotenv'
-import { SqlDatabase, repo } from 'remult'
+import { SqlDatabase, remult, repo } from 'remult'
 import { VersionInfo } from './version'
 import { Locks } from '../app/events/locks'
+import { Site, initSite } from '../app/users/sites'
 
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
@@ -21,7 +22,10 @@ const entities = [User, Task, TaskStatusChanges, VersionInfo, Locks, TaskImage]
 export const api = remultExpress({
   controllers: [SignInController],
   entities,
-  initRequest,
+  initRequest: async (req) => {
+    initSite(schema)
+    return await initRequest(req)
+  },
   dataProvider: () =>
     createPostgresDataProviderWithSchema({
       disableSsl: Boolean(process.env['dev']),
