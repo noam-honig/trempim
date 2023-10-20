@@ -22,6 +22,9 @@ import { getTitle } from './SignInController'
   allowApiUpdate: Allow.authenticated,
   allowApiDelete: false,
   allowApiInsert: Roles.admin,
+  defaultOrderBy: {
+    name: 'asc',
+  },
   apiPrefilter: () =>
     !remult.isAllowed(Roles.dispatcher) ? { id: [remult.user?.id!] } : {},
   saving: async (user) => {
