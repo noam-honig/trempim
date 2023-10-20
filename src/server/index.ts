@@ -2,7 +2,7 @@ import express, { Response } from 'express'
 import sslRedirect from 'heroku-ssl-redirect'
 import helmet from 'helmet'
 import compression from 'compression'
-import { api } from './api'
+import { api, schema } from './api'
 import session from 'cookie-session'
 import fs from 'fs'
 import { getTitle } from '../app/users/SignInController'
@@ -24,6 +24,8 @@ async function startup() {
   app.use(api)
   app.get('/', (req, res) => sendIndex(res))
   app.get('/index.html', (req, res) => sendIndex(res))
+  app.get('/assets/logo.png', (req, res) => sendSchemaFile('logo', res))
+  app.get('/assets/favicon.png', (req, res) => sendSchemaFile('favicon', res))
   app.use(express.static('dist/angular-starter-project'))
   app.use('/*', async (req, res) => {
     req.session
@@ -40,6 +42,13 @@ async function startup() {
   })
   let port = process.env['PORT'] || 3002
   app.listen(port)
+
+  function sendSchemaFile(file: string, res: Response) {
+    const fileWithPath = 'src/assets/' + file
+    let theFile = fileWithPath + '-' + schema + '.png'
+    if (fs.existsSync(theFile)) res.sendFile(theFile, { root: process.cwd() })
+    else res.sendFile(fileWithPath + '.png', { root: process.cwd() })
+  }
 
   function sendIndex(res: Response) {
     res.send(

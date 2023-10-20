@@ -14,6 +14,8 @@ import { Locks } from '../app/events/locks'
 
 config() //loads the configuration from the .env file
 
+export const schema = process.env['DB_SCHEMA']!
+
 //SqlDatabase.LogToConsole = true
 const entities = [User, Task, TaskStatusChanges, VersionInfo, Locks]
 export const api = remultExpress({
@@ -23,7 +25,7 @@ export const api = remultExpress({
   dataProvider: () =>
     createPostgresDataProviderWithSchema({
       disableSsl: Boolean(process.env['dev']),
-      schema: process.env['DB_SCHEMA']!,
+      schema,
     }),
   initApi: async () => {
     //;(await import('./read-excel')).readTripExcel()
