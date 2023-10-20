@@ -11,7 +11,7 @@ export async function sendSms(phone: string, message: string): Promise<any> {
   const inforuToken = process.env['INFORU_SMS_TOKEN']
   let useGlobalSms = !inforuToken
   var from = 'Hagai'
-  if (!accid) return 'חשבון SMS לא הוגדר'
+  if (!accid && !inforuToken) return 'חשבון SMS לא הוגדר'
   phone = phone.replace(/\D/g, '')
 
   var t = new Date()
