@@ -1,4 +1,4 @@
-<div *ngIf="!remult.authenticated()">
+<div *ngIf="!remult.authenticated() && !doesNotRequireLogin()">
   <app-card-in-middle>
     <div style="display: flex; flex-direction: column">
       <div style="align-self: center">
@@ -13,6 +13,17 @@
       </button>
     </div>
   </app-card-in-middle>
+</div>
+<div
+  style="display: flex; flex-direction: column"
+  *ngIf="doesNotRequireLogin()"
+>
+  <div style="align-self: center">
+    <img src="assets/logo.png" height="150px" />
+  </div>
+  <strong style="align-self: center">{{ title }}</strong>
+
+  <router-outlet></router-outlet>
 </div>
 
 <div

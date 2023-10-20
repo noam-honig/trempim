@@ -79,7 +79,7 @@ export class Category {
   }
 }
 @Entity<Task>('tasks', {
-  allowApiInsert: [Roles.dispatcher, Roles.trainee],
+  allowApiInsert: true,
   allowApiUpdate: (t) => {
     if (t!.taskStatus === taskStatus.draft)
       return remult.isAllowed([Roles.trainee, Roles.dispatcher])
@@ -88,6 +88,16 @@ export class Category {
   allowApiRead: Allow.authenticated,
   allowApiDelete: false,
   saving: async (task) => {
+    if (!remult.user && task.isNew()) {
+      const user = await repo(User).findFirst({
+        phone: '0500000000',
+        deleted: false,
+      })
+      if (!user) {
+        throw new Error('לא ניתן להוסיף בקשות חדשות')
+      }
+      remult.user = { id: user.id }
+    }
     if (!remult.isAllowed(Roles.dispatcher) && task.isNew())
       task.taskStatus = taskStatus.draft
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
@@ -197,7 +207,7 @@ export class Task extends IdEntity {
   })
   statusChangeDate = new Date()
   @Fields.string({
-    caption: 'הערות',
+    caption: 'פרטים נוספים',
     customInput: (x) => x.textarea(),
   })
   description = ''
@@ -249,42 +259,45 @@ export class Task extends IdEntity {
 
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
-    includeInApi: [Roles.trainee, Roles.dispatcher],
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    validate: (entity, ref) => {
+      if (entity.isNew() || ref.valueChanged()) Validators.required(entity, ref)
+    },
   })
   phone1 = ''
   @Fields.string({
     caption: 'איש קשר מוצא',
-    includeInApi: [Roles.trainee, Roles.dispatcher],
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
   })
   phone1Description = ''
   @PhoneField<Task>({
     caption: 'טלפון מוצא 2',
-    includeInApi: [Roles.trainee, Roles.dispatcher],
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
   })
   phone2 = ''
   @Fields.string({
     caption: 'איש קשר מוצא 2',
-    includeInApi: [Roles.trainee, Roles.dispatcher],
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
   })
   phone2Description = ''
   @PhoneField({
     caption: 'טלפון ליעד',
-    includeInApi: [Roles.trainee, Roles.dispatcher],
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
   })
   toPhone1 = ''
   @Fields.string({
     caption: 'איש קשר ליעד',
-    includeInApi: [Roles.trainee, Roles.dispatcher],
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
   })
   tpPhone1Description = ''
   @PhoneField({
     caption: 'טלפון ליעד 2',
-    includeInApi: [Roles.trainee, Roles.dispatcher],
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
   })
   toPhone2 = ''
   @Fields.string({
     caption: 'איש קשר ליעד 2',
-    includeInApi: [Roles.trainee, Roles.dispatcher],
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
   })
   tpPhone2Description = ''
 
@@ -494,17 +507,11 @@ export class Task extends IdEntity {
         e.address,
         e.toAddress,
         e.description,
-        e.eventDate,
-        e.startTime,
-        e.relevantHours,
-        e.phone1,
-        e.phone1Description,
-        e.phone2,
-        e.phone2Description,
-        e.toPhone1,
-        e.tpPhone1Description,
-        e.toPhone2,
-        e.tpPhone2Description,
+        [e.eventDate, e.startTime, e.relevantHours],
+        [e.phone1, e.phone1Description],
+        [e.phone2, e.phone2Description],
+        [e.toPhone1, e.tpPhone1Description],
+        [e.toPhone2, e.tpPhone2Description],
         e.externalId,
       ],
       ok: () =>
@@ -660,6 +667,12 @@ export class Task extends IdEntity {
     ]
   }
 }
+function allowPhoneOnlyForInsertOrTrainee() {
+  return () =>
+    !remult.authenticated() ||
+    remult.isAllowed([Roles.trainee, Roles.dispatcher])
+}
+
 export function mapFieldMetadataToFieldRef(
   e: EntityRef<any>,
   x: DataControlInfo<any>
@@ -756,4 +769,5 @@ export function calcValidUntil(
     minutes
   )
 }
-//[ ] - add filter by driver to all trips
+
+//[ ] test phone with different user roles (update status etc...)

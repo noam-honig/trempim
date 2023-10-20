@@ -55,6 +55,7 @@ export class SelectUserComponent implements OnInit {
   }
   async loadProducts() {
     this.users = await repo(User).find({
+      limit: 100,
       where: {
         name: { $contains: this.searchString },
       },

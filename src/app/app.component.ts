@@ -83,6 +83,9 @@ export class AppComponent implements OnInit {
       }
     return 'angular-starter-project'
   }
+  doesNotRequireLogin() {
+    return this.activeRoute?.snapshot?.firstChild?.data?.['noLogin']
+  }
   title = document.title
 
   shouldDisplayRoute(route: Route) {
@@ -90,7 +93,8 @@ export class AppComponent implements OnInit {
       !(
         this.routeName(route) &&
         (route.path || '').indexOf(':') < 0 &&
-        (route.path || '').indexOf('**') < 0
+        (route.path || '').indexOf('**') < 0 &&
+        !route.data?.['hide']
       )
     )
       return false

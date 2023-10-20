@@ -1,0 +1,6 @@
+<h2>בקשת נסיעה</h2>
+<ng-container *ngIf="!result">
+  <data-area [settings]="area"></data-area>
+  <button mat-raised-button (click)="send()">שלח בקשה</button>
+</ng-container>
+<h2 *ngIf="result">{{ result }}</h2>

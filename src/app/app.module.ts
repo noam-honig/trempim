@@ -43,7 +43,8 @@ import { DraftOverviewComponent } from './draft-overview/draft-overview.componen
 import { LocationErrorComponent } from './location-error/location-error.component'
 import { UserDetailsComponent } from './user-details/user-details.component'
 import { SelectUserComponent } from './users/select-user.component';
-import { PhoneDetailsComponent } from './phone-details/phone-details.component'
+import { PhoneDetailsComponent } from './phone-details/phone-details.component';
+import { IntakeComponent } from './intake/intake.component'
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { PhoneDetailsComponent } from './phone-details/phone-details.component'
     SelectUserComponent,
     UserDetailsComponent,
     PhoneDetailsComponent,
+    IntakeComponent,
   ],
   imports: [
     BrowserModule,

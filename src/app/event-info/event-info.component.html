@@ -44,8 +44,8 @@
       }"
     ></app-phone-details>
   </div>
-  <div class="space-above" style="white-space: pre-line">
-    <strong>הערות</strong>
+  <div class="space-above" style="white-space: pre-line" *ngIf="e.description">
+    <strong>פרטים נוספים</strong>
     {{ e.description }}
   </div>
 

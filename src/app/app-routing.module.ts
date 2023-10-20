@@ -8,6 +8,7 @@ import { terms } from './terms'
 import { OrgEventsComponent } from './events/org-events.component'
 import { NoamTestComponent } from './noam-test/noam-test.component'
 import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
+import { IntakeComponent } from './intake/intake.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -25,6 +26,11 @@ const routes: Routes = [
     path: terms.userAccounts,
     component: UsersComponent,
     canActivate: [AdminGuard],
+  },
+  {
+    path: 'intake',
+    component: IntakeComponent,
+    data: { hide: true, name: 'הוספת נסיעה', noLogin: true },
   },
   { path: 'noam-test/:1', component: NoamTestComponent },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' },
