@@ -512,6 +512,7 @@ export class Task extends IdEntity {
       },
       {
         name: 'בחר נהג',
+        icon: 'directions_car',
         visible: (x) => x.taskStatus === taskStatus.active,
         click: async (e) => {
           ui.selectUser({
@@ -523,6 +524,7 @@ export class Task extends IdEntity {
       },
       {
         name: 'היסטוריה',
+        icon: 'history_edu',
         click: async (e) => {
           ui.gridDialog({
             settings: new GridSettings(repo(TaskStatusChanges), {
