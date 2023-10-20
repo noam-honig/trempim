@@ -7,7 +7,7 @@ import session from 'cookie-session'
 import fs from 'fs'
 import { getTitle } from '../app/users/SignInController'
 import { remult, repo } from 'remult'
-import { Task, TaskImage } from '../app/events/tasks'
+import { Task, TaskImage, taskStatus } from '../app/events/tasks'
 
 async function startup() {
   const app = express()
@@ -32,10 +32,6 @@ async function startup() {
     sendSchemaSpecificFile('favicon', res)
   )
   app.get('/images/:id', api.withRemult, async (req, res) => {
-    function forbidden() {
-      res.status(403).send('forbidden')
-    }
-
     const image = await remult
       .repo(TaskImage)
       .findFirst({ id: [req.params?.['id']] })
@@ -58,7 +54,10 @@ async function startup() {
   app.get('/t/:id', api.withRemult, async (req, res) => {
     const id = req.params?.['id']
     if (id) {
-      const t = await repo(Task).findId(id)
+      const t = await repo(Task).findFirst({
+        id,
+        taskStatus: taskStatus.active,
+      })
 
       sendIndex(res, {
         image: t.imageId,
