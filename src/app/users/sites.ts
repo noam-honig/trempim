@@ -26,7 +26,7 @@ export function initSite(site?: string) {
     site = document.site
   }
   remult.context.site = new Site()
-  if (site === 'bikeil' || true) {
+  if (site === 'bikeil') {
     remult.context.site = new BikeIlSite()
   }
 }
