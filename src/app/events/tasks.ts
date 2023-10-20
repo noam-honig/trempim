@@ -64,6 +64,8 @@ export class taskStatus {
 
     new Category('שינוע ציוד'),
     new Category('שינוע במשאית'),
+    new Category('מתאים גם לאופנוע'),
+    new Category('שינוע רכב'),
     new Category('אחר'),
   ],
 })
