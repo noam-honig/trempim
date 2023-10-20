@@ -120,7 +120,7 @@ export class Category {
       return {
         $or: [
           {
-            draft: true,
+            taskStatus: taskStatus.draft,
             createUser: remult.user!.id,
           },
           Task.filterActiveTasks(),
@@ -242,7 +242,6 @@ export class Task extends IdEntity {
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
     includeInApi: [Roles.trainee, Roles.dispatcher],
-    validate: Validators.required,
   })
   phone1 = ''
   @Fields.string({
@@ -394,7 +393,7 @@ export class Task extends IdEntity {
   async markAsDraft() {
     this.driverId = ''
     this.taskStatus = taskStatus.draft
-    await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
+    await this.insertStatusChange('סמן כטיוטא', 'על ידי מוקדן')
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
