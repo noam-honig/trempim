@@ -42,7 +42,8 @@ import { NoamTestComponent } from './noam-test/noam-test.component'
 import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
 import { LocationErrorComponent } from './location-error/location-error.component'
 import { UserDetailsComponent } from './user-details/user-details.component'
-import { SelectUserComponent } from './users/select-user.component'
+import { SelectUserComponent } from './users/select-user.component';
+import { PhoneDetailsComponent } from './phone-details/phone-details.component'
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { SelectUserComponent } from './users/select-user.component'
     LocationErrorComponent,
     SelectUserComponent,
     UserDetailsComponent,
+    PhoneDetailsComponent,
   ],
   imports: [
     BrowserModule,

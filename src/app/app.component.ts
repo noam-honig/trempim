@@ -103,3 +103,8 @@ export class AppComponent implements OnInit {
   }
 }
 //[ ] - fix api to work with this url
+
+//[ ] - add categorues
+//[ ] - add second phone for driver
+//[ ] - add data to demo environment
+//[ ] - add select driver for my trips

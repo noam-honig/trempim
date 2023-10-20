@@ -99,6 +99,6 @@ export interface ContactInfo {
   name: string
 }
 export interface TaskContactInfo {
-  origin: ContactInfo
-  target: ContactInfo
+  origin: ContactInfo[]
+  target: ContactInfo[]
 }

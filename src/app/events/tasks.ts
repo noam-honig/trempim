@@ -30,7 +30,13 @@ import moment from 'moment'
 import { Roles } from '../users/roles'
 import { UITools } from '../common/UITools'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
-import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
+import {
+  ContactInfo,
+  PhoneField,
+  TaskContactInfo,
+  formatPhone,
+  phoneConfig,
+} from './phone'
 import { User } from '../users/user'
 import { Locks } from './locks'
 import { CreatedAtField, DateField, formatDate } from './date-utils'
@@ -427,21 +433,38 @@ export class Task extends IdEntity {
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
-  async getContactInfo(): Promise<TaskContactInfo | undefined> {
+  async getContactInfo(): Promise<TaskContactInfo> {
     if (Roles.dispatcher || this.driverId == remult.user?.id!)
       return {
-        origin: {
-          phone: this.phone1,
-          formattedPhone: formatPhone(this.phone1),
-          name: this.phone1Description,
-        },
-        target: {
-          phone: this.toPhone1,
-          formattedPhone: formatPhone(this.toPhone1),
-          name: this.tpPhone1Description,
-        },
+        origin: [
+          {
+            phone: this.phone1,
+            formattedPhone: formatPhone(this.phone1),
+            name: this.phone1Description,
+          },
+          {
+            phone: this.phone2,
+            formattedPhone: formatPhone(this.phone2),
+            name: this.phone2Description,
+          },
+        ],
+        target: [
+          {
+            phone: this.toPhone1,
+            formattedPhone: formatPhone(this.toPhone1),
+            name: this.tpPhone1Description,
+          },
+          {
+            phone: this.toPhone2,
+            formattedPhone: formatPhone(this.toPhone2),
+            name: this.tpPhone2Description,
+          },
+        ],
       }
-    return undefined
+    return {
+      origin: [],
+      target: [],
+    }
   }
 
   async openEditDialog(ui: UITools, saved?: VoidFunction) {
@@ -731,3 +754,4 @@ export function calcValidUntil(
     minutes
   )
 }
+//[ ] - add filter by driver to all trips

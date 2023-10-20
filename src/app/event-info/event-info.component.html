@@ -36,29 +36,13 @@
       </span>
     </div>
 
-    <div *ngIf="contactInfo?.origin?.phone" class="space-above">
-      <div class="phone-container">
-        <span
-          mat-mini-fab
-          style="vertical-align: middle; cursor: pointer"
-          color="primary"
-          (click)="sendWhatsapp(contactInfo?.origin?.phone!)"
-        >
-          <img src="assets/whatsapp.png" />
-        </span>
-        <a href="tel:{{ contactInfo?.origin?.phone }}">
-          <button mat-mini-fab style="vertical-align: middle" color="primary">
-            <mat-icon>call</mat-icon>
-          </button>
-        </a>
-        <div>
-          <a href="tel:{{ contactInfo?.origin?.phone }}"
-            >{{ contactInfo?.origin?.name }},
-            {{ contactInfo?.origin?.formattedPhone }}
-          </a>
-        </div>
-      </div>
-    </div>
+    <app-phone-details
+      *ngFor="let c of contactInfo.origin"
+      [args]="{
+        name: c.name,
+        phone: c.phone
+      }"
+    ></app-phone-details>
   </div>
   <div class="space-above" style="white-space: pre-line">
     <strong>הערות</strong>
@@ -80,30 +64,13 @@
         <img src="assets/google_maps_icon.png" />
       </span>
     </div>
-    <div *ngIf="contactInfo?.target?.phone" class="space-above">
-      <div class="phone-container">
-        <span
-          mat-mini-fab
-          style="vertical-align: middle; cursor: pointer"
-          color="primary"
-          (click)="sendWhatsapp(contactInfo?.target?.phone!)"
-        >
-          <img src="assets/whatsapp.png" />
-        </span>
-        <a href="tel:{{ contactInfo?.target?.phone }}">
-          <button mat-mini-fab style="vertical-align: middle" color="primary">
-            <mat-icon>call</mat-icon>
-          </button>
-        </a>
-        <div>
-          <a href="tel:{{ contactInfo?.target?.phone }}"
-            >{{ contactInfo?.target?.name }}
-            ,
-            {{ contactInfo?.target?.formattedPhone }}
-          </a>
-        </div>
-      </div>
-    </div>
+    <app-phone-details
+      *ngFor="let c of contactInfo.target"
+      [args]="{
+        name: c.name,
+        phone: c.phone
+      }"
+    ></app-phone-details>
   </div>
   <div *ngIf="driver">
     <hr />

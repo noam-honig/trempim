@@ -112,7 +112,10 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   showAssign() {
     return this.e.taskStatus == taskStatus.active
   }
-  contactInfo?: TaskContactInfo
+  contactInfo: TaskContactInfo = {
+    origin: [],
+    target: [],
+  }
   ngOnInit(): void {
     repo(Task)
       .findFirst({ id: this.e.id })
@@ -126,7 +129,9 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     if (this.e.driverId && this.isDispatcher())
       this.e._.relations.driver.findOne().then((x) => (this.driver = x))
     if (this.e.driverId === remult.user?.id || this.isDispatcher()) {
-      this.e.getContactInfo().then((x) => (this.contactInfo = x))
+      this.e.getContactInfo().then((x) => {
+        if (x) this.contactInfo = x
+      })
     }
   }
 
@@ -138,3 +143,4 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
   closeDialog = () => {}
 }
+//[ ] - התקן המכשיר
