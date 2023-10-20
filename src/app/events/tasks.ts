@@ -308,35 +308,38 @@ export class Task extends IdEntity {
 
   @BackendMethod({ allowed: Allow.authenticated })
   async assignToMe(userId?: string) {
+    let assignUserId = remult.user!.id
+    const assignedChangeType = 'שוייך לנהג'
     if (userId) {
       if ((await repo(User).count({ id: userId })) == 0)
         throw Error('משתמש לא קיים')
       if (userId != remult.user?.id && !remult.isAllowed(Roles.dispatcher))
         throw Error('אינך רשאי לשייך לנהג אחר')
-    }
+      assignUserId = userId
+    } else {
+      if (
+        (await repo(Task).count({
+          driverId: remult.user!.id!,
+          taskStatus: taskStatus.assigned,
+        })) >= 5
+      )
+        throw Error('ניתן להרשם במקביל לעד 5 נסיעות')
 
-    if (
-      (await repo(Task).count({
-        driverId: remult.user!.id!,
-        taskStatus: taskStatus.assigned,
-      })) >= 5
-    )
-      throw Error('ניתן להרשם במקביל לעד 5 נסיעות')
-    const assignedChangeType = 'שוייך לנהג'
-    if (
-      (await repo(TaskStatusChanges).count({
-        driverId: remult.user!.id!,
-        what: assignedChangeType,
-        createdAt: {
-          $gt: new Date(new Date().getTime() - 1000 * 60 * 60),
-        },
-      })) >= 7
-    ) {
-      throw Error('ניתן להרשם לעד 7 נסיעות בשעה')
+      if (
+        (await repo(TaskStatusChanges).count({
+          driverId: remult.user!.id!,
+          what: assignedChangeType,
+          createdAt: {
+            $gt: new Date(new Date().getTime() - 1000 * 60 * 60),
+          },
+        })) >= 7
+      ) {
+        throw Error('ניתן להרשם לעד 7 נסיעות בשעה')
+      }
     }
     await this._.reload()
     if (this.driverId) throw Error('מתנדב אחר כבר לקח משימה זו')
-    this.driverId = remult.user!.id!
+    this.driverId = assignUserId
     this.taskStatus = taskStatus.assigned
     await this.insertStatusChange(assignedChangeType)
     await this.save()
