@@ -64,12 +64,7 @@ export async function versionUpdate() {
     }
     phoneConfig.disableValidation = false
   })
-  version(3, async () => {
-    const tasks = await dbNamesOf(Task)
-    await db.execute(
-      `update ${tasks} set ${tasks.taskStatus} = ${taskStatus.draft.id} where draft=true`
-    )
-  })
+
   version(5, async () => {
     const t = await dbNamesOf(Task)
     const s = await dbNamesOf(TaskStatusChanges)
