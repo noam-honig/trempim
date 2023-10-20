@@ -102,9 +102,7 @@ export class AppComponent implements OnInit {
     if (this.uiService.isScreenSmall()) this.sidenav.close()
   }
 }
-//[ ] - fix api to work with this url
 
 //[ ] - add categorues
-//[ ] - add second phone for driver
 //[ ] - add data to demo environment
 //[ ] - add select driver for my trips

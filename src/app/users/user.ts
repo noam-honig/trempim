@@ -6,6 +6,7 @@ import {
   Allow,
   Fields,
   remult,
+  BackendMethod,
 } from 'remult'
 import { Roles } from './roles'
 import { terms } from '../terms'
@@ -13,6 +14,8 @@ import { PhoneField } from '../events/phone'
 import { UITools } from '../common/UITools'
 import { DataControl } from '../common-ui-elements/interfaces'
 import { CreatedAtField } from '../events/date-utils'
+import { sendSms } from '../../server/send-sms'
+import { getTitle } from './SignInController'
 
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,
@@ -95,5 +98,15 @@ export class User extends IdEntity {
         onOk?.()
       },
     })
+  }
+  @BackendMethod({ allowed: Roles.admin })
+  async sendInviteSmsToUser(origin: string) {
+    await sendSms(this.phone, this.buildInviteText(origin))
+  }
+
+  buildInviteText(origin: string): string {
+    return `שלום ${this.name},
+כדי להכנס למערכת השינועים של ${getTitle()} אנא הכנס לקישור הבא:
+${origin}`
   }
 }

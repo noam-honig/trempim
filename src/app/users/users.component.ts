@@ -10,6 +10,7 @@ import { remult, repo } from 'remult'
 import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExcel'
 import { BusyService } from '../common-ui-elements'
 import { SignInController } from './SignInController'
+import { sendWhatsappToPhone } from '../events/phone'
 
 @Component({
   selector: 'app-users',
@@ -50,6 +51,21 @@ export class UsersComponent implements OnInit {
       {
         name: 'פרטים',
         click: async (e) => e.editDialog(this.ui),
+      },
+      {
+        name: 'שלח SMS להזמנה',
+        click: async (e) => {
+          await e.sendInviteSmsToUser(document.location.origin)
+        },
+      },
+      {
+        name: 'שלח Whatsapp להזמנה',
+        click: async (e) => {
+          sendWhatsappToPhone(
+            e.phone,
+            e.buildInviteText(document.location.origin)
+          )
+        },
       },
       {
         name: 'הצג קוד חד פעמי',

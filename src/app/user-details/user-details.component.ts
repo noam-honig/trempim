@@ -33,4 +33,3 @@ export class UserDetailsComponent implements OnInit, WantsToCloseDialog {
     }
   }
 }
-//[ ] - send sms on add user (Or at least ask to)
