@@ -59,13 +59,12 @@ async function startup() {
     const id = req.params?.['id']
     if (id) {
       const t = await repo(Task).findId(id)
-      if (t?.imageId) {
-        sendIndex(res, {
-          image: t.imageId,
-          description: t.getShortDescription(),
-        })
-        return
-      }
+
+      sendIndex(res, {
+        image: t.imageId,
+        description: t.getShortDescription(),
+      })
+      return
     }
     sendIndex(res)
   })
