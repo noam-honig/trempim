@@ -56,21 +56,25 @@ async function startup() {
   })
 
   app.get('/t/:id', api.withRemult, async (req, res) => {
-    const id = req.params?.['id']
-    if (id) {
-      const t = await repo(Task).findFirst({
-        id,
-        taskStatus: taskStatus.active,
-      })
-      if (t) {
-        sendIndex(res, {
-          image: t.imageId,
-          description: t.getShortDescription(),
+    try {
+      const id = req.params?.['id']
+      if (id) {
+        const t = await repo(Task).findFirst({
+          id,
+          taskStatus: taskStatus.active,
         })
-        return
+        if (t) {
+          sendIndex(res, {
+            image: t.imageId,
+            description: t.getShortDescription(),
+          })
+          return
+        }
       }
+      sendIndex(res)
+    } catch (err: any) {
+      res.status(500).send(err.message)
     }
-    sendIndex(res)
   })
   app.use(express.static('dist/angular-starter-project'))
   app.use('/*', async (req, res) => {
