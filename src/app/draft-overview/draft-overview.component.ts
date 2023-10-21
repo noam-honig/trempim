@@ -10,6 +10,8 @@ import { UIToolsService } from '../common/UIToolsService'
 import { openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { Roles } from '../users/roles'
+import { getTitle } from '../users/sites'
+import { Title } from '@angular/platform-browser'
 
 @Component({
   selector: 'app-draft-overview',
@@ -17,9 +19,10 @@ import { Roles } from '../users/roles'
   styleUrls: ['./draft-overview.component.scss'],
 })
 export class DraftOverviewComponent implements OnInit {
-  constructor(private ui: UIToolsService) {}
+  constructor(private ui: UIToolsService, private title: Title) {}
   tasks: Task[] = []
   ngOnInit(): void {
+    this.title.setTitle(getTitle() + ' ניהול')
     repo(Task)
       .find({
         where: {

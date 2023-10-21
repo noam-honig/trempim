@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core'
+import { Title } from '@angular/platform-browser'
 import { repo } from 'remult'
 import { Task } from '../events/tasks'
 import {
@@ -6,6 +7,7 @@ import {
   GridSettings,
 } from '../common-ui-elements/interfaces'
 import { InputImageComponent } from '../common/input-image/input-image.component'
+import { getTitle } from '../users/sites'
 
 @Component({
   selector: 'app-intake',
@@ -13,7 +15,7 @@ import { InputImageComponent } from '../common/input-image/input-image.component
   styleUrls: ['./intake.component.scss'],
 })
 export class IntakeComponent implements OnInit {
-  constructor() {}
+  constructor(private title: Title) {}
 
   r = repo(Task).create()
   area = new DataAreaSettings({
@@ -34,7 +36,9 @@ export class IntakeComponent implements OnInit {
       ]
     },
   })
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.title.setTitle(getTitle()+" בקשה")
+  }
   result = ''
   async send() {
     await this.r._.save()

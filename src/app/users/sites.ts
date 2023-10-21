@@ -2,9 +2,11 @@ import { remult } from 'remult'
 import { DEFAULT_NAME } from './SignInController'
 import { Category } from '../events/tasks'
 
+let title = ''
 export function getTitle() {
-  if (typeof localStorage !== 'undefined') return document.title
-  return process.env['NAME'] || DEFAULT_NAME
+  if (title) return title
+  if (typeof localStorage !== 'undefined') return (title = document.title)
+  return (title = process.env['NAME'] || DEFAULT_NAME)
 }
 export class Site {
   bikeCategoryCaption?: string

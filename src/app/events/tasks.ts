@@ -589,22 +589,15 @@ export class Task extends IdEntity {
         },
       },
       {
-        name: 'העתק קישור רישום לנסיעה',
+        name: 'העתק הודעה לווטסאפ',
         icon: 'content_copy',
         visible: (x) => x.taskStatus === taskStatus.active,
         click: (e) => {
-          copy(e.getLink())
+          copy(e.getShortDescription() + '\n' + e.getLink())
           ui.info('הקישור הועתק ללוח, ניתן לשלוח בקבוצה')
         },
       },
-      {
-        name: 'שלח קישור רישום בווטסאפ',
-        icon: 'message',
-        visible: (x) => x.taskStatus === taskStatus.active,
-        click: (e) => {
-          sendWhatsappToPhone('', e.getShortDescription() + '\n' + e.getLink())
-        },
-      },
+
       {
         name: 'בחר נהג',
         icon: 'directions_car',
