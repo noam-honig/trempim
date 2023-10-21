@@ -50,7 +50,7 @@ async function startup() {
       } else {
         res.status(404).send('Image not found')
       }
-    } catch (err:any) {
+    } catch (err: any) {
       res.status(500).send(err.message)
     }
   })
@@ -62,12 +62,13 @@ async function startup() {
         id,
         taskStatus: taskStatus.active,
       })
-
-      sendIndex(res, {
-        image: t.imageId,
-        description: t.getShortDescription(),
-      })
-      return
+      if (t) {
+        sendIndex(res, {
+          image: t.imageId,
+          description: t.getShortDescription(),
+        })
+        return
+      }
     }
     sendIndex(res)
   })
