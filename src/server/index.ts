@@ -32,22 +32,26 @@ async function startup() {
     sendSchemaSpecificFile('favicon', res)
   )
   app.get('/images/:id', api.withRemult, async (req, res) => {
-    const image = await remult
-      .repo(TaskImage)
-      .findFirst({ id: [req.params?.['id']] })
-    if (!image) {
-      res.status(404).send('Not found')
-      return
-    }
-    const base64Image = image.image
-    if (base64Image) {
-      const imageFormat = base64Image.split(';')[0].split('/')[1]
-      const imageBuffer = Buffer.from(base64Image.split(',')[1], 'base64')
+    try {
+      const image = await remult
+        .repo(TaskImage)
+        .findFirst({ id: [req.params?.['id']] })
+      if (!image) {
+        res.status(404).send('Not found')
+        return
+      }
+      const base64Image = image.image
+      if (base64Image) {
+        const imageFormat = base64Image.split(';')[0].split('/')[1]
+        const imageBuffer = Buffer.from(base64Image.split(',')[1], 'base64')
 
-      res.set('Content-Type', `image/${imageFormat}`)
-      res.send(imageBuffer)
-    } else {
-      res.status(404).send('Image not found')
+        res.set('Content-Type', `image/${imageFormat}`)
+        res.send(imageBuffer)
+      } else {
+        res.status(404).send('Image not found')
+      }
+    } catch (err:any) {
+      res.status(500).send(err.message)
     }
   })
 
