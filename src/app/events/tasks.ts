@@ -422,7 +422,10 @@ export class Task extends IdEntity {
 
   @BackendMethod({ allowed: Allow.authenticated })
   async cancelAssignment(notes: string) {
-    if (this.driverId != remult.user?.id!)
+    if (
+      this.driverId != remult.user?.id! &&
+      !remult.isAllowed(Roles.dispatcher)
+    )
       throw new Error('נסיעה זו לא משוייכת לך')
     this.driverId = ''
     this.taskStatus = taskStatus.active
@@ -467,7 +470,10 @@ export class Task extends IdEntity {
   @BackendMethod({ allowed: Allow.authenticated })
   async otherProblem(notes: string) {
     if (!notes) throw Error('אנא הזן הערות, שנדע מה קרה')
-    if (this.driverId != remult.user?.id!)
+    if (
+      this.driverId != remult.user?.id! &&
+      !remult.isAllowed(Roles.dispatcher)
+    )
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.otherProblem
     this.statusNotes = notes
@@ -476,7 +482,10 @@ export class Task extends IdEntity {
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async completed(notes: string) {
-    if (this.driverId != remult.user?.id!)
+    if (
+      this.driverId != remult.user?.id! &&
+      !remult.isAllowed(Roles.dispatcher)
+    )
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.completed
     this.statusNotes = notes
@@ -485,7 +494,10 @@ export class Task extends IdEntity {
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async statusClickedByMistake() {
-    if (this.driverId != remult.user?.id! || remult.isAllowed(Roles.dispatcher))
+    if (
+      this.driverId != remult.user?.id! &&
+      !remult.isAllowed(Roles.dispatcher)
+    )
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.assigned
     await this.insertStatusChange('עדכון סטטוס נלחץ בטעות')
