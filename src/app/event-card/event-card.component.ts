@@ -58,16 +58,25 @@ export class EventCardComponent implements OnInit {
         if (this.toRegion) {
           message += 'לאזור ' + this.toRegion + ' '
         }
-        message += ` - שעה ${displayTime(new Date())} ( ${
-          this.tasks.length
-        } קריאות) : \n`
+
+        let lines = ''
+        let count = 0
+        let t = new Date()
+
+        message += ` - שעה ${t.getHours()}:${(
+          t.getMinutes() / 10
+        ).toFixed()}0 ( ${this.tasks.length} קריאות) : \n`
         for (const u of this.urgencies) {
           for (const e of u.events) {
-            if (this.filter(e))
-              message +=
+            if (this.filter(e)) {
+              lines +=
                 '* ' + e.getShortDescription() + '\n' + e.getLink() + '\n\n'
+              count++
+            }
           }
         }
+        message +=
+          ` - שעה ${displayTime(new Date())} ( ${count} קריאות) : \n` + lines
         copy(message)
       },
     },
