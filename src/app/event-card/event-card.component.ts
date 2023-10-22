@@ -19,6 +19,7 @@ import {
   getRegion,
 } from '../common/address-input/google-api-helpers'
 import { LocationErrorComponent } from '../location-error/location-error.component'
+import { Urgency } from '../events/urgency'
 const AllCategories = {
   id: 'asdfaetfsafads',
   caption: 'הכל',
@@ -47,7 +48,7 @@ export class EventCardComponent implements OnInit {
   isDispatcher() {
     return remult.isAllowed(Roles.dispatcher)
   }
-  dates: dateEvents[] = []
+  urgencies: dateEvents[] = []
   regions: { id: string; count: number; caption: string }[] = []
   toRegions: { id: string; count: number; caption: string }[] = []
   types: { id: string; count: number; caption: string }[] = []
@@ -76,7 +77,7 @@ export class EventCardComponent implements OnInit {
   }
   showLocation = false
   refresh() {
-    this.dates = []
+    this.urgencies = []
     this.tasks.sort((a, b) => compareEventDate(a, b))
 
     let firstLongLat: string | undefined
@@ -88,13 +89,20 @@ export class EventCardComponent implements OnInit {
       if (!firstLongLat) firstLongLat = getLongLat(e.addressApiResult)
       if (getLongLat(e.addressApiResult) != firstLongLat)
         this.showLocation = true
-      let d = this.dates.find((d) => d.date == eventDisplayDate(e))
-      if (1 == 1) {
-        if (this.dates.length == 0)
-          this.dates.push((d = { date: '', events: [] }))
-        d = this.dates[0]
-      }
-      if (!d) this.dates.push((d = { date: eventDisplayDate(e), events: [] }))
+      let d = this.urgencies.find((d) => d.sort == e.urgency.id)
+      // if (1 == 1) {
+      //   if (this.urgencies.length == 0)
+      //     this.urgencies.push((d = { urgency: '', events: [] }))
+      //   d = this.urgencies[0]
+      // }
+      if (!d)
+        this.urgencies.push(
+          (d = {
+            urgency: 'דחיפות ' + e.urgency.caption,
+            events: [],
+            sort: e.urgency.id,
+          })
+        )
       d.events.push(e)
       let region = this.regions.find(
         (c) => c.id == getRegion(e.addressApiResult)
@@ -146,7 +154,8 @@ export class EventCardComponent implements OnInit {
 
     this.types.splice(0, 0, AllCategories)
 
-    this.dates = this.dates.filter((d) => d.events.length > 0)
+    this.urgencies = this.urgencies.filter((d) => d.events.length > 0)
+    this.urgencies.sort((a, b) => b.sort - a.sort)
     this.sortEvents()
     this.area = new DataAreaSettings({
       fields: () => [
@@ -257,9 +266,11 @@ export class EventCardComponent implements OnInit {
   }
   sortEvents() {
     if (!this.volunteerLocation)
-      this.dates.forEach((d) => d.events.sort((a, b) => compareEventDate(a, b)))
+      this.urgencies.forEach((d) =>
+        d.events.sort((a, b) => compareEventDate(a, b))
+      )
     else
-      this.dates.forEach((d) =>
+      this.urgencies.forEach((d) =>
         d.events.sort(
           (a, b) =>
             GetDistanceBetween(
@@ -283,6 +294,7 @@ function compareEventDate(a: Task, b: Task) {
 }
 
 interface dateEvents {
-  date: string
+  urgency: string
+  sort: number
   events: Task[]
 }

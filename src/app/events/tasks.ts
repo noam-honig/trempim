@@ -36,6 +36,7 @@ import { CreatedAtField, DateField, formatDate } from './date-utils'
 import { Locks } from './locks'
 import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
 import { taskStatus } from './taskStatus'
+import { Urgency } from './urgency'
 
 @Entity<Task>('tasks', {
   allowApiInsert: true,
@@ -185,6 +186,9 @@ export class Task extends IdEntity {
     customInput: (x) => x.textarea(),
   })
   description = ''
+  @DataControl({ visible: () => getSite().canSeeUrgency })
+  @Field(() => Urgency)
+  urgency = Urgency.normal
   @Field(() => Category)
   category? = getSite().defaultCategory
   @Fields.dateOnly<Task>({
@@ -498,7 +502,7 @@ export class Task extends IdEntity {
     ui.areaDialog({
       title: 'פרטי נסיעה',
       fields: [
-        e.category!,
+        [e.category!, e.urgency],
         e.title,
         e.address,
         e.toAddress,
@@ -509,6 +513,7 @@ export class Task extends IdEntity {
         [e.phone2, e.phone2Description],
         [e.toPhone1, e.tpPhone1Description],
         [e.toPhone2, e.tpPhone2Description],
+
         e.imageId,
         e.externalId,
       ],

@@ -25,9 +25,9 @@
   <mat-divider></mat-divider>
 </div>
 <div>
-  <div *ngFor="let d of dates">
+  <div *ngFor="let d of urgencies">
     <ng-container *ngIf="hasEvents(d)">
-      <h3>{{ d.date }}</h3>
+      <h3>{{ d.urgency }}</h3>
       <div class="events-container" [transition-group]="'flip-list'">
         <ng-container *ngFor="let e of d.events; trackBy: trackBy">
           <mat-card

@@ -1,6 +1,7 @@
 import { remult } from 'remult'
 import { DEFAULT_NAME } from './SignInController'
 import { Category } from '../events/Category'
+import { Roles } from './roles'
 
 let title = ''
 export function getTitle() {
@@ -15,6 +16,9 @@ export class Site {
   categories?: Category[]
   showCopyLink?: boolean
   imageIsMandatory?: boolean
+  get canSeeUrgency() {
+    return true
+  }
 }
 
 export class BikeIlSite extends Site {
@@ -25,6 +29,11 @@ export class BikeIlSite extends Site {
   override showCopyLink? = true
   override imageIsMandatory? = true
 }
+export class Yedidim extends Site {
+  override get canSeeUrgency() {
+    return remult.isAllowed(Roles.admin)
+  }
+}
 
 export function initSite(site?: string) {
   if (!site && typeof document !== 'undefined') {
@@ -32,8 +41,15 @@ export function initSite(site?: string) {
     site = document.site
   }
   remult.context.site = new Site()
-  if (site === 'bikeil') {
-    remult.context.site = new BikeIlSite()
+  switch (site) {
+    case 'bikeil':
+      remult.context.site = new BikeIlSite()
+      break
+    case 'yedidim':
+    case '!!!ORG!!!':
+    case 'ezion':
+      remult.context.site = new Yedidim()
+      break
   }
 }
 
