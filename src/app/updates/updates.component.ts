@@ -5,6 +5,7 @@ import { tripsGrid } from '../events/tripsGrid'
 import { remult, repo } from 'remult'
 import { User } from '../users/user'
 import { Task } from '../events/tasks'
+import { getSite } from '../users/sites'
 
 @Component({
   selector: 'app-updates',
@@ -38,6 +39,7 @@ export class UpdatesComponent implements OnInit {
 @Injectable()
 export class UpdatesService {
   async updateLastUpdatedView() {
+    if (!getSite().countUpdates) return
     const user = await repo(User).findFirst({ id: [remult.user?.id!] })
     this.lastUpdateViewed = user.lastUpdateView
     user.lastUpdateView = new Date()
@@ -46,6 +48,7 @@ export class UpdatesService {
   }
   waitingUpdates = 0
   async updateWaitingUpdates() {
+    if (!getSite().countUpdates) return
     const user = await repo(User).findFirst({ id: [remult.user?.id!] })
     if (user.lastUpdateView) this.lastUpdateViewed = user.lastUpdateView
     this.waitingUpdates = await repo(Task).count({

@@ -308,11 +308,11 @@ export class Task extends IdEntity {
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
 
-  @Fields.string({
+  @Fields.string<Task>({
     caption: 'תמונה',
     customInput: (c) => c.image(),
     validate: (_, f) => {
-      if (getSite().imageIsMandatory)
+      if (getSite().imageIsMandatory && (_.isNew() || f.valueChanged()))
         Validators.required(_, f, 'אנא העלה תמונה')
     },
   })

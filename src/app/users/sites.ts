@@ -13,6 +13,7 @@ export function getTitle() {
   return (title = process.env['NAME'] || DEFAULT_NAME)
 }
 export class Site {
+  countUpdates = true
   showInfoSnackbarFor(message: UpdateMessage) {
     return true
   }
@@ -36,6 +37,7 @@ export class BikeIlSite extends Site {
   override imageIsMandatory? = true
 }
 export class Yedidim extends Site {
+  override countUpdates = false
   override get canSeeUrgency() {
     return remult.isAllowed(Roles.admin)
   }
