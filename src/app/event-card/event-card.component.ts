@@ -63,8 +63,9 @@ export class EventCardComponent implements OnInit {
         } קריאות) : \n`
         for (const u of this.urgencies) {
           for (const e of u.events) {
-            message +=
-              '* ' + e.getShortDescription() + '\n' + e.getLink() + '\n\n'
+            if (this.filter(e))
+              message +=
+                '* ' + e.getShortDescription() + '\n' + e.getLink() + '\n\n'
           }
         }
         copy(message)
