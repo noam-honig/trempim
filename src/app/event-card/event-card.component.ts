@@ -63,9 +63,6 @@ export class EventCardComponent implements OnInit {
         let count = 0
         let t = new Date()
 
-        message += ` - שעה ${t.getHours()}:${(
-          t.getMinutes() / 10
-        ).toFixed()}0 ( ${this.tasks.length} קריאות) : \n`
         for (const u of this.urgencies) {
           for (const e of u.events) {
             if (this.filter(e)) {
