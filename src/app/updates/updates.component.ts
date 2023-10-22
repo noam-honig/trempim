@@ -19,11 +19,13 @@ export class UpdatesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
+  rowsLoaded = false
   tripGrid = tripsGrid({
     ui: this.ui,
     busy: this.busy,
     rowsLoaded: () => {
-      this.updates.updateLastUpdatedView()
+      if (!this.rowsLoaded) this.updates.updateLastUpdatedView()
+      this.rowsLoaded = true
     },
     rowCssClass: (t) =>
       t.statusChangeDate > this.updates.lastUpdateViewed ? 'new-update' : '',
