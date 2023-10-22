@@ -47,14 +47,11 @@ export class UpdatesService {
   waitingUpdates = 0
   async updateWaitingUpdates() {
     const user = await repo(User).findFirst({ id: [remult.user?.id!] })
-    this.lastUpdateViewed = user.lastUpdateView || new Date()
+    if (user.lastUpdateView) this.lastUpdateViewed = user.lastUpdateView
     this.waitingUpdates = await repo(Task).count({
       statusChangeDate: { $gt: this.lastUpdateViewed },
     })
   }
-  constructor() {
-    this.lastUpdateViewed = new Date()
-    this.lastUpdateViewed.setDate(this.lastUpdateViewed.getDate() - 1)
-  }
-  lastUpdateViewed: Date
+
+  lastUpdateViewed = new Date()
 }

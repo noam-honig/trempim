@@ -6,11 +6,12 @@ import { api, schema } from './api'
 import session from 'cookie-session'
 import fs from 'fs'
 import { getTitle } from 'src/app/users/sites'
-import { remult, repo } from 'remult'
+import { SqlDatabase, remult, repo } from 'remult'
 import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { taskStatus } from 'src/app/events/taskStatus'
 
+SqlDatabase.LogToConsole = false
 async function startup() {
   const app = express()
   app.use(sslRedirect())
