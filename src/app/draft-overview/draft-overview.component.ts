@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { remult, repo } from 'remult'
-import { Task, taskStatus } from '../events/tasks'
+import { Task } from '../events/tasks'
+import { taskStatus } from '../events/taskStatus'
 import {
   GeocodeResult,
   getGoogleMapLink,

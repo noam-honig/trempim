@@ -1,108 +1,41 @@
+import copy from 'copy-to-clipboard'
 import {
-  IdEntity,
   Allow,
-  EntityRef,
-  FieldMetadata,
+  BackendMethod,
+  Entity,
+  EntityFilter,
+  Field,
+  Fields,
+  IdEntity,
+  Relations,
+  SqlDatabase,
   Validators,
   ValueConverters,
   remult,
-  ValueListFieldType,
-  Fields,
-  Field,
-  Relations,
-  dbNamesOf,
-  SqlDatabase,
   repo,
-  Remult,
-  BackendMethod,
-  EntityFilter,
-  Entity,
-  EntityBase,
 } from 'remult'
 import {
   DataControl,
-  DataControlInfo,
-  DataControlSettings,
   GridSettings,
   RowButton,
 } from '../common-ui-elements/interfaces'
-import copy from 'copy-to-clipboard'
 
 import moment from 'moment'
-import { Roles } from '../users/roles'
 import { UITools } from '../common/UITools'
 import {
   GeocodeResult,
   getCity,
 } from '../common/address-input/google-api-helpers'
-import {
-  ContactInfo,
-  PhoneField,
-  TaskContactInfo,
-  formatPhone,
-  phoneConfig,
-  sendWhatsappToPhone,
-} from './phone'
-import { User } from '../users/user'
-import { Locks } from './locks'
-import { CreatedAtField, DateField, formatDate } from './date-utils'
+import { Roles } from '../users/roles'
 import { getSite } from '../users/sites'
-
-@ValueListFieldType({
-  caption: 'סטטוס',
-  defaultValue: () => taskStatus.active,
-})
-export class taskStatus {
-  static draft = new taskStatus(-10, '📝 טיוטא')
-  static active = new taskStatus(0, ' פתוח לרישום')
-
-  static assigned = new taskStatus(1, '🚘 שוייך לנהג')
-  static completed = new taskStatus(11, '✅ הושלם')
-  static notRelevant = new taskStatus(21, '👎 כבר לא רלוונטי')
-  static otherProblem = new taskStatus(22, '🛑 בעיה אחרת')
-
-  constructor(public id: number, public caption: string) {}
-}
-
-@ValueListFieldType({
-  caption: 'קטגוריה',
-  getValues: () =>
-    getSite().categories || [
-      Category.delivery,
-
-      new Category('שינוע ציוד'),
-      Category.truck,
-      Category.bike,
-      new Category('שינוע רכב'),
-      Category.other,
-    ],
-})
-export class Category {
-  static delivery = new Category('שינוע חיילים', 'שינוע')
-  static bike = new Category(
-    'מתאים גם לאופנוע',
-    undefined,
-    () => getSite().bikeCategoryCaption
-  )
-  static truck = new Category(
-    'שינוע במשאית',
-    undefined,
-    () => getSite().truckCategoryCaption
-  )
-  static other = new Category('אחר')
-  _caption: string
-  constructor(
-    caption: string,
-    public id: string | undefined = undefined,
-    private getCaption?: () => string | undefined
-  ) {
-    this._caption = caption
-    if (!id) this.id = caption
-  }
-  get caption() {
-    return this.getCaption?.() || this._caption
-  }
-}
+import { User } from '../users/user'
+import { Category } from './Category'
+import { TaskImage } from './TaskImage'
+import { TaskStatusChanges } from './TaskStatusChanges'
+import { CreatedAtField, DateField, formatDate } from './date-utils'
+import { Locks } from './locks'
+import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
+import { taskStatus } from './taskStatus'
 
 @Entity<Task>('tasks', {
   allowApiInsert: true,
@@ -751,19 +684,6 @@ function allowPhoneOnlyForInsertOrTrainee() {
     remult.isAllowed([Roles.trainee, Roles.dispatcher])
 }
 
-export function mapFieldMetadataToFieldRef(
-  e: EntityRef<any>,
-  x: DataControlInfo<any>
-) {
-  let y = x as DataControlSettings<any, any>
-  if (y.getValue) {
-    return y
-  }
-  if (y.field) {
-    return { ...y, field: e.fields.find(y.field as FieldMetadata) }
-  }
-  return e.fields.find(y as FieldMetadata)
-}
 export const day = 86400000
 
 export function eventDisplayDate(
@@ -804,34 +724,6 @@ export function eventDisplayDate(
   return ''
 }
 
-@Entity<TaskStatusChanges>('taskStatusChanges', {
-  allowApiCrud: false,
-  allowApiRead: Roles.dispatcher,
-  defaultOrderBy: {
-    createdAt: 'desc',
-  },
-})
-export class TaskStatusChanges extends IdEntity {
-  @Fields.string()
-  taskId = ''
-  @Fields.string({ caption: 'פעולה' })
-  what = ''
-  @Field(() => taskStatus)
-  eventStatus!: taskStatus
-
-  @Fields.string({ caption: 'הערות' })
-  notes = ''
-  @Fields.string({ caption: 'נהג' })
-  driverId = ''
-  @Relations.toOne<TaskStatusChanges, User>(() => User, 'driverId')
-  driver?: User
-  @Fields.string({ caption: 'בוצע ע"י' })
-  createUserId = remult.user?.id!
-  @Relations.toOne<TaskStatusChanges, User>(() => User, 'createUserId')
-  createUser?: User
-  @CreatedAtField({ caption: 'מתי' })
-  createdAt = new Date()
-}
 export function calcValidUntil(
   date: Date,
   startTime: string,
@@ -847,14 +739,3 @@ export function calcValidUntil(
     minutes
   )
 }
-@Entity(undefined!, { allowApiCrud: false, dbName: 'images' })
-export class TaskImage extends IdEntity {
-  @Fields.string()
-  image = ''
-  @Fields.createdAt()
-  createdAt = new Date()
-  @Fields.string()
-  createUser = remult.user?.id
-}
-
-//[ ] test phone with different user roles (update status etc...)

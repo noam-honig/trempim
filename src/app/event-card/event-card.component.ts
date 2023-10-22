@@ -5,7 +5,9 @@ import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
 
 import { UIToolsService } from '../common/UIToolsService'
-import { Category, Task, eventDisplayDate, taskStatus } from '../events/tasks'
+import { Task, eventDisplayDate } from '../events/tasks'
+import { Category } from '../events/Category'
+import { taskStatus } from '../events/taskStatus'
 import { Roles } from '../users/roles'
 import {
   Location,

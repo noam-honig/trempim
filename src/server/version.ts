@@ -8,12 +8,9 @@ import {
   repo,
   SqlDatabase,
 } from 'remult'
-import {
-  calcValidUntil,
-  Task,
-  taskStatus,
-  TaskStatusChanges,
-} from '../app/events/tasks'
+import { calcValidUntil, Task } from '../app/events/tasks'
+import { TaskStatusChanges } from 'src/app/events/TaskStatusChanges'
+import { taskStatus } from 'src/app/events/taskStatus'
 import { phoneConfig } from '../app/events/phone'
 
 @Entity(undefined!, {

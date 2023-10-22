@@ -1,6 +1,6 @@
 import { remult } from 'remult'
 import { DEFAULT_NAME } from './SignInController'
-import { Category } from '../events/tasks'
+import { Category } from '../events/Category'
 
 let title = ''
 export function getTitle() {

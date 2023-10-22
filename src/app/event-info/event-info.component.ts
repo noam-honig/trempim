@@ -10,7 +10,8 @@ import { remult, repo } from 'remult'
 import { Roles } from '../users/roles'
 
 import { UIToolsService } from '../common/UIToolsService'
-import { Task, eventDisplayDate, taskStatus } from '../events/tasks'
+import { Task, eventDisplayDate } from '../events/tasks'
+import { taskStatus } from '../events/taskStatus'
 import {
   getCity,
   getGoogleMapLink,
