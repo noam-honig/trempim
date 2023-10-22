@@ -519,6 +519,7 @@ export class Task extends IdEntity {
             name: this.phone2Description,
           },
         ],
+
         target: [
           {
             phone: this.toPhone1,
@@ -851,3 +852,5 @@ export class TaskImage extends IdEntity {
 }
 
 //[ ] test phone with different user roles (update status etc...)
+//[ ] לאפשר להפוך טיוטא ישר ללא רלוונטי
+//[ ] בטיוטא מופיע נלחץ בטעות 
