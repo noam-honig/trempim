@@ -10,25 +10,32 @@
   //   min-height:100%;
   border: 1px solid rgba(0, 0, 0, 0.5);
 }
+
 .mat-toolbar {
   display: flex;
 }
+
 .toolbar-title {
   flex-grow: 1;
 }
+
 .user-info-button {
   border: solid;
 }
+
 .app-sidenav-content {
   display: flex;
   height: 100%;
   flex-direction: column;
 }
+
 .app-sidenav {
   width: 240px;
 }
+
 .wrapper {
   padding: 0 10px;
+
   @media screen and (max-width: 800px) {
     padding: 0 2px;
   }
@@ -40,11 +47,13 @@ $iconWidth: 56px;
   padding: 0;
   margin: 8px;
   min-width: $iconWidth;
+
   @media (max-width: 720px) {
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
   mat-icon {
     font-size: 30px;
     height: $iconWidth;
@@ -52,4 +61,28 @@ $iconWidth: 56px;
     line-height: $iconWidth;
     color: white;
   }
+}
+
+.alert-badge>span {
+  top: 12px !important;
+  right: 10px !important;
+  background-color: green;
+}
+
+.alert-line-badge>span {
+  left: auto !important;
+  top: auto !important;
+  margin-right: 4px;
+  background-color: green;
+}
+
+.draft-badge>span {
+  bottom: 6px !important;
+  right: 10px !important;
+}
+
+.draft-line-badge>span {
+  left: auto !important;
+  top: auto !important;
+  margin-right: 4px;
 }

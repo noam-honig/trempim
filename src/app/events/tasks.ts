@@ -37,6 +37,7 @@ import { Locks } from './locks'
 import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
 import { taskStatus } from './taskStatus'
 import { Urgency } from './urgency'
+import { updateChannel } from './UpdatesChannel'
 
 @Entity<Task>('tasks', {
   allowApiInsert: true,
@@ -357,6 +358,7 @@ export class Task extends IdEntity {
     return this.getContactInfo()
   }
   private async insertStatusChange(what: string, notes?: string) {
+    updateChannel.publish(what + ' - ' + this.getShortDescription())
     await repo(TaskStatusChanges).insert({
       taskId: this.id,
       what,

@@ -4,16 +4,15 @@ import { remult, repo, Unsubscribe } from 'remult'
 import { Roles } from '../users/roles'
 import { Task } from './tasks'
 import { taskStatus } from './taskStatus'
-import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs'
 import { GridSettings, RowButton } from '../common-ui-elements/interfaces'
-import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExcel'
 import { BusyService, openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { getImageUrl } from './getImageUrl'
+import { tripsGrid } from './tripsGrid'
 
 @Component({
   selector: 'app-org-events',
@@ -59,7 +58,9 @@ export class OrgEventsComponent implements OnInit {
   private loadEvents() {
     if (this.activeTab == 2) {
       if (!this.allRides) {
-        this.allRides = new GridSettings<Task>(repo(Task), {
+        this.allRides = tripsGrid({
+          ui: this.tools,
+          busy: this.busy,
           where: () => {
             if (this.onlyShowRelevant)
               return {
@@ -73,10 +74,6 @@ export class OrgEventsComponent implements OnInit {
             taskStatus: 'desc',
             statusChangeDate: 'desc',
           },
-          include: {
-            driver: true,
-            createUser: true,
-          },
           gridButtons: [
             {
               textInMenu: () =>
@@ -86,53 +83,6 @@ export class OrgEventsComponent implements OnInit {
                 this.allRides?.reloadData()
               },
             },
-            {
-              name: 'יצוא לאקסל',
-              click: () => saveToExcel(this.allRides!, 'rides', this.busy),
-            },
-          ],
-          columnSettings: (t) => [
-            t.externalId,
-            t.title,
-            t.taskStatus,
-            t.statusChangeDate,
-            {
-              field: t.driverId,
-              getValue: (t) => t.driver?.name,
-              customFilter: (select) => {
-                this.tools.selectUser({
-                  onSelect: (x) => select(x.id),
-                  onCancel: () => select(undefined),
-                })
-              },
-            },
-            t.category!,
-            t.eventDate,
-            t.startTime,
-            t.relevantHours,
-            t.validUntil,
-            t.address,
-            t.phone1,
-            t.phone1Description,
-            t.toAddress,
-            t.toPhone1,
-            t.tpPhone1Description,
-
-            t.createUserId,
-          ],
-          rowButtons: [
-            {
-              name: 'הצג נסיעה',
-              click: (e) => {
-                openDialog(EventInfoComponent, (x) => {
-                  x.e = e
-                  //x.refresh = () => this.refresh()
-                })
-              },
-            },
-            ...Task.rowButtons(this.tools, {
-              taskAdded: (t) => this.allRides!.items.push(t),
-            }),
           ],
         })
       } else this.allRides.reloadData()

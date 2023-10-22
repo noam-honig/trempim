@@ -31,9 +31,27 @@
   *ngIf="remult.authenticated()"
 >
   <mat-toolbar color="primary" style="flex-shrink: 0">
-    <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
-      <mat-icon>menu</mat-icon>
-    </button>
+    <div>
+      <div
+        [matBadge]="updates.waitingUpdates"
+        [matBadgeHidden]="!updates.waitingUpdates"
+        matBadgeOverlap="false"
+        matBadgePosition="below before"
+        matBadgeColor="accent"
+        class="alert-badge"
+      ></div>
+      <div
+        [matBadge]="drafts"
+        [matBadgeHidden]="!drafts"
+        matBadgeColor="warn"
+        matBadgePosition="below before"
+        class="draft-badge"
+      >
+        <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+    </div>
     <span class="toolbar-title">{{ currentTitle() }}</span>
     <ng-container *ngIf="remult.authenticated()">
       <button mat-flat-button color="primary" [matMenuTriggerFor]="menu">
@@ -70,6 +88,34 @@
             }}</a>
           </mat-list-item>
         </ng-container>
+        <mat-list-item routerLinkActive="active-route">
+          <a
+            matLine
+            [routerLink]="['/עדכונים']"
+            (click)="routeClicked()"
+            class="alert-line-badge"
+            [matBadge]="updates.waitingUpdates"
+            [matBadgeHidden]="!updates.waitingUpdates"
+            matBadgeColor="warn"
+            matBadgePosition="above after"
+            >עדכונים</a
+          >
+        </mat-list-item>
+        <mat-list-item routerLinkActive="active-route">
+          <a
+            matLine
+            [matBadge]="drafts"
+            [matBadgeHidden]="!drafts"
+            [routerLink]="['/טיוטות']"
+            (click)="routeClicked()"
+            class="draft-line-badge"
+            matBadge="99"
+            matBadgeColor="warn"
+            matBadgePosition="above after"
+            >טיוטות</a
+          >
+        </mat-list-item>
+
         <mat-list-item *ngIf="showCopyLink()" routerLinkActive="active-route">
           <a matLine (click)="copyBikeIlLink()">העתק קישור לטופס</a>
         </mat-list-item>

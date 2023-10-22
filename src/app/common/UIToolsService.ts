@@ -43,7 +43,7 @@ export class UIToolsService implements UITools {
     return openDialog(UserDetailsComponent, (x) => (x.args = args))
   }
   info(info: string): any {
-    this.snackBar.open(info, 'close', { duration: 4000 })
+    this.snackBar.open(info, 'סגור', { duration: 4000 })
   }
   async error(err: any) {
     return await openDialog(

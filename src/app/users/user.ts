@@ -82,6 +82,8 @@ export class User extends IdEntity {
   @DataControl({ width: '130px' })
   @Fields.boolean({ caption: 'לא פעיל', allowApiUpdate: Roles.admin })
   deleted = false
+  @Fields.date()
+  lastUpdateView = new Date()
 
   editDialog(ui: UITools, onOk?: () => void) {
     const v = this
