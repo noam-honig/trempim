@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog'
 import { Remult, repo } from 'remult'
 import { BusyService } from '../common-ui-elements'
 import { User } from './user'
+import { getCity } from '../common/address-input/google-api-helpers'
 
 @Component({
   selector: 'app-server-side-search-selection-dialog',
@@ -17,7 +18,7 @@ import { User } from './user'
             matInput
             [(ngModel)]="searchString"
             [ngModelOptions]="{ standalone: true }"
-            placeholder="Search"
+            placeholder="חיפוש נהג"
             (input)="doSearch()"
           />
         </mat-form-field>
@@ -29,7 +30,14 @@ import { User } from './user'
             style="height:36px"
             (click)="select(o)"
           >
-            {{ o.name }}
+            <span>{{ o.name }}</span>
+            <span
+              class="mat-subtitle-2"
+              *ngIf="o.addressApiResult"
+              style="color:gray"
+            >
+             &nbsp; - {{ getCity(o) }}
+            </span>
           </mat-list-item>
           <mat-divider></mat-divider>
         </ng-container>
@@ -52,6 +60,9 @@ export class SelectUserComponent implements OnInit {
   users: User[] = []
   ngOnInit() {
     this.loadProducts()
+  }
+  getCity(u: User) {
+    return getCity(u.addressApiResult, u.address)
   }
   async loadProducts() {
     this.users = await repo(User).find({

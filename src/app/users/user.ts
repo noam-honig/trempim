@@ -16,6 +16,7 @@ import { DataControl } from '../common-ui-elements/interfaces'
 import { CreatedAtField } from '../events/date-utils'
 import { sendSms } from '../../server/send-sms'
 import { getTitle } from './sites'
+import { GeocodeResult } from '../common/address-input/google-api-helpers'
 
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,
@@ -85,6 +86,19 @@ export class User extends IdEntity {
   @Fields.date()
   lastUpdateView = new Date()
 
+  @Fields.json<GeocodeResult>({ includeInApi: Roles.dispatcher })
+  addressApiResult: GeocodeResult | null = null
+  @Fields.string<User>({
+    includeInApi: Roles.dispatcher,
+    caption: 'מיקום מוצא',
+    customInput: (c) =>
+      c.inputAddress(
+        (result, event: User) =>
+          (event.addressApiResult = result.autoCompleteResult)
+      ),
+  })
+  address = ''
+
   editDialog(ui: UITools, onOk?: () => void) {
     const v = this
     ui.areaDialog({
@@ -96,6 +110,7 @@ export class User extends IdEntity {
         v.$.trainee,
         v.$.admin,
         v.$.adminNotes,
+        v.$.address,
         v.$.deleted,
       ],
       ok: async () => {
