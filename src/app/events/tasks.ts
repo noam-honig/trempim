@@ -239,6 +239,21 @@ export class Task extends IdEntity {
   toAddress = ''
 
   @PhoneField<Task>({
+    caption: 'טלפון ממלא הבקשה',
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    validate: (entity, ref) => {
+      if ((entity.isNew() || ref.valueChanged()) && getSite().useFillerInfo)
+        Validators.required(entity, ref)
+    },
+  })
+  requesterPhone1 = ''
+  @Fields.string({
+    caption: 'שם ממלא הבקשה',
+    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+  })
+  requesterPhone1Description = ''
+
+  @PhoneField<Task>({
     caption: 'טלפון מוצא',
     includeInApi: allowPhoneOnlyForInsertOrTrainee(),
     validate: (entity, ref) => {
@@ -526,6 +541,9 @@ export class Task extends IdEntity {
         e.toAddress,
         e.description,
         [e.eventDate, e.startTime, e.relevantHours],
+        ...(getSite().useFillerInfo
+          ? [[e.requesterPhone1, e.requesterPhone1Description]]
+          : []),
         [e.phone1, e.phone1Description],
         [e.phone2, e.phone2Description],
         [e.toPhone1, e.tpPhone1Description],

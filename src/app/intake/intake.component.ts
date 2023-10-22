@@ -7,7 +7,7 @@ import {
   GridSettings,
 } from '../common-ui-elements/interfaces'
 import { InputImageComponent } from '../common/input-image/input-image.component'
-import { getTitle } from '../users/sites'
+import { getSite, getTitle } from '../users/sites'
 
 @Component({
   selector: 'app-intake',
@@ -28,6 +28,9 @@ export class IntakeComponent implements OnInit {
         e.toAddress,
         e.description,
         [e.eventDate, e.startTime, e.relevantHours],
+        ...(getSite().useFillerInfo
+          ? [[e.requesterPhone1, e.requesterPhone1Description]]
+          : []),
         [e.phone1, e.phone1Description],
         [e.phone2, e.phone2Description],
         [e.toPhone1, e.tpPhone1Description],
@@ -37,7 +40,7 @@ export class IntakeComponent implements OnInit {
     },
   })
   ngOnInit(): void {
-    this.title.setTitle(getTitle()+" בקשה")
+    this.title.setTitle(getTitle() + ' בקשה')
   }
   result = ''
   async send() {

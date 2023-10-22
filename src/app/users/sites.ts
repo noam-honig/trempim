@@ -14,6 +14,7 @@ export function getTitle() {
 }
 export class Site {
   countUpdates = true
+  useFillerInfo = false
   showInfoSnackbarFor(message: UpdateMessage) {
     return true
   }
@@ -35,6 +36,7 @@ export class BikeIlSite extends Site {
   override categories = [Category.bike, Category.truck, Category.other]
   override showCopyLink? = true
   override imageIsMandatory? = true
+  override useFillerInfo = true
 }
 export class Yedidim extends Site {
   override countUpdates = false
@@ -62,10 +64,10 @@ export function initSite(site?: string) {
   remult.context.site = new Site()
   switch (site) {
     case 'bikeil':
+    case '!!!ORG!!!':
       remult.context.site = new BikeIlSite()
       break
     case 'yedidim':
-    case '!!!ORG!!!':
     case 'ezion':
       remult.context.site = new Yedidim()
       break
