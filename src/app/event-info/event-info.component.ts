@@ -26,7 +26,9 @@ import {
 import { UpdateStatusComponent } from '../update-status/update-status.component'
 import { User } from '../users/user'
 import { getImageUrl } from '../events/getImageUrl'
+import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 
+@DialogConfig({ maxWidth: '95vw' })
 @Component({
   selector: 'app-event-info',
   templateUrl: './event-info.component.html',
