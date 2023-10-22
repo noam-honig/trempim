@@ -1,28 +1,63 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { Router, Route, ActivatedRoute } from '@angular/router'
 import { MatSidenav } from '@angular/material/sidenav'
 
 import { UIToolsService } from './common/UIToolsService'
-import { openDialog, RouteHelperService } from 'common-ui-elements'
+import { BusyService, openDialog, RouteHelperService } from 'common-ui-elements'
 import { User } from './users/user'
 import { DataAreaDialogComponent } from './common/data-area-dialog/data-area-dialog.component'
 import { terms } from './terms'
 import { SignInController } from './users/SignInController'
-import { remult } from 'remult'
+import { remult, repo } from 'remult'
 import { DataAreaSettings } from './common-ui-elements/interfaces'
+import copy from 'copy-to-clipboard'
+import { getSite } from './users/sites'
+import { Roles } from './users/roles'
+import { updateChannel } from './events/UpdatesChannel'
+import { UpdatesService } from './updates/updates.component'
+import { Task } from './events/tasks'
+import { taskStatus } from './events/taskStatus'
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   constructor(
     public router: Router,
     public activeRoute: ActivatedRoute,
     private routeHelper: RouteHelperService,
-    public uiService: UIToolsService
+    public uiService: UIToolsService,
+    public updates: UpdatesService,
+    private busy: BusyService
   ) {}
+  unSub = () => {}
+  ngOnDestroy(): void {
+    this.unSub()
+  }
+  drafts = 0
+  updateSubscription() {
+    this.unSub()
+    this.unSub = () => {}
+
+    if (remult.isAllowed(Roles.dispatcher)) {
+      this.updateStats()
+      updateChannel
+        .subscribe((message) => {
+          if (getSite().showInfoSnackbarFor(message))
+            this.uiService.info(message.message)
+          this.updateStats()
+        })
+        .then((u) => (this.unSub = u))
+    }
+  }
+  async updateStats() {
+    this.busy.donotWait(async () => {
+      await this.updates.updateWaitingUpdates()
+      this.drafts = await repo(Task).count({ taskStatus: taskStatus.draft })
+    })
+  }
   terms = terms
   remult = remult
 
@@ -39,17 +74,19 @@ export class AppComponent implements OnInit {
     if (!this.signIn.askForOtp) await this.signIn.signIn()
     else {
       remult.user = await this.signIn.signInWithOtp()
+      this.updateSubscription()
       if (!remult.user) {
         this.signIn.$.name.error = 'אנא הזן שם'
       }
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.updateSubscription()
+  }
 
   async signOut() {
     await SignInController.signOut()
-
     remult.user = undefined
     location.reload()
     this.router.navigate(['/'])
@@ -108,6 +145,13 @@ export class AppComponent implements OnInit {
   @ViewChild('sidenav') sidenav: MatSidenav
   routeClicked() {
     if (this.uiService.isScreenSmall()) this.sidenav.close()
+  }
+  copyBikeIlLink() {
+    copy('https://bit.ly/3rZFZR8')
+    this.uiService.info('הקישור הועתק')
+  }
+  showCopyLink() {
+    return getSite().showCopyLink
   }
 }
 

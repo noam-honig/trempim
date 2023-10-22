@@ -1,4 +1,13 @@
 <div>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="addTask()"
+    *ngIf="isDispatcher()"
+  >
+    הוספת נסיעה
+  </button>
+  <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
   <data-area [settings]="area"></data-area>
   <div
     style="
@@ -25,9 +34,9 @@
   <mat-divider></mat-divider>
 </div>
 <div>
-  <div *ngFor="let d of dates">
+  <div *ngFor="let d of urgencies">
     <ng-container *ngIf="hasEvents(d)">
-      <h3>{{ d.date }}</h3>
+      <strong *ngIf="urgencies.length > 1">{{ d.urgency }}:</strong>
       <div class="events-container" [transition-group]="'flip-list'">
         <ng-container *ngFor="let e of d.events; trackBy: trackBy">
           <mat-card

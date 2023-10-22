@@ -9,15 +9,6 @@
       <mat-tab label="חיפוש נסיעה"></mat-tab>
       <mat-tab label="כל הנסיעות" *ngIf="isDispatcher()"> </mat-tab>
     </mat-tab-group>
-
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="addTask()"
-      *ngIf="isDispatcher()"
-    >
-      הוספת נסיעה
-    </button>
   </div>
 
   <div class="grow-item">

@@ -1,11 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { Field, Fields, getFields, remult } from 'remult'
+import { Field, Fields, getFields, remult, repo } from 'remult'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
 
 import { UIToolsService } from '../common/UIToolsService'
-import { Category, Task, eventDisplayDate, taskStatus } from '../events/tasks'
+import { Task, eventDisplayDate } from '../events/tasks'
+import { Category } from '../events/Category'
+import { taskStatus } from '../events/taskStatus'
 import { Roles } from '../users/roles'
 import {
   Location,
@@ -17,6 +19,9 @@ import {
   getRegion,
 } from '../common/address-input/google-api-helpers'
 import { LocationErrorComponent } from '../location-error/location-error.component'
+import copy from 'copy-to-clipboard'
+import { displayTime } from '../events/date-utils'
+
 const AllCategories = {
   id: 'asdfaetfsafads',
   caption: 'הכל',
@@ -28,15 +33,54 @@ const AllCategories = {
   styleUrls: ['./event-card.component.scss'],
 })
 export class EventCardComponent implements OnInit {
-  constructor(private dialog: UIToolsService) {}
+  constructor(private tools: UIToolsService) {}
 
-  menuOptions: RowButton<Task>[] = Task.rowButtons(this.dialog, {
+  menuOptions: RowButton<Task>[] = Task.rowButtons(this.tools, {
     taskAdded: (t) => {
       this.tasks.push(t)
       this.refresh()
     },
     taskSaved: () => this.refresh(),
   })
+  addTask() {
+    const t = repo(Task).create()
+    t.openEditDialog(this.tools, () => (this.tasks = [t, ...this.tasks]))
+  }
+  buttons: RowButton<any>[] = [
+    {
+      visible: () => remult.isAllowed(Roles.dispatcher),
+      name: 'העתק רשימה עבור ווטסאפ',
+      click: () => {
+        let message = 'קריאות פתוחות '
+        if (this.region) {
+          message += 'מאזור ' + this.region + ' '
+        }
+        if (this.toRegion) {
+          message += 'לאזור ' + this.toRegion + ' '
+        }
+
+        let lines = ''
+        let count = 0
+        let t = new Date()
+
+        message += ` - שעה ${t.getHours()}:${(
+          t.getMinutes() / 10
+        ).toFixed()}0 ( ${this.tasks.length} קריאות) : \n`
+        for (const u of this.urgencies) {
+          for (const e of u.events) {
+            if (this.filter(e)) {
+              lines +=
+                '* ' + e.getShortDescription() + '\n' + e.getLink() + '\n\n'
+              count++
+            }
+          }
+        }
+        message +=
+          ` - שעה ${displayTime(new Date())} ( ${count} קריאות) : \n` + lines
+        copy(message)
+      },
+    },
+  ]
 
   getStatus(e: Task) {
     if (e.taskStatus != taskStatus.active) return e.taskStatus.caption
@@ -45,7 +89,7 @@ export class EventCardComponent implements OnInit {
   isDispatcher() {
     return remult.isAllowed(Roles.dispatcher)
   }
-  dates: dateEvents[] = []
+  urgencies: dateEvents[] = []
   regions: { id: string; count: number; caption: string }[] = []
   toRegions: { id: string; count: number; caption: string }[] = []
   types: { id: string; count: number; caption: string }[] = []
@@ -74,7 +118,7 @@ export class EventCardComponent implements OnInit {
   }
   showLocation = false
   refresh() {
-    this.dates = []
+    this.urgencies = []
     this.tasks.sort((a, b) => compareEventDate(a, b))
 
     let firstLongLat: string | undefined
@@ -86,13 +130,20 @@ export class EventCardComponent implements OnInit {
       if (!firstLongLat) firstLongLat = getLongLat(e.addressApiResult)
       if (getLongLat(e.addressApiResult) != firstLongLat)
         this.showLocation = true
-      let d = this.dates.find((d) => d.date == eventDisplayDate(e))
-      if (1 == 1) {
-        if (this.dates.length == 0)
-          this.dates.push((d = { date: '', events: [] }))
-        d = this.dates[0]
-      }
-      if (!d) this.dates.push((d = { date: eventDisplayDate(e), events: [] }))
+      let d = this.urgencies.find((d) => d.sort == e.urgency.id)
+      // if (1 == 1) {
+      //   if (this.urgencies.length == 0)
+      //     this.urgencies.push((d = { urgency: '', events: [] }))
+      //   d = this.urgencies[0]
+      // }
+      if (!d)
+        this.urgencies.push(
+          (d = {
+            urgency: 'דחיפות ' + e.urgency.caption,
+            events: [],
+            sort: e.urgency.id,
+          })
+        )
       d.events.push(e)
       let region = this.regions.find(
         (c) => c.id == getRegion(e.addressApiResult)
@@ -144,7 +195,8 @@ export class EventCardComponent implements OnInit {
 
     this.types.splice(0, 0, AllCategories)
 
-    this.dates = this.dates.filter((d) => d.events.length > 0)
+    this.urgencies = this.urgencies.filter((d) => d.events.length > 0)
+    this.urgencies.sort((a, b) => b.sort - a.sort)
     this.sortEvents()
     this.area = new DataAreaSettings({
       fields: () => [
@@ -205,7 +257,7 @@ export class EventCardComponent implements OnInit {
   }
 
   edit(e: Task) {
-    e.openEditDialog(this.dialog, () => this.refresh())
+    e.openEditDialog(this.tools, () => this.refresh())
   }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active
@@ -255,9 +307,11 @@ export class EventCardComponent implements OnInit {
   }
   sortEvents() {
     if (!this.volunteerLocation)
-      this.dates.forEach((d) => d.events.sort((a, b) => compareEventDate(a, b)))
+      this.urgencies.forEach((d) =>
+        d.events.sort((a, b) => compareEventDate(a, b))
+      )
     else
-      this.dates.forEach((d) =>
+      this.urgencies.forEach((d) =>
         d.events.sort(
           (a, b) =>
             GetDistanceBetween(
@@ -281,6 +335,7 @@ function compareEventDate(a: Task, b: Task) {
 }
 
 interface dateEvents {
-  date: string
+  urgency: string
+  sort: number
   events: Task[]
 }

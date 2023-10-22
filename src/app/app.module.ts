@@ -47,6 +47,8 @@ import { PhoneDetailsComponent } from './phone-details/phone-details.component'
 import { IntakeComponent } from './intake/intake.component'
 import { InputImageComponent } from './common/input-image/input-image.component'
 import { initSite } from './users/sites'
+import { MatBadgeModule } from '@angular/material/badge'
+import { UpdatesComponent, UpdatesService } from './updates/updates.component'
 
 @NgModule({
   declarations: [
@@ -73,6 +75,7 @@ import { initSite } from './users/sites'
     PhoneDetailsComponent,
     IntakeComponent,
     InputImageComponent,
+    UpdatesComponent,
   ],
   imports: [
     BrowserModule,
@@ -92,11 +95,14 @@ import { initSite } from './users/sites'
     MatMenuModule,
     CommonUIElementsModule,
     MatRadioModule,
+
     MatTabsModule,
+    MatBadgeModule,
   ],
   providers: [
     UIToolsService,
     AdminGuard,
+    UpdatesService,
     { provide: APP_INITIALIZER, useFactory: initApp, multi: true },
   ],
   bootstrap: [AppComponent],

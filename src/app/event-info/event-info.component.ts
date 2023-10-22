@@ -10,7 +10,8 @@ import { remult, repo } from 'remult'
 import { Roles } from '../users/roles'
 
 import { UIToolsService } from '../common/UIToolsService'
-import { Task, eventDisplayDate, taskStatus } from '../events/tasks'
+import { Task, eventDisplayDate } from '../events/tasks'
+import { taskStatus } from '../events/taskStatus'
 import {
   getCity,
   getGoogleMapLink,
@@ -25,7 +26,9 @@ import {
 import { UpdateStatusComponent } from '../update-status/update-status.component'
 import { User } from '../users/user'
 import { getImageUrl } from '../events/getImageUrl'
+import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 
+@DialogConfig({ maxWidth: '95vw' })
 @Component({
   selector: 'app-event-info',
   templateUrl: './event-info.component.html',
@@ -148,3 +151,8 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   closeDialog = () => {}
 }
 //[ ] - התקן המכשיר
+
+//[ ] - add alerts and last seen stuff
+
+//[ ] - add urgency, critical, high, medium, normal
+//[ ] - add driver's address - to use for distance measurement

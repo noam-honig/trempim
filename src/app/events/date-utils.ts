@@ -3,10 +3,7 @@ import { FieldOptions, Fields } from 'remult'
 export function formatDate(d: Date) {
   const now = new Date()
 
-  let result = d.toLocaleTimeString('he-il', {
-    hour: 'numeric',
-    minute: '2-digit',
-  })
+  let result = displayTime(d)
   if (now.toDateString() == d.toDateString()) return result
   return (
     result +
@@ -30,4 +27,11 @@ export function CreatedAtField<entityType>(
   options?: FieldOptions<entityType, Date>
 ) {
   return Fields.createdAt({ displayValue: (_, d) => formatDate(d), ...options })
+}
+
+export function displayTime(d: Date) {
+  return d.toLocaleTimeString('he-il', {
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }

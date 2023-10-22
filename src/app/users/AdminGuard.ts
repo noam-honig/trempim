@@ -15,3 +15,10 @@ export class DraftsGuard extends AuthenticatedGuard {
     return [Roles.dispatcher, Roles.trainee]
   }
 }
+
+@Injectable()
+export class DispatchGuard extends AuthenticatedGuard {
+  override isAllowed() {
+    return [Roles.dispatcher]
+  }
+}

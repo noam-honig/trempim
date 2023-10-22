@@ -1,4 +1,5 @@
 import { MatDialogConfig } from '@angular/material/dialog'
+import { dialogConfigMember } from './dialogConfigMember'
 
 export function DialogConfig(config: MatDialogConfig) {
   return function (target: any) {
@@ -6,5 +7,3 @@ export function DialogConfig(config: MatDialogConfig) {
     return target
   }
 }
-
-const dialogConfigMember = Symbol('dialogConfigMember')

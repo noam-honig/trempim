@@ -1,108 +1,43 @@
+import copy from 'copy-to-clipboard'
 import {
-  IdEntity,
   Allow,
-  EntityRef,
-  FieldMetadata,
+  BackendMethod,
+  Entity,
+  EntityFilter,
+  Field,
+  Fields,
+  IdEntity,
+  Relations,
+  SqlDatabase,
   Validators,
   ValueConverters,
   remult,
-  ValueListFieldType,
-  Fields,
-  Field,
-  Relations,
-  dbNamesOf,
-  SqlDatabase,
   repo,
-  Remult,
-  BackendMethod,
-  EntityFilter,
-  Entity,
-  EntityBase,
 } from 'remult'
 import {
   DataControl,
-  DataControlInfo,
-  DataControlSettings,
   GridSettings,
   RowButton,
 } from '../common-ui-elements/interfaces'
-import copy from 'copy-to-clipboard'
 
 import moment from 'moment'
-import { Roles } from '../users/roles'
 import { UITools } from '../common/UITools'
 import {
   GeocodeResult,
   getCity,
 } from '../common/address-input/google-api-helpers'
-import {
-  ContactInfo,
-  PhoneField,
-  TaskContactInfo,
-  formatPhone,
-  phoneConfig,
-  sendWhatsappToPhone,
-} from './phone'
-import { User } from '../users/user'
-import { Locks } from './locks'
-import { CreatedAtField, DateField, formatDate } from './date-utils'
+import { Roles } from '../users/roles'
 import { getSite } from '../users/sites'
-
-@ValueListFieldType({
-  caption: 'סטטוס',
-  defaultValue: () => taskStatus.active,
-})
-export class taskStatus {
-  static draft = new taskStatus(-10, '📝 טיוטא')
-  static active = new taskStatus(0, ' פתוח לרישום')
-
-  static assigned = new taskStatus(1, '🚘 שוייך לנהג')
-  static completed = new taskStatus(11, '✅ הושלם')
-  static notRelevant = new taskStatus(21, '👎 כבר לא רלוונטי')
-  static otherProblem = new taskStatus(22, '🛑 בעיה אחרת')
-
-  constructor(public id: number, public caption: string) {}
-}
-
-@ValueListFieldType({
-  caption: 'קטגוריה',
-  getValues: () =>
-    getSite().categories || [
-      Category.delivery,
-
-      new Category('שינוע ציוד'),
-      Category.truck,
-      Category.bike,
-      new Category('שינוע רכב'),
-      Category.other,
-    ],
-})
-export class Category {
-  static delivery = new Category('שינוע חיילים', 'שינוע')
-  static bike = new Category(
-    'מתאים גם לאופנוע',
-    undefined,
-    () => getSite().bikeCategoryCaption
-  )
-  static truck = new Category(
-    'שינוע במשאית',
-    undefined,
-    () => getSite().truckCategoryCaption
-  )
-  static other = new Category('אחר')
-  _caption: string
-  constructor(
-    caption: string,
-    public id: string | undefined = undefined,
-    private getCaption?: () => string | undefined
-  ) {
-    this._caption = caption
-    if (!id) this.id = caption
-  }
-  get caption() {
-    return this.getCaption?.() || this._caption
-  }
-}
+import { User } from '../users/user'
+import { Category } from './Category'
+import { TaskImage } from './TaskImage'
+import { TaskStatusChanges } from './TaskStatusChanges'
+import { CreatedAtField, DateField, formatDate } from './date-utils'
+import { Locks } from './locks'
+import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
+import { taskStatus } from './taskStatus'
+import { Urgency } from './urgency'
+import { updateChannel } from './UpdatesChannel'
 
 @Entity<Task>('tasks', {
   allowApiInsert: true,
@@ -189,11 +124,13 @@ export class Category {
 export class Task extends IdEntity {
   getShortDescription(): string {
     return (
-      (this.category?.caption || '') +
+      (this.category?.caption + ': ' || '') +
+      this.title +
       ' מ' +
       getCity(this.addressApiResult!, this.address) +
       ' ל' +
-      getCity(this.toAddressApiResult, this.toAddress)
+      getCity(this.toAddressApiResult, this.toAddress) +
+      ` (${this.externalId})`
     )
   }
   displayDate() {
@@ -252,6 +189,9 @@ export class Task extends IdEntity {
     customInput: (x) => x.textarea(),
   })
   description = ''
+  @DataControl({ visible: () => getSite().canSeeUrgency })
+  @Field(() => Urgency)
+  urgency = Urgency.normal
   @Field(() => Category)
   category? = getSite().defaultCategory
   @Fields.dateOnly<Task>({
@@ -368,7 +308,14 @@ export class Task extends IdEntity {
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
 
-  @Fields.string({ customInput: (c) => c.image() })
+  @Fields.string({
+    caption: 'תמונה',
+    customInput: (c) => c.image(),
+    validate: (_, f) => {
+      if (getSite().imageIsMandatory)
+        Validators.required(_, f, 'אנא העלה תמונה')
+    },
+  })
   imageId = ''
 
   @BackendMethod({ allowed: Allow.authenticated })
@@ -411,6 +358,12 @@ export class Task extends IdEntity {
     return this.getContactInfo()
   }
   private async insertStatusChange(what: string, notes?: string) {
+    updateChannel.publish({
+      status: this.taskStatus.id,
+      message: what + ' - ' + this.getShortDescription(),
+      userId: remult.user?.id!,
+      action: what,
+    })
     await repo(TaskStatusChanges).insert({
       taskId: this.id,
       what,
@@ -430,7 +383,7 @@ export class Task extends IdEntity {
     this.driverId = ''
     this.taskStatus = taskStatus.active
     this.statusNotes = notes
-    await this.insertStatusChange('נהג ביטל שיוך', notes)
+    await this.insertStatusChange(DriverCanceledAssign, notes)
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
@@ -456,8 +409,10 @@ export class Task extends IdEntity {
   @BackendMethod({ allowed: Roles.dispatcher })
   async returnToActive() {
     this.driverId = ''
+    let action = 'מוקדן החזיר לפעיל'
+    if (taskStatus.draft) action = 'טיוטה אושרה'
     this.taskStatus = taskStatus.active
-    await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
+    await this.insertStatusChange(action, 'על ידי מוקדן')
     await this.save()
   }
   @BackendMethod({ allowed: Roles.dispatcher })
@@ -559,17 +514,17 @@ export class Task extends IdEntity {
     ui.areaDialog({
       title: 'פרטי נסיעה',
       fields: [
-        e.category!,
+        [e.category!, e.urgency],
         e.title,
         e.address,
         e.toAddress,
         e.description,
-        e.eventDate,
-        [e.startTime, e.relevantHours],
+        [e.eventDate, e.startTime, e.relevantHours],
         [e.phone1, e.phone1Description],
         [e.phone2, e.phone2Description],
         [e.toPhone1, e.tpPhone1Description],
         [e.toPhone2, e.tpPhone2Description],
+
         e.imageId,
         e.externalId,
       ],
@@ -745,19 +700,6 @@ function allowPhoneOnlyForInsertOrTrainee() {
     remult.isAllowed([Roles.trainee, Roles.dispatcher])
 }
 
-export function mapFieldMetadataToFieldRef(
-  e: EntityRef<any>,
-  x: DataControlInfo<any>
-) {
-  let y = x as DataControlSettings<any, any>
-  if (y.getValue) {
-    return y
-  }
-  if (y.field) {
-    return { ...y, field: e.fields.find(y.field as FieldMetadata) }
-  }
-  return e.fields.find(y as FieldMetadata)
-}
 export const day = 86400000
 
 export function eventDisplayDate(
@@ -798,34 +740,6 @@ export function eventDisplayDate(
   return ''
 }
 
-@Entity<TaskStatusChanges>('taskStatusChanges', {
-  allowApiCrud: false,
-  allowApiRead: Roles.dispatcher,
-  defaultOrderBy: {
-    createdAt: 'desc',
-  },
-})
-export class TaskStatusChanges extends IdEntity {
-  @Fields.string()
-  taskId = ''
-  @Fields.string({ caption: 'פעולה' })
-  what = ''
-  @Field(() => taskStatus)
-  eventStatus!: taskStatus
-
-  @Fields.string({ caption: 'הערות' })
-  notes = ''
-  @Fields.string({ caption: 'נהג' })
-  driverId = ''
-  @Relations.toOne<TaskStatusChanges, User>(() => User, 'driverId')
-  driver?: User
-  @Fields.string({ caption: 'בוצע ע"י' })
-  createUserId = remult.user?.id!
-  @Relations.toOne<TaskStatusChanges, User>(() => User, 'createUserId')
-  createUser?: User
-  @CreatedAtField({ caption: 'מתי' })
-  createdAt = new Date()
-}
 export function calcValidUntil(
   date: Date,
   startTime: string,
@@ -841,16 +755,8 @@ export function calcValidUntil(
     minutes
   )
 }
-@Entity(undefined!, { allowApiCrud: false, dbName: 'images' })
-export class TaskImage extends IdEntity {
-  @Fields.string()
-  image = ''
-  @Fields.createdAt()
-  createdAt = new Date()
-  @Fields.string()
-  createUser = remult.user?.id
-}
 
 //[ ] test phone with different user roles (update status etc...)
 //[ ] לאפשר להפוך טיוטא ישר ללא רלוונטי
-//[ ] בטיוטא מופיע נלחץ בטעות 
+//[ ] בטיוטא מופיע נלחץ בטעות
+export const DriverCanceledAssign = 'נהג ביטל שיוך'

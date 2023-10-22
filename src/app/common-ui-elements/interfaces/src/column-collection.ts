@@ -9,13 +9,14 @@ import {
   Allowed,
   FieldOptions,
   ValueConverter,
-  Unsubscribe,
   Repository,
   EntityOrderBy,
   EntityFilter,
   ValueListInfo,
   Remult,
   remult,
+  Unsubscribe,
+  RefSubscriber,
 } from 'remult'
 
 import {
@@ -27,7 +28,8 @@ import {
 } from './data-control-interfaces'
 import { FilterHelper } from './filter-helper'
 import { decorateColumnSettings, getEntitySettings } from 'remult/internals'
-import { RefSubscriber } from 'remult'
+
+import { ClassType } from 'remult/classType'
 
 export class FieldCollection<rowType = any> {
   constructor(

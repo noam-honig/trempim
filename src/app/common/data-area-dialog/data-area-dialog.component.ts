@@ -9,7 +9,11 @@ import { getFields } from 'remult'
 import { terms } from '../../terms'
 import { button } from '../UITools'
 import { DialogConfig } from '../../common-ui-elements/src/angular/DialogConfig'
+import { Dialog } from '@angular/cdk/dialog'
 
+@DialogConfig({
+  maxWidth: '95vw',
+})
 @Component({
   templateUrl: './data-area-dialog.component.html',
   styleUrls: ['./data-area-dialog.component.scss'],
