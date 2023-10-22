@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { Field, Fields, getFields, remult } from 'remult'
+import { Field, Fields, getFields, remult, repo } from 'remult'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
@@ -19,7 +19,9 @@ import {
   getRegion,
 } from '../common/address-input/google-api-helpers'
 import { LocationErrorComponent } from '../location-error/location-error.component'
-import { Urgency } from '../events/urgency'
+import copy from 'copy-to-clipboard'
+import { displayTime } from '../events/date-utils'
+
 const AllCategories = {
   id: 'asdfaetfsafads',
   caption: 'הכל',
@@ -31,15 +33,44 @@ const AllCategories = {
   styleUrls: ['./event-card.component.scss'],
 })
 export class EventCardComponent implements OnInit {
-  constructor(private dialog: UIToolsService) {}
+  constructor(private tools: UIToolsService) {}
 
-  menuOptions: RowButton<Task>[] = Task.rowButtons(this.dialog, {
+  menuOptions: RowButton<Task>[] = Task.rowButtons(this.tools, {
     taskAdded: (t) => {
       this.tasks.push(t)
       this.refresh()
     },
     taskSaved: () => this.refresh(),
   })
+  addTask() {
+    const t = repo(Task).create()
+    t.openEditDialog(this.tools, () => (this.tasks = [t, ...this.tasks]))
+  }
+  buttons: RowButton<any>[] = [
+    {
+      visible: () => remult.isAllowed(Roles.dispatcher),
+      name: 'העתק רשימה עבור ווטסאפ',
+      click: () => {
+        let message = 'קריאות פתוחות '
+        if (this.region) {
+          message += 'מאזור ' + this.region + ' '
+        }
+        if (this.toRegion) {
+          message += 'לאזור ' + this.toRegion + ' '
+        }
+        message += ` - שעה ${displayTime(new Date())} ( ${
+          this.tasks.length
+        } קריאות) : \n`
+        for (const u of this.urgencies) {
+          for (const e of u.events) {
+            message +=
+              '* ' + e.getShortDescription() + '\n' + e.getLink() + '\n\n'
+          }
+        }
+        copy(message)
+      },
+    },
+  ]
 
   getStatus(e: Task) {
     if (e.taskStatus != taskStatus.active) return e.taskStatus.caption
@@ -216,7 +247,7 @@ export class EventCardComponent implements OnInit {
   }
 
   edit(e: Task) {
-    e.openEditDialog(this.dialog, () => this.refresh())
+    e.openEditDialog(this.tools, () => this.refresh())
   }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active

@@ -7,7 +7,7 @@ import { taskStatus } from './taskStatus'
 import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs'
-import { GridSettings } from '../common-ui-elements/interfaces'
+import { GridSettings, RowButton } from '../common-ui-elements/interfaces'
 import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExcel'
 import { BusyService, openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
@@ -28,10 +28,6 @@ export class OrgEventsComponent implements OnInit {
     private location: Location
   ) {}
 
-  addTask() {
-    const t = repo(Task).create()
-    t.openEditDialog(this.tools, () => (this.events = [t, ...this.events]))
-  }
   @ViewChild('tabGroup')
   tabGroup!: MatTabGroup
   onTabChange(event: MatTabChangeEvent) {

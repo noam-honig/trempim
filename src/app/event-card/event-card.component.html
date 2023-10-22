@@ -1,4 +1,13 @@
 <div>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="addTask()"
+    *ngIf="isDispatcher()"
+  >
+    הוספת נסיעה
+  </button>
+  <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
   <data-area [settings]="area"></data-area>
   <div
     style="

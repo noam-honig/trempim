@@ -123,11 +123,13 @@ import { Urgency } from './urgency'
 export class Task extends IdEntity {
   getShortDescription(): string {
     return (
-      (this.category?.caption || '') +
+      (this.category?.caption + ': ' || '') +
+      this.title +
       ' מ' +
       getCity(this.addressApiResult!, this.address) +
       ' ל' +
-      getCity(this.toAddressApiResult, this.toAddress)
+      getCity(this.toAddressApiResult, this.toAddress) +
+      ` (${this.externalId})`
     )
   }
   displayDate() {
