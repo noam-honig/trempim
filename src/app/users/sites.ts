@@ -2,6 +2,9 @@ import { remult } from 'remult'
 import { DEFAULT_NAME } from './SignInController'
 import { Category } from '../events/Category'
 import { Roles } from './roles'
+import { taskStatus } from '../events/taskStatus'
+import { UpdateMessage } from '../events/UpdatesChannel'
+import { DriverCanceledAssign } from '../events/tasks'
 
 let title = ''
 export function getTitle() {
@@ -10,6 +13,9 @@ export function getTitle() {
   return (title = process.env['NAME'] || DEFAULT_NAME)
 }
 export class Site {
+  showInfoSnackbarFor(message: UpdateMessage) {
+    return true
+  }
   bikeCategoryCaption?: string
   defaultCategory = Category.delivery
   truckCategoryCaption?: string
@@ -32,6 +38,17 @@ export class BikeIlSite extends Site {
 export class Yedidim extends Site {
   override get canSeeUrgency() {
     return remult.isAllowed(Roles.admin)
+  }
+  override showInfoSnackbarFor(message: UpdateMessage): boolean {
+    if (message.userId === remult.user?.id) return false
+    if ([DriverCanceledAssign].includes(message.action)) return true
+    if (
+      [taskStatus.draft, taskStatus.otherProblem]
+        .map((x) => x.id)
+        .includes(message.status)
+    )
+      return true
+    return false
   }
 }
 

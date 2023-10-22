@@ -45,7 +45,8 @@ export class AppComponent implements OnInit, OnDestroy {
       this.updateStats()
       updateChannel
         .subscribe((message) => {
-          this.uiService.info(message)
+          if (getSite().showInfoSnackbarFor(message))
+            this.uiService.info(message.message)
           this.updateStats()
         })
         .then((u) => (this.unSub = u))

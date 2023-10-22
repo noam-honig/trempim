@@ -358,7 +358,12 @@ export class Task extends IdEntity {
     return this.getContactInfo()
   }
   private async insertStatusChange(what: string, notes?: string) {
-    updateChannel.publish(what + ' - ' + this.getShortDescription())
+    updateChannel.publish({
+      status: this.taskStatus.id,
+      message: what + ' - ' + this.getShortDescription(),
+      userId: remult.user?.id!,
+      action: what,
+    })
     await repo(TaskStatusChanges).insert({
       taskId: this.id,
       what,
@@ -378,7 +383,7 @@ export class Task extends IdEntity {
     this.driverId = ''
     this.taskStatus = taskStatus.active
     this.statusNotes = notes
-    await this.insertStatusChange('נהג ביטל שיוך', notes)
+    await this.insertStatusChange(DriverCanceledAssign, notes)
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
@@ -404,8 +409,10 @@ export class Task extends IdEntity {
   @BackendMethod({ allowed: Roles.dispatcher })
   async returnToActive() {
     this.driverId = ''
+    let action = 'מוקדן החזיר לפעיל'
+    if (taskStatus.draft) action = 'טיוטה אושרה'
     this.taskStatus = taskStatus.active
-    await this.insertStatusChange('מוקדן החזיר לפעיל', 'על ידי מוקדן')
+    await this.insertStatusChange(action, 'על ידי מוקדן')
     await this.save()
   }
   @BackendMethod({ allowed: Roles.dispatcher })
@@ -748,3 +755,4 @@ export function calcValidUntil(
     minutes
   )
 }
+export const DriverCanceledAssign = 'נהג ביטל שיוך'
