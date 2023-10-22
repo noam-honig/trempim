@@ -10,6 +10,8 @@ import { terms } from './terms'
 import { SignInController } from './users/SignInController'
 import { remult } from 'remult'
 import { DataAreaSettings } from './common-ui-elements/interfaces'
+import copy from 'copy-to-clipboard'
+import { getSite } from './users/sites'
 
 @Component({
   selector: 'app-root',
@@ -108,6 +110,13 @@ export class AppComponent implements OnInit {
   @ViewChild('sidenav') sidenav: MatSidenav
   routeClicked() {
     if (this.uiService.isScreenSmall()) this.sidenav.close()
+  }
+  copyBikeIlLink() {
+    copy('https://bit.ly/3rZFZR8')
+    this.uiService.info('הקישור הועתק')
+  }
+  showCopyLink() {
+    return getSite().showCopyLink
   }
 }
 

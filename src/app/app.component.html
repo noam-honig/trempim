@@ -70,6 +70,9 @@
             }}</a>
           </mat-list-item>
         </ng-container>
+        <mat-list-item *ngIf="showCopyLink()" routerLinkActive="active-route">
+          <a matLine (click)="copyBikeIlLink()">העתק קישור לטופס</a>
+        </mat-list-item>
       </mat-nav-list>
     </mat-sidenav>
     <div class="app-sidenav-content">

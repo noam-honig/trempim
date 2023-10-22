@@ -13,6 +13,8 @@ export class Site {
   defaultCategory = Category.delivery
   truckCategoryCaption?: string
   categories?: Category[]
+  showCopyLink?: boolean
+  imageIsMandatory?: boolean
 }
 
 export class BikeIlSite extends Site {
@@ -20,6 +22,8 @@ export class BikeIlSite extends Site {
   override defaultCategory = Category.bike
   override truckCategoryCaption? = 'שינוע מסחרי או נגרר'
   override categories = [Category.bike, Category.truck, Category.other]
+  override showCopyLink? = true
+  override imageIsMandatory? = true
 }
 
 export function initSite(site?: string) {

@@ -368,7 +368,14 @@ export class Task extends IdEntity {
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
 
-  @Fields.string({ customInput: (c) => c.image() })
+  @Fields.string({
+    caption: 'תמונה',
+    customInput: (c) => c.image(),
+    validate: (_, f) => {
+      if (getSite().imageIsMandatory)
+        Validators.required(_, f, 'אנא העלה תמונה')
+    },
+  })
   imageId = ''
 
   @BackendMethod({ allowed: Allow.authenticated })
