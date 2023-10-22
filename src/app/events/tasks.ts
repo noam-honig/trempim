@@ -307,6 +307,12 @@ export class Task extends IdEntity {
   @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
+  @Fields.string({
+    caption: 'הערה פנימית לחמ"ל',
+    customInput: (x) => x.textarea(),
+    includeInApi: Roles.trainee,
+  })
+  internalComments = ''
 
   @Fields.string<Task>({
     caption: 'תמונה',
@@ -526,6 +532,7 @@ export class Task extends IdEntity {
         [e.toPhone2, e.tpPhone2Description],
 
         e.imageId,
+        e.internalComments,
         e.externalId,
       ],
       ok: () =>
