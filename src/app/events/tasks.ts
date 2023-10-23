@@ -823,13 +823,9 @@ export function calcValidUntil(
 ) {
   const hours = +startTime.substring(0, 2)
   const minutes = +startTime.substring(3, 5)
-  const result = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    hours + validUntil,
-    minutes
-  )
+  const result = new Date(date)
+  result.setHours(result.getHours() + hours + validUntil)
+  result.setMinutes(result.getMinutes() + minutes)
   console.log({ date, startTime, validUntil, hours, minutes, result })
   return result
 }
