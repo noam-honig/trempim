@@ -130,7 +130,8 @@ const contactInfoRules: FieldOptions<Task, string> = {
             'נוספה טיוטא: ' +
               task.getShortDescription() +
               '\n\n' +
-              remult.context.origin
+              remult.context.origin +
+              '/טיוטות'
           )
         }
       }
