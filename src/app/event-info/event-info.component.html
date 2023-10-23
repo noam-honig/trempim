@@ -32,7 +32,14 @@
       "
     />
   </div>
-
+  <app-phone-details
+    [args]="{
+      phone: e.requesterPhone1,
+      name: e.requesterPhone1Description,
+      title: 'ממלא הבקשה'
+    }"
+  >
+  </app-phone-details>
   <div *ngIf="e.address" class="space-above">
     <strong>כתובת מוצא</strong>
     <div class="phone-container" style="justify-content: space-between">
@@ -50,12 +57,21 @@
     </div>
 
     <app-phone-details
-      *ngFor="let c of contactInfo.origin"
       [args]="{
-        name: c.name,
-        phone: c.phone
+        phone: e.phone1,
+        name: e.phone1Description,
+        title: 'איש קשר לאיסוף'
       }"
-    ></app-phone-details>
+    >
+    </app-phone-details>
+    <app-phone-details
+      [args]="{
+        phone: e.phone2,
+        name: e.phone2Description,
+        title: 'איש קשר לאיסוף 2'
+      }"
+    >
+    </app-phone-details>
   </div>
   <div class="space-above" style="white-space: pre-line" *ngIf="e.description">
     <strong>פרטים נוספים</strong>
@@ -78,36 +94,45 @@
       </span>
     </div>
     <app-phone-details
-      *ngFor="let c of contactInfo.target"
       [args]="{
-        name: c.name,
-        phone: c.phone
+        phone: e.toPhone1,
+        name: e.tpPhone1Description,
+        title: 'איש קשר למסירה'
       }"
-    ></app-phone-details>
-  </div>
-  <div *ngIf="driver">
-    <hr />
-    <strong>נהג: {{ driver.name }}</strong>
-    <div *ngIf="driver.phone" class="space-above">
-      <div class="phone-container">
-        <span
-          mat-mini-fab
-          style="vertical-align: middle; cursor: pointer"
-          color="primary"
-          (click)="sendWhatsapp(driver.phone!)"
-        >
-          <img src="assets/whatsapp.png" />
-        </span>
-        <a href="tel:{{ driver.phone }}">
-          <button mat-mini-fab style="vertical-align: middle" color="primary">
-            <mat-icon>call</mat-icon>
-          </button>
-        </a>
-        <div>
-          <a href="tel:{{ driver.phone }}"
-            >{{ driver.name }},
-            {{ driver.$.phone.displayValue }}
+    >
+    </app-phone-details>
+    <app-phone-details
+      [args]="{
+        phone: e.toPhone2,
+        name: e.tpPhone2Description,
+        title: 'איש קשר למסירה 2'
+      }"
+    >
+    </app-phone-details>
+    <div *ngIf="driver">
+      <hr />
+      <strong>נהג: {{ driver.name }}</strong>
+      <div *ngIf="driver.phone" class="space-above">
+        <div class="phone-container">
+          <span
+            mat-mini-fab
+            style="vertical-align: middle; cursor: pointer"
+            color="primary"
+            (click)="sendWhatsapp(driver.phone!)"
+          >
+            <img src="assets/whatsapp.png" />
+          </span>
+          <a href="tel:{{ driver.phone }}">
+            <button mat-mini-fab style="vertical-align: middle" color="primary">
+              <mat-icon>call</mat-icon>
+            </button>
           </a>
+          <div>
+            <a href="tel:{{ driver.phone }}"
+              >{{ driver.name }},
+              {{ driver.$.phone.displayValue }}
+            </a>
+          </div>
         </div>
       </div>
     </div>

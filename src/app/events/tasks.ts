@@ -6,6 +6,7 @@ import {
   Entity,
   EntityFilter,
   Field,
+  FieldOptions,
   Fields,
   IdEntity,
   Relations,
@@ -39,6 +40,34 @@ import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
 import { taskStatus } from './taskStatus'
 import { Urgency } from './urgency'
 import { updateChannel } from './UpdatesChannel'
+
+const contactInfoRules: FieldOptions<Task, string> = {
+  includeInApi: (t) => {
+    if (remult.user) {
+      if (remult.isAllowed([Roles.trainee, Roles.dispatcher])) return true
+      if (
+        t!.createUserId === remult.user?.id &&
+        remult.isAllowed(Roles.trainee)
+      )
+        return true
+      if (t!.driverId === remult.user.id) return true
+    }
+    if (t!.isNew()) return true
+    return false
+  },
+  allowApiUpdate: (t) => {
+    if (remult.user) {
+      if (remult.isAllowed([Roles.trainee, Roles.dispatcher])) return true
+      if (
+        t!.createUserId === remult.user?.id &&
+        remult.isAllowed(Roles.trainee)
+      )
+        return true
+    }
+    if (t!.isNew()) return true
+    return false
+  },
+}
 
 @Entity<Task>('tasks', {
   allowApiInsert: true,
@@ -241,7 +270,7 @@ export class Task extends IdEntity {
 
   @PhoneField<Task>({
     caption: 'טלפון ממלא הבקשה',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
     validate: (entity, ref) => {
       if ((entity.isNew() || ref.valueChanged()) && getSite().useFillerInfo)
         Validators.required(entity, ref)
@@ -250,13 +279,13 @@ export class Task extends IdEntity {
   requesterPhone1 = remult.user?.phone
   @Fields.string({
     caption: 'שם ממלא הבקשה',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
   })
   requesterPhone1Description = remult.user?.name
 
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
     validate: (entity, ref) => {
       if (entity.isNew() || ref.valueChanged()) Validators.required(entity, ref)
     },
@@ -264,37 +293,37 @@ export class Task extends IdEntity {
   phone1 = ''
   @Fields.string({
     caption: 'איש קשר מוצא',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
   })
   phone1Description = ''
   @PhoneField<Task>({
     caption: 'טלפון מוצא 2',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
   })
   phone2 = ''
   @Fields.string({
     caption: 'איש קשר מוצא 2',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
   })
   phone2Description = ''
   @PhoneField({
     caption: 'טלפון ליעד',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
   })
   toPhone1 = ''
   @Fields.string({
     caption: 'איש קשר ליעד',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
   })
   tpPhone1Description = ''
   @PhoneField({
     caption: 'טלפון ליעד 2',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
   })
   toPhone2 = ''
   @Fields.string({
     caption: 'איש קשר ליעד 2',
-    includeInApi: allowPhoneOnlyForInsertOrTrainee(),
+    ...contactInfoRules,
   })
   tpPhone2Description = ''
 
@@ -719,18 +748,6 @@ export class Task extends IdEntity {
   getLink(): string {
     return document.location.origin + '/t/' + this.id
   }
-}
-function allowPhoneOnlyForInsertOrTrainee() {
-  let result: AllowedForInstance<Task> = (t) => {
-    if (remult.user) {
-      if (remult.isAllowed([Roles.trainee, Roles.dispatcher])) return true
-      if (t!.createUserId === remult.user?.id) return true
-      if (t!.driverId === remult.user.id) return true
-    }
-    if (t!.isNew()) return true
-    return false
-  }
-  return result
 }
 
 export const day = 86400000

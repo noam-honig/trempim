@@ -75,12 +75,11 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     if (this.inProgress) return
     this.inProgress = true
     try {
-      this.contactInfo = await this.e.assignToMe()
-      this.closeDialog()
+      await this.e.assignToMe()
+      await this.e._.reload()
     } catch (err: any) {
       this.dialog.error(err)
       this.e.taskStatus = taskStatus.assigned
-      this.closeDialog()
     } finally {
       this.inProgress = false
     }
@@ -96,6 +95,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
       UpdateStatusComponent,
       (x) => (x.args = { showFailStatus: false, task: this.e })
     )
+    await this.e._.reload()
   }
   showCancel() {
     return (
@@ -135,11 +135,6 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
       })
     if (this.e.driverId && this.isDispatcher())
       this.e._.relations.driver.findOne().then((x) => (this.driver = x))
-    if (this.e.driverId === remult.user?.id || this.isDispatcher()) {
-      this.e.getContactInfo().then((x) => {
-        if (x) this.contactInfo = x
-      })
-    }
   }
 
   edit() {

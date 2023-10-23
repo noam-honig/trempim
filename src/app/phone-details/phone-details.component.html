@@ -3,7 +3,7 @@
     matDialogTitle
     style="display: flex; justify-content: space-between; align-items: center"
   >
-    <strong> {{ args.title }} {{ args.name }} </strong>
+    <strong style="font-size: large"> {{ getTitle() }} </strong>
     <button
       mat-icon-button
       (click)="args.closeDialog()"

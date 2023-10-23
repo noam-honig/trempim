@@ -84,6 +84,13 @@ a:hover {
   font-weight: bold;
 }
 
-.mat-dialog-content {
-  padding: 8px !important
+@media (max-width: 720px) {
+  .mat-dialog-content {
+    padding: 8px !important
+  }
+}
+
+.mat-dialog-title {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
 }
