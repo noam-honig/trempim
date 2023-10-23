@@ -18,7 +18,7 @@ export async function initRequest(req: Request) {
   remult.context.sessionOptions = req.sessionOptions
   const sessionUser = req.session!['user']
   const user = await repo(User).findFirst({
-    id: [sessionUser.id],
+    id: [sessionUser?.id],
     deleted: false,
   })
   return setSessionUserBasedOnUserRow(user)
