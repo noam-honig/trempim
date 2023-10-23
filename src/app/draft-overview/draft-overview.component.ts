@@ -85,6 +85,11 @@ export class DraftOverviewComponent implements OnInit {
     return t.taskStatus === taskStatus.draft
   }
   async assignToMe(t: Task) {
+    await t._.reload()
+    if (t.responsibleDispatcherId) {
+      if (!this.ui.yesNoQuestion('הקריאה כבר משוייכת למוקדן אחר, האם להחליף?'))
+        return
+    }
     t.responsibleDispatcherId = remult.user!.id
     await t.save()
     t.responsibleDispatcher = await repo(User).findId(remult.user!.id)
