@@ -826,16 +826,21 @@ export function calcValidUntil(
   const result = new Date(date)
   result.setHours(result.getHours() + hours + validUntil)
   result.setMinutes(result.getMinutes() + minutes)
-  console.log({
-    date,
-    startTime,
-    validUntil,
-    hours,
-    minutes,
-    result,
-    offset: date.getTimezoneOffset(),
-  })
-  return result
+
+  const r2 = new Date(
+    result.toLocaleString('en-US', {
+      timeZone: 'Asia/Jerusalem',
+      hour12: false,
+      timeZoneName: 'short',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+  )
+  return r2
 }
 
 //[ ] test phone with different user roles (update status etc...)
