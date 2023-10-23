@@ -827,19 +827,19 @@ export function calcValidUntil(
   result.setHours(result.getHours() + hours + validUntil)
   result.setMinutes(result.getMinutes() + minutes)
 
-  const r2 = new Date(
-    result.toLocaleString('en-US', {
-      timeZone: 'Asia/Jerusalem',
-      hour12: false,
-      timeZoneName: 'short',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    })
-  )
+  const text = result.toLocaleString('en-US', {
+    timeZone: 'Asia/Jerusalem',
+    hour12: false,
+    timeZoneName: 'short',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+  const r2 = new Date(text)
+  console.log({ date, startTime, validUntil, result, text, r2 })
   return r2
 }
 
