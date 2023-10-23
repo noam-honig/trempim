@@ -96,6 +96,7 @@ export class DraftOverviewComponent implements OnInit {
   }
   async clearMeAsDispatcher(t: Task) {
     t.responsibleDispatcherId = ''
+    t.responsibleDispatcher = undefined
     await t.save()
   }
 }
