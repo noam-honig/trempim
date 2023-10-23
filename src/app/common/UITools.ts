@@ -51,6 +51,9 @@ declare module 'remult' {
     ) => void
     customInput?: (inputOptions: customInputOptions<entityType>) => void
   }
+  export interface UserInfo {
+    phone?: string
+  }
 }
 
 export interface InputAddressResult {

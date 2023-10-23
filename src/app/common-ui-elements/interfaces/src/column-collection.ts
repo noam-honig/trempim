@@ -417,7 +417,7 @@ export class InputField<valueType> implements FieldRef<any, valueType> {
       key: settings.key,
       displayValue: () => '',
       apiUpdateAllowed: () => true,
-      includedInApi: true,
+      includedInApi: () => true,
       toInput: (x) => x,
       fromInput: (x) => x,
       dbReadOnly: false,

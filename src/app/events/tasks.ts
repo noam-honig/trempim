@@ -1,6 +1,7 @@
 import copy from 'copy-to-clipboard'
 import {
   Allow,
+  AllowedForInstance,
   BackendMethod,
   Entity,
   EntityFilter,
@@ -246,12 +247,12 @@ export class Task extends IdEntity {
         Validators.required(entity, ref)
     },
   })
-  requesterPhone1 = ''
+  requesterPhone1 = remult.user?.phone
   @Fields.string({
     caption: 'שם ממלא הבקשה',
     includeInApi: allowPhoneOnlyForInsertOrTrainee(),
   })
-  requesterPhone1Description = ''
+  requesterPhone1Description = remult.user?.name
 
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
@@ -720,9 +721,16 @@ export class Task extends IdEntity {
   }
 }
 function allowPhoneOnlyForInsertOrTrainee() {
-  return () =>
-    !remult.authenticated() ||
-    remult.isAllowed([Roles.trainee, Roles.dispatcher])
+  let result: AllowedForInstance<Task> = (t) => {
+    if (remult.user) {
+      if (remult.isAllowed([Roles.trainee, Roles.dispatcher])) return true
+      if (t!.createUserId === remult.user?.id) return true
+      if (t!.driverId === remult.user.id) return true
+    }
+    if (t!.isNew()) return true
+    return false
+  }
+  return result
 }
 
 export const day = 86400000

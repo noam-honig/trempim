@@ -84,6 +84,12 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.updateSubscription()
   }
+  isDispatcher() {
+    return remult.isAllowed(Roles.dispatcher)
+  }
+  isTrainee() {
+    return remult.isAllowed(Roles.trainee)
+  }
 
   async signOut() {
     await SignInController.signOut()

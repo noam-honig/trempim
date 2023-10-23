@@ -12,7 +12,10 @@ import {
 import { terms } from '../terms'
 import { Roles } from './roles'
 import { User } from './user'
-import { setSessionUser } from '../../server/server-session'
+import {
+  setSessionUser,
+  setSessionUserBasedOnUserRow,
+} from '../../server/server-session'
 import { sendSms } from '../../server/send-sms'
 import { PhoneField } from '../events/phone'
 import { getTitle } from './sites'
@@ -100,24 +103,7 @@ export class SignInController extends ControllerBase {
     }
 
     if (!user) throw 'מספר טלפון לא מוכר'
-    const roles: string[] = []
-    if (user.admin) {
-      roles.push(Roles.admin)
-      roles.push(Roles.dispatcher)
-      roles.push(Roles.trainee)
-    } else if (user.dispatcher) {
-      roles.push(Roles.dispatcher)
-      roles.push(Roles.trainee)
-    } else if (user.trainee) roles.push(Roles.trainee)
-
-    return setSessionUser(
-      {
-        id: user.id,
-        name: user.name,
-        roles,
-      },
-      this.rememberOnThisDevice
-    )
+    return setSessionUserBasedOnUserRow(user)
   }
 
   @BackendMethod({ allowed: Allow.authenticated })
@@ -125,7 +111,7 @@ export class SignInController extends ControllerBase {
     setSessionUser(undefined!, true)
   }
   @BackendMethod({ allowed: true })
-  static currentUser() {
+  static async currentUser() {
     return remult.user
   }
   @BackendMethod({ allowed: Roles.admin })
@@ -142,7 +128,7 @@ async function setUserToSelfSignInIfAllowed() {
     deleted: false,
   })
   if (user) {
-    remult.user = { id: user.id, name: user.name }
+    remult.user = { id: user.id, name: user.name, phone: user.phone }
     return true
   }
   return false
