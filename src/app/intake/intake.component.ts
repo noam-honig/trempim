@@ -35,6 +35,7 @@ export class IntakeComponent implements OnInit {
         [e.phone2, e.phone2Description],
         [e.toPhone1, e.tpPhone1Description],
         [e.toPhone2, e.tpPhone2Description],
+        e.internalComments,
         e.imageId,
       ]
     },

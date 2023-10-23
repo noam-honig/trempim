@@ -360,6 +360,9 @@ export class Task extends IdEntity {
   @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
+  @DataControl({
+    visible: (t) => remult.isAllowed([Roles.trainee, Roles.dispatcher]),
+  })
   @Fields.string({
     caption: 'הערה פנימית לחמ"ל',
     customInput: (x) => x.textarea(),
