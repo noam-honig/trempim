@@ -54,6 +54,28 @@
         <a (click)="showUser(t)"> {{ t.createUser?.name }}</a>
       </td>
     </tr>
+    <tr *ngIf="isDispatcher()">
+      <td>אחמש אחראי:</td>
+      <td>
+        <a (click)="showDispatcher(t)"> {{ t.responsibleDispatcher?.name }}</a>
+        <button
+          mat-button
+          color="warn"
+          (click)="clearMeAsDispatcher(t)"
+          *ngIf="t.responsibleDispatcherId"
+        >
+          בטל שיוך
+        </button>
+
+        <button
+          *ngIf="!t.responsibleDispatcherId"
+          mat-button
+          (click)="assignToMe(t)"
+        >
+          אני אטפל
+        </button>
+      </td>
+    </tr>
   </table>
   <div>
     <button

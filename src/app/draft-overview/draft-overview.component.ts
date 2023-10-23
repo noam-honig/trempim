@@ -6,13 +6,13 @@ import {
   GeocodeResult,
   getGoogleMapLink,
 } from '../common/address-input/google-api-helpers'
-import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
 import { openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { Roles } from '../users/roles'
 import { getTitle } from '../users/sites'
 import { Title } from '@angular/platform-browser'
+import { User } from '../users/user'
 
 @Component({
   selector: 'app-draft-overview',
@@ -22,6 +22,7 @@ import { Title } from '@angular/platform-browser'
 export class DraftOverviewComponent implements OnInit {
   constructor(private ui: UIToolsService, private title: Title) {}
   tasks: Task[] = []
+
   ngOnInit(): void {
     this.title.setTitle(getTitle() + ' ניהול')
     repo(Task)
@@ -31,6 +32,7 @@ export class DraftOverviewComponent implements OnInit {
         },
         include: {
           createUser: true,
+          responsibleDispatcher: true,
         },
         orderBy: {
           createdAt: 'desc',
@@ -76,7 +78,19 @@ export class DraftOverviewComponent implements OnInit {
   showUser(t: Task) {
     this.ui.showUserInfo({ user: t.createUser, title: 'פרטי מוקדן' })
   }
+  showDispatcher(t: Task) {
+    this.ui.showUserInfo({ user: t.responsibleDispatcher, title: 'פרטי מוקדן' })
+  }
   isDraft(t: Task) {
     return t.taskStatus === taskStatus.draft
+  }
+  async assignToMe(t: Task) {
+    t.responsibleDispatcherId = remult.user!.id
+    await t.save()
+    t.responsibleDispatcher = await repo(User).findId(remult.user!.id)
+  }
+  async clearMeAsDispatcher(t: Task) {
+    t.responsibleDispatcherId = ''
+    await t.save()
   }
 }

@@ -125,7 +125,13 @@ const contactInfoRules: FieldOptions<Task, string> = {
         for (const user of await repo(User).find({
           where: { dispatcher: true },
         })) {
-          sendSms(user.phone, 'נוספה טיוטא: ' + task.getShortDescription())
+          sendSms(
+            user.phone,
+            'נוספה טיוטא: ' +
+              task.getShortDescription() +
+              '\n\n' +
+              remult.context.origin
+          )
         }
       }
     }
@@ -434,6 +440,14 @@ export class Task extends IdEntity {
       driverId: this.driverId,
     })
   }
+  @Fields.string({
+    valueConverter: {
+      toDb: (x) => (x == null ? '' : x),
+    },
+  })
+  responsibleDispatcherId = ''
+  @Relations.toOne<Task, User>(() => User, 'responsibleDispatcherId')
+  responsibleDispatcher?: User
 
   @BackendMethod({ allowed: Allow.authenticated })
   async cancelAssignment(notes: string) {

@@ -9,6 +9,7 @@ declare module 'remult' {
   export interface RemultContext {
     session: CookieSessionInterfaces.CookieSessionObject
     sessionOptions: CookieSessionInterfaces.CookieSessionOptions
+    origin?: string
     site: Site
   }
 }
@@ -16,12 +17,13 @@ declare module 'remult' {
 export async function initRequest(req: Request) {
   remult.context.session = req.session!
   remult.context.sessionOptions = req.sessionOptions
+  remult.context.origin = 'https://' + req.get('host')
   const sessionUser = req.session!['user']
   const user = await repo(User).findFirst({
     id: [sessionUser?.id],
     deleted: false,
   })
-  return setSessionUserBasedOnUserRow(user)
+  setSessionUserBasedOnUserRow(user)
 }
 
 export function setSessionUser(user: UserInfo, remember?: boolean): UserInfo {
