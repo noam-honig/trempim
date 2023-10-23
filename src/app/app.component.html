@@ -88,6 +88,19 @@
             }}</a>
           </mat-list-item>
         </ng-container>
+        <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">
+          <a
+            matLine
+            [routerLink]="['/intake']"
+            (click)="routeClicked()"
+            class="alert-line-badge"
+            [matBadge]="updates.waitingUpdates"
+            [matBadgeHidden]="!updates.waitingUpdates"
+            matBadgeColor="warn"
+            matBadgePosition="above after"
+            >הוספת נסיעה</a
+          >
+        </mat-list-item>
         <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">
           <a
             matLine

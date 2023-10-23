@@ -15,6 +15,7 @@ export function getTitle() {
 export class Site {
   countUpdates = true
   useFillerInfo = false
+  allowAnyVolunteerToAdd? = false
   showInfoSnackbarFor(message: UpdateMessage) {
     return true
   }
@@ -37,6 +38,7 @@ export class BikeIlSite extends Site {
   override showCopyLink? = true
   override imageIsMandatory? = true
   override useFillerInfo = true
+  override allowAnyVolunteerToAdd = true
 }
 export class Yedidim extends Site {
   override countUpdates = false
