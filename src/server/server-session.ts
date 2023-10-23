@@ -34,6 +34,9 @@ export function setSessionUser(user: UserInfo, remember?: boolean): UserInfo {
 }
 
 export function setSessionUserBasedOnUserRow(user: User, remember?: boolean) {
+  if (!user) {
+    return setSessionUser(undefined!, true)
+  }
   const roles: string[] = []
   if (user.admin) {
     roles.push(Roles.admin)
