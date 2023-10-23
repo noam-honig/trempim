@@ -16,6 +16,7 @@ export class Site {
   countUpdates = true
   useFillerInfo = false
   allowAnyVolunteerToAdd? = false
+  sendSmsOnNewDraft = false
   showInfoSnackbarFor(message: UpdateMessage) {
     return true
   }
@@ -39,6 +40,7 @@ export class BikeIlSite extends Site {
   override imageIsMandatory? = true
   override useFillerInfo = true
   override allowAnyVolunteerToAdd = true
+  override sendSmsOnNewDraft = true
 }
 export class Yedidim extends Site {
   override countUpdates = false

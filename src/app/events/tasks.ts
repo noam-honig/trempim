@@ -40,6 +40,7 @@ import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
 import { taskStatus } from './taskStatus'
 import { Urgency } from './urgency'
 import { updateChannel } from './UpdatesChannel'
+import { sendSms } from '../../server/send-sms'
 
 const contactInfoRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
@@ -120,6 +121,13 @@ const contactInfoRules: FieldOptions<Task, string> = {
   saved: async (task, { isNew }) => {
     if (isNew) {
       await task.insertStatusChange('יצירה')
+      if (task.taskStatus === taskStatus.draft && getSite().sendSmsOnNewDraft) {
+        for (const user of await repo(User).find({
+          where: { dispatcher: true },
+        })) {
+          sendSms(user.phone, 'נוספה טיוטא: ' + task.getShortDescription())
+        }
+      }
     }
   },
   validation: (task) => {
