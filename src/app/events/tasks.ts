@@ -823,13 +823,15 @@ export function calcValidUntil(
 ) {
   const hours = +startTime.substring(0, 2)
   const minutes = +startTime.substring(3, 5)
-  return new Date(
+  const result = new Date(
     date.getFullYear(),
     date.getMonth(),
     date.getDate(),
     hours + validUntil,
     minutes
   )
+  console.log({ date, startTime, validUntil, hours, minutes, result })
+  return result
 }
 
 //[ ] test phone with different user roles (update status etc...)
