@@ -824,11 +824,17 @@ export function calcValidUntil(
   const hours = +startTime.substring(0, 2)
   const minutes = +startTime.substring(3, 5)
   const result = new Date(date)
-  result.setHours(
-    result.getHours() + hours + validUntil + result.getTimezoneOffset()
-  )
+  result.setHours(result.getHours() + hours + validUntil)
   result.setMinutes(result.getMinutes() + minutes)
-  console.log({ date, startTime, validUntil, hours, minutes, result })
+  console.log({
+    date,
+    startTime,
+    validUntil,
+    hours,
+    minutes,
+    result,
+    offset: date.getTimezoneOffset(),
+  })
   return result
 }
 
