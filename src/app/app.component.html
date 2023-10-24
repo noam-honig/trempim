@@ -78,36 +78,13 @@
         {{ terms.hello }} {{ remult.user!.name }}
       </h4>
       <mat-nav-list role="list">
-        <ng-container *ngFor="let m of router.config">
-          <mat-list-item
-            *ngIf="shouldDisplayRoute(m)"
-            routerLinkActive="active-route"
-          >
-            <a matLine [routerLink]="m.path" (click)="routeClicked()">{{
-              routeName(m)
-            }}</a>
-          </mat-list-item>
-        </ng-container>
         <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">
           <a
             matLine
-            [routerLink]="['/intake']"
+            [routerLink]="['/']"
             (click)="routeClicked()"
             class="alert-line-badge"
-            >הוספת נסיעה</a
-          >
-        </mat-list-item>
-        <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">
-          <a
-            matLine
-            [routerLink]="['/עדכונים']"
-            (click)="routeClicked()"
-            class="alert-line-badge"
-            [matBadge]="updates.waitingUpdates"
-            [matBadgeHidden]="!updates.waitingUpdates"
-            matBadgeColor="warn"
-            matBadgePosition="above after"
-            >עדכונים</a
+            >נסיעות</a
           >
         </mat-list-item>
         <mat-list-item routerLinkActive="active-route" *ngIf="isTrainee()">
@@ -124,9 +101,41 @@
             >טיוטות</a
           >
         </mat-list-item>
+        <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">
+          <a
+            matLine
+            [routerLink]="['/עדכונים']"
+            (click)="routeClicked()"
+            class="alert-line-badge"
+            [matBadge]="updates.waitingUpdates"
+            [matBadgeHidden]="!updates.waitingUpdates"
+            matBadgeColor="warn"
+            matBadgePosition="above after"
+            >עדכונים</a
+          >
+        </mat-list-item>
+        <ng-container *ngFor="let m of router.config">
+          <mat-list-item
+            *ngIf="shouldDisplayRoute(m)"
+            routerLinkActive="active-route"
+          >
+            <a matLine [routerLink]="m.path" (click)="routeClicked()">{{
+              routeName(m)
+            }}</a>
+          </mat-list-item>
+        </ng-container>
 
+        <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">
+          <a
+            matLine
+            [routerLink]="['/intake']"
+            (click)="routeClicked()"
+            class="alert-line-badge"
+            >הוספת נסיעה</a
+          >
+        </mat-list-item>
         <mat-list-item *ngIf="showCopyLink()" routerLinkActive="active-route">
-          <a matLine (click)="copyBikeIlLink()">העתק קישור לטופס</a>
+          <a matLine (click)="copyAddLink()">העתק קישור לטופס</a>
         </mat-list-item>
       </mat-nav-list>
     </mat-sidenav>

@@ -42,6 +42,12 @@ export class BikeIlSite extends Site {
   override allowAnyVolunteerToAdd = true
   override sendSmsOnNewDraft = true
 }
+export class Hahatul extends Site {
+  override showCopyLink? = true
+  override allowAnyVolunteerToAdd = true
+  override sendSmsOnNewDraft = true
+  override useFillerInfo = true
+}
 export class Yedidim extends Site {
   override countUpdates = false
   override get canSeeUrgency() {
@@ -68,8 +74,11 @@ export function initSite(site?: string) {
   remult.context.site = new Site()
   switch (site) {
     case 'bikeil':
-    case '!!!ORG!!!':
       remult.context.site = new BikeIlSite()
+      break
+    case 'hahatul':
+    case '!!!ORG!!!':
+      remult.context.site = new Hahatul()
       break
     case 'yedidim':
     case 'ezion':

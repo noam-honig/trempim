@@ -16,7 +16,7 @@ const routes: Routes = [
   {
     path: defaultRoute,
     component: OrgEventsComponent,
-    data: { name: 'נסיעות' },
+    data: { name: 'נסיעות', hide: true },
   },
   {
     path: 't/:id',

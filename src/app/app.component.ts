@@ -155,8 +155,8 @@ export class AppComponent implements OnInit, OnDestroy {
   routeClicked() {
     if (this.uiService.isScreenSmall()) this.sidenav.close()
   }
-  copyBikeIlLink() {
-    copy('https://bit.ly/3rZFZR8')
+  copyAddLink() {
+    copy(document.location.origin + '/intake')
     this.uiService.info('הקישור הועתק')
   }
   showCopyLink() {
