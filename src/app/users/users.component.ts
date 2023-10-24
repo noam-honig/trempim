@@ -80,7 +80,13 @@ export class UsersComponent implements OnInit {
   })
   async addVolunteer() {
     const v = repo(User).create()
-    v.editDialog(this.ui, () => this.users.items.splice(0, 0, v))
+    v.editDialog(this.ui, () => {
+      setTimeout(() => {
+        const index = this.users.items.findIndex((x) => x.id == v.id)
+        if (index >= 0) this.users.items.splice(index, 1)
+        this.users.items.splice(0, 0, v)
+      }, 300)
+    })
   }
 
   ngOnInit() {}
