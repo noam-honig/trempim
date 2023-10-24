@@ -718,6 +718,7 @@ export class Task extends IdEntity {
             taskStatus.active,
             taskStatus.assigned,
             taskStatus.otherProblem,
+            taskStatus.draft,
           ].includes(e.taskStatus),
         click: async (e) => {
           if (e.taskStatus !== taskStatus.completed)
@@ -739,7 +740,17 @@ export class Task extends IdEntity {
         name: 'החזר לפתוח לרישום',
         icon: 'check_circle',
 
-        visible: (e) => ![taskStatus.active].includes(e.taskStatus),
+        visible: (e) =>
+          ![taskStatus.active, taskStatus.draft].includes(e.taskStatus),
+        click: async (e) => {
+          await e.returnToActive()
+        },
+      },
+      {
+        name: 'אשר טיוטא',
+        icon: 'check_circle',
+
+        visible: (e) => [taskStatus.draft].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
         },

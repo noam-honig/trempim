@@ -102,5 +102,10 @@
     >
       {{ isDraft(t) ? 'אשר טיוטא' : 'בטל אישור' }}
     </button>
+    <app-dots-menu
+      [buttons]="buttons"
+      [item]="t"
+      *ngIf="isDispatcher()"
+    ></app-dots-menu>
   </div>
 </mat-card>

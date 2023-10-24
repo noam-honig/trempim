@@ -22,6 +22,7 @@ import { User } from '../users/user'
 export class DraftOverviewComponent implements OnInit {
   constructor(private ui: UIToolsService, private title: Title) {}
   tasks: Task[] = []
+  buttons = Task.rowButtons(this.ui)
 
   ngOnInit(): void {
     this.title.setTitle(getTitle() + ' ניהול')
