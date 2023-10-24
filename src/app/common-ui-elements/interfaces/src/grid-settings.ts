@@ -20,8 +20,19 @@ import {
 } from './data-control-interfaces'
 import { DataList } from './dataList'
 import { FilterHelper } from './filter-helper'
+import { User } from '../../../users/user'
 
 export class GridSettings<rowType = any> {
+  addNewRowToGrid(v: rowType) {
+    setTimeout(() => {
+      const refId = getEntityRef(v).getId()
+      const index = this.items.findIndex(
+        (x) => getEntityRef(x).getId() == refId
+      )
+      if (index >= 0) this.items.splice(index, 1)
+      this.items.splice(0, 0, v)
+    }, 300)
+  }
   undoChanges(r: rowType) {
     let helper = this.getRowHelper(r)
     helper.undoChanges()
