@@ -110,9 +110,7 @@ const contactInfoRules: FieldOptions<Task, string> = {
       )
     }
     if (task.imageId?.includes('data:image/')) {
-      task.imageId = (
-        await repo(TaskImage).insert({ id: task.id, image: task.imageId })
-      ).id
+      task.imageId = (await repo(TaskImage).insert({ image: task.imageId })).id
     }
     for (const f of [task.$.createUserId, task.$.driverId]) {
       if (f.value === null) f.value = f.originalValue
