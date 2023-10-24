@@ -76,4 +76,14 @@ export async function versionUpdate() {
       select ${t.id},${t.id},'יצירה',${t.taskStatus},${t.driverId},${t.createUserId},${t.createdAt} from ${t}`
     )
   })
+  version(6, async () => {
+    for await (const task of await repo(Task).query()) {
+      task.validUntil = calcValidUntil(
+        task.eventDate,
+        task.startTime,
+        task.relevantHours
+      )
+      await task.save()
+    }
+  })
 }
