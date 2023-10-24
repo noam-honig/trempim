@@ -824,9 +824,9 @@ export function calcValidUntil(
   const hours = +startTime.substring(0, 2)
   const minutes = +startTime.substring(3, 5)
   const result = new Date(date)
-  result.setHours(result.getHours() + hours + validUntil)
+  result.setHours(result.getHours() + hours + validUntil - 3)
   result.setMinutes(result.getMinutes() + minutes)
-
+  return result
   const text = result.toLocaleString('en-US', {
     timeZone: 'Asia/Jerusalem',
     hour12: false,
