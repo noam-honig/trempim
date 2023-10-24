@@ -8,7 +8,9 @@ import { getSite } from '../users/sites'
       Category.delivery,
 
       new Category('שינוע ציוד'),
+      new Category('שינוע ברכב מסחרי / נגרר'),
       Category.truck,
+
       Category.bike,
       new Category('שינוע רכב'),
       Category.other,
@@ -26,6 +28,7 @@ export class Category {
     undefined,
     () => getSite().truckCategoryCaption
   )
+
   static other = new Category('אחר')
   _caption: string
   constructor(
