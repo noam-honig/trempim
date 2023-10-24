@@ -29,7 +29,13 @@ export async function versionUpdate() {
       v.version = 0
     }
     if (v.version <= ver - 1) {
-      await what()
+      try {
+        await what()
+      } catch (err) {
+        console.error(err)
+        throw err
+      }
+
       v.version = ver
       await v.save()
     }
