@@ -125,7 +125,7 @@ const contactInfoRules: FieldOptions<Task, string> = {
         })) {
           sendSms(
             user.phone,
-            'נוספה טיוטא: ' +
+            'נוספה בקשה: ' +
               task.getShortDescription() +
               '\n\n' +
               remult.context.origin +
