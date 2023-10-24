@@ -411,7 +411,7 @@ export class Task extends IdEntity {
           createdAt: {
             $gt: new Date(new Date().getTime() - 1000 * 60 * 60),
           },
-        })) >= 7
+        })) >= 20
       ) {
         throw Error('ניתן להרשם לעד 7 נסיעות בשעה')
       }
