@@ -51,12 +51,12 @@ export class EventCardComponent implements OnInit {
       visible: () => remult.isAllowed(Roles.dispatcher),
       name: 'העתק רשימה עבור ווטסאפ',
       click: () => {
-        let message = 'קריאות פתוחות '
+        let message = 'קריאות פתוחות'
         if (this.region) {
-          message += 'מאזור ' + this.region + ' '
+          message += ' מאזור ' + this.region
         }
         if (this.toRegion) {
-          message += 'לאזור ' + this.toRegion + ' '
+          message += ' לאזור ' + this.toRegion
         }
 
         let lines = ''
@@ -73,7 +73,7 @@ export class EventCardComponent implements OnInit {
           }
         }
         message +=
-          ` - שעה ${displayTime(new Date())} ( ${count} קריאות) : \n` + lines
+          ` - שעה ${displayTime(new Date())} (${count} קריאות): \n` + lines
         copy(message)
       },
     },
