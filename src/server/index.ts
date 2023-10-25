@@ -15,8 +15,8 @@ import { SqlDatabase, remult, repo } from 'remult'
 import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { taskStatus } from 'src/app/events/taskStatus'
-import { Request, ParamsDictionary } from 'express-serve-static-core'
-import { ParsedQs } from 'qs'
+
+const defaultRedirect = process.env['DEFAULT_REDIRECT'] || 'dshinua'
 
 SqlDatabase.LogToConsole = false
 async function startup() {
@@ -36,11 +36,21 @@ async function startup() {
   //app.use(helmet({ contentSecurityPolicy: false }))
 
   app.use(api)
+
   app.use(express.static('dist/angular-starter-project'))
   app.get('/*.*', (req, res) => {
-    res.redirect('/dshinua')
+    res.redirect('/' + defaultRedirect)
   })
-  app.get('/*/', api.withRemult, (req, res) => sendIndex(res))
+  app.get('/t/*', (req, res) => {
+    res.redirect('/' + defaultRedirect + req.path)
+  })
+  app.use((req, res, next) => {
+    if (!getBackendSite(getSiteFromPath(req)))
+      res.status(404).send('Not found: ' + getSiteFromPath(req))
+    else next()
+  })
+  app.use(api.withRemult)
+  app.get('/*/', (req, res) => sendIndex(res))
   app.get('/*/index.html', (req, res) => sendIndex(res))
   app.get('/*/assets/logo.png', (req, res) =>
     sendSchemaSpecificFile('logo', res)
@@ -48,7 +58,7 @@ async function startup() {
   app.get('/*/assets/favicon.png', (req, res) =>
     sendSchemaSpecificFile('favicon', res)
   )
-  app.get('/*/images/:id', api.withRemult, async (req, res) => {
+  app.get('/*/images/:id', async (req, res) => {
     try {
       const image = await remult
         .repo(TaskImage)
@@ -72,7 +82,7 @@ async function startup() {
     }
   })
 
-  app.get('/*/t/:id', api.withRemult, async (req, res) => {
+  app.get('/*/t/:id', async (req, res) => {
     try {
       const id = req.params?.['id']
       if (id) {
