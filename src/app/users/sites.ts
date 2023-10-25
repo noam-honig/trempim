@@ -84,6 +84,8 @@ export function initSite(site?: string) {
     case 'hahatul':
     case '!!!ORG!!!':
     case 'vdri':
+    case 'ngim':
+    case 'dshinua':
       remult.context.site = new Hahatul(site)
       break
     case 'yedidim':
@@ -111,6 +113,7 @@ export const backendSites = [
   { urlPrefix: 'y', dbSchema: 'ezion', title: 'ידידים' },
   { urlPrefix: 'ezion', dbSchema: 'ezion', title: 'ידידים' },
   { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
+  { urlPrefix: 'ngim', dbSchema: 'ngim', title: 'חמל נהגים' },
 ]
 export function getBackendSite(schema?: string) {
   if (!schema) schema = getSite().urlPrefix
