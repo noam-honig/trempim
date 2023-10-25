@@ -38,7 +38,7 @@ async function startup() {
   app.use(api)
   app.use(express.static('dist/angular-starter-project'))
   app.get('/*.*', (req, res) => {
-    res.redirect('/test1')
+    res.redirect('/dshinua')
   })
   app.get('/*/', api.withRemult, (req, res) => sendIndex(res))
   app.get('/*/index.html', (req, res) => sendIndex(res))

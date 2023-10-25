@@ -51,3 +51,4 @@ export const api = remultExpress({
     //;(await import('./read-excel')).readTripExcel()
   },
 })
+//[ ] = לדאוג שידים יעשה REDIRECT נכון
