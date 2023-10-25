@@ -16,8 +16,6 @@ import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { taskStatus } from 'src/app/events/taskStatus'
 
-const defaultRedirect = process.env['DEFAULT_REDIRECT'] || 'dshinua'
-
 SqlDatabase.LogToConsole = false
 async function startup() {
   const app = express()
@@ -25,7 +23,9 @@ async function startup() {
   app.use((req, res, next) => {
     const sp = req.path.split('/')
     if (sp.length < 2 || sp[1] == '' || req.path.startsWith('/t/')) {
-      res.redirect('/' + defaultRedirect + req.path)
+      let redirect = 'y'
+      if (req.hostname.includes('dshinua')) redirect = 'dshinua'
+      res.redirect('/' + redirect + req.path)
       return
     }
     const siteUrl = getSiteFromPath(req)
