@@ -27,6 +27,7 @@ import { UpdateStatusComponent } from '../update-status/update-status.component'
 import { User } from '../users/user'
 import { getImageUrl } from '../events/getImageUrl'
 import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
+import { getSite } from '../users/sites'
 
 @DialogConfig({ maxWidth: '95vw' })
 @Component({
@@ -53,6 +54,9 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     taskAdded: (t) => this.refresh(),
     taskSaved: () => this.refresh(),
   })
+  useFillerInfo() {
+    return getSite().useFillerInfo
+  }
   openSourceWaze() {
     openWaze(getLongLat(this.e.addressApiResult), this.e.address)
   }

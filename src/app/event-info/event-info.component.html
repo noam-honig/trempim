@@ -33,6 +33,7 @@
     />
   </div>
   <app-phone-details
+    *ngIf="useFillerInfo()"
     [args]="{
       phone: e.requesterPhone1,
       name: e.requesterPhone1Description,
