@@ -27,6 +27,7 @@ export class PostgresSchemaWrapper implements PostgresPool {
 }
 
 const schemaCache = new Map<string, Promise<SqlDatabase>>()
+let connectionOpen = 0
 export async function getConnectionForSchema(args: {
   schema: string
   connectionString?: string
@@ -49,6 +50,8 @@ export async function createPostgresDataProviderWithSchema(args: {
   disableSsl: boolean
   entities: any[]
 }) {
+  connectionOpen++
+  console.log({ connectionOpen })
   const pool = new Pool({
     connectionString: args.connectionString || process.env['DATABASE_URL'],
     ssl: args.disableSsl
