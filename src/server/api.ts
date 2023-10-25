@@ -51,6 +51,11 @@ export const api = remultExpress({
     initSite(schema)
     remult.context.origin =
       'https://' + req.get('host') + '/' + getSite().urlPrefix
+    const info = getBackendSite(schema)
+    if (!info) {
+      console.log('Error, invalid schema - request was: ' + req.path)
+      throw 'invalid schema'
+    }
     remult.dataProvider = await postgres.getConnectionForSchema(
       getBackendSite(schema)!.dbSchema
     )
