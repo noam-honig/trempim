@@ -86,6 +86,7 @@ export function initSite(site?: string) {
     case 'vdri':
     case 'ngim':
     case 'dshinua':
+    case 'mgln':
       remult.context.site = new Hahatul(site)
       break
     case 'yedidim':
