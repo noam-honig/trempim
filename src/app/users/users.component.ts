@@ -77,8 +77,10 @@ export class UsersComponent implements OnInit {
   })
   async addVolunteer() {
     const v = repo(User).create()
-    v.editDialog(this.ui, () => {
+    v.editDialog(this.ui, async () => {
       this.users.addNewRowToGrid(v)
+      if (await this.ui.yesNoQuestion('האם לשלוח הזמנה בווטסאפ למתנדב?'))
+        sendWhatsappToPhone(v.phone, v.buildInviteText(remult.context.origin))
     })
   }
 
