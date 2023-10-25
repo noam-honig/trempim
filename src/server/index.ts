@@ -48,18 +48,15 @@ async function startup() {
   app.use(api)
 
   app.use(express.static('dist/angular-starter-project'))
-  app.get('/*.*', (req, res) => {
-    res.redirect('/' + defaultRedirect)
-  })
+
   app.use(api.withRemult)
-  app.get('/*/', (req, res) => sendIndex(res))
-  app.get('/*/index.html', (req, res) => sendIndex(res))
   app.get('/*/assets/logo.png', (req, res) =>
     sendSchemaSpecificFile('logo', res)
   )
   app.get('/*/assets/favicon.png', (req, res) =>
     sendSchemaSpecificFile('favicon', res)
   )
+
   app.get('/*/images/:id', async (req, res) => {
     try {
       const image = await remult
@@ -106,6 +103,8 @@ async function startup() {
     }
   })
 
+  app.get('/*/', (req, res) => sendIndex(res))
+  app.get('/*/index.html', (req, res) => sendIndex(res))
   app.use('/*/*', async (req, res) => {
     req.session
     if (req.headers.accept?.includes('json')) {
@@ -138,6 +137,14 @@ async function startup() {
       .toString()
       .replace(/!!!NAME!!!/g, getBackendSite()!.title)
       .replace(/!!!ORG!!!/g, getBackendSite()!.urlPrefix)
+      .replace(
+        /assets\/favicon.png/g,
+        getBackendSite().urlPrefix + '/assets/favicon.png'
+      )
+      .replace(
+        /assets\/logo.png/g,
+        getBackendSite().urlPrefix + '/assets/logo.png'
+      )
     if (args?.image) {
       result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
     }

@@ -130,7 +130,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
         if (!x) {
           this.dialog.error('הנסיעה כנראה כבר נלקחה על ידי נהג אחר')
           this.e.taskStatus = taskStatus.assigned
-          this.closeDialog()
+          this.closeDialog?.()
         }
       })
     if (this.e.driverId && this.isDispatcher())
@@ -143,7 +143,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   getCity() {
     return getCity(this.e.addressApiResult!, this.e.address)
   }
-  closeDialog = () => {}
+  closeDialog!: VoidFunction
 }
 //[ ] - התקן המכשיר
 

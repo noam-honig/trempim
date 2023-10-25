@@ -15,7 +15,11 @@
     </button>
   </div>
 </div>
-<mat-dialog-content class="dialog-container" [style.padding-bottom]="'30px'">
+<mat-dialog-content
+  class="dialog-container"
+  [style.padding-bottom]="'30px'"
+  [style.min-width]="'320px'"
+>
   {{ e.category?.caption }} - ({{ e.externalId }})
 
   <span>{{ displayDate() }} </span>

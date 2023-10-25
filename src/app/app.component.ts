@@ -36,6 +36,9 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unSub()
   }
+  getLogo() {
+    return '/' + getSite().urlPrefix + '/assets/logo.png'
+  }
   drafts = 0
   updateSubscription() {
     this.unSub()

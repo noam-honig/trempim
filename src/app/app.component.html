@@ -2,7 +2,7 @@
   <app-card-in-middle>
     <div style="display: flex; flex-direction: column">
       <div style="align-self: center">
-        <img src="assets/logo.png" height="150px" />
+        <img [src]="getLogo()" height="150px" />
       </div>
       <strong style="align-self: center">{{ title }}</strong>
 
@@ -19,7 +19,7 @@
   *ngIf="doesNotRequireLogin() && !remult.authenticated()"
 >
   <div style="align-self: center">
-    <img src="assets/logo.png" height="150px" />
+    <img [src]="getLogo()" height="150px" />
   </div>
   <strong style="align-self: center">{{ title }}</strong>
 
