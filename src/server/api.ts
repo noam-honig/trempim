@@ -1,13 +1,20 @@
 import { remultExpress } from 'remult/remult-express'
 import { User } from '../app/users/user'
 import { SignInController } from '../app/users/SignInController'
-import { initRequest } from './server-session'
+import { initRequestUser } from './server-session'
 import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { TaskStatusChanges } from 'src/app/events/TaskStatusChanges'
 import { getPostgresSchemaManager } from './PostgresSchemaWrapper'
 import { config } from 'dotenv'
-import { SqlDatabase, remult, repo } from 'remult'
+import {
+  InMemoryLiveQueryStorage,
+  LiveQueryStorage,
+  SqlDatabase,
+  SubscriptionServer,
+  remult,
+  repo,
+} from 'remult'
 import { VersionInfo } from './version'
 import { Locks } from '../app/events/locks'
 import {
@@ -16,7 +23,7 @@ import {
   getSiteFromPath,
   initSite,
 } from '../app/users/sites'
-import { SseSubscriptionServer } from 'remult/server'
+import { InitRequestOptions, SseSubscriptionServer } from 'remult/server'
 import { Roles } from '../app/users/roles'
 
 //import { readExcelVolunteers } from './read-excel'
@@ -39,7 +46,7 @@ export const api = remultExpress({
   controllers: [SignInController],
   rootPath: '/*/api',
   entities,
-  initRequest: async (req) => {
+  initRequest: async (req, options) => {
     let schema = getSiteFromPath(req)
     initSite(schema)
     remult.context.origin =
@@ -47,7 +54,8 @@ export const api = remultExpress({
     remult.dataProvider = await postgres.getConnectionForSchema(
       getBackendSite(schema)!.dbSchema
     )
-    return await initRequest(req)
+    await initRequestUser(req)
+    initRemultBasedOnRequestInfo(schema, options)
   },
   contextSerializer: {
     serialize: async () => ({
@@ -61,6 +69,7 @@ export const api = remultExpress({
       remult.dataProvider = await postgres.getConnectionForSchema(
         getBackendSite(schema)!.dbSchema
       )
+      initRemultBasedOnRequestInfo(schema, options)
     },
   },
 
@@ -68,5 +77,37 @@ export const api = remultExpress({
     //;(await import('./read-excel')).readTripExcel()
   },
 })
-//[ ] = לדאוג שידים יעשה REDIRECT נכון
-//[ ] - לבדוק שהפניה של כותבת עם קישור לISSUE ספציפי גם עובד
+
+const siteEventPublishers = new Map<
+  string,
+  {
+    subscriptionServer: SubscriptionServer
+    liveQueryStorage: LiveQueryStorage
+  }
+>()
+function initRemultBasedOnRequestInfo(
+  site: string,
+  options: InitRequestOptions
+) {
+  let found = siteEventPublishers.get(site)
+  if (!found) {
+    let subscriptionServer: SubscriptionServer
+    //TODO YONI - review channel name
+    let x = new SseSubscriptionServer((channel, remult) => {
+      return remult.isAllowed(Roles.dispatcher)
+    })
+
+    subscriptionServer = x
+
+    var liveQueryStorage = new InMemoryLiveQueryStorage()
+    siteEventPublishers.set(
+      site,
+      (found = {
+        subscriptionServer,
+        liveQueryStorage,
+      })
+    )
+  }
+  remult.subscriptionServer = found.subscriptionServer
+  options.liveQueryStorage = found.liveQueryStorage
+}

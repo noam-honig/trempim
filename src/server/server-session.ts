@@ -14,7 +14,7 @@ declare module 'remult' {
   }
 }
 
-export async function initRequest(req: Request) {
+export async function initRequestUser(req: Request) {
   remult.context.session = req.session!
   remult.context.sessionOptions = req.sessionOptions
 
