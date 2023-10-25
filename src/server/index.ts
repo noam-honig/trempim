@@ -29,7 +29,11 @@ async function startup() {
       return
     }
     const siteUrl = getSiteFromPath(req)
-    if (!getBackendSite(siteUrl) && sp[1] != 'assets' && sp.length > 2) {
+    if (
+      !getBackendSite(siteUrl) &&
+      ((sp[1] != 'assets' && sp.length > 2) ||
+        (sp.length == 2 && !siteUrl.includes('.')))
+    ) {
       res.status(404).send('Not found: ' + siteUrl)
       return
     }
