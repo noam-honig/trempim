@@ -22,7 +22,12 @@ async function startup() {
   app.use(sslRedirect())
   app.use((req, res, next) => {
     const sp = req.path.split('/')
-    if (sp.length < 2 || sp[1] == '' || req.path.startsWith('/t/')) {
+    if (
+      sp.length < 2 ||
+      sp[1] == '' ||
+      sp[1] == 'api' ||
+      req.path.startsWith('/t/')
+    ) {
       let redirect = 'y'
       if (req.hostname.includes('dshinua')) redirect = 'dshinua'
       res.redirect('/' + redirect + req.path)
