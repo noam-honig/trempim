@@ -94,7 +94,11 @@ export class AppComponent implements OnInit, OnDestroy {
     return remult.isAllowed(Roles.trainee)
   }
   showAddTrip() {
-    return remult.isAllowed(Roles.trainee) || getSite().allowAnyVolunteerToAdd
+    return (
+      remult.isAllowed(Roles.trainee) ||
+      getSite().allowAnyVolunteerToAdd ||
+      this.showCopyLink()
+    )
   }
 
   async signOut() {
