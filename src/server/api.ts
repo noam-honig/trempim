@@ -39,12 +39,30 @@ export const api = remultExpress({
   initRequest: async (req) => {
     let schema = getSiteFromPath(req)
     initSite(schema)
+    remult.context.origin =
+      'https://' + req.get('host') + '/' + getSite().urlPrefix
     remult.dataProvider = await getConnectionForSchema({
       disableSsl: Boolean(process.env['dev']),
       schema: getBackendSite(schema)!.dbSchema,
       entities,
     })
     return await initRequest(req)
+  },
+  contextSerializer: {
+    serialize: async () => ({
+      origin: remult.context.origin,
+      site: getSite().urlPrefix,
+    }),
+    deserialize: async (json, options) => {
+      let schema = json.site
+      remult.context.origin = json.origin
+      initSite(schema)
+      remult.dataProvider = await getConnectionForSchema({
+        disableSsl: Boolean(process.env['dev']),
+        schema: getBackendSite(schema)!.dbSchema,
+        entities,
+      })
+    },
   },
 
   initApi: async () => {

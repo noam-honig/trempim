@@ -17,8 +17,7 @@ declare module 'remult' {
 export async function initRequest(req: Request) {
   remult.context.session = req.session!
   remult.context.sessionOptions = req.sessionOptions
-  remult.context.origin =
-    'https://' + req.get('host') + '/' + getSite().urlPrefix
+
   const sessionUser = req.session!['user']
   if (!sessionUser || !sessionUser.id) return
   const user = await repo(User).findFirst({
