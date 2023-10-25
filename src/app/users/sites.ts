@@ -113,8 +113,7 @@ export const backendSites = [
 export function getBackendSite(schema?: string) {
   if (!schema) schema = getSite().urlPrefix
   const result = backendSites.find((x) => x.urlPrefix === schema)
-  if (result) return result
-  throw 'schema not found: ' + schema
+  return result!
 }
 
 export function getSiteFromPath(req: { path: string }) {

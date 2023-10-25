@@ -23,9 +23,19 @@ async function startup() {
   const app = express()
   app.use(sslRedirect())
   app.use((req, res, next) => {
-    const schema = getSiteFromPath(req)
+    const sp = req.path.split('/')
+    if (sp.length < 2 || sp[1] == '' || req.path.startsWith('/t/')) {
+      res.redirect('/' + defaultRedirect + req.path)
+      return
+    }
+    const siteUrl = getSiteFromPath(req)
+    if (!getBackendSite(siteUrl) && sp[1] != 'assets' && sp.length > 2) {
+      res.status(404).send('Not found: ' + siteUrl)
+      return
+    }
+
     session({
-      path: '/' + schema,
+      path: '/' + siteUrl,
       secret:
         process.env['NODE_ENV'] === 'production'
           ? process.env['SESSION_SECRET']
@@ -40,14 +50,6 @@ async function startup() {
   app.use(express.static('dist/angular-starter-project'))
   app.get('/*.*', (req, res) => {
     res.redirect('/' + defaultRedirect)
-  })
-  app.get('/t/*', (req, res) => {
-    res.redirect('/' + defaultRedirect + req.path)
-  })
-  app.use((req, res, next) => {
-    if (!getBackendSite(getSiteFromPath(req)))
-      res.status(404).send('Not found: ' + getSiteFromPath(req))
-    else next()
   })
   app.use(api.withRemult)
   app.get('/*/', (req, res) => sendIndex(res))
