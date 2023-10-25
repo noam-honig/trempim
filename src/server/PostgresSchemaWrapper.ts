@@ -1,5 +1,5 @@
 import { Pool, PoolClient, QueryResult } from 'pg'
-import { Remult, SqlDatabase } from 'remult'
+import { Remult, SqlDatabase, remult, repo } from 'remult'
 import {
   PostgresDataProvider,
   PostgresPool,
@@ -26,10 +26,28 @@ export class PostgresSchemaWrapper implements PostgresPool {
   }
 }
 
+const schemaCache = new Map<string, Promise<SqlDatabase>>()
+export async function getConnectionForSchema(args: {
+  schema: string
+  connectionString?: string
+  disableSsl: boolean
+  entities: any[]
+}) {
+  let result = schemaCache.get(args.schema)
+  if (!result) {
+    schemaCache.set(
+      args.schema,
+      (result = createPostgresDataProviderWithSchema(args))
+    )
+  }
+  return result
+}
+
 export async function createPostgresDataProviderWithSchema(args: {
   schema: string
   connectionString?: string
   disableSsl: boolean
+  entities: any[]
 }) {
   const pool = new Pool({
     connectionString: args.connectionString || process.env['DATABASE_URL'],
@@ -42,10 +60,10 @@ export async function createPostgresDataProviderWithSchema(args: {
   const result = new SqlDatabase(
     new PostgresDataProvider(new PostgresSchemaWrapper(pool, args.schema!))
   )
-  result.ensureSchema = async (entities) => {
-    const sb = new PostgresSchemaBuilder(result, args.schema)
-    await sb.ensureSchema(entities)
-    await versionUpdate()
-  }
+  remult.dataProvider = result
+  const sb = new PostgresSchemaBuilder(result, args.schema)
+  await sb.ensureSchema(args.entities.map((e) => repo(e).metadata))
+  await versionUpdate()
+
   return result
 }

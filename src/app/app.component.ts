@@ -156,7 +156,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.uiService.isScreenSmall()) this.sidenav.close()
   }
   copyAddLink() {
-    copy(document.location.origin + '/intake')
+    copy(remult.context.origin + '/intake')
     this.uiService.info('הקישור הועתק')
   }
   showCopyLink() {

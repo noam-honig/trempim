@@ -10,9 +10,10 @@ let title = ''
 export function getTitle() {
   if (title) return title
   if (typeof localStorage !== 'undefined') return (title = document.title)
-  return (title = process.env['NAME'] || DEFAULT_NAME)
+  return getBackendSite()!.title
 }
 export class Site {
+  constructor(public urlPrefix: string) {}
   countUpdates = true
   useFillerInfo = false
   allowAnyVolunteerToAdd? = false
@@ -70,24 +71,51 @@ export function initSite(site?: string) {
   if (!site && typeof document !== 'undefined') {
     //@ts-ignore
     site = document.site
+    if (site === '!!!ORG!!!') {
+      //@ts-ignore
+      site = document.location.pathname.split('/')[1]
+    }
   }
-  remult.context.site = new Site()
+  remult.context.site = new Site(site!)
   switch (site) {
     case 'bikeil':
-      remult.context.site = new BikeIlSite()
+      remult.context.site = new BikeIlSite(site)
       break
     case 'hahatul':
     case '!!!ORG!!!':
     case 'vdri':
-      remult.context.site = new Hahatul()
+      remult.context.site = new Hahatul(site)
       break
     case 'yedidim':
     case 'ezion':
-      remult.context.site = new Yedidim()
+      remult.context.site = new Yedidim(site)
       break
   }
 }
 
 export function getSite() {
-  return remult.context.site || new Site()
+  return remult.context.site || new Site('')
+}
+
+export const backendSites = [
+  { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
+  { urlPrefix: 'test1', dbSchema: 'yedidim', title: 'פיתוח' },
+  {
+    urlPrefix: 'hahatul',
+    dbSchema: 'hahatul',
+    title: 'עמותת החתול – בוגרי 669',
+  },
+  { urlPrefix: 'lev1', dbSchema: 'lev1', title: 'לב אחד שינועים' },
+  { urlPrefix: 'bikeil', dbSchema: 'bikeil', title: 'חמל אופנועים' },
+  { urlPrefix: 'vdri', dbSchema: 'vdri', title: 'חמ"ל נהגים מתנדבים ארצי' },
+]
+export function getBackendSite(schema?: string) {
+  if (!schema) schema = getSite().urlPrefix
+  const result = backendSites.find((x) => x.urlPrefix === schema)
+  if (result) return result
+  throw 'schema not found: ' + schema
+}
+
+export function getSiteFromPath(req: { path: string }) {
+  return req.path.split('/')[1]
 }

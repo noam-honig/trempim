@@ -2,39 +2,53 @@ import express, { Response } from 'express'
 import sslRedirect from 'heroku-ssl-redirect'
 import helmet from 'helmet'
 import compression from 'compression'
-import { api, schema } from './api'
+import { api } from './api'
 import session from 'cookie-session'
 import fs from 'fs'
-import { getTitle } from 'src/app/users/sites'
+import {
+  getBackendSite,
+  getSite,
+  getSiteFromPath,
+  getTitle,
+} from '../app/users/sites'
 import { SqlDatabase, remult, repo } from 'remult'
 import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { taskStatus } from 'src/app/events/taskStatus'
+import { Request, ParamsDictionary } from 'express-serve-static-core'
+import { ParsedQs } from 'qs'
 
 SqlDatabase.LogToConsole = false
 async function startup() {
   const app = express()
   app.use(sslRedirect())
-  app.use(
+  app.use((req, res, next) => {
+    const schema = getSiteFromPath(req)
     session({
+      path: '/' + schema,
       secret:
         process.env['NODE_ENV'] === 'production'
           ? process.env['SESSION_SECRET']
           : 'my secret1',
-    })
-  )
+    })(req, res, next)
+  })
   app.use(compression())
   //app.use(helmet({ contentSecurityPolicy: false }))
 
   app.use(api)
-
-  app.get('/', (req, res) => sendIndex(res))
-  app.get('/index.html', (req, res) => sendIndex(res))
-  app.get('/assets/logo.png', (req, res) => sendSchemaSpecificFile('logo', res))
-  app.get('/assets/favicon.png', (req, res) =>
+  app.use(express.static('dist/angular-starter-project'))
+  app.get('/*.*', (req, res) => {
+    res.redirect('/test1')
+  })
+  app.get('/*/', api.withRemult, (req, res) => sendIndex(res))
+  app.get('/*/index.html', (req, res) => sendIndex(res))
+  app.get('/*/assets/logo.png', (req, res) =>
+    sendSchemaSpecificFile('logo', res)
+  )
+  app.get('/*/assets/favicon.png', (req, res) =>
     sendSchemaSpecificFile('favicon', res)
   )
-  app.get('/images/:id', api.withRemult, async (req, res) => {
+  app.get('/*/images/:id', api.withRemult, async (req, res) => {
     try {
       const image = await remult
         .repo(TaskImage)
@@ -58,7 +72,7 @@ async function startup() {
     }
   })
 
-  app.get('/t/:id', api.withRemult, async (req, res) => {
+  app.get('/*/t/:id', api.withRemult, async (req, res) => {
     try {
       const id = req.params?.['id']
       if (id) {
@@ -79,8 +93,8 @@ async function startup() {
       res.status(500).send(err.message)
     }
   })
-  app.use(express.static('dist/angular-starter-project'))
-  app.use('/*', async (req, res) => {
+
+  app.use('/*/*', async (req, res) => {
     req.session
     if (req.headers.accept?.includes('json')) {
       console.log(req)
@@ -98,7 +112,7 @@ async function startup() {
 
   function sendSchemaSpecificFile(file: string, res: Response) {
     const fileWithPath = 'src/assets/' + file
-    let theFile = fileWithPath + '-' + schema + '.png'
+    let theFile = fileWithPath + '-' + getSite().urlPrefix + '.png'
     if (fs.existsSync(theFile)) res.sendFile(theFile, { root: process.cwd() })
     else res.sendFile(fileWithPath + '.png', { root: process.cwd() })
   }
@@ -110,8 +124,8 @@ async function startup() {
     let result = fs
       .readFileSync(process.cwd() + '/dist/angular-starter-project/index.html')
       .toString()
-      .replace(/!!!NAME!!!/g, getTitle())
-      .replace(/!!!ORG!!!/g, schema)
+      .replace(/!!!NAME!!!/g, getBackendSite()!.title)
+      .replace(/!!!ORG!!!/g, getBackendSite()!.urlPrefix)
     if (args?.image) {
       result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
     }

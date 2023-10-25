@@ -55,16 +55,13 @@ export class UsersComponent implements OnInit {
       {
         name: 'שלח SMS להזמנה',
         click: async (e) => {
-          await e.sendInviteSmsToUser(document.location.origin)
+          await e.sendInviteSmsToUser(remult.context.origin)
         },
       },
       {
         name: 'שלח Whatsapp להזמנה',
         click: async (e) => {
-          sendWhatsappToPhone(
-            e.phone,
-            e.buildInviteText(document.location.origin)
-          )
+          sendWhatsappToPhone(e.phone, e.buildInviteText(remult.context.origin))
         },
       },
       {

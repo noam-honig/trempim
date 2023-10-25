@@ -2,14 +2,14 @@ import { UserInfo, remult, repo } from 'remult'
 import type { Request } from 'express'
 import type from 'cookie-session' //needed for build - do not remove
 import { User } from '../app/users/user'
-import { Site } from '../app/users/sites'
+import { Site, getSite } from '../app/users/sites'
 import { Roles } from '../app/users/roles'
 
 declare module 'remult' {
   export interface RemultContext {
     session: CookieSessionInterfaces.CookieSessionObject
     sessionOptions: CookieSessionInterfaces.CookieSessionOptions
-    origin?: string
+    origin: string
     site: Site
   }
 }
@@ -17,7 +17,8 @@ declare module 'remult' {
 export async function initRequest(req: Request) {
   remult.context.session = req.session!
   remult.context.sessionOptions = req.sessionOptions
-  remult.context.origin = 'https://' + req.get('host')
+  remult.context.origin =
+    'https://' + req.get('host') + '/' + getSite().urlPrefix
   const sessionUser = req.session!['user']
   if (!sessionUser || !sessionUser.id) return
   const user = await repo(User).findFirst({

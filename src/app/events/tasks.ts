@@ -783,7 +783,7 @@ export class Task extends IdEntity {
     ]
   }
   getLink(): string {
-    return document.location.origin + '/t/' + this.id
+    return remult.context.origin + '/t/' + this.id
   }
 }
 

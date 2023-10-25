@@ -46,9 +46,10 @@ import { SelectUserComponent } from './users/select-user.component'
 import { PhoneDetailsComponent } from './phone-details/phone-details.component'
 import { IntakeComponent } from './intake/intake.component'
 import { InputImageComponent } from './common/input-image/input-image.component'
-import { initSite } from './users/sites'
+import { getSite, initSite } from './users/sites'
 import { MatBadgeModule } from '@angular/material/badge'
 import { UpdatesComponent, UpdatesService } from './updates/updates.component'
+import { APP_BASE_HREF } from '@angular/common'
 
 @NgModule({
   declarations: [
@@ -103,13 +104,22 @@ import { UpdatesComponent, UpdatesService } from './updates/updates.component'
     UIToolsService,
     AdminGuard,
     UpdatesService,
+    {
+      provide: APP_BASE_HREF,
+      useFactory: () => {
+        initSite()
+        const site = getSite().urlPrefix
+        remult.context.origin = document.location.origin + '/' + site
+        remult.apiClient.url = '/' + site + '/api'
+        return '/' + site
+      },
+    },
     { provide: APP_INITIALIZER, useFactory: initApp, multi: true },
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(zone: NgZone) {
-    initSite()
     remult.apiClient.wrapMessageHandling = (handler) =>
       zone.run(() => handler())
   }
