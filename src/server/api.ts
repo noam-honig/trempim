@@ -5,10 +5,7 @@ import { initRequest } from './server-session'
 import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { TaskStatusChanges } from 'src/app/events/TaskStatusChanges'
-import {
-  createPostgresDataProviderWithSchema,
-  getConnectionForSchema,
-} from './PostgresSchemaWrapper'
+import { getPostgresSchemaManager } from './PostgresSchemaWrapper'
 import { config } from 'dotenv'
 import { SqlDatabase, remult, repo } from 'remult'
 import { VersionInfo } from './version'
@@ -29,6 +26,12 @@ config() //loads the configuration from the .env file
 
 //SqlDatabase.LogToConsole = true
 const entities = [User, Task, TaskStatusChanges, VersionInfo, Locks, TaskImage]
+
+const postgres = getPostgresSchemaManager({
+  disableSsl: Boolean(process.env['dev']),
+  entities,
+})
+
 export const api = remultExpress({
   subscriptionServer: new SseSubscriptionServer((x) =>
     remult.isAllowed(Roles.dispatcher)
@@ -41,11 +44,9 @@ export const api = remultExpress({
     initSite(schema)
     remult.context.origin =
       'https://' + req.get('host') + '/' + getSite().urlPrefix
-    remult.dataProvider = await getConnectionForSchema({
-      disableSsl: Boolean(process.env['dev']),
-      schema: getBackendSite(schema)!.dbSchema,
-      entities,
-    })
+    remult.dataProvider = await postgres.getConnectionForSchema(
+      getBackendSite(schema)!.dbSchema
+    )
     return await initRequest(req)
   },
   contextSerializer: {
@@ -57,11 +58,9 @@ export const api = remultExpress({
       let schema = json.site
       remult.context.origin = json.origin
       initSite(schema)
-      remult.dataProvider = await getConnectionForSchema({
-        disableSsl: Boolean(process.env['dev']),
-        schema: getBackendSite(schema)!.dbSchema,
-        entities,
-      })
+      remult.dataProvider = await postgres.getConnectionForSchema(
+        getBackendSite(schema)!.dbSchema
+      )
     },
   },
 
