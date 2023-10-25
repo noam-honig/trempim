@@ -100,7 +100,8 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   showCancel() {
     return (
       this.e.taskStatus != taskStatus.active &&
-      this.e.taskStatus != taskStatus.assigned
+      this.e.taskStatus != taskStatus.assigned &&
+      this.e.taskStatus != taskStatus.draft
     )
   }
   isAssigned() {
