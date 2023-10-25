@@ -114,6 +114,7 @@ export const backendSites = [
   { urlPrefix: 'ezion', dbSchema: 'ezion', title: 'ידידים' },
   { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
   { urlPrefix: 'ngim', dbSchema: 'ngim', title: 'חמל נהגים' },
+  { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
 ]
 export function getBackendSite(schema?: string) {
   if (!schema) schema = getSite().urlPrefix
