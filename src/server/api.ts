@@ -52,3 +52,4 @@ export const api = remultExpress({
   },
 })
 //[ ] = לדאוג שידים יעשה REDIRECT נכון
+//[ ] - לבדוק שהפניה של כותבת עם קישור לISSUE ספציפי גם עובד
