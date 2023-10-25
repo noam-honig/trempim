@@ -65,7 +65,7 @@ export class EventCardComponent implements OnInit {
 
         for (const u of this.urgencies) {
           for (const e of u.events) {
-            if (this.filter(e)) {
+            if (this.filter(e) && e.taskStatus == taskStatus.active) {
               lines +=
                 '* ' + e.getShortDescription() + '\n' + e.getLink() + '\n\n'
               count++
@@ -73,8 +73,11 @@ export class EventCardComponent implements OnInit {
           }
         }
         message +=
-          ` - שעה ${displayTime(new Date())} (${count} קריאות): \n` + lines
-        copy(message)
+          ` - שעה ${t.getHours()}:${(
+            t.getMinutes() / 10
+          ).toFixed()}0 (${count} קריאות): \n` + lines
+        if (count == 0) this.tools.error('לא נמצאו קריאות ליצוא')
+        else copy(message)
       },
     },
   ]

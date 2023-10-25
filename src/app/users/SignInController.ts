@@ -103,7 +103,7 @@ export class SignInController extends ControllerBase {
     }
 
     if (!user) throw 'מספר טלפון לא מוכר'
-    return setSessionUserBasedOnUserRow(user)
+    return setSessionUserBasedOnUserRow(user, this.rememberOnThisDevice)
   }
 
   @BackendMethod({ allowed: Allow.authenticated })

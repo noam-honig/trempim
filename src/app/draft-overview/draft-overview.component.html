@@ -95,12 +95,20 @@
       ערוך
     </button>
     <button
-      *ngIf="isDispatcher()"
+      *ngIf="isDispatcher() && isDraft(t)"
       mat-raised-button
-      [color]="isDraft(t) ? 'primary' : 'error'"
-      (click)="confirm(t)"
+      [color]="'primary'"
+      (click)="t.returnToActive()"
     >
-      {{ isDraft(t) ? 'אשר טיוטא' : 'בטל אישור' }}
+      אשר טיוטא
+    </button>
+    <button
+      *ngIf="isDispatcher() && isActive(t)"
+      mat-raised-button
+      [color]="'error'"
+      (click)="t.markAsDraft()"
+    >
+      בטל אישור
     </button>
     <app-dots-menu
       [buttons]="buttons"

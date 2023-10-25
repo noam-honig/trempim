@@ -68,10 +68,7 @@ export class DraftOverviewComponent implements OnInit {
       x.e = t
     })
   }
-  async confirm(t: Task) {
-    if (t.taskStatus === taskStatus.active) await t.markAsDraft()
-    else await t.returnToActive()
-  }
+
   errorColor(address?: GeocodeResult | null) {
     if (!address?.results?.[0]?.geometry) return 'red'
     return ''
@@ -84,6 +81,9 @@ export class DraftOverviewComponent implements OnInit {
   }
   isDraft(t: Task) {
     return t.taskStatus === taskStatus.draft
+  }
+  isActive(t: Task) {
+    return t.taskStatus === taskStatus.active
   }
   async assignToMe(t: Task) {
     await t._.reload()

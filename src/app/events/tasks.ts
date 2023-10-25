@@ -757,7 +757,9 @@ export class Task extends IdEntity {
       },
       {
         name: 'סמן כטיוטא',
-        visible: (e) => e.taskStatus == taskStatus.active,
+        visible: (e) =>
+          e.taskStatus == taskStatus.active ||
+          e.taskStatus === taskStatus.notRelevant,
         click: async (e) => {
           await e.markAsDraft()
         },

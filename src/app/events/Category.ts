@@ -8,6 +8,7 @@ import { getSite } from '../users/sites'
       Category.delivery,
 
       new Category('שינוע ציוד'),
+      new Category('שינוע מזון'),
       new Category('שינוע ברכב מסחרי / נגרר'),
       Category.truck,
 
