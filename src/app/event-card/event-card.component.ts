@@ -118,19 +118,8 @@ export class EventCardComponent implements OnInit {
     this._tasks = val
     this.refresh()
   }
-  clickOnMap(ids: string[]) {
-    if (ids.length > 1) {
-      openDialog(EventCardComponent, (x) => {
-        x.tasks = this._tasks.filter((t) => ids.includes(t.id))
-      })
-    } else if (ids.length == 1) {
-      openDialog(
-        EventInfoComponent,
-        (x) => (x.e = this._tasks.find((t) => t.id == ids[0])!)
-      )
-    }
-  }
-  showMap = false
+
+  showMap = true
   showLocation = false
   filteredTasks: Task[] = []
   filterChanged() {
@@ -140,6 +129,7 @@ export class EventCardComponent implements OnInit {
   isDialog() {
     return this.closeDialog !== undefined
   }
+  title = ''
   refresh() {
     this.urgencies = []
     this.tasks.sort((a, b) => compareEventDate(a, b))
@@ -269,7 +259,7 @@ export class EventCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isDialog()) this.showMap = false
+    if (this.isDialog()) this.showMap = true
   }
   eventDetails(e: Task) {
     openDialog(EventInfoComponent, (x) => {

@@ -6,15 +6,18 @@ import {
   Output,
   ViewChild,
 } from '@angular/core'
-import { BusyService } from '../common-ui-elements'
+import { BusyService, openDialog } from '../common-ui-elements'
 import { UIToolsService } from '../common/UIToolsService'
 import { repo } from 'remult'
 import { Task } from '../events/tasks'
 import {
   Location,
+  getAddress,
   getLocation,
 } from '../common/address-input/google-api-helpers'
 import { taskStatus } from '../events/taskStatus'
+import { EventCardComponent } from '../event-card/event-card.component'
+import { EventInfoComponent } from '../event-info/event-info.component'
 //import { addresses } from '../../../tmp/addresses'
 
 const lineSymbol = {
@@ -37,6 +40,11 @@ export class NoamTestComponent implements OnInit {
   }
   @Output() tasksClicked = new EventEmitter<string[]>()
 
+  lines: google.maps.Polyline[] = []
+  clearLines() {
+    this.lines.forEach((x) => x.setMap(null))
+    this.lines = []
+  }
   userClickedOnFamilyOnMap: (familyId: string[]) => void = () => {}
   setFamilyOnMap(
     familyId: string,
@@ -50,21 +58,9 @@ export class NoamTestComponent implements OnInit {
         icon,
       })
 
-      // const line = new google.maps.Polyline({
-      //   path: [start, end],
-      //   icons: [
-      //     {
-      //       icon: lineSymbol,
-      //       offset: '100%',
-      //     },
-      //   ],
-      //   strokeColor: 'gray',
-      //   strokeWeight: 2,
-      //   map: this.map,
-      // })
       google.maps.event.addListener(marker, 'click', async () => {
-        this.disableMapBoundsRefresh++
-        let families: string[] = []
+        // this.disableMapBoundsRefresh++
+        let taskIds: string[] = []
 
         this.dict.forEach((m, id) => {
           if (m.start.getMap() != null) {
@@ -76,14 +72,48 @@ export class NoamTestComponent implements OnInit {
               (end.lng() == p3.lng() && end.lat() == p3.lat()) ||
               (start.lng() == p3.lng() && start.lat() == p3.lat())
             ) {
-              families.push(id!)
+              taskIds.push(id!)
             }
           }
         })
-        if (families.length > 0) this.tasksClicked.next(families)
+        if (taskIds.length > 0) {
+          this.tasksClicked.next(taskIds)
+          let tasks = this._tasks.filter((t) => taskIds.includes(t.id))
+          this.adjustBounds(tasks)
+          this.clearLines()
+          for (const t of tasks) {
+            this.lines.push(
+              new google.maps.Polyline({
+                path: [
+                  getLocation(t.addressApiResult),
+                  getLocation(t.toAddressApiResult),
+                ],
+                icons: [
+                  {
+                    icon: lineSymbol,
+                    offset: '100%',
+                  },
+                ],
+                strokeColor: 'gray',
+                strokeWeight: 2,
+                map: this.map,
+              })
+            )
+          }
+          if (tasks.length > 1) {
+            openDialog(EventCardComponent, (x) => {
+              let f = this._tasks.find((x) => x.id == familyId)!
+
+              x.tasks = tasks
+              x.title = position === startLocation ? f.address : f.toAddress
+            })
+          } else if (tasks.length == 1) {
+            openDialog(EventInfoComponent, (x) => (x.e = tasks[0]))
+          }
+        }
 
         setTimeout(() => {
-          this.disableMapBoundsRefresh--
+          //  this.disableMapBoundsRefresh--
         }, 10000)
       })
       return marker
@@ -140,6 +170,15 @@ export class NoamTestComponent implements OnInit {
       const start = getLocation(t.addressApiResult!),
         end = getLocation(t.toAddressApiResult!)
       this.setFamilyOnMap(t.id, start, end)
+    }
+    this.adjustBounds(this._tasks)
+  }
+  adjustBounds(tasks: Task[]) {
+    this.bounds = new google.maps.LatLngBounds()
+    for (const t of tasks) {
+      const start = getLocation(t.addressApiResult!),
+        end = getLocation(t.toAddressApiResult!)
+      this.setFamilyOnMap(t.id, start, end)
       if (this.israel.contains(start)) this.bounds.extend(start)
       if (this.israel.contains(end)) this.bounds.extend(end)
     }
@@ -166,6 +205,7 @@ export class NoamTestComponent implements OnInit {
     }, 100)
   }
   clear() {
+    this.clearLines()
     this.dict.forEach((m) => {
       m.start.setMap(null)
       m.end.setMap(null)

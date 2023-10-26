@@ -819,7 +819,14 @@ export function eventDisplayDate(
           return edd.toLocaleString('he', { month: 'long', year: '2-digit' })
       }
     }
-    if (group) return 'עבר'
+    if (d > t - day * 2) {
+      return 'אתמול' + ' (' + moment(d).locale('he').format('DD/MM') + ')'
+    }
+    if (d > t - day * 3) {
+      return 'שלשום' + ' (' + moment(d).locale('he').format('DD/MM') + ')'
+    }
+
+    return 'עבר' + ' (' + moment(d).locale('he').format('DD/MM') + ')'
 
     return moment(d).locale('he').format('DD/MM (dddd)')
   }

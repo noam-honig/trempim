@@ -34,16 +34,14 @@
     </div>
     <mat-divider></mat-divider>
   </div>
-  <div *ngIf="isDialog()">
+  <div *ngIf="isDialog()" mat-dialog-title>
+    {{ title }}
     <button mat-icon-button [mat-dialog-close]>
       <mat-icon>close</mat-icon>
     </button>
   </div>
   <div *ngIf="showMap" class="grow-item" style="position: relative">
-    <app-noam-test
-      [tasks]="filteredTasks"
-      (tasksClicked)="clickOnMap($event)"
-    ></app-noam-test>
+    <app-noam-test [tasks]="filteredTasks"></app-noam-test>
     <button
       mat-mini-fab
       color
@@ -53,7 +51,7 @@
       <mat-icon> list </mat-icon>
     </button>
   </div>
-  <div *ngIf="!showMap" class mat-dialog-content>
+  <div *ngIf="!showMap" class mat-dialog-content class="grow-item">
     <div *ngFor="let d of urgencies">
       <ng-container *ngIf="hasEvents(d)">
         <strong *ngIf="urgencies.length > 1">{{ d.urgency }}:</strong>
