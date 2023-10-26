@@ -328,7 +328,14 @@ export class EventCardComponent implements OnInit {
 }
 
 function compareEventDate(a: Task, b: Task) {
-  let r = a.eventDate.valueOf() - b.eventDate.valueOf()
+  const now = new Date()
+  let startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDay())
+  function fixDate(d: Date) {
+    if (d.valueOf() < startOfDay.valueOf()) d = new Date(d)
+    d.setFullYear(d.getFullYear() + 1)
+    return d.valueOf()
+  }
+  let r = fixDate(a.eventDate) - fixDate(b.eventDate)
 
   if (r != 0) return r
   return b.createdAt.valueOf() - a.createdAt.valueOf()
