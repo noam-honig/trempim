@@ -27,6 +27,7 @@ export class Site {
   categories?: Category[]
   showCopyLink?: boolean
   imageIsMandatory?: boolean
+  showTwoContacts = true
   get canSeeUrgency() {
     return true
   }
@@ -48,6 +49,9 @@ export class Hahatul extends Site {
   override allowAnyVolunteerToAdd = true
   override sendSmsOnNewDraft = true
   override useFillerInfo = true
+}
+export class ngim extends Site {
+  override showTwoContacts = false
 }
 export class Yedidim extends Site {
   override countUpdates = false
@@ -84,11 +88,12 @@ export function initSite(site?: string) {
     case 'hahatul':
     case '!!!ORG!!!':
     case 'vdri':
-    case 'ngim':
     case 'dshinua':
     case 'mgln':
       remult.context.site = new Hahatul(site)
       break
+    case 'ngim':
+      remult.context.site = new ngim(site)
     case 'yedidim':
     case 'ezion':
       remult.context.site = new Yedidim(site)

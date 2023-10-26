@@ -309,11 +309,13 @@ export class Task extends IdEntity {
     ...contactInfoRules,
   })
   phone1Description = ''
+  @DataControl({ visible: () => getSite().showTwoContacts })
   @PhoneField<Task>({
     caption: 'טלפון מוצא 2',
     ...contactInfoRules,
   })
   phone2 = ''
+  @DataControl({ visible: () => getSite().showTwoContacts })
   @Fields.string({
     caption: 'איש קשר מוצא 2',
     ...contactInfoRules,
@@ -329,11 +331,13 @@ export class Task extends IdEntity {
     ...contactInfoRules,
   })
   tpPhone1Description = ''
+  @DataControl({ visible: () => getSite().showTwoContacts })
   @PhoneField({
     caption: 'טלפון ליעד 2',
     ...contactInfoRules,
   })
   toPhone2 = ''
+  @DataControl({ visible: () => getSite().showTwoContacts })
   @Fields.string({
     caption: 'איש קשר ליעד 2',
     ...contactInfoRules,
