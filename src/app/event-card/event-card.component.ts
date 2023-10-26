@@ -130,7 +130,7 @@ export class EventCardComponent implements OnInit {
       )
     }
   }
-  showMap = true
+  showMap = false
   showLocation = false
   filteredTasks: Task[] = []
   filterChanged() {
@@ -357,10 +357,19 @@ export class EventCardComponent implements OnInit {
 }
 
 function compareEventDate(a: Task, b: Task) {
-  let r = a.eventDate.valueOf() - b.eventDate.valueOf()
+  let startOfDay = new Date()
+  startOfDay.setHours(0, 0, 0, 0)
+  function fixDate(d: Date) {
+    if (d.valueOf() < startOfDay.valueOf()) {
+      d = new Date(d)
+      d.setFullYear(d.getFullYear() + 1)
+    }
+    return d.valueOf()
+  }
+  let r = fixDate(a.eventDate) - fixDate(b.eventDate)
 
   if (r != 0) return r
-  return b.startTime.localeCompare(a.startTime)
+  return b.createdAt.valueOf() - a.createdAt.valueOf()
 }
 
 interface dateEvents {
