@@ -21,12 +21,14 @@ import {
 import { LocationErrorComponent } from '../location-error/location-error.component'
 import copy from 'copy-to-clipboard'
 import { displayTime } from '../events/date-utils'
+import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 
 const AllCategories = {
   id: 'asdfaetfsafads',
   caption: 'הכל',
   count: 0,
 }
+@DialogConfig({ maxWidth: '95vw' })
 @Component({
   selector: 'app-event-card',
   templateUrl: './event-card.component.html',
@@ -116,7 +118,28 @@ export class EventCardComponent implements OnInit {
     this._tasks = val
     this.refresh()
   }
+  clickOnMap(ids: string[]) {
+    if (ids.length > 1) {
+      openDialog(EventCardComponent, (x) => {
+        x.tasks = this._tasks.filter((t) => ids.includes(t.id))
+      })
+    } else if (ids.length == 1) {
+      openDialog(
+        EventInfoComponent,
+        (x) => (x.e = this._tasks.find((t) => t.id == ids[0])!)
+      )
+    }
+  }
+  showMap = true
   showLocation = false
+  filteredTasks: Task[] = []
+  filterChanged() {
+    this.filteredTasks = this.tasks.filter((x) => this.filter(x))
+  }
+  closeDialog?: VoidFunction
+  isDialog() {
+    return this.closeDialog !== undefined
+  }
   refresh() {
     this.urgencies = []
     this.tasks.sort((a, b) => compareEventDate(a, b))
@@ -205,20 +228,24 @@ export class EventCardComponent implements OnInit {
             field: this.$.region,
             valueList: this.regions,
             visible: () => this.regions.length > 2,
+            valueChange: () => this.filterChanged(),
           },
           {
             field: this.$.toRegion,
             valueList: this.toRegions,
             visible: () => this.toRegions.length > 2,
+            valueChange: () => this.filterChanged(),
           },
           {
             field: this.$.category,
             valueList: this.types,
             visible: () => this.types.length > 2,
+            valueChange: () => this.filterChanged(),
           },
         ],
       ],
     })
+    this.filterChanged()
   }
 
   filter(e: Task) {
@@ -241,7 +268,9 @@ export class EventCardComponent implements OnInit {
     return getFields(this, remult)
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.isDialog()) this.showMap = false
+  }
   eventDetails(e: Task) {
     openDialog(EventInfoComponent, (x) => {
       x.e = e

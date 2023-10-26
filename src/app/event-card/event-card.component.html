@@ -1,22 +1,23 @@
-<div>
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="addTask()"
-    *ngIf="isDispatcher()"
-  >
-    הוספת נסיעה
-  </button>
-  <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
-  <data-area [settings]="area"></data-area>
-  <div
-    style="
-      display: flex;
-      justify-content: space-between;
-      flex-direction: row-reverse;
-    "
-  >
-    <div>
+<div class="full-page">
+  <div *ngIf="!isDialog()">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addTask()"
+      *ngIf="isDispatcher()"
+    >
+      הוספת נסיעה
+    </button>
+    <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
+    <data-area [settings]="area"></data-area>
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+      "
+      *ngIf="!showMap"
+    >
       <button
         mat-raised-button
         color="primary"
@@ -29,61 +30,81 @@
             : 'למעבר לתצוגה לפי תאריך'
         }}
       </button>
+      <button mat-raised-button (click)="showMap = true">מפה</button>
     </div>
+    <mat-divider></mat-divider>
   </div>
-  <mat-divider></mat-divider>
-</div>
-<div>
-  <div *ngFor="let d of urgencies">
-    <ng-container *ngIf="hasEvents(d)">
-      <strong *ngIf="urgencies.length > 1">{{ d.urgency }}:</strong>
-      <div class="events-container" [transition-group]="'flip-list'">
-        <ng-container *ngFor="let e of d.events; trackBy: trackBy">
-          <mat-card
-            transition-group-item
-            class="event-card"
-            [class.registered]="isRegisteredToEvent(e) && showingAllTasks"
-            *ngIf="filter(e)"
-          >
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 10px;
-              "
+  <div *ngIf="isDialog()">
+    <button mat-icon-button [mat-dialog-close]>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div *ngIf="showMap" class="grow-item" style="position: relative">
+    <app-noam-test
+      [tasks]="filteredTasks"
+      (tasksClicked)="clickOnMap($event)"
+    ></app-noam-test>
+    <button
+      mat-mini-fab
+      color
+      style="position: absolute; left: 10px; top: 10px"
+      (click)="showMap = false"
+    >
+      <mat-icon> list </mat-icon>
+    </button>
+  </div>
+  <div *ngIf="!showMap" class mat-dialog-content>
+    <div *ngFor="let d of urgencies">
+      <ng-container *ngIf="hasEvents(d)">
+        <strong *ngIf="urgencies.length > 1">{{ d.urgency }}:</strong>
+        <div class="events-container" [transition-group]="'flip-list'">
+          <ng-container *ngFor="let e of d.events; trackBy: trackBy">
+            <mat-card
+              transition-group-item
+              class="event-card"
+              [class.registered]="isRegisteredToEvent(e) && showingAllTasks"
+              *ngIf="filter(e)"
             >
-              <strong (click)="eventDetails(e)">
-                {{ e.title }}
-              </strong>
-              <app-dots-menu
-                [item]="e"
-                [buttons]="menuOptions"
-                *ngIf="isDispatcher()"
-              ></app-dots-menu>
-            </div>
-            <div class="event-info" (click)="eventDetails(e)">
-              <div class="event-detail">
-                {{ e.category?.caption || '' }}{{ distance(e) }}
-                <span>
-                  {{ eventCity(e) }}
-                  <span *ngIf="e.toAddressApiResult">
-                    => {{ eventToCity(e) }} ({{ travelDistance(e) }})</span
-                  >
-                </span>
-                <div>
-                  <strong>{{ displayDate(e) }}</strong>
-                </div>
-                <div style="color: gray">מספר {{ e.externalId }}</div>
-
-                <a *ngIf="!isFull(e)">{{ 'לפרטים והרשמה' }}</a>
-                <strong *ngIf="isFull(e)">
-                  {{ e.taskStatus.caption }}
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 10px;
+                "
+              >
+                <strong (click)="eventDetails(e)">
+                  {{ e.title }}
                 </strong>
+                <app-dots-menu
+                  [item]="e"
+                  [buttons]="menuOptions"
+                  *ngIf="isDispatcher()"
+                ></app-dots-menu>
               </div>
-            </div>
-          </mat-card>
-        </ng-container>
-      </div>
-    </ng-container>
+              <div class="event-info" (click)="eventDetails(e)">
+                <div class="event-detail">
+                  {{ e.category?.caption || '' }}{{ distance(e) }}
+                  <span>
+                    {{ eventCity(e) }}
+                    <span *ngIf="e.toAddressApiResult">
+                      => {{ eventToCity(e) }} ({{ travelDistance(e) }})</span
+                    >
+                  </span>
+                  <div>
+                    <strong>{{ displayDate(e) }}</strong>
+                  </div>
+                  <div style="color: gray">מספר {{ e.externalId }}</div>
+
+                  <a *ngIf="!isFull(e)">{{ 'לפרטים והרשמה' }}</a>
+                  <strong *ngIf="isFull(e)">
+                    {{ e.taskStatus.caption }}
+                  </strong>
+                </div>
+              </div>
+            </mat-card>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
   </div>
 </div>

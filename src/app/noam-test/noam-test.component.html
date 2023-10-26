@@ -1,18 +1,1 @@
-<div *ngFor="let add of addresses">
-  <strong>{{ add.address }}</strong>
-  <div>
-    <!-- <strong *ngIf="add.api?.results?.[0]?.['partial_match']">חלקי</strong> -->
-    {{add.api?.results?.[0]?.formatted_address}}
-  </div>
-  <div>
-    <div *ngFor="let c of add.api?.results?.[0]?.address_components">
-      {{ c.short_name }} - {{ c.types.join(', ') }}
-    </div>
-  </div>
-</div>
-
-<table>
-  <tr *ngFor="let add of addresses">
-    <td>{{ add.address }}</td>
-  </tr>
-</table>
+<div #gmap style="height: 100%" dir="ltr"></div>
