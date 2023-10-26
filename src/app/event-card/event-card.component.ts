@@ -259,7 +259,7 @@ export class EventCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isDialog()) this.showMap = true
+    if (this.isDialog()) this.showMap = false
   }
   eventDetails(e: Task) {
     openDialog(EventInfoComponent, (x) => {
