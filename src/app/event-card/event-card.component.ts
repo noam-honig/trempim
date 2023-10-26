@@ -119,7 +119,7 @@ export class EventCardComponent implements OnInit {
     this.refresh()
   }
 
-  showMap = true
+  showMap = false
   showLocation = false
   filteredTasks: Task[] = []
   filterChanged() {
