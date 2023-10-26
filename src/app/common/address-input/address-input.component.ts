@@ -16,6 +16,7 @@ import { FieldRef } from 'remult'
 
 import { getAddress, Location, parseUrlInAddress } from './google-api-helpers'
 import { InputAddressResult } from '../UITools'
+import { getSite } from '../../users/sites'
 
 @Component({
   selector: 'app-address-input',
@@ -33,6 +34,7 @@ export class AddressInputComponent
   constructor(private zone: NgZone) {}
   set args(value: CustomComponentArgs) {
     this.field = value.fieldRef
+    if (value.settings.caption) this.caption = value.settings.caption
     if (value.args) {
       this.onSelect = (result) => {
         value.args(result, value.fieldRef.container)
@@ -55,10 +57,11 @@ export class AddressInputComponent
   initAddress(consumer: (x: InputAddressResult) => void) {
     if (this.initAddressAutoComplete) return
     this.initAddressAutoComplete = true
-
+    const types = getSite().onlyCities ? ['(cities)'] : undefined
     const autocomplete = new google.maps.places.Autocomplete(
       this.addressInput.nativeElement,
       {
+        types,
         //   bounds: bounds,
         fields: ['address_components', 'formatted_address', 'geometry', 'type'],
       }

@@ -28,9 +28,13 @@ export class Site {
   showCopyLink?: boolean
   imageIsMandatory?: boolean
   showTwoContacts = true
+  fromAddressName?: string
+  toAddressName?: string
+  addressInstructions?: string
   get canSeeUrgency() {
     return true
   }
+  onlyCities = false
 }
 
 export class BikeIlSite extends Site {
@@ -51,7 +55,14 @@ export class Hahatul extends Site {
   override useFillerInfo = true
 }
 export class vdri extends Site {
+  override showCopyLink? = true
+  override allowAnyVolunteerToAdd = true
   override showTwoContacts = false
+  override fromAddressName = 'ישוב מוצא'
+  override toAddressName = 'ישוב יעד'
+  override addressInstructions? =
+    'אין למלא כתובות מדויקות או בסיסים, יש לרשום רק את העיר.'
+  override onlyCities = true
 }
 export class Yedidim extends Site {
   override countUpdates = false
@@ -89,9 +100,9 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
+    case 'test1':
       remult.context.site = new Hahatul(site)
       break
-    case 'test1':
     case 'vdri':
       remult.context.site = new vdri(site)
       break

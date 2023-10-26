@@ -21,11 +21,24 @@ export class IntakeComponent implements OnInit {
   area = new DataAreaSettings({
     fields: () => {
       let e = this.r.$
+      return [e.category!, e.title]
+    },
+  })
+  getAddressInstructions() {
+    return getSite().addressInstructions
+  }
+  area2 = new DataAreaSettings({
+    fields: () => {
+      let e = this.r.$
       return [
-        e.category!,
-        e.title,
-        e.address,
-        e.toAddress,
+        {
+          field: e.address,
+          caption: getSite().fromAddressName || e.address.metadata.caption,
+        },
+        {
+          field: e.toAddress,
+          caption: getSite().toAddressName || e.toAddress.metadata.caption,
+        },
         e.description,
         [e.eventDate, e.startTime, e.relevantHours],
         ...(getSite().useFillerInfo

@@ -1,6 +1,10 @@
 <h2>בקשת נסיעה</h2>
 <ng-container *ngIf="!result">
   <data-area [settings]="area"></data-area>
+  <strong style="color: red" *ngIf="getAddressInstructions()">{{
+    getAddressInstructions()
+  }}</strong>
+  <data-area [settings]="area2"></data-area>
 
   <button mat-raised-button (click)="send()">שלח בקשה</button>
 </ng-container>

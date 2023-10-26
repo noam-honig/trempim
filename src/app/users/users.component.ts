@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
 import { User } from './user'
 
 import { UIToolsService } from '../common/UIToolsService'
@@ -11,6 +11,7 @@ import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExce
 import { BusyService } from '../common-ui-elements'
 import { SignInController } from './SignInController'
 import { sendWhatsappToPhone } from '../events/phone'
+import * as xlsx from 'xlsx'
 
 @Component({
   selector: 'app-users',
@@ -43,9 +44,15 @@ export class UsersComponent implements OnInit {
     rowCssClass: (row) => (row.deleted ? 'canceled' : ''),
     gridButtons: [
       {
-        name: 'Excel',
+        name: 'יצוא לExcel',
         click: () => saveToExcel(this.users, 'users', this.busyService),
       },
+      // {
+      //   name: 'קליטת מתנדבים מאקסל',
+      //   click: () => {
+      //     this.myInput.nativeElement.click()
+      //   },
+      // },
     ],
     rowButtons: [
       {
@@ -82,6 +89,43 @@ export class UsersComponent implements OnInit {
       if (await this.ui.yesNoQuestion('האם לשלוח הזמנה בווטסאפ למתנדב?'))
         sendWhatsappToPhone(v.phone, v.buildInviteText(remult.context.origin))
     })
+  }
+  @ViewChild('fileInput') myInput!: ElementRef
+
+  async onFileInput(eventArgs: any) {
+    for (const file of eventArgs.target.files) {
+      let f: File = file
+      await new Promise((res) => {
+        var fileReader = new FileReader()
+
+        fileReader.onload = async (e: any) => {
+          // pre-process data
+          var binary = ''
+          var bytes = new Uint8Array(e.target.result)
+          var length = bytes.byteLength
+          for (var i = 0; i < length; i++) {
+            binary += String.fromCharCode(bytes[i])
+          }
+          // call 'xlsx' to read the file
+          var oFile = xlsx.read(binary, {
+            type: 'binary',
+            cellDates: true,
+            cellStyles: true,
+          })
+          let sheets = oFile.SheetNames
+          var dataArray = xlsx.utils.sheet_to_json(oFile.Sheets[sheets[0]], {
+            header: 1,
+          })
+
+          // let processed = await ImportExcelController.importProductsFromExcel(
+          //   dataArray
+          // )
+          // alert('loaded ' + processed + ' products')
+        }
+        fileReader.readAsArrayBuffer(f)
+      })
+      return //to import the first file only
+    }
   }
 
   ngOnInit() {}
