@@ -50,7 +50,7 @@ export class Hahatul extends Site {
   override sendSmsOnNewDraft = true
   override useFillerInfo = true
 }
-export class ngim extends Site {
+export class vdri extends Site {
   override showTwoContacts = false
 }
 export class Yedidim extends Site {
@@ -86,14 +86,14 @@ export function initSite(site?: string) {
       remult.context.site = new BikeIlSite(site)
       break
     case 'hahatul':
-    case '!!!ORG!!!':
-    case 'vdri':
     case 'dshinua':
+    case 'ngim':
     case 'mgln':
       remult.context.site = new Hahatul(site)
       break
-    case 'ngim':
-      remult.context.site = new ngim(site)
+    case 'test1':
+    case 'vdri':
+      remult.context.site = new vdri(site)
       break
     case 'yedidim':
     case 'ezion':
