@@ -94,8 +94,8 @@ export class NoamTestComponent implements OnInit {
                     offset: '100%',
                   },
                 ],
-                strokeColor: 'gray',
-                strokeWeight: 2,
+                // strokeColor: 'gray',
+                // strokeWeight: 2,
                 map: this.map,
               })
             )

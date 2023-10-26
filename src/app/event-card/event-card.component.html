@@ -43,12 +43,11 @@
   <div *ngIf="showMap" class="grow-item" style="position: relative">
     <app-noam-test [tasks]="filteredTasks"></app-noam-test>
     <button
-      mat-mini-fab
-      color
+      mat-raised-button
       style="position: absolute; left: 10px; top: 10px"
       (click)="showMap = false"
     >
-      <mat-icon> list </mat-icon>
+      חזרה לרשימה
     </button>
   </div>
   <div *ngIf="!showMap" class mat-dialog-content class="grow-item">
