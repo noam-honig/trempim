@@ -20,6 +20,7 @@ SqlDatabase.LogToConsole = false
 async function startup() {
   const app = express()
   app.use(sslRedirect())
+  app.use(express.static('dist/angular-starter-project'))
   app.use((req, res, next) => {
     const sp = req.path.split('/')
     if (
@@ -36,8 +37,7 @@ async function startup() {
     const siteUrl = getSiteFromPath(req)
     if (
       !getBackendSite(siteUrl) &&
-      ((sp[1] != 'assets' && sp.length > 2) ||
-        (sp.length == 2 && !siteUrl.includes('.')))
+      ((sp[1] != 'assets' && sp.length > 2) || sp.length == 2)
     ) {
       res.status(404).send('Not found: ' + siteUrl)
       return
@@ -55,8 +55,6 @@ async function startup() {
   //app.use(helmet({ contentSecurityPolicy: false }))
 
   app.use(api)
-
-  app.use(express.static('dist/angular-starter-project'))
 
   app.use(api.withRemult)
   app.get('/*/assets/logo.png', (req, res) =>
