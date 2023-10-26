@@ -94,6 +94,7 @@ export function initSite(site?: string) {
       break
     case 'ngim':
       remult.context.site = new ngim(site)
+      break
     case 'yedidim':
     case 'ezion':
       remult.context.site = new Yedidim(site)
