@@ -26,3 +26,5 @@ heroku config:set SESSION_SECRET=some-very-secret-key
 git push heroku master 
 heroku apps:open
 ```
+
+![image](https://github.com/noam-honig/trempim/assets/16635859/dc6ee3e8-0ae6-4237-a27c-36aff2e0c9bf)
