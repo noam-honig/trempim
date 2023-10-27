@@ -105,14 +105,18 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return (
       this.e.taskStatus != taskStatus.active &&
       this.e.taskStatus != taskStatus.assigned &&
+      this.e.taskStatus != taskStatus.driverPickedUp &&
       this.e.taskStatus != taskStatus.draft
     )
   }
   isAssigned() {
-    return this.e.taskStatus == taskStatus.assigned
+    return (
+      this.e.taskStatus == taskStatus.assigned ||
+      this.e.taskStatus == taskStatus.driverPickedUp
+    )
   }
   async clickedByMistake() {
-    await this.e.statusClickedByMistake()
+    await this.e.completedStatusClickedByMistake()
   }
 
   isDispatcher() {
@@ -149,6 +153,24 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return getCity(this.e.addressApiResult!, this.e.address)
   }
   closeDialog!: VoidFunction
+
+  showPickedUp() {
+    return this.e.taskStatus === taskStatus.assigned
+  }
+  showCancelPickedUp() {
+    return this.e.taskStatus === taskStatus.driverPickedUp
+  }
+  showThumbsUpOnPickup() {
+    return [taskStatus.driverPickedUp, taskStatus.completed].includes(
+      this.e.taskStatus
+    )
+  }
+  async pickedUp() {
+    await this.e.driverPickedUp()
+  }
+  async cancelPickedUp() {
+    await this.e.pickedUpStatusClickedByMistake()
+  }
 }
 //[ ] - התקן המכשיר
 

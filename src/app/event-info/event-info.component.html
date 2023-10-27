@@ -87,7 +87,29 @@
     {{ e.description }}
     {{ e.privateDriverNotes }}
   </div>
-
+  <div
+    style="display: flex; place-content: space-between; margin-top: 8px"
+    *ngIf="showThumbsUpOnPickup()"
+  >
+    <strong>👍👍👍 </strong>
+    <button
+      mat-raised-button
+      color="error"
+      (click)="cancelPickedUp()"
+      *ngIf="showCancelPickedUp()"
+    >
+      נלחץ בטעות
+    </button>
+  </div>
+  <button
+    mat-raised-button
+    style="margin-top: 16px; background-color: green; color: white"
+    *ngIf="showPickedUp()"
+    (click)="pickedUp()"
+  >
+    נאסף בהצלחה
+  </button>
+  <hr />
   <div *ngIf="e.toAddress" class="space-above">
     <strong>כתובת יעד</strong>
     <div class="phone-container" style="justify-content: space-between">

@@ -92,11 +92,11 @@ export class OrgEventsComponent implements OnInit {
           where:
             this.activeTab == 0
               ? {
-                  taskStatus: taskStatus.assigned,
+                  taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
                   driverId: remult.user!.id,
                 }
               : {
-                  taskStatus: taskStatus.active,
+                  taskStatus: [taskStatus.active],
                 },
         })
         .then(async (items) => {

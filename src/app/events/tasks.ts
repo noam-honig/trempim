@@ -205,7 +205,7 @@ export class Task extends IdEntity {
         },
         {
           driverId: remult.user!.id!,
-          taskStatus: taskStatus.assigned,
+          taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
         },
       ],
     }
@@ -410,7 +410,7 @@ export class Task extends IdEntity {
       if (
         (await repo(Task).count({
           driverId: remult.user!.id!,
-          taskStatus: taskStatus.assigned,
+          taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
         })) >= 5
       )
         throw Error('ניתן להרשם במקביל לעד 5 נסיעות')
@@ -496,7 +496,7 @@ export class Task extends IdEntity {
   async returnToActive() {
     this.driverId = ''
     let action = 'מוקדן החזיר לפעיל'
-    if (taskStatus.draft) action = 'טיוטה אושרה'
+    if (this.taskStatus == taskStatus.draft) action = 'טיוטה אושרה'
     this.taskStatus = taskStatus.active
     await this.insertStatusChange(action, 'על ידי מוקדן')
     await this.save()
@@ -506,6 +506,12 @@ export class Task extends IdEntity {
     this.driverId = ''
     this.taskStatus = taskStatus.draft
     await this.insertStatusChange('סמן כטיוטא', 'על ידי מוקדן')
+    await this.save()
+  }
+  @BackendMethod({ allowed: Roles.dispatcher })
+  async markForRelevanceCheck() {
+    this.taskStatus = taskStatus.relevanceCheck
+    await this.insertStatusChange(this.taskStatus.caption)
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
@@ -534,14 +540,43 @@ export class Task extends IdEntity {
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
-  async statusClickedByMistake() {
+  async completedStatusClickedByMistake() {
+    if (
+      this.driverId != remult.user?.id! &&
+      !remult.isAllowed(Roles.dispatcher)
+    )
+      throw new Error('נסיעה זו לא משוייכת לך')
+    if (
+      (await repo(TaskStatusChanges).count({
+        taskId: this.id,
+        eventStatus: taskStatus.driverPickedUp,
+      })) > 0
+    )
+      this.taskStatus = taskStatus.driverPickedUp
+    else this.taskStatus = taskStatus.assigned
+    await this.insertStatusChange('עדכון סטטוס נלחץ בטעות')
+    await this.save()
+  }
+  @BackendMethod({ allowed: Allow.authenticated })
+  async driverPickedUp() {
+    if (
+      this.driverId != remult.user?.id! &&
+      !remult.isAllowed(Roles.dispatcher)
+    )
+      throw new Error('נסיעה זו לא משוייכת לך')
+    this.taskStatus = taskStatus.driverPickedUp
+    await this.insertStatusChange(this.taskStatus.caption)
+    await this.save()
+  }
+  @BackendMethod({ allowed: Allow.authenticated })
+  async pickedUpStatusClickedByMistake() {
     if (
       this.driverId != remult.user?.id! &&
       !remult.isAllowed(Roles.dispatcher)
     )
       throw new Error('נסיעה זו לא משוייכת לך')
     this.taskStatus = taskStatus.assigned
-    await this.insertStatusChange('עדכון סטטוס נלחץ בטעות')
+    await this.insertStatusChange('נאסף בהצלחה נלחץ בטעות')
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
@@ -723,12 +758,21 @@ export class Task extends IdEntity {
         click: (e) => ui.showUserInfo({ userId: e.driverId, title: 'נהג' }),
       },
       {
+        name: 'העבר לבירור רלוונטיות',
+        icon: 'question_mark',
+        visible: (e) => [taskStatus.active].includes(e.taskStatus),
+        click: async (e) => {
+          await e.markForRelevanceCheck()
+        },
+      },
+      {
         name: 'סמן כלא רלוונטי',
         icon: 'thumb_down',
         visible: (e) =>
           [
             taskStatus.active,
             taskStatus.assigned,
+            taskStatus.notRelevant,
             taskStatus.otherProblem,
             taskStatus.draft,
           ].includes(e.taskStatus),
@@ -741,8 +785,11 @@ export class Task extends IdEntity {
         name: 'החזר לנהג',
         icon: 'badge',
         visible: (e) =>
-          ![taskStatus.active, taskStatus.assigned].includes(e.taskStatus) &&
-          e.driverId !== '',
+          ![
+            taskStatus.active,
+            taskStatus.assigned,
+            taskStatus.driverPickedUp,
+          ].includes(e.taskStatus) && e.driverId !== '',
 
         click: async (e) => {
           await e.returnToDriver()
@@ -753,7 +800,11 @@ export class Task extends IdEntity {
         icon: 'check_circle',
 
         visible: (e) =>
-          ![taskStatus.active, taskStatus.draft].includes(e.taskStatus),
+          ![
+            taskStatus.active,
+            taskStatus.draft,
+            taskStatus.relevanceCheck,
+          ].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
         },
@@ -771,7 +822,8 @@ export class Task extends IdEntity {
         name: 'סמן כטיוטא',
         visible: (e) =>
           e.taskStatus == taskStatus.active ||
-          e.taskStatus === taskStatus.notRelevant,
+          e.taskStatus === taskStatus.notRelevant ||
+          e.taskStatus == taskStatus.relevanceCheck,
         click: async (e) => {
           await e.markAsDraft()
         },
