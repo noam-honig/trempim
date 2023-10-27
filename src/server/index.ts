@@ -20,7 +20,7 @@ SqlDatabase.LogToConsole = false
 async function startup() {
   const app = express()
   app.use(sslRedirect())
-  app.use(express.static('dist/angular-starter-project'))
+
   app.use((req, res, next) => {
     const sp = req.path.split('/')
     if (
@@ -34,23 +34,26 @@ async function startup() {
       res.redirect('/' + redirect + req.path)
       return
     }
-    const siteUrl = getSiteFromPath(req)
-    if (
-      !getBackendSite(siteUrl) &&
-      ((sp[1] != 'assets' && sp.length > 2) || sp.length == 2)
-    ) {
-      res.status(404).send('Not found: ' + siteUrl)
-      return
-    }
+    express.static('dist/angular-starter-project')(req, res, () => {
+      const siteUrl = getSiteFromPath(req)
+      if (
+        !getBackendSite(siteUrl) &&
+        ((sp[1] != 'assets' && sp.length > 2) || sp.length == 2)
+      ) {
+        res.status(404).send('Not found: ' + siteUrl)
+        return
+      }
 
-    session({
-      path: '/' + siteUrl,
-      secret:
-        process.env['NODE_ENV'] === 'production'
-          ? process.env['SESSION_SECRET']
-          : 'my secret1',
-    })(req, res, next)
+      session({
+        path: '/' + siteUrl,
+        secret:
+          process.env['NODE_ENV'] === 'production'
+            ? process.env['SESSION_SECRET']
+            : 'my secret1',
+      })(req, res, next)
+    })
   })
+
   app.use(compression())
   //app.use(helmet({ contentSecurityPolicy: false }))
 
