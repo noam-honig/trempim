@@ -802,6 +802,7 @@ export class Task extends IdEntity {
             taskStatus.active,
             taskStatus.assigned,
             taskStatus.driverPickedUp,
+            taskStatus.relevanceCheck,
           ].includes(e.taskStatus) && e.driverId !== '',
 
         click: async (e) => {
@@ -813,11 +814,7 @@ export class Task extends IdEntity {
         icon: 'check_circle',
 
         visible: (e) =>
-          ![
-            taskStatus.active,
-            taskStatus.draft,
-            taskStatus.relevanceCheck,
-          ].includes(e.taskStatus),
+          ![taskStatus.active, taskStatus.draft].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
         },
