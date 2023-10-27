@@ -41,8 +41,8 @@
         class="alert-badge"
       ></div>
       <div
-        [matBadge]="drafts"
-        [matBadgeHidden]="!drafts"
+        [matBadge]="drafts + relevanceCheck"
+        [matBadgeHidden]="!drafts && !relevanceCheck"
         matBadgeColor="warn"
         matBadgePosition="below before"
         class="draft-badge"
@@ -95,10 +95,22 @@
             [routerLink]="['/טיוטות']"
             (click)="routeClicked()"
             class="draft-line-badge"
-            matBadge="99"
             matBadgeColor="warn"
             matBadgePosition="above after"
             >טיוטות</a
+          >
+        </mat-list-item>
+        <mat-list-item routerLinkActive="active-route" *ngIf="isTrainee()">
+          <a
+            matLine
+            [matBadge]="relevanceCheck"
+            [matBadgeHidden]="!drafts"
+            [routerLink]="['/בבדיקה']"
+            (click)="routeClicked()"
+            class="draft-line-badge"
+            matBadgeColor="warn"
+            matBadgePosition="above after"
+            >בדיקת רלוונטיות</a
           >
         </mat-list-item>
         <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">

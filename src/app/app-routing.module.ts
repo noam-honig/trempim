@@ -10,6 +10,7 @@ import { NoamTestComponent } from './noam-test/noam-test.component'
 import { DraftOverviewComponent } from './draft-overview/draft-overview.component'
 import { IntakeComponent } from './intake/intake.component'
 import { UpdatesComponent } from './updates/updates.component'
+import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -27,6 +28,12 @@ const routes: Routes = [
     path: 'טיוטות',
     component: DraftOverviewComponent,
     canActivate: [DraftsGuard],
+    data: { hide: true },
+  },
+  {
+    path: 'בבדיקה',
+    component: VerifyRelevanceComponent,
+    canActivate: [DispatchGuard],
     data: { hide: true },
   },
   {

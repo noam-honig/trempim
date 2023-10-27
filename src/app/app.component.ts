@@ -40,6 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
     return '/' + getSite().urlPrefix + '/assets/logo.png'
   }
   drafts = 0
+  relevanceCheck = 0
   updateSubscription() {
     this.unSub()
     this.unSub = () => {}
@@ -57,8 +58,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async updateStats() {
     this.busy.donotWait(async () => {
-      await this.updates.updateWaitingUpdates()
-      this.drafts = await repo(Task).count({ taskStatus: taskStatus.draft })
+      ;[this.drafts, this.relevanceCheck] = await Promise.all([
+        repo(Task).count({ taskStatus: taskStatus.draft }),
+        repo(Task).count({ taskStatus: taskStatus.relevanceCheck }),
+        this.updates.updateWaitingUpdates(),
+      ])
     })
   }
   terms = terms

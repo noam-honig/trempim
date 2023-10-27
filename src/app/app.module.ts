@@ -49,7 +49,8 @@ import { InputImageComponent } from './common/input-image/input-image.component'
 import { getSite, initSite } from './users/sites'
 import { MatBadgeModule } from '@angular/material/badge'
 import { UpdatesComponent, UpdatesService } from './updates/updates.component'
-import { APP_BASE_HREF } from '@angular/common'
+import { APP_BASE_HREF } from '@angular/common';
+import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component'
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import { APP_BASE_HREF } from '@angular/common'
     IntakeComponent,
     InputImageComponent,
     UpdatesComponent,
+    VerifyRelevanceComponent,
   ],
   imports: [
     BrowserModule,
