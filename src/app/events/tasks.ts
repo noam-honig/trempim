@@ -396,6 +396,18 @@ export class Task extends IdEntity {
   })
   imageId = ''
 
+  @BackendMethod({ allowed: Roles.admin })
+  static async markTasksForRelevanceCheck(ids: string[]) {
+    let i = 0
+    for (const task of await repo(Task).find({
+      where: { id: ids, taskStatus: taskStatus.active },
+    })) {
+      await task.markForRelevanceCheck()
+      i++
+    }
+    return i
+  }
+
   @BackendMethod({ allowed: Allow.authenticated })
   async assignToMe(userId?: string) {
     let assignUserId = remult.user!.id

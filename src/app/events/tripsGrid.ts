@@ -5,6 +5,7 @@ import { GridSettings, IDataSettings } from '../common-ui-elements/interfaces'
 import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExcel'
 import { BusyService, openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
+import { taskStatus } from './taskStatus'
 
 export function tripsGrid({
   ui,
@@ -17,8 +18,33 @@ export function tripsGrid({
       driver: true,
       createUser: true,
     },
+    allowSelection: true,
     gridButtons: [
       ...(gridButtons || []),
+      {
+        name: 'סמן נסיעות לבירור רלוונטיות',
+        icon: 'question_mark',
+        click: async () => {
+          const relevantRides = allRides.selectedRows.filter(
+            (x) => x.taskStatus == taskStatus.active
+          )
+          if (!relevantRides.length) {
+            ui.error('לא סומנו נסיעות מתאימות, אנא סמנו בעזרת תיבת הסימון')
+            return
+          }
+          if (
+            await ui.yesNoQuestion(
+              `האם לעדכן ${relevantRides.length} נסיעות לבירור רלוונטיות?`
+            )
+          ) {
+            ui.error(
+              `עודכנו ${await Task.markTasksForRelevanceCheck(
+                relevantRides.map((x) => x.id)
+              )} נסיעות`
+            )
+          }
+        },
+      },
 
       {
         name: 'יצוא לאקסל',
