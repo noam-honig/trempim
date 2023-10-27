@@ -11,7 +11,7 @@ import { SignInController } from './users/SignInController'
 import { remult, repo } from 'remult'
 import { DataAreaSettings } from './common-ui-elements/interfaces'
 import copy from 'copy-to-clipboard'
-import { getSite } from './users/sites'
+import { getSite, getTitle } from './users/sites'
 import { Roles } from './users/roles'
 import { updateChannel } from './events/UpdatesChannel'
 import { UpdatesService } from './updates/updates.component'
@@ -32,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public updates: UpdatesService,
     private busy: BusyService
   ) {}
+  
   unSub = () => {}
   ngOnDestroy(): void {
     this.unSub()
