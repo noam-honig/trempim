@@ -54,6 +54,11 @@ export class EventCardComponent implements OnInit {
       name: 'העתק רשימה עבור ווטסאפ',
       click: () => {
         let message = 'קריאות פתוחות'
+
+        if (this.category && this.category != AllCategories) {
+          message += ` (${this.category.caption})`
+        }
+
         if (this.region) {
           message += ' מאזור ' + this.region
         }
