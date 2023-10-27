@@ -55,7 +55,7 @@ export class Hahatul extends Site {
   override sendSmsOnNewDraft = true
   override useFillerInfo = true
 }
-export class WarC extends Site {
+export class WarRoomCars extends Site {
   override showCopyLink? = true
   override allowAnyVolunteerToAdd = true
   override useFillerInfo = true
@@ -63,7 +63,7 @@ export class WarC extends Site {
   override defaultCategory = Category.bike
   override categories = [Category.bike, Category.other]
 }
-export class WarB extends Site {
+export class WarRoomBikes extends Site {
   override showCopyLink? = true
   override allowAnyVolunteerToAdd = true
 
@@ -125,11 +125,11 @@ export function initSite(site?: string) {
     case 'ezion':
       remult.context.site = new Yedidim(site)
       break
-    case 'warc':
-      remult.context.site = new WarC(site)
+    case 'wrc':
+      remult.context.site = new WarRoomCars(site)
       break
-    case 'warb':
-      remult.context.site = new WarB(site)
+    case 'wrb':
+      remult.context.site = new WarRoomBikes(site)
       break
   }
 }
@@ -154,8 +154,8 @@ export const backendSites = [
   { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
   { urlPrefix: 'ngim', dbSchema: 'ngim', title: 'חמל נהגים' },
   { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
-  { urlPrefix: 'warc', dbSchema: 'warc', title: 'נהגים מתנדבים' },
-  { urlPrefix: 'warb', dbSchema: 'warb', title: 'אופנועים מתנדבים' },
+  { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'נהגים מתנדבים' },
+  { urlPrefix: 'wrb', dbSchema: 'wrb', title: 'אופנועים מתנדבים' },
 ]
 export function getBackendSite(schema?: string) {
   if (!schema) schema = getSite().urlPrefix
