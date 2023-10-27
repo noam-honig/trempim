@@ -42,7 +42,7 @@ import { Urgency } from './urgency'
 import { updateChannel } from './UpdatesChannel'
 import { sendSms } from '../../server/send-sms'
 
-const contactInfoRules: FieldOptions<Task, string> = {
+const onlyDriverRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
     if (remult.user) {
       if (remult.isAllowed([Roles.trainee, Roles.dispatcher])) return true
@@ -282,7 +282,7 @@ export class Task extends IdEntity {
 
   @PhoneField<Task>({
     caption: 'טלפון ממלא הבקשה',
-    ...contactInfoRules,
+    ...onlyDriverRules,
     validate: (entity, ref) => {
       if ((entity.isNew() || ref.valueChanged()) && getSite().useFillerInfo)
         Validators.required(entity, ref)
@@ -291,13 +291,13 @@ export class Task extends IdEntity {
   requesterPhone1 = remult.user?.phone
   @Fields.string({
     caption: 'שם ממלא הבקשה',
-    ...contactInfoRules,
+    ...onlyDriverRules,
   })
   requesterPhone1Description = remult.user?.name
 
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
-    ...contactInfoRules,
+    ...onlyDriverRules,
     validate: (entity, ref) => {
       if (entity.isNew() || ref.valueChanged()) Validators.required(entity, ref)
     },
@@ -305,43 +305,50 @@ export class Task extends IdEntity {
   phone1 = ''
   @Fields.string({
     caption: 'איש קשר מוצא',
-    ...contactInfoRules,
+    ...onlyDriverRules,
   })
   phone1Description = ''
   @DataControl({ visible: () => getSite().showTwoContacts })
   @PhoneField<Task>({
     caption: 'טלפון מוצא 2',
-    ...contactInfoRules,
+    ...onlyDriverRules,
   })
   phone2 = ''
   @DataControl({ visible: () => getSite().showTwoContacts })
   @Fields.string({
     caption: 'איש קשר מוצא 2',
-    ...contactInfoRules,
+    ...onlyDriverRules,
   })
   phone2Description = ''
   @PhoneField({
     caption: 'טלפון ליעד',
-    ...contactInfoRules,
+    ...onlyDriverRules,
   })
   toPhone1 = ''
   @Fields.string({
     caption: 'איש קשר ליעד',
-    ...contactInfoRules,
+    ...onlyDriverRules,
   })
   tpPhone1Description = ''
   @DataControl({ visible: () => getSite().showTwoContacts })
   @PhoneField({
     caption: 'טלפון ליעד 2',
-    ...contactInfoRules,
+    ...onlyDriverRules,
   })
   toPhone2 = ''
   @DataControl({ visible: () => getSite().showTwoContacts })
   @Fields.string({
     caption: 'איש קשר ליעד 2',
-    ...contactInfoRules,
+    ...onlyDriverRules,
   })
   tpPhone2Description = ''
+
+  @Fields.string({
+    caption: 'מידע שיוצג רק לנהג המבצע ולמוקד',
+    ...onlyDriverRules,
+    customInput: (x) => x.textarea(),
+  })
+  privateDriverNotes = ''
 
   @CreatedAtField()
   createdAt = new Date()
@@ -365,6 +372,7 @@ export class Task extends IdEntity {
   driver?: User
   @Fields.string({ allowApiUpdate: false })
   statusNotes = ''
+
   @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
@@ -597,6 +605,7 @@ export class Task extends IdEntity {
         e.address,
         e.toAddress,
         e.description,
+        e.privateDriverNotes,
         [e.eventDate, e.startTime, e.relevantHours],
         ...(getSite().useFillerInfo
           ? [[e.requesterPhone1, e.requesterPhone1Description]]

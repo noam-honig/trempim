@@ -78,9 +78,14 @@
     >
     </app-phone-details>
   </div>
-  <div class="space-above" style="white-space: pre-line" *ngIf="e.description">
-    <strong>פרטים נוספים</strong>
+  <div
+    class="space-above"
+    style="white-space: pre-line"
+    *ngIf="e.description || e.privateDriverNotes"
+  >
+    <strong>פרטים נוספים: </strong>
     {{ e.description }}
+    {{ e.privateDriverNotes }}
   </div>
 
   <div *ngIf="e.toAddress" class="space-above">

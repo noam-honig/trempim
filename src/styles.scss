@@ -85,10 +85,23 @@ a:hover {
 }
 
 @media (max-width: 720px) {
-  .mat-dialog-content {
-    //   padding: 8px !important
+  .slim-dialog {
+    .mat-dialog-content {
+      padding: 8px !important;
+    }
+
+    .mat-dialog-title {
+      margin: 0 -12px !important;
+    }
+
+    .mat-dialog-actions {
+      margin: -12px -12px !important;
+    }
   }
+
+
 }
+
 
 .mat-dialog-title {
   margin-top: 0px !important;
