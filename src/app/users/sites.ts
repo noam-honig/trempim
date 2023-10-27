@@ -123,6 +123,7 @@ export function initSite(site?: string) {
       break
     case 'yedidim':
     case 'ezion':
+    case 'y':
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
