@@ -207,6 +207,7 @@ export class Task extends IdEntity {
           driverId: remult.user!.id!,
           taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
         },
+        { driverId: remult.user!.id!, statusChangeDate: { $gte: d } },
       ],
     }
   }
