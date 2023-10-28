@@ -14,6 +14,7 @@ export function getTitle() {
 }
 export class Site {
   constructor(public urlPrefix: string) {}
+  secondAddressRequired = true
   countUpdates = true
   useFillerInfo = false
   allowAnyVolunteerToAdd? = false
@@ -62,6 +63,17 @@ export class WarRoomCars extends Site {
   override bikeCategoryCaption = 'שינוע באופנוע'
   override defaultCategory = Category.bike
   override categories = [Category.bike, Category.other]
+}
+
+export class Showers extends Site {
+  static shower = new Category('מקלחות ניידות')
+  override secondAddressRequired = false
+  override defaultCategory = Showers.shower
+  override categories = [
+    Showers.shower,
+    new Category('רכב גורר עד 3.5 טון'),
+    new Category('רכב גורר מעל 3.5 טון'),
+  ]
 }
 export class WarRoomBikes extends Site {
   override showCopyLink? = true
@@ -115,7 +127,6 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
-    case 'test1':
       remult.context.site = new Hahatul(site)
       break
     case 'vdri':
@@ -132,6 +143,10 @@ export function initSite(site?: string) {
     case 'wrb':
       remult.context.site = new WarRoomBikes(site)
       break
+      case 'test1':
+    case 'showers':
+      remult.context.site = new Showers(site)
+      break
   }
 }
 
@@ -141,7 +156,7 @@ export function getSite() {
 
 export const backendSites = [
   { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
-  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח' },
+  { urlPrefix: 'test1', dbSchema: 'bikeil', title: 'פיתוח' },
   {
     urlPrefix: 'hahatul',
     dbSchema: 'hahatul',
@@ -157,6 +172,7 @@ export const backendSites = [
   { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
   { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'נהגים מתנדבים' },
   { urlPrefix: 'wrb', dbSchema: 'wrb', title: 'אופנועים מתנדבים' },
+  { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
 ]
 export function getBackendSite(schema?: string) {
   if (!schema) schema = getSite().urlPrefix

@@ -138,7 +138,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   validation: (task) => {
     if (phoneConfig.disableValidation) return
     if (!task.addressApiResult?.results) task.$.address.error = 'כתובת לא נמצאה'
-    if (!task.toAddressApiResult?.results)
+    if (!task.toAddressApiResult?.results && getSite().secondAddressRequired)
       task.$.toAddress.error = 'כתובת לא נמצאה'
   },
   //@ts-ignore
@@ -166,15 +166,24 @@ const onlyDriverRules: FieldOptions<Task, string> = {
 })
 export class Task extends IdEntity {
   getShortDescription(): string {
-    return (
-      (this.category?.caption + ': ' || '') +
-      this.title +
-      ' מ' +
-      getCity(this.addressApiResult!, this.address) +
-      ' ל' +
-      getCity(this.toAddressApiResult, this.toAddress) +
-      ` (${this.externalId})`
-    )
+    if (this.toAddressApiResult?.results?.length)
+      return (
+        (this.category?.caption + ': ' || '') +
+        this.title +
+        ' מ' +
+        getCity(this.addressApiResult!, this.address) +
+        ' ל' +
+        getCity(this.toAddressApiResult, this.toAddress) +
+        ` (${this.externalId})`
+      )
+    else
+      return (
+        (this.category?.caption + ': ' || '') +
+        this.title +
+        ' מ' +
+        getCity(this.addressApiResult!, this.address) +
+        ` (${this.externalId})`
+      )
   }
   displayDate() {
     const e = this

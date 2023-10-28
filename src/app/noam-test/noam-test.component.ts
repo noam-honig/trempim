@@ -82,23 +82,24 @@ export class NoamTestComponent implements OnInit {
           this.adjustBounds(tasks)
           this.clearLines()
           for (const t of tasks) {
-            this.lines.push(
-              new google.maps.Polyline({
-                path: [
-                  getLocation(t.addressApiResult),
-                  getLocation(t.toAddressApiResult),
-                ],
-                icons: [
-                  {
-                    icon: lineSymbol,
-                    offset: '100%',
-                  },
-                ],
-                // strokeColor: 'gray',
-                // strokeWeight: 2,
-                map: this.map,
-              })
-            )
+            if (t.toAddressApiResult?.results?.length)
+              this.lines.push(
+                new google.maps.Polyline({
+                  path: [
+                    getLocation(t.addressApiResult),
+                    getLocation(t.toAddressApiResult),
+                  ],
+                  icons: [
+                    {
+                      icon: lineSymbol,
+                      offset: '100%',
+                    },
+                  ],
+                  // strokeColor: 'gray',
+                  // strokeWeight: 2,
+                  map: this.map,
+                })
+              )
           }
           if (tasks.length > 1) {
             openDialog(EventCardComponent, (x) => {
