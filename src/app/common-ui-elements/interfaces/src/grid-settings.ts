@@ -267,7 +267,7 @@ export class GridSettings<rowType = any> {
   onEnterRow!: (row: rowType) => void
   onNewRow!: (row: rowType) => void
   saveRow(s: rowType) {
-    return getEntityRef(s).save()
+    this.restList.save(s)
   }
   caption!: string
 

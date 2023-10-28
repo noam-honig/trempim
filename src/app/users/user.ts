@@ -39,7 +39,7 @@ import { GeocodeResult } from '../common/address-input/google-api-helpers'
 export class User extends IdEntity {
   @DataControl({ width: '130px' })
   @Fields.string({
-    validate: [Validators.required],
+   // validate: [Validators.required],
     caption: terms.username,
   })
   name = ''

@@ -60,7 +60,7 @@ export class SignInController extends ControllerBase {
       if ((await userRepo.count()) === 0) {
         //first ever user is the admin
         u = await userRepo.insert({
-          name: this.phone,
+          name: '',
           phone: this.phone,
           admin: true,
         })
@@ -75,6 +75,7 @@ export class SignInController extends ControllerBase {
     )
     otps.set(this.phone, { otp: otp, expire: d })
     this.askForOtp = true
+    if (u && !u.name) this.askForName = true
     if (await setUserToSelfSignInIfAllowed()) {
       if (!(await repo(User).count({ phone: this.phone })))
         this.askForName = true
@@ -92,6 +93,7 @@ export class SignInController extends ControllerBase {
       phone: this.phone,
       deleted: false,
     })
+
     if (!user) {
       if (await setUserToSelfSignInIfAllowed()) {
         if (!this.name) {
@@ -100,6 +102,13 @@ export class SignInController extends ControllerBase {
         }
         user = await repo(User).insert({ phone: this.phone, name: this.name })
       }
+    } else if (!user.name) {
+      if (!this.name) {
+        this.askForName = true
+        return undefined
+      }
+      user.name = this.name
+      await user.save()
     }
 
     if (!user) throw 'מספר טלפון לא מוכר'
