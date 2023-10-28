@@ -1,1 +1,7 @@
-<div #gmap style="height: 100%" dir="ltr"></div>
+<div class="full-page">
+  <div #gmap class="grow-item" dir="ltr"></div>
+  <div style="height: 100px" *ngIf="selectedTasks">
+    <app-event-card [tasks]="selectedTasks" sli></app-event-card>
+    
+  </div>
+</div>

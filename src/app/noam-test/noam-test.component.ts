@@ -41,6 +41,7 @@ export class NoamTestComponent implements OnInit {
   @Output() tasksClicked = new EventEmitter<string[]>()
 
   lines: google.maps.Polyline[] = []
+  selectedTasks?: Task[]
   clearLines() {
     this.lines.forEach((x) => x.setMap(null))
     this.lines = []
@@ -101,6 +102,8 @@ export class NoamTestComponent implements OnInit {
                 })
               )
           }
+          this.selectedTasks = tasks
+          return
           if (tasks.length > 1) {
             openDialog(EventCardComponent, (x) => {
               let f = this._tasks.find((x) => x.id == familyId)!

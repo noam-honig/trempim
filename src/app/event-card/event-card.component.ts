@@ -124,7 +124,7 @@ export class EventCardComponent implements OnInit {
     this.refresh()
   }
 
-  showMap = false
+  showMap = document.location.host.includes('localhost')
   showLocation = false
   filteredTasks: Task[] = []
   filterChanged() {
