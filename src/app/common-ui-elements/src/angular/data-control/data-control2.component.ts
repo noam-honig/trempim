@@ -67,6 +67,18 @@ export class DataControl2Component {
       }
     }
   }
+  inputMode() {
+    if (this.isOtp()) {
+      return 'numeric'
+    }
+    return ''
+  }
+  autoComplete() {
+    if (this.isOtp()) {
+      return 'one-time-code'
+    }
+    return ''
+  }
 
   @Input() record: any
   @Input() notReadonly = false
@@ -77,6 +89,10 @@ export class DataControl2Component {
     undefined!,
     () => undefined!
   )
+  isOtp() {
+    return (this.map.field as FieldRef<any>)?.metadata?.key === 'otp'
+  }
+
   showDescription() {
     return (this.map.field && this.map.getValue) || !this._getEditable()
   }
