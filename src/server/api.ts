@@ -97,7 +97,6 @@ function initRemultBasedOnRequestInfo(
   let found = siteEventPublishers.get(site)
   if (!found) {
     let subscriptionServer: SubscriptionServer
-    //TODO YONI - review channel name
     let x = new SseSubscriptionServer((channel, remult) => {
       return remult.isAllowed(Roles.dispatcher)
     })

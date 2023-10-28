@@ -174,7 +174,4 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
 }
 //[ ] - התקן המכשיר
 
-//[ ] - add alerts and last seen stuff
 
-//[ ] - add urgency, critical, high, medium, normal
-//[ ] - add driver's address - to use for distance measurement

@@ -935,7 +935,4 @@ export function calcValidUntil(
   return r2
 }
 
-//[ ] test phone with different user roles (update status etc...)
-//[ ] לאפשר להפוך טיוטא ישר ללא רלוונטי
-//[ ] בטיוטא מופיע נלחץ בטעות
 export const DriverCanceledAssign = 'נהג ביטל שיוך'
