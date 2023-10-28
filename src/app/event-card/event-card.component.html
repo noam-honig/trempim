@@ -1,5 +1,5 @@
 <div class="full-page">
-  <div *ngIf="!isDialog()">
+  <div *ngIf="!isDialog() && !slim">
     <button
       mat-raised-button
       color="primary"
@@ -8,7 +8,7 @@
     >
       הוספת נסיעה
     </button>
-    <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
+    <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher() "></app-dots-menu>
     <data-area [settings]="area"></data-area>
     <div
       style="
@@ -34,11 +34,9 @@
     </div>
     <mat-divider></mat-divider>
   </div>
-  <div *ngIf="isDialog()" mat-dialog-title>
+  <div *ngIf="isDialog()" >
     {{ title }}
-    <button mat-icon-button [mat-dialog-close]>
-      <mat-icon>close</mat-icon>
-    </button>
+    
   </div>
   <div *ngIf="showMap" class="grow-item" style="position: relative">
     <app-noam-test [tasks]="filteredTasks"></app-noam-test>
@@ -50,7 +48,7 @@
       חזרה לרשימה
     </button>
   </div>
-  <div *ngIf="!showMap" class mat-dialog-content class="grow-item">
+  <div *ngIf="!showMap" [class.grow-item]="!slim">
     <div *ngFor="let d of urgencies">
       <ng-container *ngIf="hasEvents(d)">
         <strong *ngIf="urgencies.length > 1">{{ d.urgency }}:</strong>
@@ -72,10 +70,11 @@
                 <strong (click)="eventDetails(e)">
                   {{ e.title }}
                 </strong>
+                <a (click)="eventDetails(e)" *ngIf="!isFull(e)&&slim">{{ 'לפרטים והרשמה' }}</a>
                 <app-dots-menu
                   [item]="e"
                   [buttons]="menuOptions"
-                  *ngIf="isDispatcher()"
+                  *ngIf="isDispatcher()&& !slim"
                 ></app-dots-menu>
               </div>
               <div class="event-info" (click)="eventDetails(e)">
@@ -92,7 +91,7 @@
                   </div>
                   <div style="color: gray">מספר {{ e.externalId }}</div>
 
-                  <a *ngIf="!isFull(e)">{{ 'לפרטים והרשמה' }}</a>
+                  <a *ngIf="!isFull(e)&&!slim">{{ 'לפרטים והרשמה' }}</a>
                   <strong *ngIf="isFull(e)">
                     {{ e.taskStatus.caption }}
                   </strong>
