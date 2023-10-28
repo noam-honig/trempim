@@ -10,7 +10,11 @@ import {
 } from 'remult'
 import { Roles } from './roles'
 import { terms } from '../terms'
-import { PhoneField } from '../events/phone'
+import {
+  PhoneField,
+  fixPhoneInput,
+  isPhoneValidForIsrael,
+} from '../events/phone'
 import { UITools } from '../common/UITools'
 import { DataControl } from '../common-ui-elements/interfaces'
 import { CreatedAtField } from '../events/date-utils'
@@ -39,7 +43,7 @@ import { GeocodeResult } from '../common/address-input/google-api-helpers'
 export class User extends IdEntity {
   @DataControl({ width: '130px' })
   @Fields.string({
-   // validate: [Validators.required],
+    // validate: [Validators.required],
     caption: terms.username,
   })
   name = ''
@@ -122,6 +126,26 @@ export class User extends IdEntity {
   @BackendMethod({ allowed: Roles.admin })
   async sendInviteSmsToUser(origin: string) {
     await sendSms(this.phone, this.buildInviteText(origin))
+  }
+  @BackendMethod({ allowed: Roles.admin })
+  static async importFromExcel(users: Pick<User, 'name' | 'phone'>[]) {
+    let count = 0
+    for (const u of users) {
+      let phone = fixPhoneInput(u.phone)
+      const user = await remult.repo(User).findFirst({ phone })
+      if (user) {
+        if (!user.name && u.name) {
+          user.name = u.name
+          await user.save()
+        }
+      } else {
+        if (isPhoneValidForIsrael(phone)) {
+          count++
+          await remult.repo(User).insert({ name: u.name, phone })
+        }
+      }
+    }
+    return `נוספו ${count} משתמשים`
   }
 
   buildInviteText(origin: string): string {

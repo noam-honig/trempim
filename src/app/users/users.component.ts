@@ -47,12 +47,12 @@ export class UsersComponent implements OnInit {
         name: 'יצוא לExcel',
         click: () => saveToExcel(this.users, 'users', this.busyService),
       },
-      // {
-      //   name: 'קליטת מתנדבים מאקסל',
-      //   click: () => {
-      //     this.myInput.nativeElement.click()
-      //   },
-      // },
+      {
+        name: 'קליטת מתנדבים מאקסל',
+        click: () => {
+          this.myInput.nativeElement.click()
+        },
+      },
     ],
     rowButtons: [
       {
@@ -116,11 +116,20 @@ export class UsersComponent implements OnInit {
           var dataArray = xlsx.utils.sheet_to_json(oFile.Sheets[sheets[0]], {
             header: 1,
           })
+          let users: Pick<User, 'phone' | 'name'>[] = []
 
-          // let processed = await ImportExcelController.importProductsFromExcel(
-          //   dataArray
-          // )
-          // alert('loaded ' + processed + ' products')
+          for (let index = 1; index < dataArray.length; index++) {
+            const element = dataArray[index] as string[]
+            if (element[0])
+              users.push({
+                name: element[2] || element[1],
+                phone: element[0],
+              })
+          }
+          if (await this.ui.yesNoQuestion(`לייבא ${users.length} משתמשים?`))
+            this.ui.error(await User.importFromExcel(users))
+
+          eventArgs.target.value = ''
         }
         fileReader.readAsArrayBuffer(f)
       })

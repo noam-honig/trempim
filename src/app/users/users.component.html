@@ -3,7 +3,7 @@
     <button mat-raised-button color="primary" (click)="addVolunteer()">
       הוסף מתנדב
     </button>
-    <!-- <input #fileInput type="file" (input)="onFileInput($event)" /> -->
+    <input #fileInput type="file" (input)="onFileInput($event)" style="display:none"/>
   </div>
   <data-grid [settings]="users" class="grow-item"></data-grid>
 </div>
