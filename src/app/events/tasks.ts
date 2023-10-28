@@ -796,6 +796,7 @@ export class Task extends IdEntity {
             taskStatus.assigned,
             taskStatus.notRelevant,
             taskStatus.otherProblem,
+            taskStatus.relevanceCheck,
             taskStatus.draft,
           ].includes(e.taskStatus),
         click: async (e) => {
