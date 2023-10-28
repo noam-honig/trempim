@@ -119,12 +119,14 @@ export class EventCardComponent implements OnInit {
   @Input()
   showingAllTasks = false
   @Input()
+  slim = false
+  @Input()
   set tasks(val: Task[]) {
     this._tasks = val
     this.refresh()
   }
 
-  showMap = false
+  showMap = document.location.host.includes('localhost')
   showLocation = false
   filteredTasks: Task[] = []
   filterChanged() {
@@ -264,7 +266,7 @@ export class EventCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isDialog()) this.showMap = false
+    if (this.isDialog() || this.slim) this.showMap = false
   }
   eventDetails(e: Task) {
     openDialog(EventInfoComponent, (x) => {

@@ -23,6 +23,11 @@ import { EventInfoComponent } from '../event-info/event-info.component'
 const lineSymbol = {
   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
 }
+function pin(start: boolean, selected?: boolean) {
+  return `https://maps.google.com/mapfiles/ms/micons/${
+    start ? 'yellow' : 'red'
+  }${selected ? '-dot' : ''}.png`
+}
 @Component({
   selector: 'app-noam-test',
   templateUrl: './noam-test.component.html',
@@ -41,8 +46,17 @@ export class NoamTestComponent implements OnInit {
   @Output() tasksClicked = new EventEmitter<string[]>()
 
   lines: google.maps.Polyline[] = []
+  selectedTasks?: Task[]
   clearLines() {
     this.lines.forEach((x) => x.setMap(null))
+    for (const task of this.selectedTasks || []) {
+      let item = this.dict.get(task.id)
+      if (item) {
+        item.start.setIcon(pin(true))
+        item.end.setIcon(pin(false))
+      }
+    }
+    this.selectedTasks = undefined
     this.lines = []
   }
   userClickedOnFamilyOnMap: (familyId: string[]) => void = () => {}
@@ -73,6 +87,8 @@ export class NoamTestComponent implements OnInit {
               (start.lng() == p3.lng() && start.lat() == p3.lat())
             ) {
               taskIds.push(id!)
+              m.start.setIcon(pin(true, true))
+              m.end.setIcon(pin(false, true))
             }
           }
         })
@@ -101,6 +117,8 @@ export class NoamTestComponent implements OnInit {
                 })
               )
           }
+          this.selectedTasks = tasks
+          return
           if (tasks.length > 1) {
             openDialog(EventCardComponent, (x) => {
               let f = this._tasks.find((x) => x.id == familyId)!
@@ -123,14 +141,8 @@ export class NoamTestComponent implements OnInit {
     let info = this.dict.get(familyId)
     if (info && info.start.getMap() == null) info = undefined
     if (!info) {
-      let start = createMarker(
-        startLocation,
-        'https://maps.google.com/mapfiles/ms/micons/yellow-dot.png'
-      )
-      let end = createMarker(
-        endLocation,
-        'https://maps.google.com/mapfiles/ms/micons/red-dot.png'
-      )
+      let start = createMarker(startLocation, pin(true))
+      let end = createMarker(endLocation, pin(false))
       this.dict.set(familyId, { start, end })
     }
     return info

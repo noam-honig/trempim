@@ -1,1 +1,18 @@
-<div #gmap style="height: 100%" dir="ltr"></div>
+<div class="full-page">
+  <div #gmap class="grow-item" dir="ltr"></div>
+
+  <div
+    [style.max-height]="selectedTasks?.length ? '100px' : '0px'"
+    style="
+      overflow-x: auto;
+      overflow-y: none;
+      transition: max-height 0.3s ease-in-out;
+    "
+  >
+    <app-event-card
+      [tasks]="selectedTasks"
+      [slim]="true"
+      *ngIf="selectedTasks"
+    ></app-event-card>
+  </div>
+</div>
