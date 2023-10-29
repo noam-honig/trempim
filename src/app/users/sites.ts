@@ -144,7 +144,7 @@ export function initSite(site?: string) {
     case 'wrb':
       remult.context.site = new WarRoomBikes(site)
       break
-      case 'test1':
+    case 'test1':
     case 'showers':
       remult.context.site = new Showers(site)
       break
@@ -157,7 +157,7 @@ export function getSite() {
 
 export const backendSites = [
   { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
-  { urlPrefix: 'test1', dbSchema: 'bikeil', title: 'פיתוח' },
+  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח' },
   {
     urlPrefix: 'hahatul',
     dbSchema: 'hahatul',

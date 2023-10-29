@@ -25,6 +25,7 @@ import {
 } from '../app/users/sites'
 import { InitRequestOptions, SseSubscriptionServer } from 'remult/server'
 import { Roles } from '../app/users/roles'
+import { sendSms } from './send-sms'
 
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
@@ -79,6 +80,7 @@ export const api = remultExpress({
   },
 
   initApi: async () => {
+    //  await sendSms('0507330590', 'your otp is 12345')
     //;(await import('./read-excel')).readTripExcel()
   },
 })

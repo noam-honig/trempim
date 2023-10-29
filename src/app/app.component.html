@@ -4,9 +4,14 @@
       <div style="align-self: center">
         <img [src]="getLogo()" height="150px" />
       </div>
-      <strong style="align-self: center">{{ title }}</strong>
 
-      <h2>כניסה</h2>
+      ברוכים הבאים לאפליקציית השינועים של {{ title }}.
+      <br />
+      כאן תוכלו למצוא את השינועים הכי נוחים והכי קרובים אליכם, ולסייע באופן
+      משמעותי למאמץ המשותף של כולנו
+
+      <h2>לכניסה</h2>
+
       <data-area [settings]="area"> </data-area>
       <button mat-raised-button color="primary" (click)="doSignIn()">
         כניסה
@@ -105,7 +110,7 @@
           <a
             matLine
             [matBadge]="relevanceCheck"
-            [matBadgeHidden]="!drafts"
+            [matBadgeHidden]="!relevanceCheck"
             [routerLink]="['/בבדיקה']"
             (click)="routeClicked()"
             class="draft-line-badge"

@@ -31,7 +31,7 @@ export class SignInController extends ControllerBase {
   phone = ''
   @Fields.string({
     caption: 'קוד שהתקבל בהודעת SMS',
-    inputType: 'tel',
+    inputType: 'numeric',
   })
   otp = ''
   @Fields.boolean({
@@ -70,9 +70,10 @@ export class SignInController extends ControllerBase {
     d.setMinutes(d.getMinutes() + 5)
     const otp = generateRandomSixDigitNumber()
 
-    await sendSms(this.phone, `הקוד לכניסה ל${getTitle()} הוא: ` + otp).then(
-      (x) => console.log('sent', x)
-    )
+    await sendSms(
+      this.phone,
+      `הקוד לכניסה ל${getTitle()} הוא: ` + otp + '\n\nYour OTP Code is: ' + otp
+    ).then((x) => console.log('sent', x))
     otps.set(this.phone, { otp: otp, expire: d })
     this.askForOtp = true
     if (u && !u.name) this.askForName = true

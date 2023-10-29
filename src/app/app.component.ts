@@ -73,22 +73,18 @@ export class AppComponent implements OnInit, OnDestroy {
   area = new DataAreaSettings({
     fields: () => [
       { field: this.signIn.$.phone, visible: () => !this.signIn.askForOtp },
-      { field: this.signIn.$.otp, visible: () => this.signIn.askForOtp },
+      {
+        field: this.signIn.$.otp,
+        visible: () => this.signIn.askForOtp,
+        cssClass: 'otp',
+      },
       { field: this.signIn.$.name, visible: () => this.signIn.askForName },
       { field: this.signIn.$.rememberOnThisDevice },
     ],
   })
   async doSignIn() {
-    if (!this.signIn.askForOtp) {
-      await this.signIn.signIn()
-      setTimeout(() => {
-        ;(
-          document.querySelector(
-            `[autocomplete="one-time-code"]`
-          ) as HTMLInputElement
-        )?.focus()
-      }, 100)
-    } else {
+    if (!this.signIn.askForOtp) await this.signIn.signIn()
+    else {
       remult.user = await this.signIn.signInWithOtp()
       this.updateSubscription()
       if (!remult.user) {
