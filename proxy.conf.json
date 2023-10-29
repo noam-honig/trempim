@@ -15,6 +15,10 @@
       "target": "http://localhost:3002",
       "secure": false
    },
+   "/test1/assets": {
+      "target": "http://localhost:3002",
+      "secure": false
+   },
    "/test2/api": {
       "target": "http://localhost:3002",
       "secure": false
