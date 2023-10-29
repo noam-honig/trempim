@@ -32,7 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public updates: UpdatesService,
     private busy: BusyService
   ) {}
-  
+
   unSub = () => {}
   ngOnDestroy(): void {
     this.unSub()
@@ -73,7 +73,11 @@ export class AppComponent implements OnInit, OnDestroy {
   area = new DataAreaSettings({
     fields: () => [
       { field: this.signIn.$.phone, visible: () => !this.signIn.askForOtp },
-      { field: this.signIn.$.otp, visible: () => this.signIn.askForOtp },
+      {
+        field: this.signIn.$.otp,
+        visible: () => this.signIn.askForOtp,
+        cssClass: 'otp',
+      },
       { field: this.signIn.$.name, visible: () => this.signIn.askForName },
       { field: this.signIn.$.rememberOnThisDevice },
     ],
