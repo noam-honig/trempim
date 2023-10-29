@@ -61,8 +61,7 @@ export class WarRoomCars extends Site {
   override allowAnyVolunteerToAdd = true
   override useFillerInfo = true
   override bikeCategoryCaption = 'שינוע באופנוע'
-  override defaultCategory = Category.bike
-  override categories = [Category.bike, Category.other]
+  
 }
 
 export class Showers extends Site {
@@ -78,6 +77,8 @@ export class Showers extends Site {
 export class WarRoomBikes extends Site {
   override showCopyLink? = true
   override allowAnyVolunteerToAdd = true
+  override defaultCategory = Category.bike
+  override categories = [Category.bike, Category.other]
 
   override useFillerInfo = true
 }
