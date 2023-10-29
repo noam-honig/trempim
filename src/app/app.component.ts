@@ -32,7 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public updates: UpdatesService,
     private busy: BusyService
   ) {}
-
+  
   unSub = () => {}
   ngOnDestroy(): void {
     this.unSub()
@@ -79,16 +79,8 @@ export class AppComponent implements OnInit, OnDestroy {
     ],
   })
   async doSignIn() {
-    if (!this.signIn.askForOtp) {
-      await this.signIn.signIn()
-      setTimeout(() => {
-        ;(
-          document.querySelector(
-            `[autocomplete="one-time-code"]`
-          ) as HTMLInputElement
-        )?.focus()
-      }, 100)
-    } else {
+    if (!this.signIn.askForOtp) await this.signIn.signIn()
+    else {
       remult.user = await this.signIn.signInWithOtp()
       this.updateSubscription()
       if (!remult.user) {
