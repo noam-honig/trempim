@@ -61,7 +61,7 @@ async function startup() {
   app.use(api)
   app.use(api.withRemult)
   app.post('/*/monday', express.json(), async (req, res) => {
-    //console.log(JSON.stringify(req.body, undefined, 2))
+    console.log(JSON.stringify(req.body, undefined, 2))
     await updateReceivedFromMonday(req.body)
     res.send(req.body)
   })

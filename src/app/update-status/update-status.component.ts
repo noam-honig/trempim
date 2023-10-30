@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core'
-import { Fields, getFields } from 'remult'
+import { Fields, getFields, remult } from 'remult'
 import { Task } from '../events/tasks'
 import { DialogRef } from '@angular/cdk/dialog'
 import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
+import { getSite } from '../users/sites'
+import { Roles } from '../users/roles'
 
 @Component({
   selector: 'app-update-status',
@@ -21,6 +23,12 @@ export class UpdateStatusComponent implements OnInit {
 
   @Fields.string({ customInput: (x) => x.textarea(), caption: 'הערות' })
   notes = ''
+
+  showNotRelevant() {
+    return (
+      getSite().driverCanMarkAsNonRelevant || remult.isAllowed(Roles.dispatcher)
+    )
+  }
 
   get $() {
     return getFields(this)

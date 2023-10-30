@@ -7,7 +7,7 @@ import { getSite } from '../users/sites'
     getSite().categories || [
       Category.delivery,
 
-      new Category('שינוע ציוד'),
+      Category.equipment,
       new Category('שינוע מזון'),
       new Category('שינוע ברכב מסחרי / נגרר'),
       Category.truck,
@@ -19,6 +19,7 @@ import { getSite } from '../users/sites'
 })
 export class Category {
   static delivery = new Category('שינוע חיילים', 'שינוע')
+  static equipment = new Category('שינוע ציוד')
   static bike = new Category(
     'מתאים גם לאופנוע',
     undefined,

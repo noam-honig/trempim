@@ -9,7 +9,8 @@ import { taskStatus } from '../app/events/taskStatus'
 
 export const PACKED_READY_FOR_DELIVERY = 3,
   ACTIVE_DELIVERY = 0,
-  DELIVERY_DONE = 1
+  DELIVERY_DONE = 1,
+  NO_PACK_READY_FOR_DELIVERY = 6
 
 export async function updateReceivedFromMonday(event: Root) {
   try {
@@ -163,6 +164,7 @@ export async function upsertTaskBasedOnMondayValues(
   const mondayStatus = get('status73', undefined, true)
   switch (mondayStatus.index) {
     case PACKED_READY_FOR_DELIVERY:
+    case NO_PACK_READY_FOR_DELIVERY:
     case ACTIVE_DELIVERY:
     case DELIVERY_DONE:
       break
@@ -206,6 +208,11 @@ export async function upsertTaskBasedOnMondayValues(
   let fromAddress = get('long_text7')
   if (fromAddress) {
     item.address = fromAddress
+    if (
+      mondayStatus.index === PACKED_READY_FOR_DELIVERY ||
+      item.returnMondayStatus === PACKED_READY_FOR_DELIVERY
+    )
+      item.address = 'יהודה הלוי 48 תל אביב'
     if (item.$.address.valueChanged())
       item.addressApiResult = await GetGeoInformation(item.address)
   }
@@ -255,6 +262,8 @@ export async function upsertTaskBasedOnMondayValues(
   if (statusChanged)
     switch (mondayStatus.index) {
       case PACKED_READY_FOR_DELIVERY:
+      case NO_PACK_READY_FOR_DELIVERY:
+        item.returnMondayStatus = mondayStatus.index
         if (item.taskStatus !== taskStatus.active) {
           item.taskStatus = taskStatus.active
           if (!item._.isNew())

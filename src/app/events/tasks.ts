@@ -434,6 +434,9 @@ export class Task extends IdEntity {
   })
   imageId = ''
 
+  @Fields.integer<Task>({ includeInApi: false })
+  returnMondayStatus = PACKED_READY_FOR_DELIVERY
+
   @BackendMethod({ allowed: Roles.admin })
   static async markTasksForRelevanceCheck(ids: string[]) {
     let i = 0

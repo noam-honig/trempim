@@ -32,6 +32,7 @@ export class Site {
   fromAddressName?: string
   toAddressName?: string
   addressInstructions?: string
+  driverCanMarkAsNonRelevant = true
   get canSeeUrgency() {
     return true
   }
@@ -60,7 +61,8 @@ export class WarRoomCars extends Site {
   override showCopyLink? = true
   override allowAnyVolunteerToAdd = true
   override useFillerInfo = true
-  override bikeCategoryCaption = 'שינוע באופנוע'
+  override driverCanMarkAsNonRelevant = false
+  override defaultCategory = Category.equipment
 }
 
 export class Showers extends Site {
@@ -77,8 +79,8 @@ export class WarRoomBikes extends Site {
   override showCopyLink? = true
   override allowAnyVolunteerToAdd = true
   override defaultCategory = Category.bike
+  override bikeCategoryCaption = 'שינוע באופנוע'
   override categories = [Category.bike, Category.other]
-
   override useFillerInfo = true
 }
 export class vdri extends Site {
@@ -138,12 +140,12 @@ export function initSite(site?: string) {
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
+    case 'test1':
       remult.context.site = new WarRoomCars(site)
       break
     case 'wrb':
       remult.context.site = new WarRoomBikes(site)
       break
-    case 'test1':
     case 'showers':
       remult.context.site = new Showers(site)
       break
