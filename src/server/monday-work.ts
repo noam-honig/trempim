@@ -237,10 +237,11 @@ export async function upsertTaskBasedOnMondayValues(
   setDesc('single_select', 'כשרות')
   setDesc('long_text76', 'ציוד נדרש עבור נשים')
   setDesc('long_text', 'הערות')
+  item.title = item.phone1Description
   let boxes = get('numbers')
   if (boxes) {
-    item.title = boxes + ' ארגזים'
-  } else item.title = item.phone1Description
+    item.title += ', ' + (boxes == 1 ? 'ארגז אחד' : boxes + ' ארגזים')
+  }
   let driverPhone = get(DRIVER_PHONE_COLUMN)
   if (driverPhone) {
     driverPhone = fixPhoneInput(driverPhone)

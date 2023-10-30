@@ -895,6 +895,17 @@ export class Task extends IdEntity {
           })
         },
       },
+      {
+        name: 'פתח בMONDAY',
+        visible: (e) => e.externalId.startsWith('m:'),
+        click: (t) => {
+          window.open(
+            `https://kanfi-barzel.monday.com/boards/1290250715/pulses/` +
+              t.externalId.split(':')[1],
+            '_blank'
+          )
+        },
+      },
     ]
   }
   getLink(): string {
