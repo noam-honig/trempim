@@ -61,9 +61,12 @@ async function startup() {
   app.use(api)
   app.use(api.withRemult)
   app.post('/*/monday', express.json(), async (req, res) => {
-    console.log(JSON.stringify(req.body, undefined, 2))
-    await updateReceivedFromMonday(req.body)
-    res.send(req.body)
+    if (getSite().syncWithMonday) {
+      await updateReceivedFromMonday(req.body)
+      res.send(req.body)
+    } else {
+      res.status(500).json('Monday sync is disabled')
+    }
   })
   app.get('/*/assets/logo.png', (req, res) =>
     sendSchemaSpecificFile('logo', res)

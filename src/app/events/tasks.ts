@@ -143,7 +143,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         }
       }
     }
-    if (task.externalId.startsWith('m:')) {
+    if (getSite().syncWithMonday && task.externalId.startsWith('m:')) {
       if (task.$.taskStatus.valueChanged()) {
         switch (task.taskStatus) {
           case taskStatus.active:

@@ -37,6 +37,7 @@ export class Site {
     return true
   }
   onlyCities = false
+  syncWithMonday = false
 }
 
 export class BikeIlSite extends Site {
@@ -63,6 +64,7 @@ export class WarRoomCars extends Site {
   override useFillerInfo = true
   override driverCanMarkAsNonRelevant = false
   override defaultCategory = Category.equipment
+  override syncWithMonday = true
 }
 
 export class Showers extends Site {
@@ -129,6 +131,7 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
+    case 'test1':
       remult.context.site = new Hahatul(site)
       break
     case 'vdri':
@@ -140,7 +143,6 @@ export function initSite(site?: string) {
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
-    case 'test1':
       remult.context.site = new WarRoomCars(site)
       break
     case 'wrb':
