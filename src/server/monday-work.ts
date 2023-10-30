@@ -162,7 +162,7 @@ export async function upsertTaskBasedOnMondayValues(
     }
   )
   const mondayStatus = get('status73', undefined, true)
-  switch (mondayStatus.index) {
+  switch (mondayStatus?.index) {
     case PACKED_READY_FOR_DELIVERY:
     case NO_PACK_READY_FOR_DELIVERY:
     case ACTIVE_DELIVERY:
