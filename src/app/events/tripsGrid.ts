@@ -6,6 +6,7 @@ import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExce
 import { BusyService, openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { taskStatus } from './taskStatus'
+import { getRelationInfo } from 'remult/internals'
 
 export function tripsGrid({
   ui,
@@ -48,7 +49,16 @@ export function tripsGrid({
 
       {
         name: 'יצוא לאקסל',
-        click: () => saveToExcel(allRides!, 'rides', busy),
+        click: () =>
+          saveToExcel(allRides!, 'rides', busy, {
+            excludeColumn: (e: Task, c) =>
+              !!getRelationInfo(c.metadata.options) ||
+              c === e.$.toAddressApiResult ||
+              c == e.$.addressApiResult,
+            moreColumns: (e: Task, addField) => {
+              addField('טלפון נהג', e.driver?.$.phone.displayValue!, 's')
+            },
+          }),
       },
     ],
     ...gridOptions,

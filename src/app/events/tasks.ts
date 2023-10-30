@@ -402,7 +402,7 @@ export class Task extends IdEntity {
   @Fields.string({
     allowApiUpdate: false,
     caption: 'נהג',
-    displayValue: (u) => u.createUser?.name || '',
+    displayValue: (u) => u.driver?.name || '',
   })
   driverId = ''
   @Relations.toOne<Task, User>(() => User, 'driverId')

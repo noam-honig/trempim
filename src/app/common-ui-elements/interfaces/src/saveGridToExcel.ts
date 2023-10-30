@@ -15,18 +15,21 @@ export async function saveToExcel<
   grid: T,
   fileName: string,
   busyService: BusyService,
-  hideColumn?: (e: E, c: FieldRef<any>) => boolean,
-  excludeColumn?: (e: E, c: FieldRef<any>) => boolean,
-  moreColumns?: (
-    e: E,
-    addfield: (
-      caption: string,
-      v: string,
-      t: import('xlsx').ExcelDataType
+  args?: {
+    hideColumn?: (e: E, c: FieldRef<any>) => boolean
+    excludeColumn?: (e: E, c: FieldRef<any>) => boolean
+    moreColumns?: (
+      e: E,
+      addfield: (
+        caption: string,
+        v: string,
+        t: import('xlsx').ExcelDataType
+      ) => void
     ) => void
-  ) => void,
-  loadPage?: (items: E[]) => Promise<void>
+    loadPage?: (items: E[]) => Promise<void>
+  }
 ) {
+  let { hideColumn, excludeColumn, moreColumns, loadPage } = args || {}
   await busyService.doWhileShowingBusy(async () => {
     let XLSX = await import('xlsx')
     if (!hideColumn) hideColumn = () => false
