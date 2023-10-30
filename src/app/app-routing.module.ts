@@ -11,6 +11,7 @@ import { DraftOverviewComponent } from './draft-overview/draft-overview.componen
 import { IntakeComponent } from './intake/intake.component'
 import { UpdatesComponent } from './updates/updates.component'
 import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component'
+import { ProblemComponent } from './problem/problem.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -28,6 +29,12 @@ const routes: Routes = [
     path: 'טיוטות',
     component: DraftOverviewComponent,
     canActivate: [DraftsGuard],
+    data: { hide: true },
+  },
+  {
+    path: 'בעיות',
+    component: ProblemComponent,
+    canActivate: [DispatchGuard],
     data: { hide: true },
   },
   {

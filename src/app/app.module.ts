@@ -50,7 +50,8 @@ import { getSite, initSite } from './users/sites'
 import { MatBadgeModule } from '@angular/material/badge'
 import { UpdatesComponent, UpdatesService } from './updates/updates.component'
 import { APP_BASE_HREF } from '@angular/common';
-import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component'
+import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component';
+import { ProblemComponent } from './problem/problem.component'
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.co
     InputImageComponent,
     UpdatesComponent,
     VerifyRelevanceComponent,
+    ProblemComponent,
   ],
   imports: [
     BrowserModule,

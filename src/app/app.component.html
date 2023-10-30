@@ -46,8 +46,8 @@
         class="alert-badge"
       ></div>
       <div
-        [matBadge]="drafts + relevanceCheck"
-        [matBadgeHidden]="!drafts && !relevanceCheck"
+        [matBadge]="drafts + relevanceCheck + problems"
+        [matBadgeHidden]="!drafts && !relevanceCheck && !problems"
         matBadgeColor="warn"
         matBadgePosition="below before"
         class="draft-badge"
@@ -91,6 +91,19 @@
             (click)="routeClicked()"
             class="alert-line-badge"
             >נסיעות</a
+          >
+        </mat-list-item>
+        <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">
+          <a
+            matLine
+            [matBadge]="problems"
+            [matBadgeHidden]="!problems"
+            [routerLink]="['/בעיות']"
+            (click)="routeClicked()"
+            class="draft-line-badge"
+            matBadgeColor="warn"
+            matBadgePosition="above after"
+            >בעיות</a
           >
         </mat-list-item>
         <mat-list-item routerLinkActive="active-route" *ngIf="isTrainee()">

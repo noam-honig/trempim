@@ -42,6 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   drafts = 0
   relevanceCheck = 0
+  problems = 0
   updateSubscription() {
     this.unSub()
     this.unSub = () => {}
@@ -59,9 +60,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async updateStats() {
     this.busy.donotWait(async () => {
-      ;[this.drafts, this.relevanceCheck] = await Promise.all([
+      ;[this.drafts, this.relevanceCheck, this.problems] = await Promise.all([
         repo(Task).count({ taskStatus: taskStatus.draft }),
         repo(Task).count({ taskStatus: taskStatus.relevanceCheck }),
+        repo(Task).count({ taskStatus: taskStatus.otherProblem }),
         this.updates.updateWaitingUpdates(),
       ])
     })
