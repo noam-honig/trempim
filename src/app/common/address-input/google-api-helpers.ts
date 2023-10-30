@@ -238,8 +238,15 @@ export async function getCurrentLocation() {
     }, rej)
   })
 }
-
+let cache = new Map<string, Promise<GeocodeResult>>()
 export async function GetGeoInformation(address: string) {
+  let result = cache.get(address)
+  if (!result) {
+    cache.set(address, (result = InternalGetGeoInformation(address)))
+  }
+  return result
+}
+async function InternalGetGeoInformation(address: string) {
   if (!address || address == '' || address.trim() == '') return undefined
   const fetch = await import('node-fetch')
   address = address.trim()
