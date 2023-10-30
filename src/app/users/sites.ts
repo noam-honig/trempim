@@ -61,7 +61,6 @@ export class WarRoomCars extends Site {
   override allowAnyVolunteerToAdd = true
   override useFillerInfo = true
   override bikeCategoryCaption = 'שינוע באופנוע'
-  
 }
 
 export class Showers extends Site {
@@ -157,7 +156,7 @@ export function getSite() {
 
 export const backendSites = [
   { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
-  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח' },
+  { urlPrefix: 'test1', dbSchema: 'yedidim', title: 'פיתוח' },
   {
     urlPrefix: 'hahatul',
     dbSchema: 'hahatul',

@@ -95,15 +95,15 @@ export interface Result {
   address_components?: AddressComponent[]
   formatted_address?: string
   geometry: Geometry
-  partial_match: boolean
+  partial_match?: boolean
   place_id?: string
-  types: string[]
+  types?: string[]
 }
 
 export interface Geometry {
   location: Location
-  location_type: string
-  viewport: Viewport
+  location_type?: string
+  viewport?: Viewport
 }
 export interface Viewport {
   northeast: Location

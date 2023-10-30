@@ -15,11 +15,15 @@ import { SqlDatabase, remult, repo } from 'remult'
 import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { taskStatus } from 'src/app/events/taskStatus'
+import { updateReceivedFromMonday } from './monday-work'
 
 SqlDatabase.LogToConsole = false
 async function startup() {
   const app = express()
   app.use(sslRedirect())
+
+  app.use(compression())
+  //app.use(helmet({ contentSecurityPolicy: false }))
 
   app.use((req, res, next) => {
     const sp = req.path.split('/')
@@ -54,12 +58,13 @@ async function startup() {
     })
   })
 
-  app.use(compression())
-  //app.use(helmet({ contentSecurityPolicy: false }))
-
   app.use(api)
-
   app.use(api.withRemult)
+  app.post('/*/monday', express.json(), async (req, res) => {
+    //console.log(JSON.stringify(req.body, undefined, 2))
+    await updateReceivedFromMonday(req.body)
+    res.send(req.body)
+  })
   app.get('/*/assets/logo.png', (req, res) =>
     sendSchemaSpecificFile('logo', res)
   )

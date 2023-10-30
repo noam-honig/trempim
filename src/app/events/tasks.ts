@@ -41,6 +41,15 @@ import { taskStatus } from './taskStatus'
 import { Urgency } from './urgency'
 import { updateChannel } from './UpdatesChannel'
 import { sendSms } from '../../server/send-sms'
+import { _DisposeViewRepeaterStrategy } from '@angular/cdk/collections'
+import { update } from '../../server/getGraphQL'
+import {
+  ACTIVE_DELIVERY,
+  DELIVERY_DONE,
+  PACKED_READY_FOR_DELIVERY,
+  updateDriverOnMonday,
+  updateStatusOnMonday,
+} from '../../server/monday-work'
 
 const onlyDriverRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
@@ -134,9 +143,29 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         }
       }
     }
+    if (task.externalId.startsWith('m:')) {
+      if (task.$.taskStatus.valueChanged()) {
+        switch (task.taskStatus) {
+          case taskStatus.active:
+            updateStatusOnMonday(task, PACKED_READY_FOR_DELIVERY)
+            break
+          case taskStatus.assigned:
+            updateStatusOnMonday(task, ACTIVE_DELIVERY)
+            break
+          case taskStatus.completed:
+            updateStatusOnMonday(task, DELIVERY_DONE)
+            break
+        }
+      }
+      if (task.$.driverId.valueChanged()) {
+        if (task.driverId) {
+          await updateDriverOnMonday(task)
+        }
+      }
+    }
   },
   validation: (task) => {
-    if (phoneConfig.disableValidation) return
+    if (phoneConfig.disableValidation || task.__disableValidation) return
     if (!task.addressApiResult?.results) task.$.address.error = 'כתובת לא נמצאה'
     if (!task.toAddressApiResult?.results && getSite().secondAddressRequired)
       task.$.toAddress.error = 'כתובת לא נמצאה'
@@ -165,25 +194,16 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   },
 })
 export class Task extends IdEntity {
+  __disableValidation = false
   getShortDescription(): string {
+    let message = ''
+    if (this.category?.caption) message = this.category.caption + ': '
+    if (this.title) message += this.title + ' '
+    if (this.addressApiResult?.results?.length)
+      message += 'מ' + getCity(this.addressApiResult!, this.address)
     if (this.toAddressApiResult?.results?.length)
-      return (
-        (this.category?.caption + ': ' || '') +
-        this.title +
-        ' מ' +
-        getCity(this.addressApiResult!, this.address) +
-        ' ל' +
-        getCity(this.toAddressApiResult, this.toAddress) +
-        ` (${this.externalId})`
-      )
-    else
-      return (
-        (this.category?.caption + ': ' || '') +
-        this.title +
-        ' מ' +
-        getCity(this.addressApiResult!, this.address) +
-        ` (${this.externalId})`
-      )
+      message += ' ל' + getCity(this.toAddressApiResult, this.toAddress)
+    return message
   }
   displayDate() {
     const e = this
@@ -223,7 +243,10 @@ export class Task extends IdEntity {
 
   @Fields.string<Task>({
     caption: 'מה משנעים',
-    validate: (s, c) => Validators.required(s, c),
+    validate: (s, c) => {
+      if (s.__disableValidation) return
+      Validators.required(s, c)
+    },
   })
   title = ''
   @DataControl({ width: '120' })
@@ -249,6 +272,7 @@ export class Task extends IdEntity {
   @Fields.dateOnly<Task>({
     caption: 'תאריך הסיוע המבוקש',
     validate: (s, c) => {
+      if (s.__disableValidation) return
       if (!c.value || c.value.getFullYear() < 2018) c.error = 'תאריך שגוי'
     },
   })
@@ -294,6 +318,8 @@ export class Task extends IdEntity {
     caption: 'טלפון ממלא הבקשה',
     ...onlyDriverRules,
     validate: (entity, ref) => {
+      if (entity.__disableValidation) return
+
       if ((entity.isNew() || ref.valueChanged()) && getSite().useFillerInfo)
         Validators.required(entity, ref)
     },
@@ -309,6 +335,7 @@ export class Task extends IdEntity {
     caption: 'טלפון מוצא',
     ...onlyDriverRules,
     validate: (entity, ref) => {
+      if (entity.__disableValidation) return
       if (entity.isNew() || ref.valueChanged()) Validators.required(entity, ref)
     },
   })
@@ -400,6 +427,7 @@ export class Task extends IdEntity {
     caption: 'תמונה',
     customInput: (c) => c.image(),
     validate: (_, f) => {
+      if (_.__disableValidation) return
       if (getSite().imageIsMandatory && (_.isNew() || f.valueChanged()))
         Validators.required(_, f, 'אנא העלה תמונה')
     },
@@ -457,7 +485,7 @@ export class Task extends IdEntity {
     await this.save()
     return this.getContactInfo()
   }
-  private async insertStatusChange(what: string, notes?: string) {
+  async insertStatusChange(what: string, notes?: string) {
     updateChannel.publish({
       status: this.taskStatus.id,
       message: what + ' - ' + this.getShortDescription(),
