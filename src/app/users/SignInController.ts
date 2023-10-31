@@ -113,7 +113,12 @@ export class SignInController extends ControllerBase {
       await user.save()
     }
 
-    if (!user) throw 'מספר טלפון לא מוכר'
+    if (!user)
+      throw (
+        'מספר טלפון לא מוכר - אנא צרו קשר עם ארגון ' +
+        getTitle() +
+        ' בכדי שיוספו אתכם לרשימת הטלפונים המורשים.'
+      )
     try {
       return setSessionUserBasedOnUserRow(user, this.rememberOnThisDevice)
     } finally {
