@@ -86,14 +86,7 @@ export class Showers extends Site {
     new Category('רכב גורר מעל 3.5 טון'),
   ]
 }
-export class WarRoomBikes extends Site {
-  override showCopyLink? = true
-  override allowAnyVolunteerToAdd = true
-  override defaultCategory = Category.bike
-  override bikeCategoryCaption = 'שינוע באופנוע'
-  override categories = [Category.bike, Category.other]
-  override useFillerInfo = true
-}
+
 export class vdri extends Site {
   override showCopyLink? = true
   override allowAnyVolunteerToAdd = true
@@ -165,9 +158,7 @@ export function initSite(site?: string) {
     case 'wrc':
       remult.context.site = new WarRoomCars(site)
       break
-    case 'wrb':
-      remult.context.site = new WarRoomBikes(site)
-      break
+
     case 'showers':
       remult.context.site = new Showers(site)
       break
@@ -180,7 +171,7 @@ export function getSite() {
 
 export const backendSites = [
   { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
-  { urlPrefix: 'test1', dbSchema: 'yedidim', title: 'פיתוח' },
+  { urlPrefix: 'test1', dbSchema: 'trempim', title: 'פיתוח' },
   {
     urlPrefix: 'hahatul',
     dbSchema: 'hahatul',
@@ -194,8 +185,7 @@ export const backendSites = [
   { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
   { urlPrefix: 'ngim', dbSchema: 'ngim', title: 'חמל נהגים' },
   { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
-  { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'נהגים מתנדבים' },
-  { urlPrefix: 'wrb', dbSchema: 'wrb', title: 'אופנועים מתנדבים' },
+  { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
   { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
 ]
 export function getBackendSite(schema?: string) {

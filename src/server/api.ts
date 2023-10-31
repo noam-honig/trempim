@@ -88,9 +88,53 @@ export const api = remultExpress({
 
   initApi: async () => {
     try {
+      remult.dataProvider = await postgres.getConnectionForSchema(
+        getBackendSite('test1')!.dbSchema
+      )
+
+      remult.subscriptionServer = new SseSubscriptionServer()
+
+      //await updateStatusOnMonday(item, ACTIVE_DELIVERY)
+
+      //await upsertTaskBasedOnMondayValues(1290250715, 1299715447)
     } catch (error: any) {
       console.error(error)
     }
+
+    // const r = await update(
+    //   1290250715,
+    //   1304985733,
+    //   'status73',
+    //   JSON.stringify({ index: 13 })
+    // )
+
+    //     const r = await gql(
+    //       {
+    //         board: 1290250715,
+    //         item: 1304985733,
+    //       },
+    //       `#graphql
+    // query ($board: ID!, $item: ID!) {
+    //   boards(ids: [$board]) {
+    //     id
+    //     name
+    //     board_folder_id
+    //     board_kind
+    //     items_page(query_params: {ids: [$item]}) {
+    //       items {
+    //         id
+    //         name
+    //         column_values {
+    //           id
+    //           text
+    //           value
+    //         }
+    //       }
+    //     }
+    //   }
+    // }`
+    //     )
+    // console.log(JSON.stringify(r, undefined, 2))
   },
 })
 

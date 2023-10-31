@@ -46,6 +46,7 @@ import { update } from '../../server/getGraphQL'
 import {
   ACTIVE_DELIVERY,
   DELIVERY_DONE,
+  NO_PACK_READY_FOR_DELIVERY,
   PACKED_READY_FOR_DELIVERY,
   updateDriverOnMonday,
   updateStatusOnMonday,
@@ -147,7 +148,12 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       if (task.$.taskStatus.valueChanged()) {
         switch (task.taskStatus) {
           case taskStatus.active:
-            updateStatusOnMonday(task, PACKED_READY_FOR_DELIVERY)
+            updateStatusOnMonday(
+              task,
+              task.returnMondayStatus === NO_PACK_READY_FOR_DELIVERY
+                ? task.returnMondayStatus
+                : PACKED_READY_FOR_DELIVERY
+            )
             break
           case taskStatus.assigned:
             updateStatusOnMonday(task, ACTIVE_DELIVERY)
@@ -443,7 +449,7 @@ export class Task extends IdEntity {
   imageId = ''
 
   @Fields.integer<Task>({ includeInApi: false })
-  returnMondayStatus = PACKED_READY_FOR_DELIVERY
+  returnMondayStatus = -1
 
   @BackendMethod({ allowed: Roles.admin })
   static async markTasksForRelevanceCheck(ids: string[]) {
