@@ -4,6 +4,7 @@ import { Remult } from 'remult'
 
 import { YesNoQuestionComponent } from './yes-no-question/yes-no-question.component'
 import {
+  BusyService,
   CommonUIElementsPluginsService,
   openDialog,
   SelectValueDialogComponent,
@@ -22,13 +23,18 @@ import { User } from '../users/user'
 import { UserDetailsComponent } from '../user-details/user-details.component'
 import { SelectUserComponent } from '../users/select-user.component'
 import { InputImageComponent } from './input-image/input-image.component'
+import { TaskStatusChanges } from '../events/TaskStatusChanges'
 
 @Injectable()
 export class UIToolsService implements UITools {
+  report(what: string, context: string, taskId?: string) {
+    this.busy.donotWait(() => TaskStatusChanges.view(what, context, taskId))
+  }
   constructor(
     zone: NgZone,
     private snackBar: MatSnackBar,
-    commonUIPlugin: CommonUIElementsPluginsService
+    commonUIPlugin: CommonUIElementsPluginsService,
+    private busy: BusyService
   ) {
     this.mediaMatcher.addListener((mql) =>
       zone.run(() => /*this.mediaMatcher = mql*/ ''.toString())
@@ -45,12 +51,14 @@ export class UIToolsService implements UITools {
   info(info: string): any {
     this.snackBar.open(info, 'סגור', { duration: 4000 })
   }
-  async error(err: any) {
+  async error(err: any, taskId?: string) {
+    const message = extractError(err)
+    this.report('שגיאה', err, taskId)
     return await openDialog(
       YesNoQuestionComponent,
       (d) =>
         (d.args = {
-          message: extractError(err),
+          message,
           isAQuestion: false,
         })
     )

@@ -4,11 +4,13 @@ import type from 'cookie-session' //needed for build - do not remove
 import { User } from '../app/users/user'
 import { Site, getSite } from '../app/users/sites'
 import { Roles } from '../app/users/roles'
+import { createId } from '@paralleldrive/cuid2'
 
 declare module 'remult' {
   export interface RemultContext {
     session: CookieSessionInterfaces.CookieSessionObject
     sessionOptions: CookieSessionInterfaces.CookieSessionOptions
+    sessionId: string
     origin: string
     site: Site
   }
@@ -17,6 +19,8 @@ declare module 'remult' {
 export async function initRequestUser(req: Request) {
   remult.context.session = req.session!
   remult.context.sessionOptions = req.sessionOptions
+  remult.context.sessionId =
+    req.session!['sessionID'] || (req.session!['sessionID'] = createId())
 
   const sessionUser = req.session!['user']
   if (!sessionUser || !sessionUser.id) return

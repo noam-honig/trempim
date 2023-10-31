@@ -19,6 +19,7 @@ import {
 import { sendSms } from '../../server/send-sms'
 import { PhoneField } from '../events/phone'
 import { getTitle } from './sites'
+import { TaskStatusChanges } from '../events/TaskStatusChanges'
 
 const otp = '123456'
 @Controller('signIn')
@@ -113,7 +114,13 @@ export class SignInController extends ControllerBase {
     }
 
     if (!user) throw 'מספר טלפון לא מוכר'
-    return setSessionUserBasedOnUserRow(user, this.rememberOnThisDevice)
+    try {
+      return setSessionUserBasedOnUserRow(user, this.rememberOnThisDevice)
+    } finally {
+      await await repo(TaskStatusChanges).insert({
+        what: 'לוגין',
+      })
+    }
   }
 
   @BackendMethod({ allowed: Allow.authenticated })
@@ -122,6 +129,9 @@ export class SignInController extends ControllerBase {
   }
   @BackendMethod({ allowed: true })
   static async currentUser() {
+    await repo(TaskStatusChanges).insert({
+      what: 'טעינת אתר',
+    })
     return remult.user
   }
   @BackendMethod({ allowed: Roles.admin })

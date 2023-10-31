@@ -8,6 +8,8 @@ import {
 } from '../common-ui-elements/interfaces'
 import { InputImageComponent } from '../common/input-image/input-image.component'
 import { getSite, getTitle } from '../users/sites'
+import { UITools } from '../common/UITools'
+import { UIToolsService } from '../common/UIToolsService'
 
 @Component({
   selector: 'app-intake',
@@ -15,7 +17,7 @@ import { getSite, getTitle } from '../users/sites'
   styleUrls: ['./intake.component.scss'],
 })
 export class IntakeComponent implements OnInit {
-  constructor(private title: Title) {}
+  constructor(private title: Title, private ui: UIToolsService) {}
 
   r = repo(Task).create()
   area = new DataAreaSettings({
@@ -54,6 +56,7 @@ export class IntakeComponent implements OnInit {
     },
   })
   ngOnInit(): void {
+    this.ui.report('קישור לטופס הוספה', '')
     this.title.setTitle(getTitle() + ' בקשה')
   }
   result = ''

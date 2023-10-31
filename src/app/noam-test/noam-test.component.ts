@@ -118,17 +118,6 @@ export class NoamTestComponent implements OnInit {
               )
           }
           this.selectedTasks = tasks
-          return
-          if (tasks.length > 1) {
-            openDialog(EventCardComponent, (x) => {
-              let f = this._tasks.find((x) => x.id == familyId)!
-
-              x.tasks = tasks
-              x.title = position === startLocation ? f.address : f.toAddress
-            })
-          } else if (tasks.length == 1) {
-            openDialog(EventInfoComponent, (x) => (x.e = tasks[0]))
-          }
         }
 
         setTimeout(() => {

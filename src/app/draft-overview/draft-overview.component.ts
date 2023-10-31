@@ -66,6 +66,7 @@ export class DraftOverviewComponent implements OnInit {
   show(t: Task) {
     openDialog(EventInfoComponent, (x) => {
       x.e = t
+      x.context = 'מסך טיוטות'
     })
   }
 

@@ -57,14 +57,14 @@ export class AddressInputComponent
   initAddress(consumer: (x: InputAddressResult) => void) {
     if (this.initAddressAutoComplete) return
     this.initAddressAutoComplete = true
-    const types = getSite().onlyCities ? ['(cities)'] : undefined
+    const options: google.maps.places.AutocompleteOptions = {
+      //   bounds: bounds,
+      fields: ['address_components', 'formatted_address', 'geometry', 'type'],
+    }
+    if (getSite().onlyCities) options.types = ['(cities)']
     const autocomplete = new google.maps.places.Autocomplete(
       this.addressInput.nativeElement,
-      {
-        types,
-        //   bounds: bounds,
-        fields: ['address_components', 'formatted_address', 'geometry', 'type'],
-      }
+      options
     )
     this.destroyMe = google.maps.event.addListener(
       autocomplete,

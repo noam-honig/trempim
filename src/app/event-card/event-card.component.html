@@ -1,5 +1,5 @@
 <div class="full-page">
-  <div *ngIf="!isDialog() && !slim">
+  <div *ngIf="!isDialog() && !fromMap">
     <button
       mat-raised-button
       color="primary"
@@ -8,7 +8,7 @@
     >
       הוספת נסיעה
     </button>
-    <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher() "></app-dots-menu>
+    <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
     <data-area [settings]="area"></data-area>
     <div
       style="
@@ -30,25 +30,24 @@
             : 'למעבר לתצוגה לפי תאריך'
         }}
       </button>
-      <button mat-raised-button (click)="showMap = true">מפה</button>
+      <button mat-raised-button (click)="toggleShowMap(true)">מפה</button>
     </div>
     <mat-divider></mat-divider>
   </div>
-  <div *ngIf="isDialog()" >
+  <div *ngIf="isDialog()">
     {{ title }}
-    
   </div>
   <div *ngIf="showMap" class="grow-item" style="position: relative">
     <app-noam-test [tasks]="filteredTasks"></app-noam-test>
     <button
       mat-raised-button
       style="position: absolute; left: 10px; top: 10px"
-      (click)="showMap = false"
+      (click)="toggleShowMap(false)"
     >
       חזרה לרשימה
     </button>
   </div>
-  <div *ngIf="!showMap" [class.grow-item]="!slim">
+  <div *ngIf="!showMap" [class.grow-item]="!fromMap">
     <div *ngFor="let d of urgencies">
       <ng-container *ngIf="hasEvents(d)">
         <strong *ngIf="urgencies.length > 1">{{ d.urgency }}:</strong>
@@ -70,11 +69,13 @@
                 <strong (click)="eventDetails(e)">
                   {{ e.title }}
                 </strong>
-                <a (click)="eventDetails(e)" *ngIf="!isFull(e)&&slim">{{ 'לפרטים והרשמה' }}</a>
+                <a (click)="eventDetails(e)" *ngIf="!isFull(e) && fromMap">{{
+                  'לפרטים והרשמה'
+                }}</a>
                 <app-dots-menu
                   [item]="e"
                   [buttons]="menuOptions"
-                  *ngIf="isDispatcher()&& !slim"
+                  *ngIf="isDispatcher() && !fromMap"
                 ></app-dots-menu>
               </div>
               <div class="event-info" (click)="eventDetails(e)">
@@ -91,7 +92,7 @@
                   </div>
                   <div style="color: gray">מספר {{ e.externalId }}</div>
 
-                  <a *ngIf="!isFull(e)&&!slim">{{ 'לפרטים והרשמה' }}</a>
+                  <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים והרשמה' }}</a>
                   <strong *ngIf="isFull(e)">
                     {{ e.taskStatus.caption }}
                   </strong>

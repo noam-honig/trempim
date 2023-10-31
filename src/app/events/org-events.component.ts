@@ -111,9 +111,9 @@ export class OrgEventsComponent implements OnInit {
               }
               if (t)
                 openDialog(EventInfoComponent, (x) => {
-                  x.e = t!
+                  ;(x.e = t!), (x.context = 'מקישור')
                 })
-              else this.tools.error('לנסיעה זו כבר משוייך נהג')
+              else this.tools.error('לנסיעה זו כבר משוייך נהג', this.tripId)
             }
             if (this.events.length == 0) this.gotoSearchEvents()
           }

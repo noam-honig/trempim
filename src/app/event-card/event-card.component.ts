@@ -119,7 +119,7 @@ export class EventCardComponent implements OnInit {
   @Input()
   showingAllTasks = false
   @Input()
-  slim = false
+  fromMap = false
   @Input()
   set tasks(val: Task[]) {
     this._tasks = val
@@ -127,9 +127,25 @@ export class EventCardComponent implements OnInit {
   }
 
   showMap = document.location.host.includes('localhost')
+  toggleShowMap(val: boolean) {
+    this.showMap = val
+    this.tools.report(
+      val ? 'הצג מפה' : 'הצג רשימה',
+      this.showingAllTasks ? 'חיפוש נסיעה' : 'נסיעות שלי'
+    )
+  }
   showLocation = false
   filteredTasks: Task[] = []
-  filterChanged() {
+  filterChanged(report = true) {
+    if (report)
+      this.tools.report(
+        'סינון',
+        JSON.stringify({
+          region: this.region,
+          toRegion: this.toRegion,
+          category: this.category?.id,
+        })
+      )
     this.filteredTasks = this.tasks.filter((x) => this.filter(x))
   }
   closeDialog?: VoidFunction
@@ -242,7 +258,7 @@ export class EventCardComponent implements OnInit {
         ],
       ],
     })
-    this.filterChanged()
+    this.filterChanged(false)
   }
 
   filter(e: Task) {
@@ -266,12 +282,17 @@ export class EventCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isDialog() || this.slim) this.showMap = false
+    if (this.isDialog() || this.fromMap) this.showMap = false
   }
   eventDetails(e: Task) {
     openDialog(EventInfoComponent, (x) => {
       x.e = e
       x.refresh = () => this.refresh()
+      x.context = this.fromMap
+        ? 'מהמפה'
+        : this.showingAllTasks
+        ? 'מחיפוש נסיעה'
+        : 'נסיעות שלי'
     })
   }
   displayDate(e: Task) {

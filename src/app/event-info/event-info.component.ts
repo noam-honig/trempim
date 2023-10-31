@@ -43,6 +43,8 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   public refresh = () => {}
   driver?: User
   @Input() noClose = false
+
+  @Input() context = ''
   displayDate() {
     return this.e.displayDate()
   }
@@ -133,11 +135,12 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     target: [],
   }
   ngOnInit(): void {
+    this.dialog.report('צפייה', this.context, this.e.id)
     repo(Task)
       .findFirst({ id: this.e.id })
       .then((x) => {
         if (!x) {
-          this.dialog.error('הנסיעה כנראה כבר נלקחה על ידי נהג אחר')
+          this.dialog.error('הנסיעה כנראה כבר נלקחה על ידי נהג אחר', this.e.id)
           this.e.taskStatus = taskStatus.assigned
           this.closeDialog?.()
         }
@@ -173,5 +176,3 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
 }
 //[ ] - התקן המכשיר
-
-

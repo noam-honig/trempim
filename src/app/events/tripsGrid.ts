@@ -98,7 +98,7 @@ export function tripsGrid({
         click: (e) => {
           openDialog(EventInfoComponent, (x) => {
             x.e = e
-            //x.refresh = () => this.refresh()
+            x.context = 'מהטבלה'
           })
         },
       },
