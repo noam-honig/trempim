@@ -13,6 +13,13 @@ export function getTitle() {
   return getBackendSite()!.title
 }
 export class Site {
+  getIntroText() {
+    return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
+
+כאן תוכלו למצוא את השינועים הכי נוחים והכי קרובים אליכם, ולסייע באופן
+משמעותי למאמץ המשותף של כולנו
+`
+  }
   constructor(public urlPrefix: string) {}
   secondAddressRequired = true
   countUpdates = true
@@ -100,6 +107,17 @@ export class Yedidim extends Site {
   override get canSeeUrgency() {
     return remult.isAllowed(Roles.admin)
   }
+  override getIntroText(): string {
+    return `ברוכים הבאים למערכת השינועים של ידידים!
+
+כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים לבסיסים, בשינוע ציוד לחיילים או בשינועים שונים הנדרשים לכוחות העורף.
+
+המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
+
+במידה ונתקלתם בבעיה בהתחברות למערכת יש לפנות למנהל הסניף, או להתקשר למוקד הכוננים במספר [077-600-1230](tel:077-600-1230) שלוחה 1.
+
+צאו לעשות חסדים!`
+  }
   override showInfoSnackbarFor(message: UpdateMessage): boolean {
     if (message.userId === remult.user?.id) return false
     if ([DriverCanceledAssign].includes(message.action)) return true
@@ -131,7 +149,6 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
-    case 'test1':
       remult.context.site = new Hahatul(site)
       break
     case 'vdri':
@@ -140,6 +157,7 @@ export function initSite(site?: string) {
     case 'yedidim':
     case 'ezion':
     case 'y':
+    case 'test1':
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':

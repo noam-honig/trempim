@@ -49,9 +49,10 @@ import { InputImageComponent } from './common/input-image/input-image.component'
 import { getSite, initSite } from './users/sites'
 import { MatBadgeModule } from '@angular/material/badge'
 import { UpdatesComponent, UpdatesService } from './updates/updates.component'
-import { APP_BASE_HREF } from '@angular/common';
-import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component';
+import { APP_BASE_HREF } from '@angular/common'
+import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component'
 import { ProblemComponent } from './problem/problem.component'
+import { MarkdownModule } from 'ngx-markdown'
 
 @NgModule({
   declarations: [
@@ -100,7 +101,7 @@ import { ProblemComponent } from './problem/problem.component'
     MatMenuModule,
     CommonUIElementsModule,
     MatRadioModule,
-
+    MarkdownModule.forRoot(),
     MatTabsModule,
     MatBadgeModule,
   ],

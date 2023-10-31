@@ -154,6 +154,7 @@ export class AppComponent implements OnInit, OnDestroy {
   doesNotRequireLogin() {
     return this.activeRoute?.snapshot?.firstChild?.data?.['noLogin']
   }
+  introText = getSite().getIntroText()
   title = document.title
 
   shouldDisplayRoute(route: Route) {
