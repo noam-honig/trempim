@@ -320,16 +320,24 @@ export class Task extends IdEntity {
     validate: (entity, ref) => {
       if (entity.__disableValidation) return
 
-      if ((entity.isNew() || ref.valueChanged()) && getSite().useFillerInfo)
+      if (
+        (entity.isNew() || ref.valueChanged()) &&
+        getSite().useFillerInfo &&
+        !remult.isAllowed(Roles.dispatcher)
+      )
         Validators.required(entity, ref)
     },
   })
-  requesterPhone1 = remult.user?.phone
+  requesterPhone1 = !remult.isAllowed(Roles.dispatcher)
+    ? remult.user?.phone
+    : ''
   @Fields.string({
     caption: 'שם ממלא הבקשה',
     ...onlyDriverRules,
   })
-  requesterPhone1Description = remult.user?.name
+  requesterPhone1Description = !remult.isAllowed(Roles.dispatcher)
+    ? remult.user?.name
+    : ''
 
   @PhoneField<Task>({
     caption: 'טלפון מוצא',
