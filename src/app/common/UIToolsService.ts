@@ -53,7 +53,7 @@ export class UIToolsService implements UITools {
   }
   async error(err: any, taskId?: string) {
     const message = extractError(err)
-    this.report('שגיאה', err, taskId)
+    this.report('שגיאה', message, taskId)
     return await openDialog(
       YesNoQuestionComponent,
       (d) =>
