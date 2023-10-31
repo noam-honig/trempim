@@ -492,6 +492,7 @@ export class Task extends IdEntity {
     if (this.driverId) throw Error('מתנדב אחר כבר לקח משימה זו')
     this.driverId = assignUserId
     this.taskStatus = taskStatus.assigned
+    this.statusNotes = ''
     await this.insertStatusChange(assignedChangeType)
     await this.save()
     return this.getContactInfo()
