@@ -41,7 +41,8 @@
     [args]="{
       phone: e.requesterPhone1,
       name: e.requesterPhone1Description,
-      title: 'ממלא הבקשה'
+      title: 'ממלא הבקשה',
+      messageContext: e.getShortDescription()
     }"
   >
   </app-phone-details>
@@ -65,7 +66,8 @@
       [args]="{
         phone: e.phone1,
         name: e.phone1Description,
-        title: 'איש קשר לאיסוף'
+        title: 'איש קשר לאיסוף',
+        messageContext: e.getShortDescription()
       }"
     >
     </app-phone-details>
@@ -73,7 +75,8 @@
       [args]="{
         phone: e.phone2,
         name: e.phone2Description,
-        title: 'איש קשר לאיסוף 2'
+        title: 'איש קשר לאיסוף 2',
+        messageContext: e.getShortDescription()
       }"
     >
     </app-phone-details>
@@ -129,7 +132,8 @@
       [args]="{
         phone: e.toPhone1,
         name: e.tpPhone1Description,
-        title: 'איש קשר למסירה'
+        title: 'איש קשר למסירה',
+        messageContext: e.getShortDescription()
       }"
     >
     </app-phone-details>
@@ -137,7 +141,8 @@
       [args]="{
         phone: e.toPhone2,
         name: e.tpPhone2Description,
-        title: 'איש קשר למסירה 2'
+        title: 'איש קשר למסירה 2',
+        messageContext: e.getShortDescription()
       }"
     >
     </app-phone-details>

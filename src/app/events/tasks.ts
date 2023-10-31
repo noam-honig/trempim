@@ -203,7 +203,7 @@ export class Task extends IdEntity {
       message += 'מ' + getCity(this.addressApiResult!, this.address)
     if (this.toAddressApiResult?.results?.length)
       message += ' ל' + getCity(this.toAddressApiResult, this.toAddress)
-    return message
+    return message + ` (${this.externalId})`
   }
   displayDate() {
     const e = this
