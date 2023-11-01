@@ -51,7 +51,7 @@ export async function versionUpdate() {
     NO MAXVALUE
     CACHE 1;`)
   })
-  version(2, async () => {
+  await version(2, async () => {
     phoneConfig.disableValidation = true
     for await (const task of repo(Task).query()) {
       task.validUntil = calcValidUntil(
@@ -69,7 +69,7 @@ export async function versionUpdate() {
     phoneConfig.disableValidation = false
   })
 
-  version(5, async () => {
+  await version(5, async () => {
     const t = await dbNamesOf(Task)
     const s = await dbNamesOf(TaskStatusChanges)
     await db.execute(
@@ -77,7 +77,7 @@ export async function versionUpdate() {
       select ${t.id},${t.id},'יצירה',${t.taskStatus},${t.driverId},${t.createUserId},${t.createdAt} from ${t}`
     )
   })
-  version(6, async () => {
+  await version(6, async () => {
     for await (const task of await repo(Task).query()) {
       task.validUntil = calcValidUntil(
         task.eventDate,
@@ -87,19 +87,20 @@ export async function versionUpdate() {
       await task.save()
     }
   })
-  version(7, async () => {
+  await version(8, async () => {
     const site = getSite()
 
     for await (const task of await repo(Task).query()) {
+      task.__disableValidation = true
       switch (task.category) {
         case Category.delivery.id:
-          task.category = getSite().deliveryCaption || 'שינוע חיילים'
+          task.category = site.deliveryCaption || 'שינוע חיילים'
           break
         case Category.bike.id:
-          task.category = getSite().bikeCategoryCaption || task.category
+          task.category = site.bikeCategoryCaption || task.category
           break
         case Category.truck.id:
-          task.category = getSite().truckCategoryCaption || task.category
+          task.category = site.truckCategoryCaption || task.category
           break
       }
       await task.save()
