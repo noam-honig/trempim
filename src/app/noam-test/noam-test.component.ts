@@ -236,6 +236,7 @@ export class NoamTestComponent implements OnInit {
         zoom: 13,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: true,
+        fullscreenControl: true,
       }
       this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp)
       this.mapInit = true
