@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { getImageUrl } from './getImageUrl'
 import { tripsGrid } from './tripsGrid'
+import { getSite } from '../users/sites'
 
 @Component({
   selector: 'app-org-events',
@@ -56,6 +57,8 @@ export class OrgEventsComponent implements OnInit {
   }
 
   private loadEvents() {
+    let date = new Date()
+    date.setHours(date.getHours() - 2)
     if (this.activeTab == 2) {
       if (!this.allRides) {
         this.allRides = tripsGrid({
@@ -97,6 +100,9 @@ export class OrgEventsComponent implements OnInit {
                 }
               : {
                   taskStatus: [taskStatus.active],
+                  validUntil: getSite().showPastEvents
+                    ? undefined!
+                    : { $gt: date },
                 },
         })
         .then(async (items) => {

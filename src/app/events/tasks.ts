@@ -101,7 +101,11 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       remult.user = { id: user.id }
       task.createUserId = remult.user.id
     }
-    if (!remult.isAllowed(Roles.dispatcher) && task.isNew())
+    if (
+      !remult.isAllowed(Roles.dispatcher) &&
+      task.isNew() &&
+      !getSite().allDeliveryRequestsAreApprovedAutomatically
+    )
       task.taskStatus = taskStatus.draft
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
     if (task.isNew() && !task.externalId)

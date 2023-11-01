@@ -126,7 +126,7 @@ export class EventCardComponent implements OnInit {
     this.refresh()
   }
 
-  showMap = document.location.host.includes('localhost')
+  showMap = false // document.location.host.includes('localhost')
   toggleShowMap(val: boolean) {
     this.showMap = val
     this.tools.report(

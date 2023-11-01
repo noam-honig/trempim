@@ -13,6 +13,8 @@ export function getTitle() {
   return getBackendSite()!.title
 }
 export class Site {
+  deliveryCaption: string | undefined
+  allDeliveryRequestsAreApprovedAutomatically = false
   getIntroText() {
     return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
 
@@ -47,6 +49,7 @@ export class Site {
   }
   onlyCities = false
   syncWithMonday = false
+  showPastEvents = true
 }
 
 export class BikeIlSite extends Site {
@@ -66,6 +69,22 @@ export class Hahatul extends Site {
   override allowAnyVolunteerToAdd = true
   override sendSmsOnNewDraft = true
   override useFillerInfo = true
+}
+export class Civil extends Site {
+  override showCopyLink? = true
+  override allowAnyVolunteerToAdd = true
+  override useFillerInfo = true
+  override allDeliveryRequestsAreApprovedAutomatically = true
+  override deliveryCaption = 'הסעת חיילים'
+  override categories = [
+    Category.delivery,
+    new Category('הסעת מפונים'),
+    new Category('הסעות אחר'),
+    new Category('שינוע ציוד'),
+    new Category('שינוע אוכל חם'),
+    Category.other,
+  ]
+  override showPastEvents = false
 }
 export class WarRoomCars extends Site {
   override showCopyLink? = true
@@ -144,8 +163,11 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
-    case 'test1':
       remult.context.site = new Hahatul(site)
+      break
+    case 'civil':
+    case 'test1':
+      remult.context.site = new Civil(site)
       break
     case 'vdri':
       remult.context.site = new vdri(site)
@@ -187,6 +209,7 @@ export const backendSites = [
   { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
   { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
   { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
+  { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמ"ל האזרחי' },
 ]
 export function getBackendSite(schema?: string) {
   if (!schema) schema = getSite().urlPrefix

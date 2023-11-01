@@ -18,7 +18,11 @@ import { getSite } from '../users/sites'
     ],
 })
 export class Category {
-  static delivery = new Category('שינוע חיילים', 'שינוע')
+  static delivery = new Category(
+    'שינוע חיילים',
+    'שינוע',
+    () => getSite().deliveryCaption
+  )
   static equipment = new Category('שינוע ציוד')
   static bike = new Category(
     'מתאים גם לאופנוע',
