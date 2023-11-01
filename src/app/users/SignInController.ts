@@ -90,7 +90,7 @@ export class SignInController extends ControllerBase {
       this.askForOtp = false
       throw Error('פג תוקף הקוד, נסה שנית')
     }
-    if (otp != this.otp) throw Error('קוד לא תקין')
+    if (otp != this.otp?.trim()) throw Error('קוד לא תקין')
     let user = await repo(User).findFirst({
       phone: this.phone,
       deleted: false,

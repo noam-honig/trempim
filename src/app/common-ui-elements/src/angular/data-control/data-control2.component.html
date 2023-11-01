@@ -12,6 +12,7 @@
         <input
           #theId
           matInput
+          autocomplete="off"
           [(ngModel)]="_getColumn()!.inputValue"
           type="{{ settings._getColDataType(map) }}"
           (ngModelChange)="settings._colValueChanged(map, record)"
