@@ -209,7 +209,7 @@ export function getSite() {
 
 export const backendSites = [
   { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
-  { urlPrefix: 'test1', dbSchema: 'trempim', title: 'פיתוח' },
+  { urlPrefix: 'test1', dbSchema: 'dshinua', title: 'פיתוח' },
   {
     urlPrefix: 'hahatul',
     dbSchema: 'hahatul',
