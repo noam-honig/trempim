@@ -104,14 +104,16 @@
       נלחץ בטעות
     </button>
   </div>
-  <button
-    mat-raised-button
-    style="margin-top: 16px; background-color: green; color: white"
-    *ngIf="showPickedUp()"
-    (click)="pickedUp()"
-  >
-    נאסף בהצלחה
-  </button>
+  <div>
+    <button
+      mat-raised-button
+      style="margin-top: 16px; background-color: green; color: white"
+      *ngIf="showPickedUp()"
+      (click)="pickedUp()"
+    >
+      אספתי בהצלחה
+    </button>
+  </div>
   <hr />
   <div *ngIf="e.toAddress" class="space-above">
     <strong>כתובת יעד</strong>
@@ -199,7 +201,7 @@
     *ngIf="isAssigned()"
     (click)="completed()"
   >
-    הושלם בהצלחה
+    השלמתי בהצלחה
   </button>
   <button
     mat-raised-button
