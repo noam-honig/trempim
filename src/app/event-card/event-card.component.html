@@ -80,7 +80,7 @@
               </div>
               <div class="event-info" (click)="eventDetails(e)">
                 <div class="event-detail">
-                  {{ e.category?.caption || '' }}{{ distance(e) }}
+                  {{ e.category || '' }}{{ distance(e) }}
                   <span>
                     {{ eventCity(e) }}
                     <span *ngIf="e.toAddressApiResult">

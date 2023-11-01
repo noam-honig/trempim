@@ -31,7 +31,7 @@ import {
 import { Roles } from '../users/roles'
 import { getSite, getTitle } from '../users/sites'
 import { User } from '../users/user'
-import { Category } from './Category'
+
 import { TaskImage } from './TaskImage'
 import { TaskStatusChanges } from './TaskStatusChanges'
 import { CreatedAtField, DateField, formatDate } from './date-utils'
@@ -222,7 +222,7 @@ ${this.getLink()}`
 
   getShortDescription(): string {
     let message = ''
-    if (this.category?.caption) message = this.category.caption + ': '
+    if (this.category) message = this.category + ': '
     if (this.title) message += this.title + ' '
     if (this.addressApiResult?.results?.length)
       message += 'מ' + getCity(this.addressApiResult!, this.address)
@@ -267,7 +267,7 @@ ${this.getLink()}`
   }
 
   @Fields.string<Task>({
-    caption: 'מה משנעים',
+    caption: 'מה משנעים *',
     validate: (s, c) => {
       if (s.__disableValidation) return
       Validators.required(s, c)
@@ -292,8 +292,11 @@ ${this.getLink()}`
   @DataControl({ visible: () => getSite().canSeeUrgency })
   @Field(() => Urgency)
   urgency = Urgency.normal
-  @Field(() => Category)
-  category? = getSite().defaultCategory
+  @DataControl({
+    valueList: () => getSite().categories.map((x) => ({ id: x, caption: x })),
+  })
+  @Fields.string({ caption: 'קטגוריה' })
+  category: string = getSite().defaultCategory
   @Fields.dateOnly<Task>({
     caption: 'תאריך הסיוע המבוקש',
     validate: (s, c) => {
@@ -318,7 +321,7 @@ ${this.getLink()}`
   @Fields.json<GeocodeResult>()
   addressApiResult: GeocodeResult | null = null
   @Fields.string({
-    caption: 'מיקום מוצא',
+    caption: 'מיקום מוצא *',
     customInput: (c) =>
       c.inputAddress(
         (result, event: Task) =>
@@ -330,7 +333,7 @@ ${this.getLink()}`
   @Fields.json<GeocodeResult>()
   toAddressApiResult: GeocodeResult | null = null
   @Fields.string({
-    caption: 'מיקום יעד',
+    caption: 'מיקום יעד *',
     customInput: (c) =>
       c.inputAddress(
         (result, event: Task) =>
@@ -340,7 +343,7 @@ ${this.getLink()}`
   toAddress = ''
 
   @PhoneField<Task>({
-    caption: 'טלפון ממלא הבקשה',
+    caption: 'טלפון ממלא הבקשה *',
     ...onlyDriverRules,
     validate: (entity, ref) => {
       if (entity.__disableValidation) return
@@ -365,7 +368,7 @@ ${this.getLink()}`
     : ''
 
   @PhoneField<Task>({
-    caption: 'טלפון מוצא',
+    caption: 'טלפון מוצא *',
     ...onlyDriverRules,
     validate: (entity, ref) => {
       if (entity.__disableValidation) return

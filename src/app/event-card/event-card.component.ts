@@ -6,7 +6,7 @@ import { BusyService, openDialog } from '../common-ui-elements'
 
 import { UIToolsService } from '../common/UIToolsService'
 import { Task, eventDisplayDate } from '../events/tasks'
-import { Category } from '../events/Category'
+
 import { taskStatus } from '../events/taskStatus'
 import { Roles } from '../users/roles'
 import {
@@ -23,11 +23,6 @@ import copy from 'copy-to-clipboard'
 import { displayTime } from '../events/date-utils'
 import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 
-const AllCategories = {
-  id: 'asdfaetfsafads',
-  caption: 'הכל',
-  count: 0,
-}
 @DialogConfig({ maxWidth: '95vw' })
 @Component({
   selector: 'app-event-card',
@@ -55,8 +50,8 @@ export class EventCardComponent implements OnInit {
       click: () => {
         let message = 'קריאות פתוחות'
 
-        if (this.category && this.category != AllCategories) {
-          message += ` (${this.category.caption})`
+        if (this.category) {
+          message += ` (${this.category})`
         }
 
         if (this.region) {
@@ -110,8 +105,8 @@ export class EventCardComponent implements OnInit {
   region: string = ''
   @Fields.string({ caption: 'לאן?' })
   toRegion: string = ''
-  @Field(() => Category, { caption: 'קטגוריה' })
-  category = AllCategories
+  @Fields.string({ caption: 'קטגוריה' })
+  category = ''
   area!: DataAreaSettings
 
   _tasks!: Task[]
@@ -143,7 +138,7 @@ export class EventCardComponent implements OnInit {
         JSON.stringify({
           region: this.region,
           toRegion: this.toRegion,
-          category: this.category?.id,
+          category: this.category,
         })
       )
     this.filteredTasks = this.tasks.filter((x) => this.filter(x))
@@ -202,12 +197,12 @@ export class EventCardComponent implements OnInit {
         })
       } else toRegion.count++
 
-      let type = this.types.find((c) => c.id == e.category?.id)
+      let type = this.types.find((c) => c.id == e.category)
       if (!type) {
         this.types.push({
-          id: e.category?.id!,
+          id: e.category,
           count: 1,
-          caption: e.category?.caption || '',
+          caption: e.category || '',
         })
       } else type.count++
     }
@@ -229,7 +224,11 @@ export class EventCardComponent implements OnInit {
     this.types.sort((b, a) => a.count - b.count)
     this.types.forEach((c) => (c.caption = c.caption + ' - ' + c.count))
 
-    this.types.splice(0, 0, AllCategories)
+    this.types.splice(0, 0, {
+      id: '',
+      count: this._tasks.length,
+      caption: 'הכל ' + ' - ' + this._tasks.length,
+    })
 
     this.urgencies = this.urgencies.filter((d) => d.events.length > 0)
     this.urgencies.sort((a, b) => b.sort - a.sort)
@@ -267,8 +266,8 @@ export class EventCardComponent implements OnInit {
       (this.toRegion == '' ||
         getRegion(e.toAddressApiResult) == this.toRegion) &&
       (this.category == undefined ||
-        this.category == AllCategories ||
-        e.category?.id == this.category.id)
+        this.category == '' ||
+        e.category == this.category)
     )
   }
   hasEvents(d: dateEvents) {

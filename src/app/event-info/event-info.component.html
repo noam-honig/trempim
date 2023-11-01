@@ -20,7 +20,7 @@
   [style.padding-bottom]="'30px'"
   [style.min-width]="'320px'"
 >
-  {{ e.category?.caption }} - ({{ e.externalId }})
+  {{ e.category }} - ({{ e.externalId }})
 
   <span>{{ displayDate() }} </span>
   <div *ngIf="e.imageId" style="width: 200px; height: 200px">

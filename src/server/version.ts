@@ -12,6 +12,7 @@ import { calcValidUntil, Task } from '../app/events/tasks'
 import { TaskStatusChanges } from 'src/app/events/TaskStatusChanges'
 import { taskStatus } from 'src/app/events/taskStatus'
 import { phoneConfig } from '../app/events/phone'
+import { getSite } from '../app/users/sites'
 
 @Entity(undefined!, {
   dbName: 'versionInfo',
@@ -86,4 +87,55 @@ export async function versionUpdate() {
       await task.save()
     }
   })
+  version(7, async () => {
+    const site = getSite()
+
+    for await (const task of await repo(Task).query()) {
+      switch (task.category) {
+        case Category.delivery.id:
+          task.category = getSite().deliveryCaption || 'שינוע חיילים'
+          break
+        case Category.bike.id:
+          task.category = getSite().bikeCategoryCaption || task.category
+          break
+        case Category.truck.id:
+          task.category = getSite().truckCategoryCaption || task.category
+          break
+      }
+      await task.save()
+    }
+  })
+}
+
+class Category {
+  static delivery = new Category(
+    'שינוע חיילים',
+    'שינוע',
+    () => getSite().deliveryCaption
+  )
+  static equipment = new Category('שינוע ציוד')
+  static bike = new Category(
+    'מתאים גם לאופנוע',
+    undefined,
+    () => getSite().bikeCategoryCaption
+  )
+  static truck = new Category(
+    'שינוע במשאית',
+    undefined,
+    () => getSite().truckCategoryCaption
+  )
+
+  static other = new Category('אחר')
+  _caption: string
+  constructor(
+    caption: string,
+    public id: string | undefined = undefined,
+    private getCaption?: () => string | undefined
+  ) {
+    this._caption = caption
+    if (!id) this.id = caption
+  }
+  get caption() {
+    return this.getCaption?.() || this._caption
+  }
 }

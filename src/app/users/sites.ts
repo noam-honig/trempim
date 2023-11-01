@@ -1,6 +1,4 @@
 import { remult } from 'remult'
-import { DEFAULT_NAME } from './SignInController'
-import { Category } from '../events/Category'
 import { Roles } from './roles'
 import { taskStatus } from '../events/taskStatus'
 import { UpdateMessage } from '../events/UpdatesChannel'
@@ -12,6 +10,7 @@ export function getTitle() {
   if (typeof localStorage !== 'undefined') return (title = document.title)
   return getBackendSite()!.title
 }
+
 export class Site {
   deliveryCaption: string | undefined
   allDeliveryRequestsAreApprovedAutomatically = false
@@ -33,10 +32,23 @@ export class Site {
   showInfoSnackbarFor(message: UpdateMessage) {
     return true
   }
+
+  soldiersDelivery = 'שינוע חיילים'
+  bikeDelivery = 'שינוע באופנוע'
+
   bikeCategoryCaption?: string
-  defaultCategory = Category.delivery
+  defaultCategory = this.soldiersDelivery
   truckCategoryCaption?: string
-  categories?: Category[]
+  categories: string[] = [
+    this.soldiersDelivery,
+    'שינוע ציוד',
+    'שינוע מזון',
+    'שינוע ברכב מסחרי . נגרר',
+    'שינוע במשאית',
+    'מתאים גם לאופנוע',
+    'שינוע רכ',
+    'אחר',
+  ]
   showCopyLink?: boolean
   imageIsMandatory?: boolean
   showTwoContacts = true
@@ -54,9 +66,13 @@ export class Site {
 
 export class BikeIlSite extends Site {
   override bikeCategoryCaption = 'שינוע באופנוע'
-  override defaultCategory = Category.bike
+  override defaultCategory = this.bikeCategoryCaption
   override truckCategoryCaption? = 'שינוע מסחרי או נגרר'
-  override categories = [Category.bike, Category.truck, Category.other]
+  override categories = [
+    this.bikeCategoryCaption!,
+    this.truckCategoryCaption!,
+    'אחר',
+  ]
   override showCopyLink? = true
   override imageIsMandatory? = true
   override useFillerInfo = true
@@ -76,13 +92,14 @@ export class Civil extends Site {
   override useFillerInfo = true
   override allDeliveryRequestsAreApprovedAutomatically = true
   override deliveryCaption = 'הסעת חיילים'
+  override defaultCategory = this.deliveryCaption
   override categories = [
-    Category.delivery,
-    new Category('הסעת מפונים'),
-    new Category('הסעות אחר'),
-    new Category('שינוע ציוד'),
-    new Category('שינוע אוכל חם'),
-    Category.other,
+    this.defaultCategory!,
+    'הסעת מפונים',
+    'הסעות אחר',
+    'שינוע ציוד',
+    'שינוע אוכל חם',
+    'אחר',
   ]
   override showPastEvents = false
 }
@@ -91,18 +108,17 @@ export class WarRoomCars extends Site {
   override allowAnyVolunteerToAdd = true
   override useFillerInfo = true
   override driverCanMarkAsNonRelevant = false
-  override defaultCategory = Category.equipment
+  override defaultCategory = 'שינוע ציוד'
   override syncWithMonday = true
 }
 
 export class Showers extends Site {
-  static shower = new Category('מקלחות ניידות')
   override secondAddressRequired = false
-  override defaultCategory = Showers.shower
+  override defaultCategory = 'מקלחות ניידות'
   override categories = [
-    Showers.shower,
-    new Category('רכב גורר עד 3.5 טון'),
-    new Category('רכב גורר מעל 3.5 טון'),
+    this.defaultCategory,
+    'רכב גורר עד 3.5 טון',
+    'רכב גורר מעל 3.5 טון',
   ]
 }
 
@@ -163,10 +179,10 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
-    case 'test1':
       remult.context.site = new Hahatul(site)
       break
     case 'civil':
+    case 'test1':
       remult.context.site = new Civil(site)
       break
     case 'vdri':
