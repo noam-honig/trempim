@@ -780,7 +780,7 @@ ${this.getLink()}`
       },
       {
         name: 'שלח ווטסאפ לנהג',
-        icon: 'Sms',
+        icon: 'sms',
         visible: (x) =>
           [taskStatus.driverPickedUp, taskStatus.assigned].includes(
             x.taskStatus
