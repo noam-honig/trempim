@@ -35,9 +35,9 @@ export class EventCardComponent implements OnInit {
   menuOptions: RowButton<Task>[] = Task.rowButtons(this.tools, {
     taskAdded: (t) => {
       this.tasks.push(t)
-      this.refresh()
+      this.refreshFilters(false)
     },
-    taskSaved: () => this.refresh(),
+    taskSaved: () => this.refreshFilters(false),
   })
   addTask() {
     const t = repo(Task).create()
@@ -118,7 +118,7 @@ export class EventCardComponent implements OnInit {
   @Input()
   set tasks(val: Task[]) {
     this._tasks = val
-    this.refresh()
+    this.refreshFilters(false)
   }
 
   showMap = false // document.location.host.includes('localhost')
@@ -131,7 +131,13 @@ export class EventCardComponent implements OnInit {
   }
   showLocation = false
   filteredTasks: Task[] = []
-  filterChanged(report = true) {
+
+  closeDialog?: VoidFunction
+  isDialog() {
+    return this.closeDialog !== undefined
+  }
+  title = ''
+  refreshFilters(report: boolean) {
     if (report)
       this.tools.report(
         'סינון',
@@ -142,13 +148,6 @@ export class EventCardComponent implements OnInit {
         })
       )
     this.filteredTasks = this.tasks.filter((x) => this.filter(x))
-  }
-  closeDialog?: VoidFunction
-  isDialog() {
-    return this.closeDialog !== undefined
-  }
-  title = ''
-  refresh() {
     this.urgencies = []
     this.tasks.sort((a, b) => compareEventDate(a, b))
 
@@ -176,49 +175,56 @@ export class EventCardComponent implements OnInit {
           })
         )
       d.events.push(e)
-      let region = this.regions.find(
-        (c) => c.id == getRegion(e.addressApiResult)
-      )
-      if (!region) {
-        this.regions.push({
-          id: getRegion(e.addressApiResult),
-          count: 1,
-          caption: '',
-        })
-      } else region.count++
-      let toRegion = this.toRegions.find(
-        (c) => c.id == getRegion(e.toAddressApiResult)
-      )
-      if (!toRegion) {
-        this.toRegions.push({
-          id: getRegion(e.toAddressApiResult),
-          count: 1,
-          caption: '',
-        })
-      } else toRegion.count++
-
-      let type = this.types.find((c) => c.id == e.category)
-      if (!type) {
-        this.types.push({
-          id: e.category,
-          count: 1,
-          caption: e.category || '',
-        })
-      } else type.count++
+      if (this.filter(e, { region: true })) {
+        let region = this.regions.find(
+          (c) => c.id == getRegion(e.addressApiResult)
+        )
+        if (!region) {
+          this.regions.push({
+            id: getRegion(e.addressApiResult),
+            count: 1,
+            caption: '',
+          })
+        } else region.count++
+      }
+      if (this.filter(e, { toRegion: true })) {
+        let toRegion = this.toRegions.find(
+          (c) => c.id == getRegion(e.toAddressApiResult)
+        )
+        if (!toRegion) {
+          this.toRegions.push({
+            id: getRegion(e.toAddressApiResult),
+            count: 1,
+            caption: '',
+          })
+        } else toRegion.count++
+      }
+      if (this.filter(e, { category: true })) {
+        let type = this.types.find((c) => c.id == e.category)
+        if (!type) {
+          this.types.push({
+            id: e.category,
+            count: 1,
+            caption: e.category || '',
+          })
+        } else type.count++
+      }
     }
     this.regions.sort((b, a) => a.count - b.count)
     this.regions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
     this.regions.splice(0, 0, {
       id: '',
       count: this._tasks.length,
-      caption: 'כל הארץ' + ' - ' + this._tasks.length,
+      caption:
+        'כל הארץ' + ' - ' + this.regions.reduce((a, b) => a + b.count, 0),
     })
     this.toRegions.sort((b, a) => a.count - b.count)
     this.toRegions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
     this.toRegions.splice(0, 0, {
       id: '',
       count: this._tasks.length,
-      caption: 'כל הארץ' + ' - ' + this._tasks.length,
+      caption:
+        'כל הארץ' + ' - ' + this.toRegions.reduce((a, b) => a + b.count, 0),
     })
 
     this.types.sort((b, a) => a.count - b.count)
@@ -227,7 +233,7 @@ export class EventCardComponent implements OnInit {
     this.types.splice(0, 0, {
       id: '',
       count: this._tasks.length,
-      caption: 'הכל ' + ' - ' + this._tasks.length,
+      caption: 'הכל ' + ' - ' + this.types.reduce((a, b) => a + b.count, 0),
     })
 
     this.urgencies = this.urgencies.filter((d) => d.events.length > 0)
@@ -240,32 +246,38 @@ export class EventCardComponent implements OnInit {
             field: this.$.region,
             valueList: this.regions,
             visible: () => this.regions.length > 2,
-            valueChange: () => this.filterChanged(),
+            valueChange: () => this.refreshFilters(true),
           },
           {
             field: this.$.toRegion,
             valueList: this.toRegions,
             visible: () => this.toRegions.length > 2,
-            valueChange: () => this.filterChanged(),
+            valueChange: () => this.refreshFilters(true),
           },
           {
             field: this.$.category,
             valueList: this.types,
             visible: () => this.types.length > 2,
-            valueChange: () => this.filterChanged(),
+            valueChange: () => this.refreshFilters(true),
           },
         ],
       ],
     })
-    this.filterChanged(false)
   }
 
-  filter(e: Task) {
+  filter(
+    e: Task,
+    ignore?: { region?: boolean; toRegion?: boolean; category?: boolean }
+  ) {
     return (
-      (this.region == '' || getRegion(e.addressApiResult) == this.region) &&
-      (this.toRegion == '' ||
+      (ignore?.region ||
+        this.region == '' ||
+        getRegion(e.addressApiResult) == this.region) &&
+      (ignore?.toRegion ||
+        this.toRegion == '' ||
         getRegion(e.toAddressApiResult) == this.toRegion) &&
-      (this.category == undefined ||
+      (ignore?.category ||
+        this.category == undefined ||
         this.category == '' ||
         e.category == this.category)
     )
@@ -286,7 +298,7 @@ export class EventCardComponent implements OnInit {
   eventDetails(e: Task) {
     openDialog(EventInfoComponent, (x) => {
       x.e = e
-      x.refresh = () => this.refresh()
+      x.refresh = () => this.refreshFilters(false)
       x.context = this.fromMap
         ? 'מהמפה'
         : this.showingAllTasks
@@ -303,7 +315,7 @@ export class EventCardComponent implements OnInit {
   }
 
   edit(e: Task) {
-    e.openEditDialog(this.tools, () => this.refresh())
+    e.openEditDialog(this.tools, () => this.refreshFilters(false))
   }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active
