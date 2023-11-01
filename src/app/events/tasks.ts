@@ -29,14 +29,20 @@ import {
   getCity,
 } from '../common/address-input/google-api-helpers'
 import { Roles } from '../users/roles'
-import { getSite } from '../users/sites'
+import { getSite, getTitle } from '../users/sites'
 import { User } from '../users/user'
 import { Category } from './Category'
 import { TaskImage } from './TaskImage'
 import { TaskStatusChanges } from './TaskStatusChanges'
 import { CreatedAtField, DateField, formatDate } from './date-utils'
 import { Locks } from './locks'
-import { PhoneField, TaskContactInfo, formatPhone, phoneConfig } from './phone'
+import {
+  PhoneField,
+  TaskContactInfo,
+  formatPhone,
+  phoneConfig,
+  sendWhatsappToPhone,
+} from './phone'
 import { taskStatus } from './taskStatus'
 import { Urgency } from './urgency'
 import { updateChannel } from './UpdatesChannel'
@@ -205,6 +211,15 @@ const onlyDriverRules: FieldOptions<Task, string> = {
 })
 export class Task extends IdEntity {
   __disableValidation = false
+  sendWhatsappInvite() {
+    sendWhatsappToPhone(
+      this.driver?.phone!,
+      `שלום ${this.driver?.name || ''}, קיבלת נסיעה חדשה מ "${getTitle()}"
+${this.getShortDescription()}
+${this.getLink()}`
+    )
+  }
+
   getShortDescription(): string {
     let message = ''
     if (this.category?.caption) message = this.category.caption + ': '
@@ -763,6 +778,16 @@ export class Task extends IdEntity {
           ui.info('הקישור הועתק ללוח, ניתן לשלוח בקבוצה')
         },
       },
+      {
+        name: 'שלח ווטסאפ לנהג',
+        visible: (x) =>
+          [taskStatus.driverPickedUp, taskStatus.assigned].includes(
+            x.taskStatus
+          ),
+        click: async (e) => {
+          e.sendWhatsappInvite()
+        },
+      },
 
       {
         name: 'בחר נהג',
@@ -772,10 +797,14 @@ export class Task extends IdEntity {
           ui.selectUser({
             onSelect: async (user) => {
               await e.assignToMe(user.id)
+              if (await ui.yesNoQuestion('שלח הודעת ווטסאפ לנהג?')) {
+                e.sendWhatsappInvite()
+              }
             },
           })
         },
       },
+
       {
         name: 'היסטוריה',
         icon: 'history_edu',
