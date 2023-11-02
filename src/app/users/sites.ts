@@ -21,6 +21,15 @@ export class Site {
 
 המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
 
+${
+  this.registerVolunteerLink
+    ? `
+
+עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](${this.registerVolunteerLink})
+
+`
+    : ''
+}
 צאו לעשות חסדים!`
   }
   constructor(public urlPrefix: string) {}
@@ -29,6 +38,7 @@ export class Site {
   useFillerInfo = false
   allowAnyVolunteerToAdd? = false
   sendSmsOnNewDraft = false
+  registerVolunteerLink?: string
   showInfoSnackbarFor(message: UpdateMessage) {
     return true
   }
@@ -110,18 +120,7 @@ export class WarRoomCars extends Site {
   override driverCanMarkAsNonRelevant = false
   override defaultCategory = 'שינוע ציוד'
   override syncWithMonday = true
-
-  override getIntroText() {
-    return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
-
-כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים לבסיסים, בשינוע ציוד לחיילים או בשינועים שונים הנדרשים לכוחות העורף.
-
-המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
-
-עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](https://forms.monday.com/forms/2ecb222fecfb8b8d7404f754362d2c6d?r=euc1)
-
-צאו לעשות חסדים!`
-  }
+  override registerVolunteerLink = `https://forms.monday.com/forms/2ecb222fecfb8b8d7404f754362d2c6d?r=euc1`
 }
 export class Showers extends Site {
   override secondAddressRequired = false

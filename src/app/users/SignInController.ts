@@ -113,12 +113,7 @@ export class SignInController extends ControllerBase {
       await user.save()
     }
 
-    if (!user)
-      throw (
-        'מספר טלפון לא מוכר - אנא צרו קשר עם ארגון ' +
-        getTitle() +
-        ' בכדי שיוספו אתכם לרשימת הטלפונים המורשים.'
-      )
+    if (!user) throw Error(UNKNOWN_USER)
     try {
       return setSessionUserBasedOnUserRow(user, this.rememberOnThisDevice)
     } finally {
@@ -177,3 +172,5 @@ function getOtp(phone: string) {
   if (!otp || otp.expire < new Date()) return undefined
   return otp.otp
 }
+
+export const UNKNOWN_USER = 'מספר טלפון לא מוכר'

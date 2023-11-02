@@ -7,7 +7,7 @@ import { BusyService, openDialog, RouteHelperService } from 'common-ui-elements'
 import { User } from './users/user'
 import { DataAreaDialogComponent } from './common/data-area-dialog/data-area-dialog.component'
 import { terms } from './terms'
-import { SignInController } from './users/SignInController'
+import { SignInController, UNKNOWN_USER } from './users/SignInController'
 import { remult, repo } from 'remult'
 import { DataAreaSettings } from './common-ui-elements/interfaces'
 import copy from 'copy-to-clipboard'
@@ -87,10 +87,33 @@ export class AppComponent implements OnInit, OnDestroy {
   async doSignIn() {
     if (!this.signIn.askForOtp) await this.signIn.signIn()
     else {
-      remult.user = await this.signIn.signInWithOtp()
-      this.updateSubscription()
-      if (!remult.user) {
-        this.signIn.$.name.error = 'אנא הזן שם'
+      try {
+        remult.user = await this.signIn.signInWithOtp()
+        this.updateSubscription()
+        if (!remult.user) {
+          this.signIn.$.name.error = 'אנא הזן שם'
+        }
+      } catch (err: any) {
+        if (err.message === UNKNOWN_USER) {
+          const link = getSite().registerVolunteerLink
+
+          if (link) {
+            const message = `טלפון ${
+              this.signIn.$.phone.displayValue
+            } אינו רשום למערכת, האם תרצה להירשם ל${getTitle()}?`
+            this.uiService.report(message, '')
+            if (await this.uiService.yesNoQuestion(message)) {
+              this.uiService.report('מעבר לטופס הרשמה חיצוני', '')
+              window.open(link)
+            }
+          } else {
+            await this.uiService.error(
+              `טלפון ${
+                this.signIn.$.phone.displayValue
+              } אינו רשום למערכת. אנא צור קשר עם ${getTitle()} בכדי להצטרף?`
+            )
+          }
+        }
       }
     }
   }
