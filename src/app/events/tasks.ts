@@ -162,6 +162,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       if (task.$.taskStatus.valueChanged()) {
         switch (task.taskStatus) {
           case taskStatus.active:
+          case taskStatus.assigned:
             updateStatusOnMonday(
               task,
               task.returnMondayStatus === NO_PACK_READY_FOR_DELIVERY
@@ -169,7 +170,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
                 : PACKED_READY_FOR_DELIVERY
             )
             break
-          case taskStatus.assigned:
+          case taskStatus.driverPickedUp:
             updateStatusOnMonday(task, ACTIVE_DELIVERY)
             break
           case taskStatus.completed:

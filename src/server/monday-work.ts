@@ -14,13 +14,19 @@ export const PACKED_READY_FOR_DELIVERY = 3,
 
 export async function updateReceivedFromMonday(event: Root) {
   try {
-    if (event.event.type == 'update_column_value') {
+    if (event?.event?.type == 'update_column_value') {
       const id = event.event.pulseId
       const column_id = event.event.columnId
       const value = event.event.value
       const board = event.event.boardId
 
-      await upsertTaskBasedOnMondayValues(board, id, column_id == 'status73')
+      await upsertTaskBasedOnMondayValues(
+        board,
+        id,
+        ['status73', DRIVER_NAME_COLUMN, DRIVER_PHONE_COLUMN].includes(
+          column_id
+        )
+      )
     }
   } catch (err) {
     console.error(err)
@@ -111,7 +117,7 @@ const DRIVER_NAME_COLUMN = 'text6'
 export async function upsertTaskBasedOnMondayValues(
   board: number,
   id: number,
-  statusChanged = false
+  statusOrDriverChange = false
 ) {
   const mondayUser = await repo(User).findFirst(
     { phone: '0500000002' },
@@ -205,13 +211,10 @@ export async function upsertTaskBasedOnMondayValues(
     if (item.$.toAddress.valueChanged())
       item.toAddressApiResult = await GetGeoInformation(item.toAddress)
   }
-  let fromAddress = get('long_text7')
+  let fromAddress = get('location0')
   if (fromAddress) {
     item.address = fromAddress
-    if (
-      mondayStatus.index === PACKED_READY_FOR_DELIVERY ||
-      item.returnMondayStatus === PACKED_READY_FOR_DELIVERY
-    )
+    if (get('status_1', undefined, true)?.index === 2)
       item.address = 'יהודה הלוי 48 תל אביב'
     if (item.$.address.valueChanged())
       item.addressApiResult = await GetGeoInformation(item.address)
@@ -237,11 +240,14 @@ export async function upsertTaskBasedOnMondayValues(
   setDesc('single_select', 'כשרות')
   setDesc('long_text76', 'ציוד נדרש עבור נשים')
   setDesc('long_text', 'הערות')
-  item.title = item.phone1Description
-  let boxes = get('numbers')
-  if (boxes) {
-    item.title += ', ' + (boxes == 1 ? 'ארגז אחד' : boxes + ' ארגזים')
+  item.title = get('text47')
+  if (!item.title) {
+    let boxes = get('numbers')
+    if (boxes && boxes.trim() != '0') {
+      item.title = boxes == 1 ? 'ארגז אחד' : boxes + ' ארגזים'
+    }
   }
+  if (!item.title) item.title = 'ציוד'
   let driverPhone = get(DRIVER_PHONE_COLUMN)
   if (driverPhone) {
     driverPhone = fixPhoneInput(driverPhone)
@@ -258,27 +264,26 @@ export async function upsertTaskBasedOnMondayValues(
         item.driverId = user.id
       }
     }
-  }
+  } else item.driverId = ''
 
-  if (statusChanged)
+  if (statusOrDriverChange)
     switch (mondayStatus.index) {
       case PACKED_READY_FOR_DELIVERY:
       case NO_PACK_READY_FOR_DELIVERY:
+        let relevantStatus = item.driverId
+          ? taskStatus.assigned
+          : taskStatus.active
         item.returnMondayStatus = mondayStatus.index
-        if (item.taskStatus !== taskStatus.active) {
-          item.taskStatus = taskStatus.active
+        if (item.taskStatus !== relevantStatus) {
+          item.taskStatus = relevantStatus
           if (!item._.isNew())
             await item.insertStatusChange('נדרש שילוח מMONDAY')
         }
         break
       case ACTIVE_DELIVERY:
-        if (
-          ![taskStatus.assigned, taskStatus.driverPickedUp].includes(
-            item.taskStatus
-          )
-        ) {
-          item.taskStatus = taskStatus.assigned
-          await item.insertStatusChange('שוייך נהג בMONDAY')
+        if (![taskStatus.driverPickedUp].includes(item.taskStatus)) {
+          item.taskStatus = taskStatus.driverPickedUp
+          await item.insertStatusChange('משלוח נאסף בMONDAY')
         }
         break
       case DELIVERY_DONE:
