@@ -17,6 +17,8 @@ import {
   getLocation,
   getCurrentLocation,
   getRegion,
+  getBranch,
+  GeocodeResult,
 } from '../common/address-input/google-api-helpers'
 import { LocationErrorComponent } from '../location-error/location-error.component'
 import copy from 'copy-to-clipboard'
@@ -92,8 +94,8 @@ export class EventCardComponent implements OnInit {
     return remult.isAllowed(Roles.dispatcher)
   }
   urgencies: dateEvents[] = []
-  regions: { id: string; count: number; caption: string }[] = []
-  toRegions: { id: string; count: number; caption: string }[] = []
+  regions: AreaFilterInfo[] = []
+  toRegions: AreaFilterInfo[] = []
   types: { id: string; count: number; caption: string }[] = []
   trackBy(i: number, e: { id: any }): any {
     return e.id as any
@@ -136,6 +138,11 @@ export class EventCardComponent implements OnInit {
   isDialog() {
     return this.closeDialog !== undefined
   }
+
+  isDev() {
+    return false
+    return document.location.host.includes('localhost')
+  }
   title = ''
   refreshFilters(report: boolean) {
     if (report)
@@ -147,6 +154,7 @@ export class EventCardComponent implements OnInit {
           category: this.category,
         })
       )
+
     this.filteredTasks = this.tasks.filter((x) => this.filter(x))
     this.urgencies = []
     this.tasks.sort((a, b) => compareEventDate(a, b))
@@ -174,32 +182,14 @@ export class EventCardComponent implements OnInit {
             sort: e.urgency.id,
           })
         )
-      d.events.push(e)
-      if (this.filter(e, { region: true })) {
-        let region = this.regions.find(
-          (c) => c.id == getRegion(e.addressApiResult)
-        )
-        if (!region) {
-          this.regions.push({
-            id: getRegion(e.addressApiResult),
-            count: 1,
-            caption: '',
-          })
-        } else region.count++
+      if (!this.isDev() || d.events.length < 20) d.events.push(e)
+      if (this.filter(e, { region: '' })) {
+        this.addToRegionOptions(e.addressApiResult, this.regions)
       }
-      if (this.filter(e, { toRegion: true })) {
-        let toRegion = this.toRegions.find(
-          (c) => c.id == getRegion(e.toAddressApiResult)
-        )
-        if (!toRegion) {
-          this.toRegions.push({
-            id: getRegion(e.toAddressApiResult),
-            count: 1,
-            caption: '',
-          })
-        } else toRegion.count++
+      if (this.filter(e, { toRegion: '' })) {
+        this.addToRegionOptions(e.toAddressApiResult, this.toRegions)
       }
-      if (this.filter(e, { category: true })) {
+      if (this.filter(e, { category: '' })) {
         let type = this.types.find((c) => c.id == e.category)
         if (!type) {
           this.types.push({
@@ -210,21 +200,36 @@ export class EventCardComponent implements OnInit {
         } else type.count++
       }
     }
-    this.regions.sort((b, a) => a.count - b.count)
+    function scoreRegionFilterEntry(x: AreaFilterInfo) {
+      return x.region
+        ? x.region.count * 100000 + x.count
+        : (x.count + 1) * 100000
+    }
+    this.regions.sort(
+      (b, a) => scoreRegionFilterEntry(a) - scoreRegionFilterEntry(b)
+    )
     this.regions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
     this.regions.splice(0, 0, {
       id: '',
       count: this._tasks.length,
       caption:
-        'כל הארץ' + ' - ' + this.regions.reduce((a, b) => a + b.count, 0),
+        'כל הארץ' +
+        ' - ' +
+        this.regions.filter((x) => !x.region).reduce((a, b) => a + b.count, 0),
     })
-    this.toRegions.sort((b, a) => a.count - b.count)
+    this.toRegions.sort(
+      (b, a) => scoreRegionFilterEntry(a) - scoreRegionFilterEntry(b)
+    )
     this.toRegions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
     this.toRegions.splice(0, 0, {
       id: '',
       count: this._tasks.length,
       caption:
-        'כל הארץ' + ' - ' + this.toRegions.reduce((a, b) => a + b.count, 0),
+        'כל הארץ' +
+        ' - ' +
+        this.toRegions
+          .filter((x) => !x.region)
+          .reduce((a, b) => a + b.count, 0),
     })
 
     this.types.sort((b, a) => a.count - b.count)
@@ -265,21 +270,58 @@ export class EventCardComponent implements OnInit {
     })
   }
 
+  private addToRegionOptions(
+    address: GeocodeResult | null,
+    regions: AreaFilterInfo[]
+  ) {
+    let regionName = getRegion(address)
+    let region = regions.find((c) => c.id == regionName)
+    if (!region) {
+      regions.push(
+        (region = {
+          id: regionName,
+          count: 1,
+          caption: '',
+        })
+      )
+    } else region.count++
+    let branchName = getBranch(address)
+    if (branchName != regionName) {
+      let branch = regions.find((c) => c.id == ' - ' + branchName)
+      if (!branch) {
+        regions.push({
+          id: ' - ' + branchName,
+          count: 1,
+          caption: '',
+          region,
+        })
+      } else branch.count++
+    }
+  }
+
   filter(
     e: Task,
-    ignore?: { region?: boolean; toRegion?: boolean; category?: boolean }
+    overrideSearch?: { region?: string; toRegion?: string; category?: string }
   ) {
+    const search: Required<typeof overrideSearch> = {
+      region: this.region,
+      toRegion: this.toRegion,
+      category: this.category,
+      ...overrideSearch,
+    }
+
+    function filterRegion(region: string, address: GeocodeResult | null) {
+      if (region == '') return true
+      if (region.startsWith(' - ')) {
+        return getBranch(address) == region.substring(3)
+      }
+      return getRegion(address) == region
+    }
+
     return (
-      (ignore?.region ||
-        this.region == '' ||
-        getRegion(e.addressApiResult) == this.region) &&
-      (ignore?.toRegion ||
-        this.toRegion == '' ||
-        getRegion(e.toAddressApiResult) == this.toRegion) &&
-      (ignore?.category ||
-        this.category == undefined ||
-        this.category == '' ||
-        e.category == this.category)
+      filterRegion(search.region, e.addressApiResult) &&
+      filterRegion(search.toRegion, e.toAddressApiResult) &&
+      (search.category == '' || e.category == search.category)
     )
   }
   hasEvents(d: dateEvents) {
@@ -405,4 +447,10 @@ interface dateEvents {
   urgency: string
   sort: number
   events: Task[]
+}
+interface AreaFilterInfo {
+  id: string
+  count: number
+  caption: string
+  region?: AreaFilterInfo
 }

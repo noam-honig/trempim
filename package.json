@@ -23,6 +23,7 @@
     "@angular/platform-browser": "^14.3.0",
     "@angular/platform-browser-dynamic": "^14.3.0",
     "@angular/router": "^14.3.0",
+    "@turf/turf": "^6.5.0",
     "@types/form-data": "^2.5.0",
     "@types/googlemaps": "^3.43.3",
     "@types/node-fetch": "^2.6.6",
@@ -35,6 +36,7 @@
     "googlemaps": "^1.12.0",
     "helmet": "^5.1.1",
     "heroku-ssl-redirect": "^0.1.1",
+    "iconv-lite": "^0.6.3",
     "jsonwebtoken": "^8.5.1",
     "marked": "^4.3.0",
     "moment": "^2.29.4",
@@ -78,6 +80,9 @@
   "browser": {
     "jsonwebtoken": false,
     "password-hash": false,
-    "node-fetch": false
+    "node-fetch": false,
+    "fs": false,
+    "iconv-lite": false,
+    "@turf/turf": false
   }
 }

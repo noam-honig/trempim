@@ -182,7 +182,6 @@ export function initSite(site?: string) {
       remult.context.site = new Hahatul(site)
       break
     case 'civil':
-    case 'test1':
       remult.context.site = new Civil(site)
       break
     case 'vdri':
@@ -191,6 +190,7 @@ export function initSite(site?: string) {
     case 'yedidim':
     case 'ezion':
     case 'y':
+    case 'test1':
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
@@ -209,7 +209,7 @@ export function getSite() {
 
 export const backendSites = [
   { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
-  { urlPrefix: 'test1', dbSchema: 'dshinua', title: 'פיתוח' },
+  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח' },
   {
     urlPrefix: 'hahatul',
     dbSchema: 'hahatul',

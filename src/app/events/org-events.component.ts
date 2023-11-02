@@ -98,6 +98,8 @@ export class OrgEventsComponent implements OnInit {
                   taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
                   driverId: remult.user!.id,
                 }
+              : document.location.host.includes('localhost') && false
+              ? {}
               : {
                   taskStatus: [taskStatus.active],
                   validUntil: getSite().showPastEvents

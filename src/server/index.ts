@@ -16,6 +16,7 @@ import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { taskStatus } from 'src/app/events/taskStatus'
 import { updateReceivedFromMonday } from './monday-work'
+import { updateGeocodeResult } from '../app/common/address-input/google-api-helpers'
 
 SqlDatabase.LogToConsole = false
 async function startup() {
@@ -74,6 +75,26 @@ async function startup() {
   app.get('/*/assets/favicon.png', (req, res) =>
     sendSchemaSpecificFile('favicon', res)
   )
+
+  let status = new Map<string, string>()
+  app.get('/*/api/updateRegions', async (req, res) => {
+    let site = getSiteFromPath(req)
+    if (!status.get(site)) {
+      let count = 0
+      status.set(site, 'Started')
+      res.send('working on it')
+      for await (const task of await repo(Task).query()) {
+        await updateGeocodeResult(task.addressApiResult)
+        await updateGeocodeResult(task.toAddressApiResult)
+        await task.save()
+        count++
+        status.set(site, 'updated ' + count + ' tasks')
+      }
+      status.set(site, 'Done:  ' + count + ' tasks')
+    } else {
+      res.send(status.get(site))
+    }
+  })
 
   app.get('/*/images/:id', async (req, res) => {
     try {

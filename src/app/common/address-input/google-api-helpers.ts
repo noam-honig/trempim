@@ -2,7 +2,13 @@
 import geometry, { computeDistanceBetween } from 'spherical-geometry-js'
 import { UIToolsService } from '../UIToolsService'
 
+export function getBranch(g: GeocodeResult | undefined | null) {
+  if (!g?.district) return getRegion(g)
+  return g.district
+}
+
 export function getCity(g: GeocodeResult | undefined | null, address: string) {
+  if (g?.branch) return g.branch
   const address_component = g?.results[0]?.address_components
   let r = undefined
   if (!address_component) return g?.results?.[0]?.formatted_address || ''
@@ -21,26 +27,42 @@ export function getCity(g: GeocodeResult | undefined | null, address: string) {
   return r
 }
 export function getRegion(r: GeocodeResult | undefined | null): string {
-  if (!r?.results?.[0]?.address_components) return 'לא ידוע'
-  for (const x of r.results[0].address_components) {
-    if (x.types.includes('administrative_area_level_1')) {
-      let result = x.short_name
-      switch (result) {
-        case 'Center District':
-          result = 'מחוז המרכז'
-          break
-        case 'South District':
-          result = 'מחוז הדרום'
-          break
-        case 'North District':
-          result = 'מחוז הצפון'
-          break
+  function getIt() {
+    if (r?.results?.[0]?.address_components) {
+      for (const x of r.results[0].address_components) {
+        if (x.types.includes('administrative_area_level_1')) {
+          let result = x.short_name
+          switch (result) {
+            case 'Center District':
+              result = 'מחוז המרכז'
+              break
+            case 'South District':
+              result = 'מחוז הדרום'
+              break
+            case 'North District':
+              result = 'מחוז הצפון'
+              break
+            case 'Tel Aviv District':
+              result = 'מחוז תל אביב'
+              break
+          }
+          return result.replace(/מחוז ה/g, '').replace(/מחוז /g, '')
+        }
       }
-      return result.replace(/מחוז ה/g, '').replace(/מחוז /g, '')
     }
+    if (r?.district) return r.district
+    if (r?.branch) return r.branch
+    const city = getCity(r, '')
+    if (city) return city
+    return 'לא ידוע'
   }
-
-  return 'לא ידוע'
+  const result = getIt()
+  switch (result) {
+    case 'תל אביב':
+    case 'דן':
+      return 'גוש דן'
+  }
+  return result
 }
 export function getAddress(result: {
   formatted_address?: string
@@ -90,6 +112,8 @@ export interface Location {
 export interface GeocodeResult {
   results: Result[]
   status: string
+  district?: string
+  branch?: string
 }
 export interface Result {
   address_components?: AddressComponent[]
@@ -265,4 +289,36 @@ async function InternalGetGeoInformation(address: string) {
 export function getGoogleMapLink(api?: GeocodeResult | null) {
   if (!api) return ''
   return 'https://maps.google.com/maps?q=' + getLongLat(api) + '&hl=he'
+}
+
+let geojson: any = undefined
+export async function updateGeocodeResult(x: GeocodeResult | undefined | null) {
+  if (!x?.results?.[0]) return
+  const turf = await import('@turf/turf')
+  if (!geojson) {
+    const fs = await import('fs')
+    const x = await import('iconv-lite')
+
+    geojson = JSON.parse(
+      x.default
+        .decode(fs.readFileSync('./files/ezorim.geojson'), 'win1255')
+        .toString()
+    )
+  }
+  const point = turf.point([
+    x.results[0].geometry.location.lng,
+    x.results[0].geometry.location.lat,
+  ])
+  let containingPolygon = null
+
+  for (const feature of geojson.features) {
+    if (turf.booleanPointInPolygon(point, feature.geometry)) {
+      containingPolygon = feature
+      break // Exit the loop as soon as a containing polygon is found
+    }
+  }
+  if (containingPolygon) {
+    x.branch = containingPolygon.properties['סניף']
+    x.district = containingPolygon.properties['מרחב']
+  }
 }

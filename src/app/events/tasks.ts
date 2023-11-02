@@ -27,6 +27,7 @@ import { UITools } from '../common/UITools'
 import {
   GeocodeResult,
   getCity,
+  updateGeocodeResult,
 } from '../common/address-input/google-api-helpers'
 import { Roles } from '../users/roles'
 import { getSite, getTitle } from '../users/sites'
@@ -134,6 +135,9 @@ const onlyDriverRules: FieldOptions<Task, string> = {
     }
     for (const f of [task.$.createUserId, task.$.driverId]) {
       if (f.value === null) f.value = f.originalValue
+    }
+    for (const f of [task.$.addressApiResult, task.$.toAddressApiResult]) {
+      if (f.valueChanged()) await updateGeocodeResult(f.value)
     }
   },
   saved: async (task, { isNew }) => {
