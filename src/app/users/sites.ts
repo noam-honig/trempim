@@ -90,11 +90,16 @@ export class BikeIlSite extends Site {
   override sendSmsOnNewDraft = true
 }
 
-export class Hahatul extends Site {
+export class AnyoneCanAddRequest_VolunteerCantSelfRegister extends Site {
   override showCopyLink? = true
   override allowAnyVolunteerToAdd = true
   override sendSmsOnNewDraft = true
   override useFillerInfo = true
+}
+export class Hahatul extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
+  override registerVolunteerLink =
+    'https://wa.me/972545276812?text=' +
+    encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: ')
 }
 export class Civil extends Site {
   override showCopyLink? = true
@@ -154,10 +159,22 @@ export class Yedidim extends Site {
 
 המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
 
+${
+  this.registerVolunteerLink
+    ? `
+
+עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](${this.registerVolunteerLink})
+
+`
+    : ''
+}
+
 במידה ונתקלתם בבעיה בהתחברות למערכת יש לפנות למנהל הסניף, או להתקשר למוקד הכוננים במספר [077-600-1230](tel:077-600-1230) שלוחה 1.
 
 צאו לעשות חסדים!`
   }
+
+  override registerVolunteerLink = 'https://forms.gle/E4DGSCtEgfSYfJvy9'
   override showInfoSnackbarFor(message: UpdateMessage): boolean {
     if (message.userId === remult.user?.id) return false
     if ([DriverCanceledAssign].includes(message.action)) return true
@@ -186,10 +203,15 @@ export function initSite(site?: string) {
       remult.context.site = new BikeIlSite(site)
       break
     case 'hahatul':
+    case 'test1':
+      remult.context.site = new Hahatul(site)
+      break
     case 'dshinua':
     case 'ngim':
     case 'mgln':
-      remult.context.site = new Hahatul(site)
+      remult.context.site = new AnyoneCanAddRequest_VolunteerCantSelfRegister(
+        site
+      )
       break
     case 'civil':
       remult.context.site = new Civil(site)
@@ -203,7 +225,6 @@ export function initSite(site?: string) {
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
-    case 'test1':
       remult.context.site = new WarRoomCars(site)
       break
 
