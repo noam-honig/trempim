@@ -301,7 +301,10 @@ export async function updateGeocodeResult(x: GeocodeResult | undefined | null) {
 
     geojson = JSON.parse(
       x.default
-        .decode(fs.readFileSync('./files/ezorim.geojson'), 'win1255')
+        .decode(
+          fs.readFileSync(process.cwd() + '/files/ezorim.geojson'),
+          'win1255'
+        )
         .toString()
     )
   }

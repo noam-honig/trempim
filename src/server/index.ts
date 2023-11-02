@@ -80,17 +80,21 @@ async function startup() {
   app.get('/*/api/updateRegions', async (req, res) => {
     let site = getSiteFromPath(req)
     if (!status.get(site)) {
-      let count = 0
-      status.set(site, 'Started')
-      res.send('working on it')
-      for await (const task of await repo(Task).query()) {
-        await updateGeocodeResult(task.addressApiResult)
-        await updateGeocodeResult(task.toAddressApiResult)
-        await task.save()
-        count++
-        status.set(site, 'updated ' + count + ' tasks')
+      try {
+        let count = 0
+        status.set(site, 'Started')
+        res.send('working on it')
+        for await (const task of await repo(Task).query()) {
+          await updateGeocodeResult(task.addressApiResult)
+          await updateGeocodeResult(task.toAddressApiResult)
+          await task.save()
+          count++
+          status.set(site, 'updated ' + count + ' tasks')
+        }
+        status.set(site, 'Done:  ' + count + ' tasks')
+      } catch (err: any) {
+        status.set(site, 'Error: ' + err.message)
       }
-      status.set(site, 'Done:  ' + count + ' tasks')
     } else {
       res.send(status.get(site))
     }
