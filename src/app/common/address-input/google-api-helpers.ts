@@ -298,14 +298,12 @@ export async function updateGeocodeResult(x: GeocodeResult | undefined | null) {
   if (!geojson) {
     const fs = await import('fs')
     const x = await import('iconv-lite')
+    const path = await import('path')
 
+    const geoJsonFile = path.join(process.cwd(), 'files', 'ezorim.geojson')
+    console.log({ file: geoJsonFile })
     geojson = JSON.parse(
-      x.default
-        .decode(
-          fs.readFileSync(process.cwd() + '/files/ezorim.geojson'),
-          'win1255'
-        )
-        .toString()
+      x.default.decode(fs.readFileSync(geoJsonFile), 'win1255').toString()
     )
   }
   const point = turf.point([
