@@ -19,6 +19,18 @@
       "target": "http://localhost:3002",
       "secure": false
    },
+   "/y/api": {
+      "target": "http://localhost:3002",
+      "secure": false
+   },
+   "/y/images": {
+      "target": "http://localhost:3002",
+      "secure": false
+   },
+   "/y/assets": {
+      "target": "http://localhost:3002",
+      "secure": false
+   },
    "/test2/api": {
       "target": "http://localhost:3002",
       "secure": false
