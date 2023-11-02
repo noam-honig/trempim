@@ -21,7 +21,7 @@ import { HomeComponent } from './home/home.component'
 import { YesNoQuestionComponent } from './common/yes-no-question/yes-no-question.component'
 import { DataAreaDialogComponent } from './common/data-area-dialog/data-area-dialog.component'
 import { UIToolsService } from './common/UIToolsService'
-import { AdminGuard } from './users/AdminGuard'
+import { AdminGuard, CanSeeUsersGuard } from './users/AdminGuard'
 import { remult } from 'remult'
 import { SignInController } from './users/SignInController'
 import { TextAreaDataControlComponent } from './common/textarea-data-control/textarea-data-control.component'
@@ -108,6 +108,7 @@ import { MarkdownModule } from 'ngx-markdown'
   providers: [
     UIToolsService,
     AdminGuard,
+    CanSeeUsersGuard,
     UpdatesService,
     {
       provide: APP_BASE_HREF,

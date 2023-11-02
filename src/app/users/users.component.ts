@@ -31,6 +31,7 @@ export class UsersComponent implements OnInit {
     columnOrderStateKey: 'users',
 
     orderBy: { name: 'asc' },
+
     rowsInPage: 100,
 
     columnSettings: (users) => [
@@ -38,12 +39,15 @@ export class UsersComponent implements OnInit {
       users.phone,
       users.dispatcher,
       users.trainee,
+      users.manageDrivers,
       users.admin,
       users.deleted,
+      users.createDate,
     ],
     rowCssClass: (row) => (row.deleted ? 'canceled' : ''),
     gridButtons: [
       {
+        visible: () => remult.isAllowed(Roles.admin),
         name: 'יצוא לExcel',
         click: () => saveToExcel(this.users, 'users', this.busyService),
       },
@@ -73,6 +77,7 @@ export class UsersComponent implements OnInit {
       },
       {
         name: 'הצג קוד חד פעמי',
+        visible: (e) => e.canBeUpdatedByDriverManager(),
         click: async (e) => {
           await this.ui.error(await SignInController.getOtpFor(e.phone))
         },

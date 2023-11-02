@@ -48,8 +48,8 @@ const postgres = getPostgresSchemaManager({
 })
 
 export const api = remultExpress({
-  subscriptionServer: new SseSubscriptionServer((x) =>
-    remult.isAllowed(Roles.dispatcher)
+  subscriptionServer: new SseSubscriptionServer(() =>
+    remult.isAllowed([Roles.dispatcher, Roles.manageDrivers])
   ),
   controllers: [SignInController],
   rootPath: '/*/api',
@@ -153,7 +153,7 @@ function initRemultBasedOnRequestInfo(
   if (!found) {
     let subscriptionServer: SubscriptionServer
     let x = new SseSubscriptionServer((channel, remult) => {
-      return remult.isAllowed(Roles.dispatcher)
+      return remult.isAllowed([Roles.dispatcher, Roles.manageDrivers])
     })
 
     subscriptionServer = x

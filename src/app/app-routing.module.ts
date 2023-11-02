@@ -2,7 +2,12 @@ import { CommonUIElementsModule } from 'common-ui-elements'
 import { NgModule, ErrorHandler } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 import { UsersComponent } from './users/users.component'
-import { AdminGuard, DispatchGuard, DraftsGuard } from './users/AdminGuard'
+import {
+  AdminGuard,
+  CanSeeUsersGuard,
+  DispatchGuard,
+  DraftsGuard,
+} from './users/AdminGuard'
 import { ShowDialogOnErrorErrorHandler } from './common/UIToolsService'
 import { terms } from './terms'
 import { OrgEventsComponent } from './events/org-events.component'
@@ -52,7 +57,7 @@ const routes: Routes = [
   {
     path: terms.userAccounts,
     component: UsersComponent,
-    canActivate: [AdminGuard],
+    canActivate: [CanSeeUsersGuard],
   },
   {
     path: 'intake',

@@ -8,6 +8,12 @@ export class AdminGuard extends AuthenticatedGuard {
     return Roles.admin
   }
 }
+@Injectable()
+export class CanSeeUsersGuard extends AuthenticatedGuard {
+  override isAllowed() {
+    return Roles.manageDrivers
+  }
+}
 
 @Injectable()
 export class DraftsGuard extends AuthenticatedGuard {

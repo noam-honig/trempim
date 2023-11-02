@@ -139,9 +139,12 @@ export class SignInController extends ControllerBase {
     })
     return remult.user
   }
-  @BackendMethod({ allowed: Roles.admin })
+  @BackendMethod({ allowed: Roles.manageDrivers })
   static async getOtpFor(phone: string) {
     const otp = getOtp(phone)
+    const user = await repo(User).findFirst({ phone: phone, deleted: false })
+    if (!user || !user.canBeUpdatedByDriverManager())
+      return 'אינך רשאי לבצע פעולה זו עבור משתמש זה'
     if (!otp)
       return 'אין קוד עבור משתמש זה, אנא הנחו אותו להקליד את מספר הטלפון שלו ולבקש שנית'
     return 'הקוד הוא ' + otp

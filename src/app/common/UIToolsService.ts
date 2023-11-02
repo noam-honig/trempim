@@ -191,6 +191,7 @@ export function extractError(err: any): string {
     }
   }
   if (err.rejection) return extractError(err.rejection) //for promise failed errors and http errors
+  if (err.httpStatusCode == 403) return 'אינך מורשה פעולה זו'
   if (err.message) {
     let r = err.message
     if (err.error && err.error.message) r = err.error.message

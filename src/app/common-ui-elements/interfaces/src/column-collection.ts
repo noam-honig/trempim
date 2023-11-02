@@ -228,6 +228,10 @@ export class FieldCollection<rowType = any> {
   _getEditable(col: DataControlSettings, row: rowType) {
     if (!this.allowUpdate()) return false
     if (!col.field) return false
+    let ref = col.field as FieldRef<any, any>
+    if (!row && ref) {
+      row = ref.container
+    }
     if (col.readonly !== undefined)
       return !valueOrEntityExpressionToValue(col.readonly, row)
     return true

@@ -24,14 +24,20 @@ import { GeocodeResult } from '../common/address-input/google-api-helpers'
 
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,
-  allowApiUpdate: Allow.authenticated,
+  allowApiUpdate: (user) => {
+    if (!user) return false
+    if (user.canBeUpdatedByDriverManager()) return true
+    return false
+  },
   allowApiDelete: false,
-  allowApiInsert: Roles.admin,
+  allowApiInsert: Roles.manageDrivers,
   defaultOrderBy: {
     name: 'asc',
   },
   apiPrefilter: () =>
-    !remult.isAllowed(Roles.dispatcher) ? { id: [remult.user?.id!] } : {},
+    !remult.isAllowed([Roles.dispatcher, Roles.manageDrivers])
+      ? { id: [remult.user?.id!] }
+      : {},
   saving: async (user) => {
     if (isBackend()) {
       if (user._.isNew()) {
@@ -41,19 +47,35 @@ import { GeocodeResult } from '../common/address-input/google-api-helpers'
   },
 })
 export class User extends IdEntity {
-  @DataControl({ width: '130px' })
+  canBeUpdatedByDriverManager() {
+    if (!remult.user) return false
+    if (this.id === remult.user.id) return true
+    if (remult.isAllowed(Roles.admin)) return true
+
+    return (
+      remult.isAllowed(Roles.manageDrivers) &&
+      !this.admin &&
+      !this.dispatcher &&
+      !this.trainee
+    )
+  }
+  @DataControl<User>({
+    width: '130px',
+    readonly: (e) => !e?._.apiUpdateAllowed,
+  })
   @Fields.string({
     // validate: [Validators.required],
     caption: terms.username,
   })
   name = ''
 
-  @DataControl({ width: '130px' })
+  @DataControl({ width: '130px', readonly: (e) => !e?._.apiUpdateAllowed })
   @PhoneField({
     validate: [Validators.required, Validators.uniqueOnBackend],
     inputType: 'tel',
   })
   phone = ''
+  @DataControl({ readonly: (e) => !e?._.apiUpdateAllowed })
   @Fields.string({
     caption: 'הערות מנהלים',
     includeInApi: Roles.admin,
@@ -61,31 +83,49 @@ export class User extends IdEntity {
   })
   adminNotes = ''
 
-  @CreatedAtField()
+  @CreatedAtField({ caption: 'תאריך יצירה' })
   createDate = new Date()
 
   @Fields.string({ allowApiUpdate: false, includeInApi: Roles.admin })
   createUserId = remult.user?.id || 'no user'
-  @DataControl({ width: '130px' })
+  @DataControl({
+    width: '130px',
+    readonly: () => !remult.isAllowed(Roles.admin),
+  })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
     caption: terms.admin,
   })
   admin = false
-  @DataControl({ width: '130px' })
+  @DataControl({
+    width: '130px',
+    readonly: () => !remult.isAllowed(Roles.admin),
+  })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
     caption: 'אחמ"ש מוקד',
   })
   dispatcher = false
-  @DataControl({ width: '130px' })
+  @DataControl({
+    width: '130px',
+    readonly: () => !remult.isAllowed(Roles.admin),
+  })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
     caption: 'מוקדן חרבות',
   })
   trainee = false
-  @DataControl({ width: '130px' })
-  @Fields.boolean({ caption: 'לא פעיל', allowApiUpdate: Roles.admin })
+  @DataControl({
+    width: '130px',
+    readonly: () => !remult.isAllowed(Roles.admin),
+  })
+  @Fields.boolean({
+    allowApiUpdate: Roles.admin,
+    caption: 'מנהל נהגים',
+  })
+  manageDrivers = false
+  @DataControl({ width: '130px', readonly: (e) => !e?._.apiUpdateAllowed })
+  @Fields.boolean({ caption: 'לא פעיל', allowApiUpdate: Roles.manageDrivers })
   deleted = false
   @Fields.date()
   lastUpdateView = new Date()
@@ -112,6 +152,7 @@ export class User extends IdEntity {
         v.$.phone,
         v.$.dispatcher,
         v.$.trainee,
+        v.$.manageDrivers,
         v.$.admin,
         v.$.adminNotes,
         v.$.address,

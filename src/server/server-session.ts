@@ -49,10 +49,12 @@ export function setSessionUserBasedOnUserRow(user: User, remember?: boolean) {
     roles.push(Roles.admin)
     roles.push(Roles.dispatcher)
     roles.push(Roles.trainee)
+    roles.push(Roles.manageDrivers)
   } else if (user.dispatcher) {
     roles.push(Roles.dispatcher)
     roles.push(Roles.trainee)
   } else if (user.trainee) roles.push(Roles.trainee)
+  if (user.manageDrivers) roles.push(Roles.manageDrivers)
   return setSessionUser(
     {
       id: user.id,
