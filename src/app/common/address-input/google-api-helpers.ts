@@ -300,7 +300,7 @@ export async function updateGeocodeResult(x: GeocodeResult | undefined | null) {
     const x = await import('iconv-lite')
     const path = await import('path')
 
-    const geoJsonFile = path.join(process.cwd(), 'files', 'ezorim.geojson')
+    const geoJsonFile = path.join(process.cwd(), 'files', 'Ezorim.geojson')
     console.log({ file: geoJsonFile })
     geojson = JSON.parse(
       x.default.decode(fs.readFileSync(geoJsonFile), 'win1255').toString()
