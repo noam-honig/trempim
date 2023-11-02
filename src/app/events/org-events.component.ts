@@ -14,6 +14,7 @@ import { Location } from '@angular/common'
 import { getImageUrl } from './getImageUrl'
 import { tripsGrid } from './tripsGrid'
 import { getSite } from '../users/sites'
+import { EventCardComponent } from '../event-card/event-card.component'
 
 @Component({
   selector: 'app-org-events',
@@ -30,6 +31,10 @@ export class OrgEventsComponent implements OnInit {
 
   @ViewChild('tabGroup')
   tabGroup!: MatTabGroup
+
+  @ViewChild(EventCardComponent)
+  eventCardComponent?: EventCardComponent
+
   onTabChange(event: MatTabChangeEvent) {
     if (event.index != this.activeTab) {
       this.activeTab = event.index
@@ -120,6 +125,11 @@ export class OrgEventsComponent implements OnInit {
               if (t)
                 openDialog(EventInfoComponent, (x) => {
                   ;(x.e = t!), (x.context = 'מקישור')
+                  x.args = {
+                    closeScreenAfterAdd: async () => {
+                      return this.eventCardComponent?.suggestRides(t!) || false
+                    },
+                  }
                 })
               else this.tools.error('לנסיעה זו כבר משוייך נהג', this.tripId)
             }

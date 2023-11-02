@@ -52,6 +52,10 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return getImageUrl(this.e.imageId)
   }
 
+  args?: {
+    closeScreenAfterAdd?: () => Promise<boolean>
+  }
+
   menuOptions = Task.rowButtons(this.dialog, {
     taskAdded: (t) => this.refresh(),
     taskSaved: () => this.refresh(),
@@ -83,6 +87,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     try {
       await this.e.assignToMe()
       await this.e._.reload()
+      if (await this.args?.closeScreenAfterAdd?.()) this.closeDialog?.()
     } catch (err: any) {
       this.dialog.error(err)
       this.e.taskStatus = taskStatus.assigned

@@ -337,6 +337,30 @@ export class EventCardComponent implements OnInit {
   ngOnInit(): void {
     if (this.isDialog() || this.fromMap) this.showMap = false
   }
+  async suggestRides(e: Task) {
+    if (this.region && this.toRegion) return false
+    let from = getBranch(e.addressApiResult)
+    let fromFilter = from != getRegion(e.addressApiResult) ? ' - ' + from : from
+    let to = getBranch(e.toAddressApiResult)
+    let toFilter = to != getRegion(e.toAddressApiResult) ? ' - ' + to : to
+    const count = this.filteredTasks.filter(
+      (t) =>
+        this.filter(t, { region: fromFilter, toRegion: toFilter }) &&
+        t.taskStatus === taskStatus.active
+    ).length
+    if (count) {
+      let message = `ישנן עוד  ${count} נסיעות בין ${from} ל${to}  - האם להציג אותן?`
+      if (count == 1)
+        message = `ישנה עוד נסיעה אחת בין ${from} ל${to} - האם להציג אותה?`
+      if (await this.tools.yesNoQuestion(message)) {
+        this.region = fromFilter
+        this.toRegion = toFilter
+        this.refreshFilters(true)
+        return true
+      }
+    }
+    return false
+  }
   eventDetails(e: Task) {
     openDialog(EventInfoComponent, (x) => {
       x.e = e
@@ -346,6 +370,11 @@ export class EventCardComponent implements OnInit {
         : this.showingAllTasks
         ? 'מחיפוש נסיעה'
         : 'נסיעות שלי'
+      x.args = {
+        closeScreenAfterAdd: async () => {
+          return this.suggestRides(e)
+        },
+      }
     })
   }
   displayDate(e: Task) {
