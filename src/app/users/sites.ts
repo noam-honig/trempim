@@ -110,8 +110,19 @@ export class WarRoomCars extends Site {
   override driverCanMarkAsNonRelevant = false
   override defaultCategory = 'שינוע ציוד'
   override syncWithMonday = true
-}
 
+  override getIntroText() {
+    return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
+
+כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים לבסיסים, בשינוע ציוד לחיילים או בשינועים שונים הנדרשים לכוחות העורף.
+
+המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
+
+עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](https://forms.monday.com/forms/2ecb222fecfb8b8d7404f754362d2c6d?r=euc1)
+
+צאו לעשות חסדים!`
+  }
+}
 export class Showers extends Site {
   override secondAddressRequired = false
   override defaultCategory = 'מקלחות ניידות'
@@ -190,10 +201,10 @@ export function initSite(site?: string) {
     case 'yedidim':
     case 'ezion':
     case 'y':
-    case 'test1':
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
+    case 'test1':
       remult.context.site = new WarRoomCars(site)
       break
 
@@ -209,7 +220,6 @@ export function getSite() {
 
 export const backendSites = [
   { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
-  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח' },
   {
     urlPrefix: 'hahatul',
     dbSchema: 'hahatul',
@@ -223,6 +233,7 @@ export const backendSites = [
   { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
   { urlPrefix: 'ngim', dbSchema: 'ngim', title: 'חמל נהגים' },
   { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
+  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח' },
   { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
   { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
   { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמ"ל האזרחי' },
