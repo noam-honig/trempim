@@ -119,6 +119,7 @@ export class SignInController extends ControllerBase {
     } finally {
       await await repo(TaskStatusChanges).insert({
         what: 'לוגין',
+        notes: this.rememberOnThisDevice ? 'זכור אותי' : 'אל תזכור אותי',
       })
     }
   }
