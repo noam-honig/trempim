@@ -318,6 +318,7 @@ export class FieldCollection<rowType = any> {
         }
       }
 
+      c.error = ''
       if (!col.valueChange) return false
       return col.valueChange(row, c)
     })

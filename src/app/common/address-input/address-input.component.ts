@@ -79,7 +79,7 @@ export class AddressInputComponent
             formatted_address: this.field.value,
             address_components: place.address_components,
           })
-
+          this.field.error = ''
           consumer(
             !place.geometry
               ? {

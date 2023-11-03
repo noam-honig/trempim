@@ -14,6 +14,7 @@ export function getTitle() {
 export class Site {
   deliveryCaption: string | undefined
   allDeliveryRequestsAreApprovedAutomatically = false
+  taskTitleCaption?: string
   getIntroText() {
     return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
 
@@ -33,7 +34,7 @@ ${
 צאו לעשות חסדים!`
   }
   constructor(public urlPrefix: string) {}
-  secondAddressRequired = true
+  onlyAskForSecondAddress = false
   countUpdates = true
   useFillerInfo = false
   allowAnyVolunteerToAdd? = false
@@ -128,7 +129,8 @@ export class WarRoomCars extends Site {
   override registerVolunteerLink = `https://forms.monday.com/forms/2ecb222fecfb8b8d7404f754362d2c6d?r=euc1`
 }
 export class Showers extends Site {
-  override secondAddressRequired = false
+  override taskTitleCaption = 'כמה חיילים? *'
+  override onlyAskForSecondAddress = true
   override defaultCategory = 'מקלחות ניידות'
   override categories = [
     this.defaultCategory,
@@ -224,11 +226,11 @@ export function initSite(site?: string) {
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
-    case 'test1':
       remult.context.site = new WarRoomCars(site)
       break
 
     case 'showers':
+    case 'test1':
       remult.context.site = new Showers(site)
       break
   }

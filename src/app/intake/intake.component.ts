@@ -23,7 +23,13 @@ export class IntakeComponent implements OnInit {
   area = new DataAreaSettings({
     fields: () => {
       let e = this.r.$
-      return [e.category!, e.title]
+      return [
+        {
+          field: e.category!,
+          visible: () => !getSite().onlyAskForSecondAddress,
+        },
+        { field: e.title, caption: getSite().taskTitleCaption },
+      ]
     },
   })
   getAddressInstructions() {
@@ -36,6 +42,7 @@ export class IntakeComponent implements OnInit {
         {
           field: e.address,
           caption: getSite().fromAddressName || e.address.metadata.caption,
+          visible: () => !getSite().onlyAskForSecondAddress,
         },
         {
           field: e.toAddress,
@@ -46,8 +53,14 @@ export class IntakeComponent implements OnInit {
         ...(getSite().useFillerInfo
           ? [[e.requesterPhone1, e.requesterPhone1Description]]
           : []),
-        [e.phone1, e.phone1Description],
-        [e.phone2, e.phone2Description],
+        [e.phone1, e.phone1Description].map((y) => ({
+          field: y,
+          visible: () => !getSite().onlyAskForSecondAddress,
+        })),
+        [e.phone2, e.phone2Description].map((y) => ({
+          field: y,
+          visible: () => !getSite().onlyAskForSecondAddress,
+        })),
         [e.toPhone1, e.tpPhone1Description],
         [e.toPhone2, e.tpPhone2Description],
         e.internalComments,

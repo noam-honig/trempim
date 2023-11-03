@@ -195,8 +195,9 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   },
   validation: (task) => {
     if (phoneConfig.disableValidation || task.__disableValidation) return
-    if (!task.addressApiResult?.results) task.$.address.error = 'כתובת לא נמצאה'
-    if (!task.toAddressApiResult?.results && getSite().secondAddressRequired)
+    if (!task.addressApiResult?.results && !getSite().onlyAskForSecondAddress)
+      task.$.address.error = 'כתובת לא נמצאה'
+    if (!task.toAddressApiResult?.results)
       task.$.toAddress.error = 'כתובת לא נמצאה'
   },
   //@ts-ignore
@@ -387,6 +388,7 @@ ${this.getLink()}`
     ...onlyDriverRules,
     validate: (entity, ref) => {
       if (entity.__disableValidation) return
+      if (getSite().onlyAskForSecondAddress) return
       if (entity.isNew() || ref.valueChanged()) Validators.required(entity, ref)
     },
   })
@@ -410,6 +412,15 @@ ${this.getLink()}`
   phone2Description = ''
   @PhoneField({
     caption: 'טלפון ליעד',
+    validate: (entity, ref) => {
+      if (entity.__disableValidation) return
+
+      if (
+        (entity.isNew() || ref.valueChanged()) &&
+        getSite().onlyAskForSecondAddress
+      )
+        Validators.required(entity, ref)
+    },
     ...onlyDriverRules,
   })
   toPhone1 = ''
