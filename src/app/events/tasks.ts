@@ -804,6 +804,9 @@ ${this.getLink()}`
             x.taskStatus
           ),
         click: async (e) => {
+          if (!e.driver) {
+            e.driver = await e._.relations.driver.findOne()
+          }
           e.sendWhatsappInvite()
         },
       },
