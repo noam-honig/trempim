@@ -185,26 +185,23 @@ async function startup() {
     res: Response,
     args?: { image: string; description: string }
   ) {
+    const url = remult.context.origin
+    let title = getBackendSite().title
+    if (title.length < 30) title += ' - אפליקציית שינועים למתנדבים'
     let result = fs
       .readFileSync(process.cwd() + '/dist/angular-starter-project/index.html')
       .toString()
-      .replace(/!!!NAME!!!/g, getBackendSite()!.title)
+      .replace(/!!!NAME!!!/g, title)
       .replace(/!!!ORG!!!/g, getBackendSite()!.urlPrefix)
-      .replace(
-        /assets\/favicon.png/g,
-        getBackendSite().urlPrefix + '/assets/favicon.png'
-      )
-      .replace(
-        /assets\/logo.png/g,
-        getBackendSite().urlPrefix + '/assets/logo.png'
-      )
+      .replace(/\/assets\/favicon.png/g, url + '/assets/favicon.png')
+      .replace(/\/assets\/logo.png/g, url + '/assets/logo.png')
     if (args?.image) {
       result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
     }
     let info =
       args?.description ||
       `כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים ` ||
-      getTitle()
+      title
     result = result.replace(/!!!INFO!!!/g, info)
     res.send(result)
   }
