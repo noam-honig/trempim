@@ -200,7 +200,7 @@ async function startup() {
     }
     let info =
       args?.description ||
-      `כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים ` ||
+      `כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד` ||
       title
     result = result.replace(/!!!INFO!!!/g, info)
     res.send(result)
