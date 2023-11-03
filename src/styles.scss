@@ -114,3 +114,14 @@ a:hover {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
 }
+
+
+.region-combo {
+
+
+
+
+  option:not([ng-reflect-ng-value^=" - "]) {
+    font-weight: bold;
+  }
+}

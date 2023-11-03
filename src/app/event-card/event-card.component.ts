@@ -17,7 +17,7 @@ import {
   getLocation,
   getCurrentLocation,
   getRegion,
-  getBranch,
+  getDistrict,
   GeocodeResult,
 } from '../common/address-input/google-api-helpers'
 import { LocationErrorComponent } from '../location-error/location-error.component'
@@ -164,6 +164,8 @@ export class EventCardComponent implements OnInit {
     this.regions.splice(0)
     this.toRegions.splice(0)
     this.types.splice(0)
+    let regionStats = 0,
+      toRegionStats = 0
     for (const e of this._tasks) {
       if (!firstLongLat) firstLongLat = getLongLat(e.addressApiResult)
       if (getLongLat(e.addressApiResult) != firstLongLat)
@@ -182,13 +184,47 @@ export class EventCardComponent implements OnInit {
             sort: e.urgency.id,
           })
         )
+
       if (!this.isDev() || d.events.length < 20) d.events.push(e)
+      let fromRegionName = getRegion(e.addressApiResult)
+      let fromDistrictName = ' - ' + getDistrict(e.addressApiResult)
+      const toRegionName = getRegion(e.toAddressApiResult)
+      const toDistrictName = ' - ' + getDistrict(e.toAddressApiResult)
+      //if (['5589', '5557', '5568'].includes(e.externalId)) debugger
+      const addToRegionFilter = (
+        regionKey: 'region' | 'toRegion',
+        regions: AreaFilterInfo[]
+      ) => {
+        if (this.filter(e, { [regionKey]: fromRegionName })) {
+          let region = this.addRegion(regions, fromRegionName)
+          if (this.filter(e, { [regionKey]: fromDistrictName }))
+            this.addDistrictToRegion(region, fromDistrictName)
+          if (
+            fromRegionName == toRegionName &&
+            fromDistrictName != toDistrictName
+          )
+            if (this.filter(e, { [regionKey]: toDistrictName }))
+              this.addDistrictToRegion(region, toDistrictName)
+        }
+        if (fromRegionName != toRegionName) {
+          if (this.filter(e, { [regionKey]: toRegionName })) {
+            let region = this.addRegion(regions, toRegionName)
+            if (this.filter(e, { [regionKey]: toDistrictName }))
+              this.addDistrictToRegion(region, toDistrictName)
+          }
+        }
+      }
+
+      //if (this.region) debugger
       if (this.filter(e, { region: '' })) {
-        this.addToRegionOptions(e.addressApiResult, this.regions)
+        regionStats++
+        addToRegionFilter('region', this.regions)
       }
       if (this.filter(e, { toRegion: '' })) {
-        this.addToRegionOptions(e.toAddressApiResult, this.toRegions)
+        toRegionStats++
+        addToRegionFilter('toRegion', this.toRegions)
       }
+
       if (this.filter(e, { category: '' })) {
         let type = this.types.find((c) => c.id == e.category)
         if (!type) {
@@ -200,39 +236,40 @@ export class EventCardComponent implements OnInit {
         } else type.count++
       }
     }
-    function scoreRegionFilterEntry(x: AreaFilterInfo) {
-      return x.region
-        ? x.region.count * 100000 + x.count
-        : (x.count + 1) * 100000
+
+    const sortRegion = (regions: AreaFilterInfo[], selectedRegion: string) => {
+      regions.forEach((r) => r.districts!.sort((a, b) => b.count - a.count))
+      regions.sort((a, b) => b.count - a.count || a.id.localeCompare(b.id))
+      let x = regions.reduce(
+        (result, region) => [
+          ...result,
+          region,
+          ...(region.districts!.length > 1 ||
+          selectedRegion == region.districts![0].id
+            ? region.districts!
+            : []),
+        ],
+        [] as AreaFilterInfo[]
+      )
+      regions.splice(0)
+      regions.push(...x)
+      regions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
+      return regions
     }
-    this.regions.sort(
-      (b, a) => scoreRegionFilterEntry(a) - scoreRegionFilterEntry(b)
-    )
-    this.regions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
+    sortRegion(this.regions, this.region)
     this.regions.splice(0, 0, {
       id: '',
-      count: this._tasks.length,
-      caption:
-        'כל הארץ' +
-        ' - ' +
-        this.regions.filter((x) => !x.region).reduce((a, b) => a + b.count, 0),
+      count: regionStats,
+      caption: 'כל הארץ' + ' - ' + regionStats,
     })
-    this.toRegions.sort(
-      (b, a) => scoreRegionFilterEntry(a) - scoreRegionFilterEntry(b)
-    )
-    this.toRegions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
+    sortRegion(this.toRegions, this.toRegion)
+
     this.toRegions.splice(0, 0, {
       id: '',
-      count: this._tasks.length,
-      caption:
-        'כל הארץ' +
-        ' - ' +
-        this.toRegions
-          .filter((x) => !x.region)
-          .reduce((a, b) => a + b.count, 0),
+      count: toRegionStats,
+      caption: 'כל הארץ' + ' - ' + toRegionStats,
     })
 
-    this.types.sort((b, a) => a.count - b.count)
     this.types.forEach((c) => (c.caption = c.caption + ' - ' + c.count))
 
     this.types.splice(0, 0, {
@@ -250,12 +287,14 @@ export class EventCardComponent implements OnInit {
           {
             field: this.$.region,
             valueList: this.regions,
+            cssClass: 'region-combo',
             visible: () => this.regions.length > 2,
             valueChange: () => this.refreshFilters(true),
           },
           {
             field: this.$.toRegion,
             valueList: this.toRegions,
+            cssClass: 'region-combo',
             visible: () => this.toRegions.length > 2,
             valueChange: () => this.refreshFilters(true),
           },
@@ -270,11 +309,21 @@ export class EventCardComponent implements OnInit {
     })
   }
 
-  private addToRegionOptions(
-    address: GeocodeResult | null,
-    regions: AreaFilterInfo[]
+  private addDistrictToRegion(
+    region: AreaFilterInfo,
+    districtNameWithPrefix: string
   ) {
-    let regionName = getRegion(address)
+    let district = region.districts!.find((c) => c.id == districtNameWithPrefix)
+    if (!district) {
+      region.districts!.push({
+        id: districtNameWithPrefix,
+        count: 1,
+        caption: '',
+      })
+    } else district.count++
+  }
+
+  private addRegion(regions: AreaFilterInfo[], regionName: string) {
     let region = regions.find((c) => c.id == regionName)
     if (!region) {
       regions.push(
@@ -282,21 +331,11 @@ export class EventCardComponent implements OnInit {
           id: regionName,
           count: 1,
           caption: '',
+          districts: [],
         })
       )
     } else region.count++
-    let branchName = getBranch(address)
-    if (branchName != regionName) {
-      let branch = regions.find((c) => c.id == ' - ' + branchName)
-      if (!branch) {
-        regions.push({
-          id: ' - ' + branchName,
-          count: 1,
-          caption: '',
-          region,
-        })
-      } else branch.count++
-    }
+    return region
   }
 
   filter(
@@ -313,14 +352,16 @@ export class EventCardComponent implements OnInit {
     function filterRegion(region: string, address: GeocodeResult | null) {
       if (region == '') return true
       if (region.startsWith(' - ')) {
-        return getBranch(address) == region.substring(3)
+        return getDistrict(address) == region.substring(3)
       }
       return getRegion(address) == region
     }
 
     return (
-      filterRegion(search.region, e.addressApiResult) &&
-      filterRegion(search.toRegion, e.toAddressApiResult) &&
+      ((filterRegion(search.region, e.addressApiResult) &&
+        filterRegion(search.toRegion, e.toAddressApiResult)) ||
+        (filterRegion(search.region, e.toAddressApiResult) &&
+          filterRegion(search.toRegion, e.addressApiResult))) &&
       (search.category == '' || e.category == search.category)
     )
   }
@@ -339,9 +380,9 @@ export class EventCardComponent implements OnInit {
   }
   async suggestRides(e: Task) {
     if (this.region && this.toRegion) return false
-    let from = getBranch(e.addressApiResult)
+    let from = getDistrict(e.addressApiResult)
     let fromFilter = from != getRegion(e.addressApiResult) ? ' - ' + from : from
-    let to = getBranch(e.toAddressApiResult)
+    let to = getDistrict(e.toAddressApiResult)
     let toFilter = to != getRegion(e.toAddressApiResult) ? ' - ' + to : to
     const count = this.filteredTasks.filter(
       (t) =>
@@ -477,9 +518,9 @@ interface dateEvents {
   sort: number
   events: Task[]
 }
-interface AreaFilterInfo {
+export interface AreaFilterInfo {
   id: string
   count: number
   caption: string
-  region?: AreaFilterInfo
+  districts?: AreaFilterInfo[]
 }

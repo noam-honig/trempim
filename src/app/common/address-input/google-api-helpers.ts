@@ -2,7 +2,7 @@
 import geometry, { computeDistanceBetween } from 'spherical-geometry-js'
 import { UIToolsService } from '../UIToolsService'
 
-export function getBranch(g: GeocodeResult | undefined | null) {
+export function getDistrict(g: GeocodeResult | undefined | null) {
   if (!g?.district) return getRegion(g)
   return g.district
 }
@@ -26,6 +26,7 @@ export function getCity(g: GeocodeResult | undefined | null, address: string) {
   if (!r) return address_component?.[0]?.short_name || ''
   return r
 }
+const districtToRegion = new Map<string, string>()
 export function getRegion(r: GeocodeResult | undefined | null): string {
   function getIt() {
     if (r?.results?.[0]?.address_components) {
@@ -55,6 +56,13 @@ export function getRegion(r: GeocodeResult | undefined | null): string {
     const city = getCity(r, '')
     if (city) return city
     return 'לא ידוע'
+  }
+  if (r?.district) {
+    let region = districtToRegion.get(r.district)
+    if (!region) {
+      districtToRegion.set(r.district, (region = getIt()))
+    }
+    return region
   }
   const result = getIt()
   switch (result) {

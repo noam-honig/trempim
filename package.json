@@ -49,6 +49,7 @@
     "rxjs": "~7.5.0",
     "spherical-geometry-js": "^3.0.0",
     "tsx": "^3.13.0",
+    "vitest": "^0.34.6",
     "xlsx": "^0.18.5",
     "zone.js": "~0.11.4"
   },
