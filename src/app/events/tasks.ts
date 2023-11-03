@@ -26,7 +26,9 @@ import moment from 'moment'
 import { UITools } from '../common/UITools'
 import {
   GeocodeResult,
+  GetDistanceBetween,
   getCity,
+  getLocation,
   updateGeocodeResult,
 } from '../common/address-input/google-api-helpers'
 import { Roles } from '../users/roles'
@@ -138,6 +140,12 @@ const onlyDriverRules: FieldOptions<Task, string> = {
     }
     for (const f of [task.$.addressApiResult, task.$.toAddressApiResult]) {
       if (f.valueChanged()) await updateGeocodeResult(f.value)
+      task.distance = parseFloat(
+        GetDistanceBetween(
+          getLocation(task.addressApiResult),
+          getLocation(task.toAddressApiResult)
+        ).toFixed(1)
+      )
     }
   },
   saved: async (task, { isNew }) => {
@@ -346,6 +354,8 @@ ${this.getLink()}`
       ),
   })
   toAddress = ''
+  @Fields.number()
+  distance = 0
 
   @PhoneField<Task>({
     caption: 'טלפון ממלא הבקשה *',

@@ -250,13 +250,13 @@ export function toLongLat(l: Location) {
 export function getLongLat(addressApiResult: GeocodeResult | null): string {
   return toLongLat(getLocation(addressApiResult)!)!
 }
+const EMPTY_LOCATION: Location = { lat: 0, lng: 0 }
 export function getLocation(addressApiResult: GeocodeResult | null): Location {
-  return (
-    addressApiResult?.results?.[0]?.geometry?.location || { lat: 0, lng: 0 }
-  )
+  return addressApiResult?.results?.[0]?.geometry?.location || EMPTY_LOCATION
 }
 
 export function GetDistanceBetween(a: Location, b: Location) {
+  if (!a || !b || a == EMPTY_LOCATION || b == EMPTY_LOCATION) return 0
   return computeDistanceBetween(a, b) / 1000
 }
 

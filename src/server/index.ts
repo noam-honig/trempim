@@ -16,7 +16,11 @@ import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { taskStatus } from 'src/app/events/taskStatus'
 import { updateReceivedFromMonday } from './monday-work'
-import { updateGeocodeResult } from '../app/common/address-input/google-api-helpers'
+import {
+  GetDistanceBetween,
+  getLocation,
+  updateGeocodeResult,
+} from '../app/common/address-input/google-api-helpers'
 
 SqlDatabase.LogToConsole = false
 async function startup() {
@@ -87,6 +91,12 @@ async function startup() {
         for await (const task of await repo(Task).query()) {
           await updateGeocodeResult(task.addressApiResult)
           await updateGeocodeResult(task.toAddressApiResult)
+          task.distance = parseFloat(
+            GetDistanceBetween(
+              getLocation(task.addressApiResult),
+              getLocation(task.toAddressApiResult)
+            ).toFixed(1)
+          )
           await task.save()
           count++
           status.set(site, 'updated ' + count + ' tasks')

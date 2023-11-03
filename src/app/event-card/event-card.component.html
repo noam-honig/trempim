@@ -101,6 +101,7 @@
                   <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים והרשמה' }}</a>
                   <strong *ngIf="isFull(e)">
                     {{ e.taskStatus.caption }}
+                    <span *ngIf="e.driver">, {{ e.driver.name }}</span>
                   </strong>
                 </div>
               </div>

@@ -49,7 +49,7 @@ export class OrgEventsComponent implements OnInit {
   firstLoad = true
 
   events: Task[] = []
-  allRides?: GridSettings<Task>
+
   onlyShowRelevant = true
   tripId = ''
   async ngOnInit() {
@@ -64,78 +64,62 @@ export class OrgEventsComponent implements OnInit {
   private loadEvents() {
     let date = new Date()
     date.setHours(date.getHours() - 2)
-    if (this.activeTab == 2) {
-      if (!this.allRides) {
-        this.allRides = tripsGrid({
-          ui: this.tools,
-          busy: this.busy,
-          where: () => {
-            if (this.onlyShowRelevant)
-              return {
-                taskStatus: {
-                  $ne: [taskStatus.notRelevant, taskStatus.completed],
-                },
+
+    repo(Task)
+      .find({
+        where:
+          this.activeTab == 0
+            ? {
+                taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
+                driverId: remult.user!.id,
               }
-            return {}
-          },
-          orderBy: {
-            taskStatus: 'desc',
-            statusChangeDate: 'desc',
-          },
-          gridButtons: [
-            {
-              textInMenu: () =>
-                this.onlyShowRelevant ? 'הצג הכל' : 'הצג רק רלוונטיות',
-              click: () => {
-                this.onlyShowRelevant = !this.onlyShowRelevant
-                this.allRides?.reloadData()
+            : // : document.location.host.includes('localhost') && false
+            // ? {}
+            this.activeTab == 1
+            ? {
+                taskStatus: [taskStatus.active],
+                validUntil: getSite().showPastEvents
+                  ? undefined!
+                  : { $gt: date },
+              }
+            : {
+                taskStatus: [
+                  taskStatus.assigned,
+                  taskStatus.driverPickedUp,
+                  taskStatus.otherProblem,
+                ],
               },
-            },
-          ],
-        })
-      } else this.allRides.reloadData()
-    } else
-      repo(Task)
-        .find({
-          where:
-            this.activeTab == 0
-              ? {
-                  taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
-                  driverId: remult.user!.id,
-                }
-              : document.location.host.includes('localhost') && false
-              ? {}
-              : {
-                  taskStatus: [taskStatus.active],
-                  validUntil: getSite().showPastEvents
-                    ? undefined!
-                    : { $gt: date },
-                },
-        })
-        .then(async (items) => {
-          this.events = items
-          if (this.firstLoad) {
-            this.firstLoad = false
-            if (this.tripId) {
-              this.location.replaceState('/')
-              let t = items.find((x) => x.id == this.tripId)
-              if (!t) {
-                t = await repo(Task).findId(this.tripId)
+        include:
+          this.activeTab == 2
+            ? {
+                driver: true,
               }
-              if (t)
-                openDialog(EventInfoComponent, (x) => {
-                  ;(x.e = t!), (x.context = 'מקישור')
-                  x.args = {
-                    closeScreenAfterAdd: async () => {
-                      return this.eventCardComponent?.suggestRides(t!) || false
-                    },
-                  }
-                })
-              else this.tools.error('לנסיעה זו כבר משוייך נהג', this.tripId)
+            : {},
+      })
+      .then(async (items) => {
+        this.events = items
+        if (this.firstLoad) {
+          this.firstLoad = false
+          if (this.tripId) {
+            this.location.replaceState('/')
+            let t = items.find((x) => x.id == this.tripId)
+            if (!t) {
+              t = await repo(Task).findId(this.tripId)
             }
-            if (this.events.length == 0) this.gotoSearchEvents()
+            if (t)
+              openDialog(EventInfoComponent, (x) => {
+                ;(x.e = t!), (x.context = 'מקישור')
+                x.args = {
+                  closeScreenAfterAdd: async () => {
+                    return this.eventCardComponent?.suggestRides(t!) || false
+                  },
+                }
+              })
+            else this.tools.error('לנסיעה זו כבר משוייך נהג', this.tripId)
           }
-        })
+          if (this.events.length == 0) this.gotoSearchEvents()
+        }
+      })
   }
 
   private gotoSearchEvents() {
