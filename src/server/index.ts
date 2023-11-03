@@ -201,7 +201,10 @@ async function startup() {
     if (args?.image) {
       result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
     }
-    let info = args?.description || getTitle()
+    let info =
+      args?.description ||
+      `כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים ` ||
+      getTitle()
     result = result.replace(/!!!INFO!!!/g, info)
     res.send(result)
   }
