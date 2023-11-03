@@ -121,7 +121,7 @@ a:hover {
 
 
 
-  option:not([ng-reflect-ng-value^=" - "]) {
+  option:not([value*=":  -"]) {
     font-weight: bold;
   }
 }
