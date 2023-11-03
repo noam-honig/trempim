@@ -53,6 +53,12 @@ c,1`
     comp.region = 's'
     comp.refreshFilters(false)
     expect(comp.filteredTasks.length).toBe(3)
+    expect(
+      comp.filteredTasks
+        .filter((x) => comp.onTheWayBack(x))
+        .map((x) => x.title)
+        .join(',')
+    ).toEqual('n-s')
     expect(toCompare(comp.regions)).toEqual(
       `,4
 n,3
@@ -68,6 +74,12 @@ s,1`
     comp.toRegion = 's'
     comp.refreshFilters(false)
     expect(comp.filteredTasks.length).toBe(3)
+    expect(
+      comp.filteredTasks
+        .filter((x) => comp.onTheWayBack(x))
+        .map((x) => x.title)
+        .join(',')
+    ).toEqual('s-n')
     expect(toCompare(comp.toRegions)).toEqual(
       `,4
 n,3

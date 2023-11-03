@@ -337,7 +337,25 @@ export class EventCardComponent implements OnInit {
     } else region.count++
     return region
   }
-
+  onTheWayBack(e: Task) {
+    let fromRegionName = getRegion(e.addressApiResult)
+    let fromDistrictName = ' - ' + getDistrict(e.addressApiResult)
+    const toRegionName = getRegion(e.toAddressApiResult)
+    const toDistrictName = ' - ' + getDistrict(e.toAddressApiResult)
+    if (
+      this.region &&
+      this.region != fromRegionName &&
+      this.region != fromDistrictName
+    )
+      return true
+    if (
+      this.toRegion &&
+      this.toRegion != toRegionName &&
+      this.toRegion != toDistrictName
+    )
+      return true
+    return false
+  }
   filter(
     e: Task,
     overrideSearch?: { region?: string; toRegion?: string; category?: string }
@@ -451,6 +469,12 @@ export class EventCardComponent implements OnInit {
       if (!this.volunteerLocation)
         this.volunteerLocation = await getCurrentLocation()
       else this.volunteerLocation = undefined
+      if (this.volunteerLocation) {
+        this.tools.report(
+          'מיון לפי מיקום',
+          this.volunteerLocation.lng + ',' + this.volunteerLocation.lat
+        )
+      }
       this.sortEvents()
     } catch (err: any) {
       openDialog(LocationErrorComponent, (x) => (x.args = { err }))
