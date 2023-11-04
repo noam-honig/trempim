@@ -120,6 +120,7 @@ export class Civil extends Site {
   override allDeliveryRequestsAreApprovedAutomatically = true
   override deliveryCaption = 'הסעת חיילים'
   override defaultCategory = this.deliveryCaption
+  override registerVolunteerLink='https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U'
   override categories = [
     this.defaultCategory!,
     'הסעת מפונים',
