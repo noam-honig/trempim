@@ -134,8 +134,8 @@ export class Showers extends Site {
   override defaultCategory = 'מקלחות ניידות'
   override categories = [
     this.defaultCategory,
+    'רכב גורר עד 1.5 טון',
     'רכב גורר עד 3.5 טון',
-    'רכב גורר מעל 3.5 טון',
   ]
 }
 

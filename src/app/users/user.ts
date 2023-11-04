@@ -19,7 +19,7 @@ import { UITools } from '../common/UITools'
 import { DataControl } from '../common-ui-elements/interfaces'
 import { CreatedAtField } from '../events/date-utils'
 import { sendSms } from '../../server/send-sms'
-import { getTitle } from './sites'
+import { getSite, getTitle } from './sites'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
 
 @Entity<User>('Users', {
@@ -60,7 +60,7 @@ export class User extends IdEntity {
     )
   }
   @DataControl<User>({
-    width: '130px',
+    width: '140px',
     readonly: (e) => !e?._.apiUpdateAllowed,
   })
   @Fields.string({
@@ -143,6 +143,27 @@ export class User extends IdEntity {
   })
   address = ''
 
+  @Fields.json<User, string[]>({
+    allowNull: true,
+    caption: 'קטגוריות',
+    clickWithUI: (ui, user, fieldRef) => {
+      ui.multiSelectValueDialog({
+        values: getSite().categories,
+        onSelect: (selected) => {
+          user.allowedCategories = selected
+        },
+        selected: user.allowedCategories,
+        getCaption: (x) => x,
+        title: 'קטגוריות מורשות',
+      })
+    },
+    valueConverter: {
+      fromInput: (val) => val?.split(',').map((x) => x.trim()),
+      toInput: (val) => val?.join(', '),
+    },
+  })
+  allowedCategories: string[] = []
+
   editDialog(ui: UITools, onOk?: () => void) {
     const v = this
     ui.areaDialog({
@@ -150,6 +171,7 @@ export class User extends IdEntity {
       fields: [
         v.$.name,
         v.$.phone,
+        v.$.allowedCategories,
         v.$.dispatcher,
         v.$.trainee,
         v.$.manageDrivers,

@@ -6,11 +6,15 @@ import { Roles } from './roles'
 
 import { terms } from '../terms'
 import { GridSettings } from 'common-ui-elements/interfaces'
-import { remult, repo } from 'remult'
+import { EntityFilter, remult, repo } from 'remult'
 import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExcel'
 import { BusyService } from '../common-ui-elements'
 import { SignInController } from './SignInController'
-import { sendWhatsappToPhone } from '../events/phone'
+import {
+  fixPhoneInput,
+  isPhoneValidForIsrael,
+  sendWhatsappToPhone,
+} from '../events/phone'
 import * as xlsx from 'xlsx'
 
 @Component({
@@ -23,20 +27,37 @@ export class UsersComponent implements OnInit {
   isAdmin() {
     return remult.isAllowed(Roles.admin)
   }
+  searchString = ''
+  doSearch() {
+    this.users.page = 1
+    this.busyService.donotWait(() => this.users.reloadData())
+  }
 
   users: GridSettings<User> = new GridSettings<User>(remult.repo(User), {
     allowDelete: false,
     allowInsert: false,
     allowUpdate: true,
     columnOrderStateKey: 'users',
+    where: () => {
+      if (!this.searchString) return {}
+      let or: EntityFilter<User>[] = [
+        { name: { $contains: this.searchString } },
+      ]
+      const searchDigits = fixPhoneInput(this.searchString)
+      if (searchDigits) or.push({ phone: { $contains: searchDigits } })
+      return {
+        $or: or,
+      }
+    },
 
     orderBy: { name: 'asc' },
 
-    rowsInPage: 100,
+    rowsInPage: 50,
 
     columnSettings: (users) => [
       users.name,
       users.phone,
+      users.allowedCategories,
       users.dispatcher,
       users.trainee,
       users.manageDrivers,
@@ -89,6 +110,9 @@ export class UsersComponent implements OnInit {
   })
   async addVolunteer() {
     const v = repo(User).create()
+    const digits = fixPhoneInput(this.searchString)
+    if (isPhoneValidForIsrael(digits)) v.phone = digits
+    else if (digits != this.searchString) v.name = this.searchString
     v.editDialog(this.ui, async () => {
       this.users.addNewRowToGrid(v)
       if (await this.ui.yesNoQuestion('האם לשלוח הזמנה בווטסאפ למתנדב?'))

@@ -27,10 +27,19 @@ export interface UITools {
     onSelect: (selected: T) => void
     title?: string
   }): Promise<void>
+  multiSelectValueDialog<T>(args: MultiSelectOptions<T>): Promise<void>
   selectUser(args: {
     onSelect: (selected: User) => void
     onCancel?: () => void
   }): Promise<void>
+}
+
+export interface MultiSelectOptions<T> {
+  values: T[]
+  selected?: T[]
+  onSelect: (selected: T[]) => void
+  getCaption: (item: T) => string
+  title?: string
 }
 
 export interface customInputOptions<entityType> {
@@ -53,6 +62,7 @@ declare module 'remult' {
   }
   export interface UserInfo {
     phone?: string
+    allowedCategories?: string[]
   }
 }
 

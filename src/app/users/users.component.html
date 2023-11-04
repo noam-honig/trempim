@@ -1,9 +1,25 @@
 <div class="full-page">
-  <div>
-    <button mat-raised-button color="primary" (click)="addVolunteer()">
-      הוסף מתנדב
-    </button>
-    <input #fileInput type="file" (input)="onFileInput($event)" style="display:none"/>
+  <div style="display: flex; justify-content: space-between">
+    <mat-form-field>
+      <input
+        matInput
+        [(ngModel)]="searchString"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="חיפוש שם או טלפון"
+        (input)="doSearch()"
+      />
+    </mat-form-field>
+    <input
+      #fileInput
+      type="file"
+      (input)="onFileInput($event)"
+      style="display: none"
+    />
+    <div style="align-self: center">
+      <button mat-raised-button color="primary" (click)="addVolunteer()">
+        הוסף מתנדב
+      </button>
+    </div>
   </div>
   <data-grid [settings]="users" class="grow-item"></data-grid>
 </div>

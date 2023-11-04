@@ -15,6 +15,7 @@ import {
   InputAddressResult,
   AreaDialogArgs,
   UITools,
+  MultiSelectOptions,
 } from './UITools'
 import { TextAreaDataControlComponent } from './textarea-data-control/textarea-data-control.component'
 import { AddressInputComponent } from './address-input/address-input.component'
@@ -24,6 +25,7 @@ import { UserDetailsComponent } from '../user-details/user-details.component'
 import { SelectUserComponent } from '../users/select-user.component'
 import { InputImageComponent } from './input-image/input-image.component'
 import { TaskStatusChanges } from '../events/TaskStatusChanges'
+import { MultiSelectListDialogComponent } from './multi-select-list-dialog/multi-select-list-dialog.component'
 
 @Injectable()
 export class UIToolsService implements UITools {
@@ -40,6 +42,9 @@ export class UIToolsService implements UITools {
       zone.run(() => /*this.mediaMatcher = mql*/ ''.toString())
     )
     this.enhanceFieldOptionsAndDataControlOptions(commonUIPlugin)
+  }
+  multiSelectValueDialog<T>(args: MultiSelectOptions<T>): Promise<void> {
+    return openDialog(MultiSelectListDialogComponent, (x) => x.args(args))
   }
   showUserInfo(args: {
     userId?: string | undefined

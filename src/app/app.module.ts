@@ -53,6 +53,7 @@ import { APP_BASE_HREF } from '@angular/common'
 import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component'
 import { ProblemComponent } from './problem/problem.component'
 import { MarkdownModule } from 'ngx-markdown'
+import { MultiSelectListDialogComponent } from './common/multi-select-list-dialog/multi-select-list-dialog.component'
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import { MarkdownModule } from 'ngx-markdown'
     UpdatesComponent,
     VerifyRelevanceComponent,
     ProblemComponent,
+    MultiSelectListDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -61,6 +61,7 @@ export function setSessionUserBasedOnUserRow(user: User, remember?: boolean) {
       name: user.name,
       phone: user.phone,
       roles,
+      allowedCategories: user.allowedCategories,
     },
     remember
   )
