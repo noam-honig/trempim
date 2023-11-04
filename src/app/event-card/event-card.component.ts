@@ -166,6 +166,45 @@ export class EventCardComponent implements OnInit {
     this.types.splice(0)
     let regionStats = 0,
       toRegionStats = 0
+
+    const addRegion = (
+      regions: AreaFilterInfo[],
+      regionName: string,
+      geo: GeocodeResult | null
+    ) => {
+      let region = regions.find((c) => c.id == regionName)
+      if (!region) {
+        regions.push(
+          (region = {
+            id: regionName,
+            count: 1,
+            caption: '',
+            districts: [],
+            location: getLocation(geo),
+            distance: 0,
+          })
+        )
+      } else region.count++
+      return region
+    }
+    const addDistrictToRegion = (
+      region: AreaFilterInfo,
+      districtNameWithPrefix: string,
+      geo: GeocodeResult | null
+    ) => {
+      let district = region.districts!.find(
+        (c) => c.id == districtNameWithPrefix
+      )
+      if (!district) {
+        region.districts!.push({
+          id: districtNameWithPrefix,
+          count: 1,
+          caption: '',
+          location: getLocation(geo),
+          distance: 0,
+        })
+      } else district.count++
+    }
     for (const e of this._tasks) {
       if (!firstLongLat) firstLongLat = getLongLat(e.addressApiResult)
       if (getLongLat(e.addressApiResult) != firstLongLat)
@@ -195,22 +234,27 @@ export class EventCardComponent implements OnInit {
         regionKey: 'region' | 'toRegion',
         regions: AreaFilterInfo[]
       ) => {
-        if (this.filter(e, { [regionKey]: fromRegionName })) {
-          let region = this.addRegion(regions, fromRegionName)
-          if (this.filter(e, { [regionKey]: fromDistrictName }))
-            this.addDistrictToRegion(region, fromDistrictName)
-          if (
-            fromRegionName == toRegionName &&
-            fromDistrictName != toDistrictName
-          )
-            if (this.filter(e, { [regionKey]: toDistrictName }))
-              this.addDistrictToRegion(region, toDistrictName)
-        }
+        if (e.addressApiResult?.results?.length)
+          if (this.filter(e, { [regionKey]: fromRegionName })) {
+            let region = addRegion(regions, fromRegionName, e.addressApiResult)
+            if (this.filter(e, { [regionKey]: fromDistrictName }))
+              addDistrictToRegion(region, fromDistrictName, e.addressApiResult)
+            if (
+              fromRegionName == toRegionName &&
+              fromDistrictName != toDistrictName
+            )
+              if (this.filter(e, { [regionKey]: toDistrictName }))
+                addDistrictToRegion(
+                  region,
+                  toDistrictName,
+                  e.toAddressApiResult
+                )
+          }
         if (fromRegionName != toRegionName) {
           if (this.filter(e, { [regionKey]: toRegionName })) {
-            let region = this.addRegion(regions, toRegionName)
+            let region = addRegion(regions, toRegionName, e.toAddressApiResult)
             if (this.filter(e, { [regionKey]: toDistrictName }))
-              this.addDistrictToRegion(region, toDistrictName)
+              addDistrictToRegion(region, toDistrictName, e.toAddressApiResult)
           }
         }
       }
@@ -237,36 +281,18 @@ export class EventCardComponent implements OnInit {
       }
     }
 
-    const sortRegion = (regions: AreaFilterInfo[], selectedRegion: string) => {
-      regions.forEach((r) => r.districts!.sort((a, b) => b.count - a.count))
-      regions.sort((a, b) => b.count - a.count || a.id.localeCompare(b.id))
-      let x = regions.reduce(
-        (result, region) => [
-          ...result,
-          region,
-          ...(region.districts!.length > 1 ||
-          selectedRegion == region.districts![0].id
-            ? region.districts!
-            : []),
-        ],
-        [] as AreaFilterInfo[]
-      )
-      regions.splice(0)
-      regions.push(...x)
-      regions.forEach((c) => (c.caption = c.id + ' - ' + c.count))
-      return regions
-    }
-    sortRegion(this.regions, this.region)
     this.regions.splice(0, 0, {
       id: '',
       count: regionStats,
+      distance: 0,
+      location: this.volunteerLocation!,
       caption: 'כל הארץ' + ' - ' + regionStats,
     })
-    sortRegion(this.toRegions, this.toRegion)
-
     this.toRegions.splice(0, 0, {
       id: '',
       count: toRegionStats,
+      distance: 0,
+      location: this.volunteerLocation!,
       caption: 'כל הארץ' + ' - ' + toRegionStats,
     })
 
@@ -281,6 +307,58 @@ export class EventCardComponent implements OnInit {
     this.urgencies = this.urgencies.filter((d) => d.events.length > 0)
     this.urgencies.sort((a, b) => b.sort - a.sort)
     this.sortEvents()
+    this.sortRegions()
+  }
+  sortRegions() {
+    const sortRegion = (regions: AreaFilterInfo[], selectedRegion: string) => {
+      if (this.volunteerLocation) {
+        regions.forEach((c) => {
+          c.distance = GetDistanceBetween(this.volunteerLocation!, c.location)
+          c.districts?.forEach(
+            (c) =>
+              (c.distance = GetDistanceBetween(
+                this.volunteerLocation!,
+                c.location
+              ))
+          )
+        })
+      }
+
+      let entireCountry = regions.splice(0, 1)
+      let regionsForSort = regions.filter((r) => r.districts !== undefined)
+
+      regionsForSort.forEach((r) =>
+        r.districts!.sort(
+          (a, b) => a.distance - b.distance || b.count - a.count
+        )
+      )
+      regionsForSort.sort(
+        (a, b) =>
+          a.districts![0].distance - b.districts![0].distance ||
+          b.count - a.count ||
+          a.id.localeCompare(b.id)
+      )
+      regionsForSort = regionsForSort.reduce(
+        (result, region) => [
+          ...result,
+          region,
+          ...(region.districts!.length > 1 ||
+          selectedRegion == region.districts![0].id
+            ? region.districts!
+            : []),
+        ],
+        [] as AreaFilterInfo[]
+      )
+      regions.splice(0)
+      regions.push(entireCountry[0])
+      regions.push(...regionsForSort)
+      regions.forEach(
+        (c) => (c.caption = (c.id || 'כל הארץ') + ' - ' + c.count)
+      )
+      return regions
+    }
+    sortRegion(this.regions, this.region)
+    sortRegion(this.toRegions, this.toRegion)
     this.area = new DataAreaSettings({
       fields: () => [
         [
@@ -309,34 +387,6 @@ export class EventCardComponent implements OnInit {
     })
   }
 
-  private addDistrictToRegion(
-    region: AreaFilterInfo,
-    districtNameWithPrefix: string
-  ) {
-    let district = region.districts!.find((c) => c.id == districtNameWithPrefix)
-    if (!district) {
-      region.districts!.push({
-        id: districtNameWithPrefix,
-        count: 1,
-        caption: '',
-      })
-    } else district.count++
-  }
-
-  private addRegion(regions: AreaFilterInfo[], regionName: string) {
-    let region = regions.find((c) => c.id == regionName)
-    if (!region) {
-      regions.push(
-        (region = {
-          id: regionName,
-          count: 1,
-          caption: '',
-          districts: [],
-        })
-      )
-    } else region.count++
-    return region
-  }
   onTheWayBack(e: Task) {
     let fromRegionName = getRegion(e.addressApiResult)
     let fromDistrictName = ' - ' + getDistrict(e.addressApiResult)
@@ -453,15 +503,19 @@ export class EventCardComponent implements OnInit {
 
   distance(e: Task) {
     if (!this.volunteerLocation) return undefined
-    return (
-      ', ' +
-      GetDistanceBetween(
+    return ', ' + this.distanceToTask(e).toFixed(1) + ' ' + 'ק"מ ממיקום נוכחי'
+  }
+  distanceToTask(e: Task) {
+    if (this.volunteerLocation)
+      return GetDistanceBetween(
         this.volunteerLocation,
-        getLocation(e.addressApiResult)
-      ).toFixed(1) +
-      ' ' +
-      'ק"מ ממיקום נוכחי'
-    )
+        getLocation(
+          e.addressApiResult?.results?.length
+            ? e.addressApiResult
+            : e.toAddressApiResult
+        )
+      )
+    return 0
   }
   volunteerLocation?: Location
   async sortByDistance() {
@@ -476,6 +530,7 @@ export class EventCardComponent implements OnInit {
         )
       }
       this.sortEvents()
+      this.sortRegions()
     } catch (err: any) {
       openDialog(LocationErrorComponent, (x) => (x.args = { err }))
     }
@@ -500,23 +555,13 @@ export class EventCardComponent implements OnInit {
     )
   }
   sortEvents() {
-    if (!this.volunteerLocation)
+    if (!this.volunteerLocation) {
       this.urgencies.forEach((d) =>
         d.events.sort((a, b) => compareEventDate(a, b))
       )
-    else
+    } else
       this.urgencies.forEach((d) =>
-        d.events.sort(
-          (a, b) =>
-            GetDistanceBetween(
-              this.volunteerLocation!,
-              getLocation(a.addressApiResult)
-            ) -
-            GetDistanceBetween(
-              this.volunteerLocation!,
-              getLocation(b.addressApiResult)
-            )
-        )
+        d.events.sort((a, b) => this.distanceToTask(a) - this.distanceToTask(b))
       )
   }
 }
@@ -546,5 +591,7 @@ export interface AreaFilterInfo {
   id: string
   count: number
   caption: string
+  distance: number
+  location: Location
   districts?: AreaFilterInfo[]
 }

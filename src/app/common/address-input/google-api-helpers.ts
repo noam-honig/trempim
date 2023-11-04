@@ -8,7 +8,6 @@ export function getDistrict(g: GeocodeResult | undefined | null) {
 }
 
 export function getCity(g: GeocodeResult | undefined | null, address: string) {
-  if (g?.branch) return g.branch
   const address_component = g?.results[0]?.address_components
   let r = undefined
   if (!address_component) return g?.results?.[0]?.formatted_address || ''
@@ -19,6 +18,7 @@ export function getCity(g: GeocodeResult | undefined | null, address: string) {
     address_component.forEach((x) => {
       if (x.types.includes('postal_town')) r = x.long_name
     })
+  if (!r) r = g.branch
   if (!r)
     address_component.forEach((x) => {
       if (x.types.includes('administrative_area_level_1')) r = x.long_name
