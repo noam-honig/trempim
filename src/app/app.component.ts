@@ -113,7 +113,8 @@ export class AppComponent implements OnInit, OnDestroy {
               } אינו רשום למערכת. אנא צור קשר עם ${getTitle()} בכדי להצטרף?`
             )
           }
-        }
+        }else 
+        throw err
       }
     }
   }

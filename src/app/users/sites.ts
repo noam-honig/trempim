@@ -15,6 +15,7 @@ export class Site {
   deliveryCaption: string | undefined
   allDeliveryRequestsAreApprovedAutomatically = false
   taskTitleCaption?: string
+  defaultLinkDescription=`כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד`
   getIntroText() {
     return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
 
@@ -103,6 +104,16 @@ export class Hahatul extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
     encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: ')
 }
 export class Civil extends Site {
+  override getIntroText(): string {
+    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
+
+אם טרם נרשמתם כנהגים, [אנא מלאו את הטופס פה](https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U)
+
+אם נרשמתם כבר, אמורים להתקשר אליכם לאימות נתונים.
+
+מספר שעות לאחר האימות, פרטיכם יוזנו למערכת, ואז מסי הטלפון שלכם יוכר. מכאן ואילך, לאחר אימות SMS, תוכלו לחפש בקשות מתאימות, ולממש את רוח ההתנדבות שלכם.
+יש  בעיות? דווחו בקבוצת הוואטסאפ "טרמפים+ כלל הארץ". הצטרפות לקבוצה הנ"ל - https://bit.ly/3Q7HJ2R`
+  }
   override showCopyLink? = true
   override allowAnyVolunteerToAdd = true
   override useFillerInfo = true
@@ -118,6 +129,7 @@ export class Civil extends Site {
     'אחר',
   ]
   override showPastEvents = false
+  override defaultLinkDescription='החמל האזרחי, מערכת ניהול טרמפים'
 }
 export class WarRoomCars extends Site {
   override showCopyLink? = true
@@ -215,6 +227,7 @@ export function initSite(site?: string) {
       )
       break
     case 'civil':
+    case 'test1':
       remult.context.site = new Civil(site)
       break
     case 'vdri':
@@ -230,7 +243,6 @@ export function initSite(site?: string) {
       break
 
     case 'showers':
-    case 'test1':
       remult.context.site = new Showers(site)
       break
   }
@@ -258,7 +270,7 @@ export const backendSites = [
   { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח' },
   { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
   { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
-  { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמ"ל האזרחי' },
+  { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמל האזרחי' },
 ]
 export function getBackendSite(schema?: string) {
   if (!schema) schema = getSite().urlPrefix

@@ -146,6 +146,7 @@ export class User extends IdEntity {
   @Fields.json<User, string[]>({
     allowNull: true,
     caption: 'קטגוריות',
+    dbName:'okCategories',
     clickWithUI: (ui, user, fieldRef) => {
       ui.multiSelectValueDialog({
         values: getSite().categories,
@@ -160,6 +161,7 @@ export class User extends IdEntity {
     valueConverter: {
       fromInput: (val) => val?.split(',').map((x) => x.trim()),
       toInput: (val) => val?.join(', '),
+      fieldTypeInDb: 'json',
     },
   })
   allowedCategories: string[] = []

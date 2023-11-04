@@ -187,7 +187,7 @@ async function startup() {
   ) {
     const url = remult.context.origin
     let title = getBackendSite().title
-    if (title.length < 30) title += ' - אפליקציית שינועים'
+    //if (title.length < 30) title += ' - אפליקציית שינועים'
     let result = fs
       .readFileSync(process.cwd() + '/dist/angular-starter-project/index.html')
       .toString()
@@ -200,7 +200,7 @@ async function startup() {
     }
     let info =
       args?.description ||
-      `כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד` ||
+      getSite().defaultLinkDescription ||
       title
     result = result.replace(/!!!INFO!!!/g, info)
     res.send(result)
