@@ -87,13 +87,6 @@ export class AppComponent implements OnInit, OnDestroy {
   async doSignIn() {
     if (!this.signIn.askForOtp) {
       await this.signIn.signIn()
-      if (this.signIn.phone == '0507330590')
-        navigator.credentials
-          .get({
-            //@ts-ignore
-            otp: { transport: ['sms'] },
-          }) //@ts-ignore
-          .then((otp) => (this.signIn.otp = otp?.code))
     } else {
       try {
         remult.user = await this.signIn.signInWithOtp()
