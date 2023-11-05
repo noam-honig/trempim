@@ -70,7 +70,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         remult.isAllowed(Roles.trainee)
       )
         return true
-      if (getSite().showContactToAnyDriver)return true
+      if (getSite().showContactToAnyDriver) return true
       if (t!.driverId === remult.user.id) return true
     }
     if (t!.isNew()) return true
@@ -253,13 +253,14 @@ ${this.getLink()}`
       if (time.startsWith('0')) time = time.substring(1)
       result += ' ' + time
     }
-    // if (e.validUntil.getDate() == e.eventDate.getDate()) {
-    //   result +=
-    //     ' - ' +
-    //     e.validUntil.getHours() +
-    //     ':' +
-    //     e.validUntil.getMinutes().toString().padStart(2, '0')
-    // }
+    if (getSite().showValidUntil)
+      if (e.validUntil.getDate() == e.eventDate.getDate()) {
+        result +=
+          ' - ' +
+          e.validUntil.getHours() +
+          ':' +
+          e.validUntil.getMinutes().toString().padStart(2, '0')
+      }
 
     return 'רלוונטי מ: ' + result
   }

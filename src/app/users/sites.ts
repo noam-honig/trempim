@@ -17,6 +17,7 @@ export class Site {
   taskTitleCaption?: string
   defaultLinkDescription = `כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד`
   showContactToAnyDriver = false
+  showValidUntil = false
   getIntroText() {
     return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
 
@@ -106,6 +107,7 @@ export class Hahatul extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
 }
 export class Civil extends Site {
   override showContactToAnyDriver = true
+  override showValidUntil = true
   override getIntroText(): string {
     return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
 
@@ -231,10 +233,10 @@ export function initSite(site?: string) {
       )
       break
     case 'civil':
+    case 'test1':
       remult.context.site = new Civil(site)
       break
     case 'vdri':
-    case 'test1':
       remult.context.site = new vdri(site)
       break
     case 'yedidim':
