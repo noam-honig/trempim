@@ -3,7 +3,27 @@ import geometry, { computeDistanceBetween } from 'spherical-geometry-js'
 import { UIToolsService } from '../UIToolsService'
 
 export function getDistrict(g: GeocodeResult | undefined | null) {
-  if (!g?.district) return getRegion(g)
+  if (!g?.district) return getGoogleRegion(g)
+  switch (g.district) {
+    case '444':
+      return 'ירקון'
+    case 'נגב':
+      switch (g.branch) {
+        case 'אופקים':
+        case 'נתיבות':
+        case 'שדרות':
+          return 'עוטף עזה'
+        case 'ערד':
+          return 'ים המלח'
+        case 'באר שבע':
+          return 'נגב צפוני'
+        case 'אילות':
+          return 'נגב דרומי'
+
+        default:
+          return g.branch
+      }
+  }
   return g.district
 }
 
@@ -27,38 +47,37 @@ export function getCity(g: GeocodeResult | undefined | null, address: string) {
   return r
 }
 const districtToRegion = new Map<string, string>()
-export function getRegion(r: GeocodeResult | undefined | null): string {
-  function getIt() {
-    if (r?.results?.[0]?.address_components) {
-      for (const x of r.results[0].address_components) {
-        if (x.types.includes('administrative_area_level_1')) {
-          let result = x.short_name
-          switch (result) {
-            case 'Center District':
-              result = 'מחוז המרכז'
-              break
-            case 'South District':
-              result = 'מחוז הדרום'
-              break
-            case 'North District':
-              result = 'מחוז הצפון'
-              break
-            case 'Tel Aviv District':
-              result = 'מחוז תל אביב'
-              break
-          }
-          return result.replace(/מחוז ה/g, '').replace(/מחוז /g, '')
+function getGoogleRegion(r: GeocodeResult | undefined | null) {
+  if (r?.results?.[0]?.address_components) {
+    for (const x of r.results[0].address_components) {
+      if (x.types.includes('administrative_area_level_1')) {
+        let result = x.short_name
+        switch (result) {
+          case 'Center District':
+            result = 'מחוז המרכז'
+            break
+          case 'South District':
+            result = 'מחוז הדרום'
+            break
+          case 'North District':
+            result = 'מחוז הצפון'
+            break
+          case 'Tel Aviv District':
+            result = 'מחוז תל אביב'
+            break
         }
+        return result.replace(/מחוז ה/g, '').replace(/מחוז /g, '')
       }
     }
-    if (r?.district) return r.district
-    if (r?.branch) return r.branch
-    const city = getCity(r, '')
-    if (city) return city
-    return 'לא ידוע'
   }
-
-  switch (r?.district) {
+  if (r?.district) return r.district
+  if (r?.branch) return r.branch
+  const city = getCity(r, '')
+  if (city) return city
+  return 'לא ידוע'
+}
+export function getRegion(r: GeocodeResult | undefined | null): string {
+  switch (getDistrict(r)) {
     case 'לכיש':
     case 'נגב':
       return 'דרום'
@@ -88,20 +107,7 @@ export function getRegion(r: GeocodeResult | undefined | null): string {
       return 'צפון'
   }
 
-  if (r?.district) {
-    let region = districtToRegion.get(r.district)
-    if (!region) {
-      districtToRegion.set(r.district, (region = getIt()))
-    }
-    return region
-  }
-  const result = getIt()
-  switch (result) {
-    case 'תל אביב':
-    case 'דן':
-      return 'גוש דן'
-  }
-  return result
+  return getGoogleRegion(r)
 }
 export function getAddress(result: {
   formatted_address?: string
@@ -135,6 +141,7 @@ export function getAddress(result: {
   if (r.endsWith(',')) {
     r = r.substring(0, r.length - 1)
   }
+  if (r == 'נגב') return 'דרום'
   return r
 }
 export interface AddressComponent {
