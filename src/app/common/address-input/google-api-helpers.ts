@@ -250,7 +250,7 @@ export function toLongLat(l: Location) {
 export function getLongLat(addressApiResult: GeocodeResult | null): string {
   return toLongLat(getLocation(addressApiResult)!)!
 }
-const EMPTY_LOCATION: Location = { lat: 0, lng: 0 }
+export const EMPTY_LOCATION: Location = { lat: 0, lng: 0 }
 export function getLocation(addressApiResult: GeocodeResult | null): Location {
   return addressApiResult?.results?.[0]?.geometry?.location || EMPTY_LOCATION
 }

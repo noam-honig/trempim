@@ -11,6 +11,7 @@ import { UIToolsService } from '../common/UIToolsService'
 import { repo } from 'remult'
 import { Task } from '../events/tasks'
 import {
+  EMPTY_LOCATION,
   Location,
   getAddress,
   getLocation,
@@ -53,8 +54,8 @@ export class NoamTestComponent implements OnInit {
     for (const task of this.selectedTasks || []) {
       let item = this.dict.get(task.id)
       if (item) {
-        item.start.setIcon(pin(true))
-        item.end.setIcon(pin(false))
+        item.start?.setIcon(pin(true))
+        item.end?.setIcon(pin(false))
       }
     }
     this.selectedTasks = undefined
@@ -67,6 +68,7 @@ export class NoamTestComponent implements OnInit {
     endLocation: Location
   ) {
     const createMarker = (position: Location, icon: string) => {
+      if (!position || position === EMPTY_LOCATION) return
       let marker = new google.maps.Marker({
         map: this.map,
         position,
@@ -78,18 +80,18 @@ export class NoamTestComponent implements OnInit {
         let taskIds: string[] = []
 
         this.dict.forEach((m, id) => {
-          if (m.start.getMap() != null) {
-            let start = m.start.getPosition()!
-            let end = m.end.getPosition()!
-            let p3 = marker.getPosition()!
+          if (m.start?.getMap() != null || m.end?.getMap() != null) {
+            let start = m.start?.getPosition()
+            let end = m.end?.getPosition()
+            let p3 = marker?.getPosition()
 
             if (
-              (end.lng() == p3.lng() && end.lat() == p3.lat()) ||
-              (start.lng() == p3.lng() && start.lat() == p3.lat())
+              (end?.lng() == p3?.lng() && end?.lat() == p3?.lat()) ||
+              (start?.lng() == p3?.lng() && start?.lat() == p3?.lat())
             ) {
               taskIds.push(id!)
-              m.start.setIcon(pin(true, true))
-              m.end.setIcon(pin(false, true))
+              m.start?.setIcon(pin(true, true))
+              m.end?.setIcon(pin(false, true))
             }
           }
         })
@@ -99,7 +101,10 @@ export class NoamTestComponent implements OnInit {
           this.adjustBounds(tasks)
           this.clearLines()
           for (const t of tasks) {
-            if (t.toAddressApiResult?.results?.length)
+            if (
+              t.toAddressApiResult?.results?.length &&
+              t.addressApiResult?.results?.length
+            )
               this.lines.push(
                 new google.maps.Polyline({
                   path: [
@@ -129,17 +134,37 @@ export class NoamTestComponent implements OnInit {
     }
 
     let info = this.dict.get(familyId)
-    if (info && info.start.getMap() == null) info = undefined
+    if (info && info.start?.getMap() == null && info.end?.getMap() == null)
+      info = undefined
     if (!info) {
       let start = createMarker(startLocation, pin(true))
       let end = createMarker(endLocation, pin(false))
-      this.dict.set(familyId, { start, end })
+      let line =
+        start && end && this._tasks?.length <= 10
+          ? new google.maps.Polyline({
+              path: [start?.getPosition()!, end?.getPosition()!],
+              icons: [
+                {
+                  icon: lineSymbol,
+                  offset: '100%',
+                },
+              ],
+              strokeColor: 'gray',
+              strokeWeight: 2,
+              map: this.map,
+            })
+          : undefined
+      this.dict.set(familyId, { start, end, line })
     }
     return info
   }
   dict = new Map<
     string,
-    { start: google.maps.Marker; end: google.maps.Marker }
+    {
+      start?: google.maps.Marker
+      end?: google.maps.Marker
+      line?: google.maps.Polyline
+    }
   >()
   disableMapBoundsRefresh = 0
   constructor(
@@ -210,8 +235,9 @@ export class NoamTestComponent implements OnInit {
   clear() {
     this.clearLines()
     this.dict.forEach((m) => {
-      m.start.setMap(null)
-      m.end.setMap(null)
+      m.start?.setMap(null)
+      m.end?.setMap(null)
+      m.line?.setMap(null)
     })
     this.dict.clear()
   }
