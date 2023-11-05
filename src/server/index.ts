@@ -89,6 +89,7 @@ async function startup() {
         status.set(site, 'Started')
         res.send('working on it')
         for await (const task of await repo(Task).query()) {
+          task.__disableValidation = true
           await updateGeocodeResult(task.addressApiResult)
           await updateGeocodeResult(task.toAddressApiResult)
           task.distance = parseFloat(
@@ -198,10 +199,7 @@ async function startup() {
     if (args?.image) {
       result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
     }
-    let info =
-      args?.description ||
-      getSite().defaultLinkDescription ||
-      title
+    let info = args?.description || getSite().defaultLinkDescription || title
     result = result.replace(/!!!INFO!!!/g, info)
     res.send(result)
   }
