@@ -57,6 +57,37 @@ export function getRegion(r: GeocodeResult | undefined | null): string {
     if (city) return city
     return 'לא ידוע'
   }
+
+  switch (r?.district) {
+    case 'לכיש':
+    case 'נגב':
+      return 'דרום'
+    case 'איילון':
+    case 'ירושלים':
+    case 'בנימין':
+      return 'ירושלים'
+
+    case '444':
+    case 'אונו':
+    case 'דן':
+    case 'ירקון':
+    case 'שומרון':
+    case 'שפלה':
+    case 'שרון':
+      return 'מרכז'
+    case 'משגב':
+    case 'כנרת':
+    case 'אשר':
+    case 'זבולון':
+    case 'כרמל':
+    case 'בקעת הירדן':
+    case 'גליל':
+    case 'גולן':
+    case 'העמקים':
+    case 'מנשה':
+      return 'צפון'
+  }
+
   if (r?.district) {
     let region = districtToRegion.get(r.district)
     if (!region) {
