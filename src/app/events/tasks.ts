@@ -70,6 +70,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         remult.isAllowed(Roles.trainee)
       )
         return true
+      if (getSite().showContactToAnyDriver)return true
       if (t!.driverId === remult.user.id) return true
     }
     if (t!.isNew()) return true

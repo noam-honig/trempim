@@ -15,7 +15,8 @@ export class Site {
   deliveryCaption: string | undefined
   allDeliveryRequestsAreApprovedAutomatically = false
   taskTitleCaption?: string
-  defaultLinkDescription=`כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד`
+  defaultLinkDescription = `כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד`
+  showContactToAnyDriver = false
   getIntroText() {
     return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
 
@@ -104,6 +105,7 @@ export class Hahatul extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
     encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: ')
 }
 export class Civil extends Site {
+  override showContactToAnyDriver = true
   override getIntroText(): string {
     return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
 
@@ -120,7 +122,8 @@ export class Civil extends Site {
   override allDeliveryRequestsAreApprovedAutomatically = true
   override deliveryCaption = 'הסעת חיילים'
   override defaultCategory = this.deliveryCaption
-  override registerVolunteerLink='https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U'
+  override registerVolunteerLink =
+    'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U'
   override categories = [
     this.defaultCategory!,
     'הסעת מפונים',
@@ -130,7 +133,7 @@ export class Civil extends Site {
     'אחר',
   ]
   override showPastEvents = false
-  override defaultLinkDescription='החמל האזרחי, מערכת ניהול טרמפים'
+  override defaultLinkDescription = 'החמל האזרחי, מערכת ניהול טרמפים'
 }
 export class WarRoomCars extends Site {
   override showCopyLink? = true
@@ -228,10 +231,10 @@ export function initSite(site?: string) {
       )
       break
     case 'civil':
-    case 'test1':
       remult.context.site = new Civil(site)
       break
     case 'vdri':
+    case 'test1':
       remult.context.site = new vdri(site)
       break
     case 'yedidim':
