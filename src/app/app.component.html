@@ -12,6 +12,26 @@
 
       <h2>לכניסה</h2>
 
+      <mat-form-field
+        *ngIf="signIn.askForOtp"
+        autoFocus
+        appearance="outline"
+        class="full-width-form-field dense-form-field"
+      >
+        <mat-label>{{ signIn.$.otp.metadata.caption }}</mat-label>
+        <div style="display: flex">
+          <input
+            #theId
+            matInput
+            type="text"
+            autocomplete="one-time-code"
+            inputmode="numeric"
+            maxlength="6"
+            pattern="\d{6}"
+            [(ngModel)]="signIn.$.otp.inputValue"
+          />
+        </div>
+      </mat-form-field>
       <data-area [settings]="area"> </data-area>
       <button mat-raised-button color="primary" (click)="doSignIn()">
         כניסה

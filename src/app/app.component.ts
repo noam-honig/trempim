@@ -77,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
       { field: this.signIn.$.phone, visible: () => !this.signIn.askForOtp },
       {
         field: this.signIn.$.otp,
-        visible: () => this.signIn.askForOtp,
+        visible: () => this.signIn.askForOtp && false,
         cssClass: 'otp',
       },
       { field: this.signIn.$.name, visible: () => this.signIn.askForName },
@@ -85,8 +85,15 @@ export class AppComponent implements OnInit, OnDestroy {
     ],
   })
   async doSignIn() {
-    if (!this.signIn.askForOtp) await this.signIn.signIn()
-    else {
+    if (!this.signIn.askForOtp) {
+      await this.signIn.signIn()
+      navigator.credentials
+        .get({
+          //@ts-ignore
+          otp: { transport: ['sms'] },
+        }) //@ts-ignore
+        .then((otp) => (this.signIn.otp = otp?.code))
+    } else {
       try {
         remult.user = await this.signIn.signInWithOtp()
         this.updateSubscription()
@@ -113,8 +120,7 @@ export class AppComponent implements OnInit, OnDestroy {
               } אינו רשום למערכת. אנא צור קשר עם ${getTitle()} בכדי להצטרף?`
             )
           }
-        }else 
-        throw err
+        } else throw err
       }
     }
   }
