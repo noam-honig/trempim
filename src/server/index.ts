@@ -187,7 +187,7 @@ async function startup() {
     args?: { image: string; description: string }
   ) {
     const url = remult.context.origin
-    let title = getBackendSite().title
+    let title = getBackendSite().title.replace(/"/g, '&quot;')
     //if (title.length < 30) title += ' - אפליקציית שינועים'
     let result = fs
       .readFileSync(process.cwd() + '/dist/angular-starter-project/index.html')
@@ -200,6 +200,7 @@ async function startup() {
       result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
     }
     let info = args?.description || getSite().defaultLinkDescription || title
+    info = info.replace(/"/g, '&quot;')
     result = result.replace(/!!!INFO!!!/g, info)
     res.send(result)
   }
