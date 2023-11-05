@@ -36,6 +36,7 @@ import {
   GetGeoInformation,
   updateGeocodeResult,
 } from '../app/common/address-input/google-api-helpers'
+import { ChangeLog } from '../app/common/change-log/change-log'
 
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
@@ -43,7 +44,15 @@ import {
 config() //loads the configuration from the .env file
 
 //SqlDatabase.LogToConsole = true
-const entities = [User, Task, TaskStatusChanges, VersionInfo, Locks, TaskImage]
+const entities = [
+  User,
+  Task,
+  TaskStatusChanges,
+  VersionInfo,
+  Locks,
+  TaskImage,
+  ChangeLog,
+]
 
 const postgres = getPostgresSchemaManager({
   disableSsl: Boolean(process.env['dev']),

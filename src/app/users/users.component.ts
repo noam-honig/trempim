@@ -8,7 +8,7 @@ import { terms } from '../terms'
 import { GridSettings } from 'common-ui-elements/interfaces'
 import { EntityFilter, remult, repo } from 'remult'
 import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExcel'
-import { BusyService } from '../common-ui-elements'
+import { BusyService, openDialog } from '../common-ui-elements'
 import { SignInController } from './SignInController'
 import {
   fixPhoneInput,
@@ -16,6 +16,7 @@ import {
   sendWhatsappToPhone,
 } from '../events/phone'
 import * as xlsx from 'xlsx'
+import { ChangeLogComponent } from '../common/change-log/change-log.component'
 
 @Component({
   selector: 'app-users',
@@ -101,6 +102,19 @@ export class UsersComponent implements OnInit {
         visible: (e) => e.canBeUpdatedByDriverManager(),
         click: async (e) => {
           await this.ui.error(await SignInController.getOtpFor(e.phone))
+        },
+      },
+      {
+        name: 'היסטורית שינויים',
+        visible: (e) => remult.isAllowed(Roles.admin),
+        click: async (e) => {
+          await openDialog(
+            ChangeLogComponent,
+            (x) =>
+              (x.args = {
+                for: e,
+              })
+          )
         },
       },
     ],

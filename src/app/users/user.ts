@@ -21,6 +21,7 @@ import { CreatedAtField } from '../events/date-utils'
 import { sendSms } from '../../server/send-sms'
 import { getSite, getTitle } from './sites'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
+import { recordChanges } from '../common/change-log/change-log'
 
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,
@@ -43,6 +44,7 @@ import { GeocodeResult } from '../common/address-input/google-api-helpers'
       if (user._.isNew()) {
         user.createDate = new Date()
       }
+      await recordChanges(user)
     }
   },
 })
@@ -146,7 +148,7 @@ export class User extends IdEntity {
   @Fields.json<User, string[]>({
     allowNull: true,
     caption: 'קטגוריות',
-    dbName:'okCategories',
+    dbName: 'okCategories',
     clickWithUI: (ui, user, fieldRef) => {
       ui.multiSelectValueDialog({
         values: getSite().categories,

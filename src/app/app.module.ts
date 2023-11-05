@@ -54,6 +54,7 @@ import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.co
 import { ProblemComponent } from './problem/problem.component'
 import { MarkdownModule } from 'ngx-markdown'
 import { MultiSelectListDialogComponent } from './common/multi-select-list-dialog/multi-select-list-dialog.component'
+import { ChangeLogComponent } from './common/change-log/change-log.component'
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { MultiSelectListDialogComponent } from './common/multi-select-list-dialo
     VerifyRelevanceComponent,
     ProblemComponent,
     MultiSelectListDialogComponent,
+    ChangeLogComponent,
   ],
   imports: [
     BrowserModule,
