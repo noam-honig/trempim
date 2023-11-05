@@ -228,12 +228,12 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
+    case 'test1':
       remult.context.site = new AnyoneCanAddRequest_VolunteerCantSelfRegister(
         site
       )
       break
     case 'civil':
-    case 'test1':
       remult.context.site = new Civil(site)
       break
     case 'vdri':

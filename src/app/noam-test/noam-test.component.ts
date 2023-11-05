@@ -24,6 +24,7 @@ const lineSymbol = {
   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
 }
 function pin(start: boolean, selected?: boolean) {
+  if (!start) return '/assets/finish.png'
   return `https://maps.google.com/mapfiles/ms/micons/${
     start ? 'yellow' : 'red'
   }${selected ? '-dot' : ''}.png`
