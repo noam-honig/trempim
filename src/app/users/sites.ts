@@ -230,6 +230,7 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
+    case 'teva':
       remult.context.site = new AnyoneCanAddRequest_VolunteerCantSelfRegister(
         site
       )
@@ -279,6 +280,7 @@ export const backendSites = [
   { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
   { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
   { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמל האזרחי' },
+  { urlPrefix: 'teva', dbSchema: 'teva', title: 'תופעת טבע' },
 ]
 export function getBackendSite(schema?: string) {
   if (!schema) schema = getSite().urlPrefix
