@@ -428,7 +428,9 @@ export class EventCardComponent implements OnInit {
     return (
       ((filterRegion(search.region, e.addressApiResult) &&
         filterRegion(search.toRegion, e.toAddressApiResult)) ||
-        (filterRegion(search.region, e.toAddressApiResult) &&
+        (this.region &&
+          this.toRegion &&
+          filterRegion(search.region, e.toAddressApiResult) &&
           filterRegion(search.toRegion, e.addressApiResult))) &&
       (search.category == '' || e.category == search.category)
     )
