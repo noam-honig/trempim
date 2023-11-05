@@ -14,7 +14,6 @@
 
       <mat-form-field
         *ngIf="signIn.askForOtp"
-        autoFocus
         appearance="outline"
         class="full-width-form-field dense-form-field"
       >
@@ -23,6 +22,7 @@
           <input
             #theId
             matInput
+            cdkFocusInitial
             type="tel"
             autocomplete="one-time-code"
             inputmode="numeric"

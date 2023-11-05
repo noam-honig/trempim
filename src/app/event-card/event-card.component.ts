@@ -24,6 +24,8 @@ import { LocationErrorComponent } from '../location-error/location-error.compone
 import copy from 'copy-to-clipboard'
 import { displayTime } from '../events/date-utils'
 import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
+import { getSite } from '../users/sites'
+import { YedidimBranchListComponent } from '../yedidim-branch-list/yedidim-branch-list.component'
 
 @DialogConfig({ maxWidth: '95vw' })
 @Component({
@@ -82,6 +84,18 @@ export class EventCardComponent implements OnInit {
           ).toFixed()}0 (${count} קריאות): \n` + lines
         if (count == 0) this.tools.error('לא נמצאו קריאות ליצוא')
         else copy(message)
+      },
+    },
+    {
+      visible: () =>
+        remult.isAllowed(Roles.dispatcher) && getSite().messageBySnif,
+      name: 'הודעות לפי סניפים',
+      click: () => {
+        openDialog(
+          YedidimBranchListComponent,
+          (x) =>
+            (x.args = { tasks: this.filteredTasks, category: this.category })
+        )
       },
     },
   ]

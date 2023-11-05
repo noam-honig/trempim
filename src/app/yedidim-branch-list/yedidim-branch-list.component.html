@@ -1,0 +1,11 @@
+<button mat-icon-button [mat-dialog-close]><mat-icon>close</mat-icon></button>
+<div mat-dialog-content>
+  <ng-container *ngFor="let d of districts">
+    <h3 style="margin: 0">{{ d.name }}</h3>
+    <ul style="margin: 0">
+      <li *ngFor="let b of d.branches">
+        <a (click)="copy(b.message)">{{ b.name }}</a>
+      </li>
+    </ul>
+  </ng-container>
+</div>

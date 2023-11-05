@@ -43,6 +43,7 @@ ${
   allowAnyVolunteerToAdd? = false
   sendSmsOnNewDraft = false
   registerVolunteerLink?: string
+  messageBySnif = false
   showInfoSnackbarFor(message: UpdateMessage) {
     return true
   }
@@ -169,6 +170,7 @@ export class vdri extends Site {
 }
 export class Yedidim extends Site {
   override countUpdates = false
+  override messageBySnif = true
   override get canSeeUrgency() {
     return remult.isAllowed(Roles.admin)
   }
@@ -228,7 +230,6 @@ export function initSite(site?: string) {
     case 'dshinua':
     case 'ngim':
     case 'mgln':
-    case 'test1':
       remult.context.site = new AnyoneCanAddRequest_VolunteerCantSelfRegister(
         site
       )
@@ -240,6 +241,7 @@ export function initSite(site?: string) {
       remult.context.site = new vdri(site)
       break
     case 'yedidim':
+    case 'test1':
     case 'ezion':
     case 'y':
       remult.context.site = new Yedidim(site)
