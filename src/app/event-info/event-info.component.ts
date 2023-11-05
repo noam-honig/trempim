@@ -52,6 +52,12 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return getImageUrl(this.e.imageId)
   }
 
+  showContactInfoMessage() {
+    return (
+      !this.e.phone1 && !this.e.phone2 && !this.e.toPhone1 && !this.e.toPhone2
+    )
+  }
+
   args?: {
     closeScreenAfterAdd?: () => Promise<boolean>
   }

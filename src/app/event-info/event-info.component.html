@@ -36,6 +36,9 @@
       "
     />
   </div>
+  <strong *ngIf="showContactInfoMessage()"
+    >פרטי הקשר יוצגו לאחר שתלחץ על הכפתור "אני אבצע" למטה</strong
+  >
   <app-phone-details
     *ngIf="useFillerInfo()"
     [args]="{
