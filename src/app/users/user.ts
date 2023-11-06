@@ -11,6 +11,7 @@ import {
 import { Roles } from './roles'
 import { terms } from '../terms'
 import {
+  OnlyAllowIsraeliPhones,
   PhoneField,
   fixPhoneInput,
   isPhoneValidForIsrael,
@@ -73,7 +74,11 @@ export class User extends IdEntity {
 
   @DataControl({ width: '130px', readonly: (e) => !e?._.apiUpdateAllowed })
   @PhoneField({
-    validate: [Validators.required, Validators.uniqueOnBackend],
+    validate: [
+      Validators.required,
+      Validators.uniqueOnBackend,
+      OnlyAllowIsraeliPhones,
+    ],
     inputType: 'tel',
   })
   phone = ''

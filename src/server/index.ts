@@ -23,7 +23,7 @@ import {
 } from '../app/common/address-input/google-api-helpers'
 
 SqlDatabase.LogToConsole = false
-const production = true //process.env['NODE_ENV'] === 'production'
+const production = process.env['NODE_ENV'] === 'production'
 async function startup() {
   const app = express()
   app.use(sslRedirect())

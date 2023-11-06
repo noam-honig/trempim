@@ -6,6 +6,10 @@ import {
   Validators,
 } from 'remult'
 
+export function OnlyAllowIsraeliPhones(_: any, ref: FieldRef<any, string>) {
+  if (ref.value.startsWith('+')) throw Error('רק טלפונים ישראלים נתמכים כרגע')
+}
+
 export function sendWhatsappToPhone(
   phone: string,
   smsMessage: string,
@@ -34,7 +38,7 @@ export function fixPhoneInput(s: string) {
   let orig = s.trim()
   s = s.replace(/\D/g, '')
   if (s.startsWith('972')) s = s.substring(3)
-  //if (orig.startsWith('+')) return '+' + s
+  else if (orig.startsWith('+')) return '+' + s
   if (s.length == 9 && s[0] != '0' && s[0] != '3') s = '0' + s
   return s
 }
@@ -42,6 +46,7 @@ export function fixPhoneInput(s: string) {
 export function isPhoneValidForIsrael(input: string) {
   if (input) {
     input = input.toString().trim()
+    if (input.startsWith('+')) return true
     let st1 = input.match(/^0(5\d|7\d|[2,3,4,6,8,9])(-{0,1}\d{3})(-*\d{4})$/)
     return st1 != null
   }
@@ -66,7 +71,9 @@ export function PhoneField<entityType>(
       if (!f.value) return
       f.value = fixPhoneInput(f.value)
       if (phoneConfig.disableValidation) return
-      if (!isPhoneValidForIsrael(f.value)) throw new Error('טלפון לא תקין')
+      if (!isPhoneValidForIsrael(f.value)) {
+        throw new Error('טלפון לא תקין')
+      }
     },
   ]
   if (options?.validate) {

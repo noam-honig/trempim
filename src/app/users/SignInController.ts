@@ -17,7 +17,7 @@ import {
   setSessionUserBasedOnUserRow,
 } from '../../server/server-session'
 import { sendSms } from '../../server/send-sms'
-import { PhoneField } from '../events/phone'
+import { OnlyAllowIsraeliPhones, PhoneField } from '../events/phone'
 import { getTitle } from './sites'
 import { TaskStatusChanges } from '../events/TaskStatusChanges'
 
@@ -26,7 +26,7 @@ const otp = '123456'
 export class SignInController extends ControllerBase {
   @PhoneField({
     caption: 'מספר טלפון נייד',
-    validate: Validators.required,
+    validate: [Validators.required, OnlyAllowIsraeliPhones],
     inputType: 'tel',
   })
   phone = ''

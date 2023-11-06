@@ -106,9 +106,16 @@ export class OrgEventsComponent implements OnInit {
           this.firstLoad = false
           if (this.tripId) {
             this.location.replaceState('/')
-            let t = items.find((x) => x.id == this.tripId)
+            let monday = this.tripId.startsWith('m:')
+            let t = items.find((x) =>
+              monday ? x.externalId == this.tripId : x.id == this.tripId
+            )
             if (!t) {
-              t = await repo(Task).findId(this.tripId)
+              if (monday)
+                t = await repo(Task).findFirst({
+                  externalId: this.tripId,
+                })
+              else t = await repo(Task).findId(this.tripId)
             }
             if (t)
               openDialog(EventInfoComponent, (x) => {
@@ -119,6 +126,8 @@ export class OrgEventsComponent implements OnInit {
                   },
                 }
               })
+            else if (remult.isAllowed(Roles.dispatcher))
+              this.tools.error('נסיעה לא נמצאה', this.tripId)
             else this.tools.error('לנסיעה זו כבר משוייך נהג', this.tripId)
           }
           if (this.events.length == 0) this.gotoSearchEvents()
