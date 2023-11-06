@@ -86,6 +86,7 @@ export class BikeIlSite extends Site {
   override categories = [
     this.bikeCategoryCaption!,
     this.truckCategoryCaption!,
+    'רכב פרטי',
     'אחר',
   ]
   override showCopyLink? = true
