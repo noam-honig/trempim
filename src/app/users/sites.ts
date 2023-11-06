@@ -214,7 +214,7 @@ ${
 export function initSite(site?: string) {
   if (!site && typeof document !== 'undefined') {
     //@ts-ignore
-    site = document.site
+    site = document.body.getAttribute('site')
     if (site === '!!!ORG!!!') {
       //@ts-ignore
       site = document.location.pathname.split('/')[1]
