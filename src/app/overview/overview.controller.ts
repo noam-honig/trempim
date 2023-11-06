@@ -14,7 +14,7 @@ export class OverviewController {
       sites = sites.filter(
         (x) => x.urlPrefix === 'test1' || x.urlPrefix === 'dshinua'
       )
-    } else sites.filter((x) => !x.ignore)
+    } else sites = sites.filter((x) => !x.ignore)
     if (!remult.isAllowed(Roles.superAdmin)) {
       sites = sites.filter((x) => x.urlPrefix === getSite().urlPrefix)
     }
@@ -42,7 +42,7 @@ group by org, date(${t.statusChangeDate})
     ).join(' union all ')
 
     const r = await db.execute(`select * from (${sql}) as x order by date desc`)
-    console.table(r.rows)
+    //console.table(r.rows)
     return r.rows
   }
 }

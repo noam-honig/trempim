@@ -52,6 +52,7 @@ export class OverviewComponent implements OnInit {
       for (const org of orgs) {
         this.stats.push({
           name: org[0],
+          total: [...org[1]].reduce((t, x) => t + x[1].rides, 0),
           //@ts-ignore
           chart: {
             chart: {
@@ -71,27 +72,29 @@ export class OverviewComponent implements OnInit {
             series: [
               {
                 name: 'נסיעות',
-                data: reverse([...org[1]]).map((item) => ({
+                data: [...org[1]].map((item) => ({
                   y: item[1].rides,
-                  x: new Date(item[0]),
+                  x: new Date(item[0]).valueOf(),
                 })),
               },
               {
                 name: 'נהגים',
-                data: reverse([...org[1]]).map((item) => ({
+                data: [...org[1]].map((item) => ({
                   y: item[1].drivers,
-                  x: new Date(item[0]),
+                  x: new Date(item[0]).valueOf(),
                 })),
               },
             ],
           },
         })
       }
+      this.stats.sort((a, b) => b.total - a.total)
     })
   }
   stats: {
     name: string
     chart: ChartOptions
+    total: number
   }[] = []
 
   //@ts-ignore
@@ -157,8 +160,3 @@ export type ChartOptions = {
   toolbar: any
 }
 type dataPoint = { rides: number; drivers: number }
-
-function reverse<T>(x: T[]) {
-  x.reverse()
-  return x
-}
