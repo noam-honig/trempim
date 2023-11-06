@@ -38,6 +38,8 @@ import {
 } from '../app/common/address-input/google-api-helpers'
 import { ChangeLog } from '../app/common/change-log/change-log'
 
+import { OverviewController } from '../app/overview/overview.controller'
+
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
 
@@ -63,7 +65,7 @@ export const api = remultExpress({
   subscriptionServer: new SseSubscriptionServer(() =>
     remult.isAllowed([Roles.dispatcher, Roles.manageDrivers])
   ),
-  controllers: [SignInController],
+  controllers: [SignInController, OverviewController],
   rootPath: '/*/api',
   entities,
   initRequest: async (req, options) => {

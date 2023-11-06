@@ -58,6 +58,7 @@
               "src/app/common-ui-elements/input-styles.scss"
             ],
             "scripts": [
+              "node_modules/apexcharts/dist/apexcharts.min.js",
               "node_modules/marked/marked.min.js"
             ]
           },

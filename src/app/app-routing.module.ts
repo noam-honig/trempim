@@ -7,6 +7,7 @@ import {
   CanSeeUsersGuard,
   DispatchGuard,
   DraftsGuard,
+  SuperAdminGuard,
 } from './users/AdminGuard'
 import { ShowDialogOnErrorErrorHandler } from './common/UIToolsService'
 import { terms } from './terms'
@@ -17,6 +18,7 @@ import { IntakeComponent } from './intake/intake.component'
 import { UpdatesComponent } from './updates/updates.component'
 import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component'
 import { ProblemComponent } from './problem/problem.component'
+import { OverviewComponent } from './overview/overview.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -29,6 +31,11 @@ const routes: Routes = [
     path: 't/:id',
     component: OrgEventsComponent,
     data: { name: 'נסיעות' },
+  },
+  {
+    path: 'מבט על',
+    component: OverviewComponent,
+    canActivate: [AdminGuard],
   },
   {
     path: 'טיוטות',
@@ -74,6 +81,7 @@ const routes: Routes = [
     AdminGuard,
     DraftsGuard,
     DispatchGuard,
+    SuperAdminGuard,
     { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler },
   ],
   exports: [RouterModule],

@@ -1,0 +1,15 @@
+<ng-container *ngFor="let o of stats">
+  <h4>{{ o.name }}</h4>
+  <apx-chart
+    [series]="o.chart.series"
+    [chart]="o.chart.chart"
+    [colors]="o.chart.colors"
+    [yaxis]="o.chart.yaxis"
+    [dataLabels]="commonOptions.dataLabels"
+    [markers]="commonOptions.markers"
+    [stroke]="commonOptions.stroke"
+    [grid]="commonOptions.grid"
+    [xaxis]="commonOptions.xaxis"
+    [tooltip]="commonOptions.tooltip"
+  ></apx-chart>
+</ng-container>

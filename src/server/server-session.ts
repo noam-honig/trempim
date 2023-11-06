@@ -55,6 +55,12 @@ export function setSessionUserBasedOnUserRow(user: User, remember?: boolean) {
     roles.push(Roles.trainee)
   } else if (user.trainee) roles.push(Roles.trainee)
   if (user.manageDrivers) roles.push(Roles.manageDrivers)
+  if (
+    (getSite().urlPrefix === 'dshinua' || getSite().urlPrefix === 'test1') &&
+    user.admin &&
+    ['0507330590', '0523307014'].includes(user.phone)
+  )
+    roles.push(Roles.superAdmin)
   return setSessionUser(
     {
       id: user.id,

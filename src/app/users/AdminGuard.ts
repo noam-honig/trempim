@@ -9,6 +9,12 @@ export class AdminGuard extends AuthenticatedGuard {
   }
 }
 @Injectable()
+export class SuperAdminGuard extends AuthenticatedGuard {
+  override isAllowed() {
+    return Roles.superAdmin
+  }
+}
+@Injectable()
 export class CanSeeUsersGuard extends AuthenticatedGuard {
   override isAllowed() {
     return Roles.manageDrivers

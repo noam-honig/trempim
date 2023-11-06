@@ -263,7 +263,12 @@ export function getSite() {
 }
 
 export const backendSites = [
-  { urlPrefix: 'dshinua', dbSchema: 'dshinua', title: 'שינוע - הדגמה' },
+  {
+    urlPrefix: 'dshinua',
+    dbSchema: 'dshinua',
+    title: 'שינוע - הדגמה',
+    ignore: true,
+  },
   {
     urlPrefix: 'hahatul',
     dbSchema: 'hahatul',
@@ -273,11 +278,11 @@ export const backendSites = [
   { urlPrefix: 'bikeil', dbSchema: 'bikeil', title: 'חמל אופנועים' },
   { urlPrefix: 'vdri', dbSchema: 'vdri', title: 'חמ"ל נהגים מתנדבים ארצי' },
   { urlPrefix: 'y', dbSchema: 'ezion', title: 'ידידים' },
-  { urlPrefix: 'ezion', dbSchema: 'ezion', title: 'ידידים' },
+  { urlPrefix: 'ezion', dbSchema: 'ezion', title: 'ידידים', ignore: true },
   { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
   { urlPrefix: 'ngim', dbSchema: 'ngim', title: 'חמל נהגים' },
   { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
-  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח' },
+  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח', ignore: true },
   { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
   { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
   { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמל האזרחי' },

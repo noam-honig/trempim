@@ -3,4 +3,5 @@ export const Roles = {
   dispatcher: 'dispatcher',
   trainee: 'trainee',
   manageDrivers: 'manageDrivers',
+  superAdmin: 'superAdmin',
 }

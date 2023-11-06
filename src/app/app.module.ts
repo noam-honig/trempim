@@ -54,8 +54,10 @@ import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.co
 import { ProblemComponent } from './problem/problem.component'
 import { MarkdownModule } from 'ngx-markdown'
 import { MultiSelectListDialogComponent } from './common/multi-select-list-dialog/multi-select-list-dialog.component'
-import { ChangeLogComponent } from './common/change-log/change-log.component';
+import { ChangeLogComponent } from './common/change-log/change-log.component'
 import { YedidimBranchListComponent } from './yedidim-branch-list/yedidim-branch-list.component'
+import { OverviewComponent } from './overview/overview.component'
+import { NgApexchartsModule } from 'ng-apexcharts'
 
 @NgModule({
   declarations: [
@@ -88,8 +90,10 @@ import { YedidimBranchListComponent } from './yedidim-branch-list/yedidim-branch
     MultiSelectListDialogComponent,
     ChangeLogComponent,
     YedidimBranchListComponent,
+    OverviewComponent,
   ],
   imports: [
+    NgApexchartsModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,
