@@ -23,7 +23,7 @@ import {
 } from '../app/common/address-input/google-api-helpers'
 
 SqlDatabase.LogToConsole = false
-const production = process.env['NODE_ENV'] === 'production'
+const production = true //process.env['NODE_ENV'] === 'production'
 async function startup() {
   const app = express()
   app.use(sslRedirect())
@@ -81,7 +81,7 @@ async function startup() {
       session({
         path: '/' + siteUrl,
 
-        sameSite: !production ? false : 'none',
+        sameSite: !production ? false : 'strict',
         httpOnly: production,
         secure: production,
         secret: production ? process.env['SESSION_SECRET'] : 'my secret1',
