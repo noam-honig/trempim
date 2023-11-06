@@ -243,12 +243,12 @@ export function initSite(site?: string) {
       remult.context.site = new vdri(site)
       break
     case 'yedidim':
-    case 'test1':
     case 'ezion':
     case 'y':
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
+    case 'test1':
       remult.context.site = new WarRoomCars(site)
       break
 

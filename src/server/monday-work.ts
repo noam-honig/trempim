@@ -10,7 +10,8 @@ import { taskStatus } from '../app/events/taskStatus'
 export const PACKED_READY_FOR_DELIVERY = 3,
   ACTIVE_DELIVERY = 0,
   DELIVERY_DONE = 1,
-  NO_PACK_READY_FOR_DELIVERY = 6
+  NO_PACK_READY_FOR_DELIVERY = 6,
+  ON_HOLD = 14
 
 export async function updateReceivedFromMonday(event: Root) {
   try {
@@ -34,11 +35,13 @@ export async function updateReceivedFromMonday(event: Root) {
 }
 
 export function updateStatusOnMonday(task: Task, status: number) {
+  if (remult.user?.phone === MONDAY_USER_PHONE) return
   update(1290250715, parseInt(task.externalId.split(':')[1]), 'status73', {
     index: status,
   })
 }
 export async function updateDriverOnMonday(task: Task) {
+  if (remult.user?.phone === MONDAY_USER_PHONE) return
   if (task.driverId) {
     const user = await repo(User).findId(task.driverId)
     if (user) {
@@ -111,7 +114,7 @@ export interface MondayItem {
   }[]
   subitems: any[]
 }
-
+const MONDAY_USER_PHONE = '0500000002'
 const DRIVER_PHONE_COLUMN = 'text63'
 const DRIVER_NAME_COLUMN = 'text6'
 export async function upsertTaskBasedOnMondayValues(
@@ -120,7 +123,7 @@ export async function upsertTaskBasedOnMondayValues(
   statusOrDriverChange = false
 ) {
   const mondayUser = await repo(User).findFirst(
-    { phone: '0500000002' },
+    { phone: MONDAY_USER_PHONE },
     { createIfNotFound: true }
   )
   if (mondayUser.isNew()) {
@@ -174,6 +177,10 @@ export async function upsertTaskBasedOnMondayValues(
     case ACTIVE_DELIVERY:
     case DELIVERY_DONE:
       break
+    case ON_HOLD:
+      if (item.isNew()) return
+      break
+
     default:
       return
   }
@@ -268,6 +275,12 @@ export async function upsertTaskBasedOnMondayValues(
 
   if (statusOrDriverChange)
     switch (mondayStatus.index) {
+      case ON_HOLD:
+        if (item.taskStatus !== taskStatus.draft) {
+          item.taskStatus = taskStatus.draft
+          await item.insertStatusChange('הועבר להמתנה בMONDAY')
+        }
+        break
       case PACKED_READY_FOR_DELIVERY:
       case NO_PACK_READY_FOR_DELIVERY:
         let relevantStatus = item.driverId
