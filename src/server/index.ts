@@ -31,6 +31,7 @@ async function startup() {
   app.use(compression())
   app.use(
     helmet({
+      crossOriginEmbedderPolicy: false,
       contentSecurityPolicy: {
         directives: {
           //  ...helmet.contentSecurityPolicy.getDefaultDirectives(),
