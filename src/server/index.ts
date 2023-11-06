@@ -41,6 +41,7 @@ async function startup() {
             "'self'",
             'data:',
             'maps.gstatic.com',
+            'maps.google.com',
             '*.googleapis.com',
             '*.ggpht.com',
           ],
