@@ -34,24 +34,24 @@ async function startup() {
       crossOriginEmbedderPolicy: false,
       contentSecurityPolicy: {
         directives: {
-          //  ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-          'script-src': ["'self'", 'maps.googleapis.com'],
-          'connect-src': ["'self'", '*.googleapis.com'],
-          'script-src-attr': ["'self'", "'unsafe-inline'"],
+          'script-src': ["'self'", 'maps.googleapis.com'], //https://securityheaders.com/
+          'connect-src': ["'self'", '*.googleapis.com'], //https://securityheaders.com/
+          'script-src-attr': ["'self'", "'unsafe-inline'"], //https://securityheaders.com/
           'img-src': [
-            "'self'",
-            'data:',
-            'maps.gstatic.com',
-            'maps.google.com',
-            '*.googleapis.com',
-            '*.ggpht.com',
+            //https://securityheaders.com/
+            "'self'", //https://securityheaders.com/
+            'data:', //https://securityheaders.com/
+            'maps.gstatic.com', //https://securityheaders.com/
+            'maps.google.com', //https://securityheaders.com/
+            '*.googleapis.com', //https://securityheaders.com/
+            '*.ggpht.com', //https://securityheaders.com/
           ],
         },
       },
     })
   )
   app.use((req, res, next) => {
-    res.setHeader('Permissions-Policy', 'geolocation=(self)')
+    res.setHeader('Permissions-Policy', 'geolocation=(self)') //https://securityheaders.com/
     next()
   })
 
@@ -81,14 +81,14 @@ async function startup() {
       session({
         path: '/' + siteUrl,
 
-        sameSite: !production ? false : 'strict',
-        httpOnly: production,
-        secure: production,
+        sameSite: !production ? false : 'strict', //https://securityheaders.com/
+        httpOnly: production, //https://securityheaders.com/
+        secure: production, //https://securityheaders.com/
         secret: production ? process.env['SESSION_SECRET'] : 'my secret1',
       })(req, res, next)
     })
   })
-  app.enable('trust proxy')
+  app.enable('trust proxy') //https://securityheaders.com/
 
   app.use(api)
   app.use(api.withRemult)
