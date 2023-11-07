@@ -6,6 +6,7 @@ import { fixPhoneInput, isPhoneValidForIsrael } from '../app/events/phone'
 import { GetGeoInformation } from '../app/common/address-input/google-api-helpers'
 import { Roles } from '../app/users/roles'
 import { taskStatus } from '../app/events/taskStatus'
+import { sendSms } from './send-sms'
 
 export const PACKED_READY_FOR_DELIVERY = 3,
   ACTIVE_DELIVERY = 0,
@@ -117,6 +118,7 @@ export interface MondayItem {
 const MONDAY_USER_PHONE = '0500000002'
 const DRIVER_PHONE_COLUMN = 'text63'
 const DRIVER_NAME_COLUMN = 'text6'
+
 export async function upsertTaskBasedOnMondayValues(
   board: number,
   id: number,
@@ -135,6 +137,10 @@ export async function upsertTaskBasedOnMondayValues(
     id: mondayUser.id,
     roles: [Roles.admin, Roles.dispatcher],
   }
+  const warRoomDriversBoard = board == 1307656994
+  const apiKey = warRoomDriversBoard
+    ? process.env['MONDAY_WARROOM_API_TOKEN']
+    : undefined
 
   const monday = await gql(
     {
@@ -160,42 +166,37 @@ export async function upsertTaskBasedOnMondayValues(
               }
             }
           }
-        }`
+        }`,
+    apiKey
   )
   const mondayItem = monday.boards[0].items_page.items[0] as MondayItem
 
-  const item = await repo(Task).findFirst(
-    { externalId: 'm:' + id },
-    {
-      createIfNotFound: true,
-    }
-  )
-  const mondayStatus = get('status73', undefined, true)
-  switch (mondayStatus?.index) {
-    case PACKED_READY_FOR_DELIVERY:
-    case NO_PACK_READY_FOR_DELIVERY:
-    case ACTIVE_DELIVERY:
-    case DELIVERY_DONE:
-      break
-    case ON_HOLD:
-      if (item.isNew()) return
-      break
+  if (warRoomDriversBoard) {
+    await updateDriverBasedOnMonday()
+  } else await updateTaskBasedOnMondayValues()
 
-    default:
-      return
-  }
-  item.__disableValidation = true
-  item.phone1Description = mondayItem.name
-  function set(
-    mondayColumn: string,
-    taskField: keyof Task,
-    process?: (val: any) => any
-  ) {
-    let val = get(mondayColumn, process)
-    if (val) {
-      item.$.find(taskField).value = val
+  async function updateDriverBasedOnMonday() {
+    const phone = fixPhoneInput(get('text65'))
+    if (get('status8', undefined, true)?.index == 0) {
+      if (phone) {
+        const user = await repo(User).findFirst(
+          { phone },
+          { createIfNotFound: true }
+        )
+        if (user.isNew() || !user.name) {
+          user.name = mondayItem.name
+          await user.save()
+          await sendSms(
+            user.phone,
+            `אהלן ${user.name}, בקשתך להצטרף כנהג/אופנוען מתנדב ל"חדר מלחמה כנפי ברזל" אושרה!
+לצפיה בנסיעות המחכות לעזרה לחץ:
+https://sh.hagai.co`
+          )
+        }
+      }
     }
   }
+
   function get(
     mondayColumn: string,
     process?: (val: any) => any,
@@ -212,104 +213,139 @@ export async function upsertTaskBasedOnMondayValues(
     }
     return undefined
   }
-  let toAddress = get('location')
-  if (toAddress) {
-    item.toAddress = toAddress.replace(', Israel', '')
-    if (item.$.toAddress.valueChanged())
-      item.toAddressApiResult = await GetGeoInformation(item.toAddress)
-  }
-  let fromAddress = get('location0')
-  if (fromAddress) {
-    item.address = fromAddress
-    if (get('status_1', undefined, true)?.index === 2)
-      item.address = 'יהודה הלוי 48 תל אביב'
-    if (item.$.address.valueChanged())
-      item.addressApiResult = await GetGeoInformation(item.address)
-  }
-
-  set('text4', 'phone1')
-  set('short_text', 'tpPhone1Description')
-  set('short_text0', 'toPhone1')
-  set('date', 'eventDate', (x) => ValueConverters.DateOnly.fromJson!(x))
-  item.description = ''
-  function setDesc(
-    mondayColumn: string,
-    title?: string,
-    process?: (val: any) => any
-  ) {
-    let val = get(mondayColumn)
-    if (val && process) val = process(val)
-    if (val) {
-      item.description += (title ? title + ': ' : '') + val + '\n'
-    }
-  }
-  setDesc('long_text3', 'ציוד')
-  setDesc('single_select', 'כשרות')
-  setDesc('long_text76', 'ציוד נדרש עבור נשים')
-  setDesc('long_text', 'הערות')
-  item.title = get('text47')
-  if (!item.title) {
-    let boxes = get('numbers')
-    if (boxes && boxes.trim() != '0') {
-      item.title = boxes == 1 ? 'ארגז אחד' : boxes + ' ארגזים'
-    }
-  }
-  if (!item.title) item.title = 'ציוד'
-  let driverPhone = get(DRIVER_PHONE_COLUMN)
-  if (driverPhone) {
-    driverPhone = fixPhoneInput(driverPhone)
-    if (isPhoneValidForIsrael(driverPhone)) {
-      const user = await repo(User).findFirst(
-        { phone: driverPhone },
-        { createIfNotFound: true }
-      )
-      if (user.isNew() || !user.name) {
-        user.name = get(DRIVER_NAME_COLUMN) as string
-        await user.save()
+  async function updateTaskBasedOnMondayValues() {
+    const item = await repo(Task).findFirst(
+      { externalId: 'm:' + id },
+      {
+        createIfNotFound: true,
       }
-      if (item.driverId !== user.id) {
-        item.driverId = user.id
-      }
-    }
-  } else item.driverId = ''
-
-  if (statusOrDriverChange)
-    switch (mondayStatus.index) {
-      case ON_HOLD:
-        if (item.taskStatus !== taskStatus.draft) {
-          item.taskStatus = taskStatus.draft
-          await item.insertStatusChange('הועבר להמתנה בMONDAY')
-        }
-        break
+    )
+    const mondayStatus = get('status73', undefined, true)
+    switch (mondayStatus?.index) {
       case PACKED_READY_FOR_DELIVERY:
       case NO_PACK_READY_FOR_DELIVERY:
-        let relevantStatus = item.driverId
-          ? taskStatus.assigned
-          : taskStatus.active
-        item.returnMondayStatus = mondayStatus.index
-        if (item.taskStatus !== relevantStatus) {
-          item.taskStatus = relevantStatus
-          if (!item._.isNew())
-            await item.insertStatusChange('נדרש שילוח מMONDAY')
-        }
-        break
       case ACTIVE_DELIVERY:
-        if (![taskStatus.driverPickedUp].includes(item.taskStatus)) {
-          item.taskStatus = taskStatus.driverPickedUp
-          await item.insertStatusChange('משלוח נאסף בMONDAY')
-        }
-        break
       case DELIVERY_DONE:
-        if (item.taskStatus !== taskStatus.completed) {
-          item.taskStatus = taskStatus.completed
-          await item.insertStatusChange('נסיעה הושלמה בMONDAY')
-        }
         break
+      case ON_HOLD:
+        if (item.isNew()) return
+        break
+
       default:
         return
     }
-  if (item.taskStatus === taskStatus.active) item.driverId = ''
-  await item.save()
+    item.__disableValidation = true
+    item.phone1Description = mondayItem.name
+    function set(
+      mondayColumn: string,
+      taskField: keyof Task,
+      process?: (val: any) => any
+    ) {
+      let val = get(mondayColumn, process)
+      if (val) {
+        item.$.find(taskField).value = val
+      }
+    }
+
+    let toAddress = get('location')
+    if (toAddress) {
+      item.toAddress = toAddress.replace(', Israel', '')
+      if (item.$.toAddress.valueChanged())
+        item.toAddressApiResult = await GetGeoInformation(item.toAddress)
+    }
+    let fromAddress = get('location0')
+    if (fromAddress) {
+      item.address = fromAddress
+      if (get('status_1', undefined, true)?.index === 2)
+        item.address = 'יהודה הלוי 48 תל אביב'
+      if (item.$.address.valueChanged())
+        item.addressApiResult = await GetGeoInformation(item.address)
+    }
+
+    set('text4', 'phone1')
+    set('short_text', 'tpPhone1Description')
+    set('short_text0', 'toPhone1')
+    set('date', 'eventDate', (x) => ValueConverters.DateOnly.fromJson!(x))
+    item.description = ''
+    function setDesc(
+      mondayColumn: string,
+      title?: string,
+      process?: (val: any) => any
+    ) {
+      let val = get(mondayColumn)
+      if (val && process) val = process(val)
+      if (val) {
+        item.description += (title ? title + ': ' : '') + val + '\n'
+      }
+    }
+    setDesc('long_text3', 'ציוד')
+    setDesc('single_select', 'כשרות')
+    setDesc('long_text76', 'ציוד נדרש עבור נשים')
+    setDesc('long_text', 'הערות')
+    item.title = get('text47')
+    if (!item.title) {
+      let boxes = get('numbers')
+      if (boxes && boxes.trim() != '0') {
+        item.title = boxes == 1 ? 'ארגז אחד' : boxes + ' ארגזים'
+      }
+    }
+    if (!item.title) item.title = 'ציוד'
+    let driverPhone = get(DRIVER_PHONE_COLUMN)
+    if (driverPhone) {
+      driverPhone = fixPhoneInput(driverPhone)
+      if (isPhoneValidForIsrael(driverPhone)) {
+        const user = await repo(User).findFirst(
+          { phone: driverPhone },
+          { createIfNotFound: true }
+        )
+        if (user.isNew() || !user.name) {
+          user.name = get(DRIVER_NAME_COLUMN) as string
+          await user.save()
+        }
+        if (item.driverId !== user.id) {
+          item.driverId = user.id
+        }
+      }
+    } else item.driverId = ''
+
+    if (statusOrDriverChange)
+      switch (mondayStatus.index) {
+        case ON_HOLD:
+          if (item.taskStatus !== taskStatus.draft) {
+            item.taskStatus = taskStatus.draft
+            await item.insertStatusChange('הועבר להמתנה בMONDAY')
+          }
+          break
+        case PACKED_READY_FOR_DELIVERY:
+        case NO_PACK_READY_FOR_DELIVERY:
+          let relevantStatus = item.driverId
+            ? taskStatus.assigned
+            : taskStatus.active
+          item.returnMondayStatus = mondayStatus.index
+          if (item.taskStatus !== relevantStatus) {
+            item.taskStatus = relevantStatus
+            if (!item._.isNew())
+              await item.insertStatusChange('נדרש שילוח מMONDAY')
+          }
+          break
+        case ACTIVE_DELIVERY:
+          if (![taskStatus.driverPickedUp].includes(item.taskStatus)) {
+            item.taskStatus = taskStatus.driverPickedUp
+            await item.insertStatusChange('משלוח נאסף בMONDAY')
+          }
+          break
+        case DELIVERY_DONE:
+          if (item.taskStatus !== taskStatus.completed) {
+            item.taskStatus = taskStatus.completed
+            await item.insertStatusChange('נסיעה הושלמה בMONDAY')
+          }
+          break
+        default:
+          return
+      }
+    if (item.taskStatus === taskStatus.active) item.driverId = ''
+    await item.save()
+  }
 }
 
 export interface MondayAddress {

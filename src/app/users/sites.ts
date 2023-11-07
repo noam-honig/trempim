@@ -245,10 +245,10 @@ export function initSite(site?: string) {
     case 'yedidim':
     case 'ezion':
     case 'y':
-    case 'test1':
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
+    case 'test1':
       remult.context.site = new WarRoomCars(site)
       break
 

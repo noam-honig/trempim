@@ -1,5 +1,6 @@
-export async function gql(variables: any, s: string) {
+export async function gql(variables: any, s: string, authorization?: string) {
   const fetch = await import('node-fetch')
+  if (!authorization) authorization = process.env['MONDAY_API_TOKEN']!
   const result = await fetch.default('https://api.monday.com/v2', {
     body: JSON.stringify({
       query: s,
@@ -7,7 +8,7 @@ export async function gql(variables: any, s: string) {
     }),
     method: 'POST',
     headers: {
-      authorization: process.env['MONDAY_API_TOKEN']!,
+      authorization,
       'API-Version': '2023-10',
       'content-type': 'application/json',
     },
