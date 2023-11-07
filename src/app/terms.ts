@@ -24,7 +24,7 @@ export const terms = {
   resetPassword: 'איפוס סיסמה',
   passwordDeletedSuccessful: 'סיסמה אופסה',
   passwordDeleteConfirmOf: 'בטוח לאפס את הסיסמה של ',
-  rememberOnThisDevice: 'זכור אותי במחשב זה?',
+  rememberOnThisDevice: 'זכור אותי במכשיר זה?',
   RTL: true,
 }
 

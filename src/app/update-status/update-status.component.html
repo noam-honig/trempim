@@ -1,5 +1,21 @@
-<mat-dialog-content>
+<div
+  mat-dialog-title
+  style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row-reverse;
+  "
+>
+  <div style="text-wrap: nowrap">
+    <button mat-icon-button [mat-dialog-close]>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
   <div *ngIf="args.showFailStatus">מה לא הסתדר?</div>
+</div>
+
+<mat-dialog-content>
   <div *ngIf="args.showFailStatus">
     <mat-radio-group
       [(ngModel)]="whatWentWrong"
@@ -18,5 +34,4 @@
 </mat-dialog-content>
 <mat-dialog-actions style="justify-content: space-between">
   <button mat-raised-button color="primary" (click)="save()">שמור</button>
-  <button mat-raised-button color="error" mat-dialog-close>בטל</button>
 </mat-dialog-actions>

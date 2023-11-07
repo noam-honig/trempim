@@ -70,7 +70,7 @@
                   {{ e.title }}
                 </strong>
                 <a (click)="eventDetails(e)" *ngIf="!isFull(e) && fromMap">{{
-                  'לפרטים והרשמה'
+                  'לפרטים'
                 }}</a>
                 <app-dots-menu
                   [item]="e"
@@ -80,15 +80,14 @@
               </div>
               <div class="event-info" (click)="eventDetails(e)">
                 <div class="event-detail">
-                  <span>
-                    <span *ngIf="onTheWayBack(e)" style="font-weight: bold"
+                  <span style="margin-bottom: 10px">
+                    <span
+                      *ngIf="onTheWayBack(e)"
+                      style="font-weight: bold; color: red"
                       >בדרך חזרה,
                     </span>
                     {{ e.category || '' }}{{ distance(e) }}
                   </span>
-                  <div style="margin-bottom: 10px">
-                    {{ displayDate(e) }}
-                  </div>
 
                   <div class="route-start-finish">
                     <div class="route-indicator-container">
@@ -119,6 +118,9 @@
                       </div>
                     </div>
                   </div>
+                  <div style="margin-bottom: 10px">
+                    {{ displayDate(e) }}
+                  </div>
                   <!-- <span>
                     {{ eventCity(e) }}
                     <span *ngIf="e.toAddressApiResult">
@@ -127,7 +129,7 @@
                   </span> -->
 
                   <div class="bottom-container">
-                    <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים והרשמה' }}</a>
+                    <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים' }}</a>
                     <strong *ngIf="isFull(e)">
                       {{ e.taskStatus.caption }}
                       <span *ngIf="e.driver">, {{ e.driver.name }}</span>

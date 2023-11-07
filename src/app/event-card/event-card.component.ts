@@ -171,7 +171,7 @@ export class EventCardComponent implements OnInit {
 
     this.filteredTasks = this.tasks.filter((x) => this.filter(x))
     this.urgencies = []
-    this.tasks.sort((a, b) => compareEventDate(a, b))
+    this.tasks.sort((a, b) => this.compareEventDate(a, b))
 
     let firstLongLat: string | undefined
 
@@ -570,32 +570,33 @@ export class EventCardComponent implements OnInit {
       'ק"מ'
     )
   }
+  compareEventDate(a: Task, b: Task) {
+    let startOfDay = new Date()
+    startOfDay.setHours(0, 0, 0, 0)
+    function fixDate(d: Date) {
+      if (d.valueOf() < startOfDay.valueOf()) {
+        d = new Date(d)
+        d.setFullYear(d.getFullYear() + 1)
+      }
+      return d.valueOf()
+    }
+    return (
+      (this.onTheWayBack(a) ? 1 : 0) - (this.onTheWayBack(b) ? 1 : 0) ||
+      fixDate(a.eventDate) - fixDate(b.eventDate) ||
+      a.startTime.localeCompare(b.startTime) ||
+      b.createdAt.valueOf() - a.createdAt.valueOf()
+    )
+  }
   sortEvents() {
     if (!this.volunteerLocation) {
       this.urgencies.forEach((d) =>
-        d.events.sort((a, b) => compareEventDate(a, b))
+        d.events.sort((a, b) => this.compareEventDate(a, b))
       )
     } else
       this.urgencies.forEach((d) =>
         d.events.sort((a, b) => this.distanceToTask(a) - this.distanceToTask(b))
       )
   }
-}
-
-function compareEventDate(a: Task, b: Task) {
-  let startOfDay = new Date()
-  startOfDay.setHours(0, 0, 0, 0)
-  function fixDate(d: Date) {
-    if (d.valueOf() < startOfDay.valueOf()) {
-      d = new Date(d)
-      d.setFullYear(d.getFullYear() + 1)
-    }
-    return d.valueOf()
-  }
-  let r = fixDate(a.eventDate) - fixDate(b.eventDate)
-
-  if (r != 0) return r
-  return b.createdAt.valueOf() - a.createdAt.valueOf()
 }
 
 interface dateEvents {

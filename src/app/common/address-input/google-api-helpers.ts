@@ -80,11 +80,11 @@ export function getRegion(r: GeocodeResult | undefined | null): string {
   switch (getDistrict(r)) {
     case 'לכיש':
     case 'נגב':
-      return 'דרום'
+      return 'אזור דרום'
     case 'איילון':
     case 'ירושלים':
     case 'בנימין':
-      return 'ירושלים'
+      return 'אזור ירושלים'
 
     case '444':
     case 'אונו':
@@ -93,7 +93,7 @@ export function getRegion(r: GeocodeResult | undefined | null): string {
     case 'שומרון':
     case 'שפלה':
     case 'שרון':
-      return 'מרכז'
+      return 'אזור מרכז'
     case 'משגב':
     case 'כנרת':
     case 'אשר':
@@ -104,7 +104,7 @@ export function getRegion(r: GeocodeResult | undefined | null): string {
     case 'גולן':
     case 'העמקים':
     case 'מנשה':
-      return 'צפון'
+      return 'אזור צפון'
   }
 
   return getGoogleRegion(r)
