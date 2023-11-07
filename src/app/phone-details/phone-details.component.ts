@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { formatPhone, sendWhatsappToPhone } from '../events/phone'
+import { remult } from 'remult'
+import { getTitle } from '../users/sites'
 
 @Component({
   selector: 'app-phone-details',
@@ -19,11 +21,10 @@ export class PhoneDetailsComponent implements OnInit {
   sendWhatsapp() {
     sendWhatsappToPhone(
       this.args.phone!,
-      'שלום ' +
-        this.args.name +
-        (this.args.messageContext
-          ? '\nבקשר ל' + this.args.messageContext + '\n'
-          : '')
+      `שלום ${this.args.name}
+זה ${remult.user?.name} מ${getTitle()}
+${this.args.messageContext ? 'בקשר ל' + this.args.messageContext : ''}
+`
     )
   }
   displayPhone() {
