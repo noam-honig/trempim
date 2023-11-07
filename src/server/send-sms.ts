@@ -1,3 +1,5 @@
+import { Yedidim, getSite } from '../app/users/sites'
+
 export async function sendSms(phone: string, message: string): Promise<any> {
   if (process.env['disable_sms']) {
     console.log({ phone, message })
@@ -11,7 +13,9 @@ export async function sendSms(phone: string, message: string): Promise<any> {
   const inforuToken = process.env['INFORU_SMS_TOKEN']
   let useGlobalSms = !inforuToken
   var from = 'Hagai'
-  if (!accid && !inforuToken) return 'חשבון SMS לא הוגדר'
+  const YEDIDIM_API_KEY = process.env['YEDIDIM_API_KEY']
+  const useYedidim = getSite() instanceof Yedidim && YEDIDIM_API_KEY
+  if (!accid && !inforuToken && !YEDIDIM_API_KEY) return 'חשבון SMS לא הוגדר'
   phone = phone.replace(/\D/g, '')
 
   var t = new Date()
@@ -31,7 +35,44 @@ export async function sendSms(phone: string, message: string): Promise<any> {
   const send = async () => {
     try {
       {
-        if (useGlobalSms) {
+        if (useYedidim) {
+          const r = await fetch.default('https://019sms.co.il/api', {
+            method: 'POST',
+            headers: {
+              Authorization: 'Bearer ' + YEDIDIM_API_KEY,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              sms: {
+                user: {
+                  username: 'giladc@howazit.com',
+                },
+                source: 'Yedidim',
+                destinations: {
+                  phone: [
+                    {
+                      $: {
+                        id: '',
+                      },
+                      _: phone,
+                    },
+                  ],
+                },
+                message: message,
+              },
+            }),
+          })
+          let res = await r.text()
+          let orig = res
+          let t = '<sendSmsToRecipientsResult>'
+          let i = res.indexOf(t)
+          if (i >= 0) {
+            res = res.substring(i + t.length)
+            res = res.substring(0, res.indexOf('<'))
+          }
+          console.log('sms response:', phone, res)
+          return res
+        } else if (useGlobalSms) {
           message = message
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -93,7 +134,7 @@ export async function sendSms(phone: string, message: string): Promise<any> {
             res = res.substring(i + t.length)
             res = res.substring(0, res.indexOf('<'))
           }
-          console.log('sms response: - ' + res)
+          console.log('sms response:', phone, res)
           return res
         } else {
           const data = `
@@ -136,7 +177,7 @@ export async function sendSms(phone: string, message: string): Promise<any> {
             res = res.substring(i + t.length)
             res = res.substring(0, res.indexOf('<'))
           }
-          console.log('sms response:' + res)
+          console.log('sms response:', phone, res)
           return res
         }
       }
@@ -145,9 +186,9 @@ export async function sendSms(phone: string, message: string): Promise<any> {
       return err
     }
   }
-  console.log('before send')
+  console.time('Send SMS ' + phone)
   let apiResponse = await send()
-  console.log('after send')
+  console.timeEnd('Send SMS ' + phone)
 
   if (apiResponse && typeof apiResponse !== 'string')
     apiResponse = JSON.stringify(apiResponse)

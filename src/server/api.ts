@@ -39,6 +39,7 @@ import {
 import { ChangeLog } from '../app/common/change-log/change-log'
 
 import { OverviewController } from '../app/overview/overview.controller'
+import fetch from 'node-fetch'
 
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
@@ -107,25 +108,6 @@ export const api = remultExpress({
       )
 
       remult.subscriptionServer = new SseSubscriptionServer()
-      // const fs = await import('fs')
-      // const x = await import('iconv-lite')
-      // const path = await import('path')
-
-      // const geoJsonFile = path.join(process.cwd(), 'files', 'Ezorim.geojson')
-      // console.log({ file: geoJsonFile })
-      // let geojson = JSON.parse(
-      //   x.default.decode(fs.readFileSync(geoJsonFile), 'win1255').toString()
-      // )
-      // fs.writeFileSync('tmp/geo.json', JSON.stringify(geojson, null, 2))
-
-      // let found: any = {}
-      // for (const feature of geojson.features) {
-      //   let x = feature.properties['מרחב']
-      //   if (!found[x]) {
-      //     found[x] = true
-      //     console.log(`case '${x}':`)
-      //   }
-      // }
 
       //await updateStatusOnMonday(item, ACTIVE_DELIVERY)
 
