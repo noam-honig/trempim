@@ -190,7 +190,7 @@ export async function upsertTaskBasedOnMondayValues(
             user.phone,
             `אהלן ${user.name}, בקשתך להצטרף כנהג/אופנוען מתנדב ל"חדר מלחמה כנפי ברזל" אושרה!
 לצפיה בנסיעות המחכות לעזרה לחץ:
-https://sh.hagai.co`
+https://sh.hagai.co/wrc`
           )
         }
       }
