@@ -128,12 +128,12 @@
 
                   <div class="bottom-container">
                     <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים והרשמה' }}</a>
+                    <strong *ngIf="isFull(e)">
+                      {{ e.taskStatus.caption }}
+                      <span *ngIf="e.driver">, {{ e.driver.name }}</span>
+                    </strong>
                     <div class="id-text">{{ e.externalId }}#</div>
                   </div>
-                  <strong *ngIf="isFull(e)">
-                    {{ e.taskStatus.caption }}
-                    <span *ngIf="e.driver">, {{ e.driver.name }}</span>
-                  </strong>
                 </div>
               </div>
             </mat-card>
