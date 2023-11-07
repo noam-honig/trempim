@@ -57,7 +57,8 @@ import { MultiSelectListDialogComponent } from './common/multi-select-list-dialo
 import { ChangeLogComponent } from './common/change-log/change-log.component'
 import { YedidimBranchListComponent } from './yedidim-branch-list/yedidim-branch-list.component'
 import { OverviewComponent } from './overview/overview.component'
-import { NgApexchartsModule } from 'ng-apexcharts'
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { AboutComponent } from './about/about.component'
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { NgApexchartsModule } from 'ng-apexcharts'
     ChangeLogComponent,
     YedidimBranchListComponent,
     OverviewComponent,
+    AboutComponent,
   ],
   imports: [
     NgApexchartsModule,

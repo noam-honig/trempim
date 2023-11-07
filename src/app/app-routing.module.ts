@@ -19,6 +19,7 @@ import { UpdatesComponent } from './updates/updates.component'
 import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.component'
 import { ProblemComponent } from './problem/problem.component'
 import { OverviewComponent } from './overview/overview.component'
+import { AboutComponent } from './about/about.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -72,6 +73,7 @@ const routes: Routes = [
     data: { hide: true, name: 'הוספת נסיעה', noLogin: true },
   },
   { path: 'noam-test/:1', component: NoamTestComponent },
+  { path: 'אודות', component: AboutComponent, data: { noLogin: true } },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' },
 ]
 
