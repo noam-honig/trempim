@@ -206,5 +206,3 @@ export class AppComponent implements OnInit, OnDestroy {
     return getSite().showCopyLink
   }
 }
-
-//[ ] - add select driver for my trips
