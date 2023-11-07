@@ -820,7 +820,45 @@ ${this.getLink()}`
           if (!e.driver) {
             e.driver = await e._.relations.driver.findOne()
           }
-          e.sendWhatsappInvite()
+
+          sendWhatsappToPhone(
+            e.driver?.phone!,
+            `שלום ${e.driver?.name || ''} ,מופיע באפליקציה שלקחת את הנסיעה:
+${e.getShortDescription()} של ארגון "${getTitle()}"
+והיא טרם הושלמה
+
+נשמח אם תעדכן אותנו מה הסטטוס שלה, בקישור הבא או בהודעה חוזרה
+
+${e.getLink()}
+
+`
+          )
+        },
+      },
+      {
+        name: 'ווטסאפ למבקש הנסיעה',
+        icon: 'sms',
+
+        click: async (e) => {
+          let phone =
+            (getSite().useFillerInfo && e.requesterPhone1) ||
+            e.phone1 ||
+            e.toPhone1
+          let name =
+            getSite().useFillerInfo && e.requesterPhone1
+              ? e.requesterPhone1Description
+              : e.phone1
+              ? e.phone1Description
+              : e.phone2Description
+
+          sendWhatsappToPhone(
+            phone,
+            `שלום ${name}, מופיע לנו בארגון "${getTitle()}" שביקשת את הנסיעה הבאה:
+${e.getShortDescription()} 
+
+נשמח אם תעדכן אותנו בהודעה חוזרת אם הבקשה עדיין רלוונטית
+`
+          )
         },
       },
 
