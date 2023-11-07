@@ -17,8 +17,11 @@ import { UIToolsService } from '../common/UIToolsService'
   styleUrls: ['./intake.component.scss'],
 })
 export class IntakeComponent implements OnInit {
-  constructor(private title: Title, private ui: UIToolsService) {}
-
+  constructor(private documentTitle: Title, private ui: UIToolsService) {}
+  title = document.title
+  getLogo() {
+    return '/' + getSite().urlPrefix + '/assets/logo.png'
+  }
   r = repo(Task).create()
   area = new DataAreaSettings({
     fields: () => {
@@ -70,7 +73,7 @@ export class IntakeComponent implements OnInit {
   })
   ngOnInit(): void {
     this.ui.report('קישור לטופס הוספה', '')
-    this.title.setTitle(getTitle() + ' בקשה')
+    this.documentTitle.setTitle(getTitle() + ' בקשה')
   }
   result = ''
   async send() {

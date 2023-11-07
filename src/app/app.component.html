@@ -46,11 +46,6 @@
   style="display: flex; flex-direction: column"
   *ngIf="doesNotRequireLogin() && !remult.authenticated()"
 >
-  <div style="align-self: center">
-    <img [src]="getLogo()" height="150px" />
-  </div>
-  <strong style="align-self: center">{{ title }}</strong>
-
   <router-outlet></router-outlet>
 </div>
 
