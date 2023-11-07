@@ -80,12 +80,15 @@
               </div>
               <div class="event-info" (click)="eventDetails(e)">
                 <div class="event-detail">
-                  <span style="margin-bottom: 10px">
+                  <span>
                     <span *ngIf="onTheWayBack(e)" style="font-weight: bold"
                       >בדרך חזרה,
                     </span>
                     {{ e.category || '' }}{{ distance(e) }}
                   </span>
+                  <div style="margin-bottom: 10px">
+                    {{ displayDate(e) }}
+                  </div>
 
                   <div class="route-start-finish">
                     <div class="route-indicator-container">
@@ -122,9 +125,7 @@
                       => {{ eventToCity(e) }} ({{ travelDistance(e) }})</span
                     >
                   </span> -->
-                  <div style="margin-bottom: 10px">
-                    <strong>{{ displayDate(e) }}</strong>
-                  </div>
+
                   <div class="bottom-container">
                     <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים והרשמה' }}</a>
                     <div class="id-text">{{ e.externalId }}#</div>

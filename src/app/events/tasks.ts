@@ -1035,7 +1035,7 @@ export function eventDisplayDate(
         return 'שלשום' + ' (' + moment(d).locale('he').format('DD/MM') + ')'
       }
 
-      return 'עבר' + ' (' + moment(d).locale('he').format('DD/MM') + ')'
+      return moment(d).locale('he').format('DD/MM')
     }
 
     return moment(d).locale('he').format('DD/MM (dddd)')
