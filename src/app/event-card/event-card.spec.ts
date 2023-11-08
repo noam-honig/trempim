@@ -51,7 +51,7 @@ n,1`
     )
     comp.region = 's'
     comp.refreshFilters(false)
-    expect(comp.filteredTasks.length).toBe(2)
+    expect(comp.tasksForMap.length).toBe(2)
 
     expect(toCompare(comp.regions)).toEqual(
       `,4
@@ -66,7 +66,7 @@ s,1`
     comp.region = ''
     comp.toRegion = 's'
     comp.refreshFilters(false)
-    expect(comp.filteredTasks.length).toBe(2)
+    expect(comp.tasksForMap.length).toBe(2)
     expect(toCompare(comp.toRegions)).toEqual(
       `,4
 s,2
@@ -80,9 +80,9 @@ s,1`
     )
     comp.region = 'n'
     comp.refreshFilters(false)
-    expect(comp.filteredTasks.length).toBe(2)
+    expect(comp.tasksForMap.length).toBe(2)
     expect(
-      comp.filteredTasks
+      comp.tasksForMap
         .filter((x) => comp.onTheWayBack(x))
         .map((x) => x.title)
         .join(',')
@@ -116,7 +116,7 @@ c,1`
     })
     comp.tasks = tasks
     comp.refreshFilters(false)
-    expect(comp.filteredTasks.length).toBe(5)
+    expect(comp.tasksForMap.length).toBe(5)
     expect(toCompare(comp.regions)).toMatch(
       `,5
 s,3

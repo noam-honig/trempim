@@ -45,6 +45,7 @@ export class AddressInputComponent
   initAddressAutoComplete = false
   destroyMe!: google.maps.MapsEventListener
   checkInput() {
+    this.inputSinceSelected = true
     var x = parseUrlInAddress(this.field.value)
     if (x != this.field.value) {
       setTimeout(() => {
@@ -52,7 +53,12 @@ export class AddressInputComponent
       }, 50)
     }
   }
+  onBlur() {
+    this.selectIfNotSelected()
+  }
+  inputSinceSelected = false
 
+  selectIfNotSelected = () => {}
   @ViewChild('addressInput', { static: false }) addressInput!: ElementRef
   initAddress(consumer: (x: InputAddressResult) => void) {
     if (this.initAddressAutoComplete) return
@@ -66,12 +72,28 @@ export class AddressInputComponent
       this.addressInput.nativeElement,
       options
     )
+    this.selectIfNotSelected = () => {
+      if (!this.inputSinceSelected) return
+      this.addressInput.nativeElement.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          keyCode: 40,
+        })
+      )
+
+      this.addressInput.nativeElement.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          keyCode: 13,
+        })
+      )
+    }
     this.destroyMe = google.maps.event.addListener(
       autocomplete,
       'place_changed',
       () => {
         const place = autocomplete.getPlace()
+
         if (!place) return
+        this.inputSinceSelected = false
 
         this.zone.run(() => {
           this.field.value = this.addressInput.nativeElement.value

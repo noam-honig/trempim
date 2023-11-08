@@ -68,6 +68,7 @@ export class EventCardComponent implements OnInit {
         let lines = ''
         let count = 0
         let t = new Date()
+        let tasks: Task[] = []
 
         for (const u of this.urgencies) {
           for (const e of u.events) {
@@ -75,6 +76,7 @@ export class EventCardComponent implements OnInit {
               lines +=
                 '* ' + e.getShortDescription() + '\n' + e.getLink() + '\n\n'
               count++
+              tasks.push(e)
             }
           }
         }
@@ -94,7 +96,10 @@ export class EventCardComponent implements OnInit {
         openDialog(
           YedidimBranchListComponent,
           (x) =>
-            (x.args = { tasks: this.filteredTasks, category: this.category })
+            (x.args = {
+              tasks: this._tasks.filter((x) => this.filter(x)),
+              category: this.category,
+            })
         )
       },
     },
@@ -145,8 +150,8 @@ export class EventCardComponent implements OnInit {
       this.showingAllTasks ? 'חיפוש נסיעה' : 'נסיעות שלי'
     )
   }
-  showLocation = false
-  filteredTasks: Task[] = []
+
+  tasksForMap: Task[] = []
 
   closeDialog?: VoidFunction
   isDialog() {
@@ -158,6 +163,17 @@ export class EventCardComponent implements OnInit {
     return document.location.host.includes('localhost')
   }
   title = ''
+  refreshTasksForMap() {
+    this.tasksForMap = this.tasks.filter((x) => this.filter(x))
+    if (this.volunteerLocation) {
+      this.tasksForMap.sort(
+        (a, b) => this.distanceToTask(a) - this.distanceToTask(b)
+      )
+      this.tasksForMap = this.tasksForMap.filter(
+        (x, i) => i < 10 || this.distanceToTask(x) < 25
+      )
+    }
+  }
   refreshFilters(report: boolean) {
     if (report)
       this.tools.report(
@@ -168,8 +184,7 @@ export class EventCardComponent implements OnInit {
           category: this.category,
         })
       )
-
-    this.filteredTasks = this.tasks.filter((x) => this.filter(x))
+    this.refreshTasksForMap()
     this.urgencies = []
     this.tasks.sort((a, b) => this.compareEventDate(a, b))
 
@@ -221,8 +236,7 @@ export class EventCardComponent implements OnInit {
     }
     for (const e of this._tasks) {
       if (!firstLongLat) firstLongLat = getLongLat(e.addressApiResult)
-      if (getLongLat(e.addressApiResult) != firstLongLat)
-        this.showLocation = true
+
       let d = this.urgencies.find((d) => d.sort == e.urgency.id)
       // if (1 == 1) {
       //   if (this.urgencies.length == 0)
@@ -299,14 +313,14 @@ export class EventCardComponent implements OnInit {
       id: '',
       count: regionStats,
       distance: 0,
-      location: this.volunteerLocation!,
+      location: this.volunteerLocation?.location!,
       caption: 'כל הארץ' + ' - ' + regionStats,
     })
     this.toRegions.splice(0, 0, {
       id: '',
       count: toRegionStats,
       distance: 0,
-      location: this.volunteerLocation!,
+      location: this.volunteerLocation?.location!,
       caption: 'כל הארץ' + ' - ' + toRegionStats,
     })
 
@@ -327,11 +341,14 @@ export class EventCardComponent implements OnInit {
     const sortRegion = (regions: AreaFilterInfo[], selectedRegion: string) => {
       if (this.volunteerLocation) {
         regions.forEach((c) => {
-          c.distance = GetDistanceBetween(this.volunteerLocation!, c.location)
+          c.distance = GetDistanceBetween(
+            this.volunteerLocation?.location!,
+            c.location
+          )
           c.districts?.forEach(
             (c) =>
               (c.distance = GetDistanceBetween(
-                this.volunteerLocation!,
+                this.volunteerLocation?.location!,
                 c.location
               ))
           )
@@ -468,7 +485,7 @@ export class EventCardComponent implements OnInit {
     let fromFilter = from != getRegion(e.addressApiResult) ? ' - ' + from : from
     let to = getDistrict(e.toAddressApiResult)
     let toFilter = to != getRegion(e.toAddressApiResult) ? ' - ' + to : to
-    const count = this.filteredTasks.filter(
+    const count = this.tasks.filter(
       (t) =>
         this.filter(t, { region: fromFilter, toRegion: toFilter }) &&
         t.taskStatus === taskStatus.active
@@ -524,32 +541,129 @@ export class EventCardComponent implements OnInit {
   distanceToTask(e: Task) {
     if (this.volunteerLocation)
       return GetDistanceBetween(
-        this.volunteerLocation,
+        this.volunteerLocation?.location,
         getLocation(
-          e.addressApiResult?.results?.length
+          e.addressApiResult?.results?.length &&
+            !this.volunteerLocation.toAddress
             ? e.addressApiResult
             : e.toAddressApiResult
         )
       )
     return 0
   }
-  volunteerLocation?: Location
+  showSortOptions = false
+  sortOptions = [
+    {
+      caption: 'תאריך',
+      selected: () => {
+        this.volunteerLocation = undefined
+        this.sortEvents()
+        this.refreshTasksForMap()
+      },
+    },
+    {
+      caption: 'מרחק ממני',
+      selected: async () => {
+        try {
+          this.volunteerLocation = { location: await getCurrentLocation() }
+          if (this.volunteerLocation) {
+            this.tools.report(
+              'מיון לפי מיקום',
+              this.volunteerLocation.location.lng +
+                ',' +
+                this.volunteerLocation.location.lat
+            )
+          }
+          this.sortEvents()
+          this.refreshTasksForMap()
+          this.sortRegions()
+        } catch (err: any) {
+          openDialog(LocationErrorComponent, (x) => (x.args = { err }))
+          this.currentSort = this.sortOptions[0]
+        }
+      },
+    },
+    {
+      caption: 'מרחק מכתובת',
+      selected: async () => {
+        const t = repo(Task).create()
+        this.tools.areaDialog({
+          fields: [t.$.address],
+          title: 'בחר כתובת',
+          validate: async () => {
+            if (!t.addressApiResult?.results?.[0]) throw 'לא נמצאה כתובת'
+          },
+          ok: async () => {
+            this.sortOptions.push({
+              caption: 'מרחק מ' + t.address,
+              selected: () => {
+                this.volunteerLocation = {
+                  location: t.addressApiResult?.results[0].geometry.location!,
+                }
+                this.sortEvents()
+                this.refreshTasksForMap()
+                this.sortRegions()
+                this.tools.report(
+                  'מיון לפי מרחק מכתובת',
+                  JSON.stringify(t.addressApiResult)
+                )
+              },
+            })
+            this.currentSort = this.sortOptions[this.sortOptions.length - 1]
+            this.currentSort.selected()
+          },
+          cancel: () => {
+            this.currentSort = this.sortOptions[0]
+            this.currentSort.selected()
+          },
+        })
+      },
+    },
+    {
+      caption: 'מרחק יעד מכתובת',
+      selected: async () => {
+        const t = repo(Task).create()
+        this.tools.areaDialog({
+          fields: [{ field: t.$.address, caption: 'כתובת יעד' }],
+          title: 'בחר כתובת',
+          validate: async () => {
+            if (!t.addressApiResult?.results?.[0]) throw 'לא נמצאה כתובת'
+          },
+          ok: async () => {
+            this.sortOptions.push({
+              caption: 'מרחק יעד מ' + t.address,
+              selected: () => {
+                this.volunteerLocation = {
+                  location: t.addressApiResult?.results[0].geometry.location!,
+                  toAddress: true,
+                }
+                this.sortEvents()
+                this.refreshTasksForMap()
+                this.sortRegions()
+                this.tools.report(
+                  'מיון לפי מרחק יעד מכתובת',
+                  JSON.stringify(t.addressApiResult)
+                )
+              },
+            })
+            this.currentSort = this.sortOptions[this.sortOptions.length - 1]
+            this.currentSort.selected()
+          },
+          cancel: () => {
+            this.currentSort = this.sortOptions[0]
+            this.currentSort.selected()
+          },
+        })
+      },
+    },
+  ]
+
+  currentSort = this.sortOptions[0]
+  volunteerLocation?: { location: Location; toAddress?: boolean }
   async sortByDistance() {
-    try {
-      if (!this.volunteerLocation)
-        this.volunteerLocation = await getCurrentLocation()
-      else this.volunteerLocation = undefined
-      if (this.volunteerLocation) {
-        this.tools.report(
-          'מיון לפי מיקום',
-          this.volunteerLocation.lng + ',' + this.volunteerLocation.lat
-        )
-      }
-      this.sortEvents()
-      this.sortRegions()
-    } catch (err: any) {
-      openDialog(LocationErrorComponent, (x) => (x.args = { err }))
-    }
+    this.showSortOptions = true
+    this.currentSort = this.sortOptions[1]
+    this.currentSort.selected()
   }
   isRegisteredToEvent(task: Task) {
     return task.driverId === remult.user?.id

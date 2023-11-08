@@ -11,26 +11,58 @@
     <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
     <data-area [settings]="area"></data-area>
     <div
+      *ngIf="tasks.length"
       style="
         display: flex;
         justify-content: space-between;
         flex-direction: row-reverse;
       "
-      *ngIf="!showMap"
     >
       <button
         mat-raised-button
         color="primary"
         (click)="sortByDistance()"
-        *ngIf="showLocation"
+        *ngIf="!showSortOptions"
       >
-        {{
-          !volunteerLocation
-            ? 'למעבר לתצוגה לפי מרחק'
-            : 'למעבר לתצוגה לפי תאריך'
-        }}
+        <mat-icon>location_on</mat-icon>קרוב אלי
       </button>
-      <button mat-raised-button (click)="toggleShowMap(true)">מפה</button>
+      <mat-form-field
+        *ngIf="showSortOptions"
+        appearance="outline"
+        class="dense-form-field"
+        style="margin-bottom: -8px"
+      >
+        <mat-label>הצג לפי</mat-label>
+        <div>
+          <select
+            matNativeControl
+            [(ngModel)]="currentSort"
+            (change)="currentSort.selected()"
+          >
+            <option *ngFor="let v of sortOptions" [ngValue]="v">
+              {{ v.caption }}
+            </option>
+          </select>
+        </div>
+      </mat-form-field>
+      <div style="align-self: center">
+        <button
+          *ngIf="!showMap"
+          mat-raised-button
+          (click)="toggleShowMap(true)"
+          color="primary"
+        >
+          <mat-icon>map</mat-icon> מפה
+        </button>
+        <button
+          *ngIf="showMap"
+          mat-raised-button
+          color="primary"
+          (click)="toggleShowMap(false)"
+        >
+          חזרה לרשימה
+        </button>
+      </div>
     </div>
     <mat-divider></mat-divider>
   </div>
@@ -38,14 +70,7 @@
     {{ title }}
   </div>
   <div *ngIf="showMap" class="grow-item" style="position: relative">
-    <app-noam-test [tasks]="filteredTasks"></app-noam-test>
-    <button
-      mat-raised-button
-      style="position: absolute; left: 10px; top: 10px"
-      (click)="toggleShowMap(false)"
-    >
-      חזרה לרשימה
-    </button>
+    <app-noam-test [tasks]="tasksForMap"></app-noam-test>
   </div>
   <div *ngIf="!showMap" [class.grow-item]="!fromMap">
     <div *ngFor="let d of urgencies">
@@ -86,7 +111,8 @@
                       style="font-weight: bold; color: red"
                       >בדרך חזרה,
                     </span>
-                    {{ e.category || '' }}{{ distance(e) }}
+                    {{ e.category || ''
+                    }}<span style="font-size: 12px"> {{ distance(e) }}</span>
                   </span>
 
                   <div class="route-start-finish">

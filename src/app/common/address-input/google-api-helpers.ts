@@ -80,6 +80,10 @@ export function getRegion(r: GeocodeResult | undefined | null): string {
   switch (getDistrict(r)) {
     case 'לכיש':
     case 'נגב':
+    case 'עוטף עזה':
+    case 'ים המלח':
+    case 'נגב צפוני':
+    case 'נגב דרומי':
       return 'אזור דרום'
     case 'איילון':
     case 'ירושלים':

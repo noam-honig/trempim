@@ -11,6 +11,7 @@
     [errorStateMatcher]="ngErrorStateMatches"
     autocomplete="false"
     (input)="checkInput()"
+    (blur)="onBlur()"
   />
   <mat-error *ngIf="getError()" id="theId">{{ getError() }}</mat-error>
 </mat-form-field>
