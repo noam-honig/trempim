@@ -21,7 +21,7 @@ export async function initRequestUser(req: Request) {
   remult.context.sessionOptions = req.sessionOptions
   if (!req.session!['sessionID']) {
     req.session!['sessionID'] = (
-      await repo(Session).insert({ headers: req.headers })
+      await repo(Session).insert({ headers: req.headers, ip: req.ip })
     ).id
   }
   remult.context.sessionId = req.session!['sessionID']
@@ -85,6 +85,8 @@ export class Session {
   id = ''
   @Fields.createdAt()
   createdAt = new Date()
+  @Fields.string()
+  ip = ''
   @Fields.json()
   headers: any
 }
