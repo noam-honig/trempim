@@ -58,7 +58,8 @@ import { ChangeLogComponent } from './common/change-log/change-log.component'
 import { YedidimBranchListComponent } from './yedidim-branch-list/yedidim-branch-list.component'
 import { OverviewComponent } from './overview/overview.component'
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { AboutComponent } from './about/about.component'
+import { AboutComponent } from './about/about.component';
+import { ShowPublicEventComponent } from './show-public-event/show-public-event.component'
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import { AboutComponent } from './about/about.component'
     YedidimBranchListComponent,
     OverviewComponent,
     AboutComponent,
+    ShowPublicEventComponent,
   ],
   imports: [
     NgApexchartsModule,

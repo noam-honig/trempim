@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { Title } from '@angular/platform-browser'
-import { repo } from 'remult'
+import { Fields, FieldsRef, remult, repo } from 'remult'
 import { Task } from '../events/tasks'
 import {
   DataAreaSettings,
@@ -10,6 +10,7 @@ import { InputImageComponent } from '../common/input-image/input-image.component
 import { getSite, getTitle } from '../users/sites'
 import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
+import copy from 'copy-to-clipboard'
 
 @Component({
   selector: 'app-intake',
@@ -72,12 +73,63 @@ export class IntakeComponent implements OnInit {
     },
   })
   ngOnInit(): void {
+    if (isDev()) {
+      let x: any = localStorage.getItem('previous')
+      if (x != null) {
+        x = JSON.parse(x)
+        getFields(this.r.$).forEach((f) => {
+          let val = x![f.metadata.key]
+          if (val) {
+            f.value = f.metadata.valueConverter.fromJson(val)
+          }
+        })
+      }
+    }
     this.ui.report('קישור לטופס הוספה', '')
     this.documentTitle.setTitle(getTitle() + ' בקשה')
   }
+  async createAndCopyWhatsappLink() {
+    await Task.makePublicVisible(this.r.id)
+    copy(
+      this.r.getShortDescription() +
+        '\n' +
+        remult.context.origin +
+        '/p/' +
+        this.r.id
+    )
+    this.ui.info('הקישור הועתק ללוח, ניתן לשלוח בקבוצה')
+  }
   result = ''
   async send() {
+    if (isDev())
+      localStorage.setItem(
+        'previous',
+        JSON.stringify(
+          getFields(this.r.$).reduce((prev, f) => {
+            prev[f.metadata.key] = f.metadata.valueConverter.toJson(
+              f.value as any
+            )
+            return prev
+          }, {} as any)
+        )
+      )
     await this.r._.save()
     this.result = 'הבקשה נקלטה ומספרה: ' + this.r.externalId
   }
+}
+
+function getFields(f: FieldsRef<Task>) {
+  return [
+    f.title,
+    f.address,
+    f.addressApiResult,
+    f.toAddress,
+    f.toAddressApiResult,
+    f.phone1,
+    f.requesterPhone1,
+  ]
+}
+
+function isDev() {
+  return document.location.host.includes('localhost')
 }

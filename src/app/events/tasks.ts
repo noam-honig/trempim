@@ -34,7 +34,7 @@ import {
 import { Roles } from '../users/roles'
 import { getSite, getTitle } from '../users/sites'
 import { User } from '../users/user'
-
+import { createId } from '@paralleldrive/cuid2'
 import { TaskImage } from './TaskImage'
 import { TaskStatusChanges } from './TaskStatusChanges'
 import { CreatedAtField, DateField, formatDate } from './date-utils'
@@ -72,6 +72,8 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         return true
       if (getSite().showContactToAnyDriver) return true
       if (t!.driverId === remult.user.id) return true
+      if (remult.context.availableTaskIds?.includes(t?.id!)) return true
+      if (t?.publicVisible) return true
     }
     if (t!.isNew()) return true
     return false
@@ -110,6 +112,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       }
       remult.user = { id: user.id }
       task.createUserId = remult.user.id
+      remult.context.availableTaskIds.push(task.id!)
     }
     if (
       !remult.isAllowed(Roles.dispatcher) &&
@@ -500,6 +503,24 @@ ${this.getLink()}`
 
   @Fields.integer<Task>({ includeInApi: false })
   returnMondayStatus = -1
+
+  @Fields.string({ allowApiUpdate: false })
+  publicVisible = false
+  @BackendMethod({ allowed: true })
+  static async makePublicVisible(id: string) {
+    if (!remult.context.availableTaskIds.includes(id))
+      throw Error('לא ניתן לבצע זאת למשימה זו')
+    const t = await repo(Task).findId(id)
+    t.publicVisible = true
+    await t.save()
+    await t.insertStatusChange('הפך לחשוף ציבורית')
+  }
+  @BackendMethod({ allowed: true })
+  static async getPublicTaskInfo(id: string) {
+    const r = await repo(Task).findFirst({ id, publicVisible: true })
+    if (!r) throw Error('לא נמצאה משימה זו')
+    return r._.toApiJson()
+  }
 
   @BackendMethod({ allowed: Roles.admin })
   static async markTasksForRelevanceCheck(ids: string[]) {

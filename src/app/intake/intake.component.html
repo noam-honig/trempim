@@ -1,24 +1,34 @@
-<div
-  style="
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 16px;
-  "
->
-  <div style="align-self: center">
-    <img [src]="getLogo()" height="150px" />
-  </div>
-  <strong style="align-self: center">{{ title }}</strong>
-</div>
-<h2>בקשת משימה</h2>
 <ng-container *ngIf="!result">
+  <div
+    style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 16px;
+    "
+  >
+    <div style="align-self: center">
+      <img [src]="getLogo()" height="150px" />
+    </div>
+    <strong style="align-self: center">{{ title }}</strong>
+    <h2>בקשת משימה</h2>
+  </div>
   <data-area [settings]="area"></data-area>
   <strong style="color: red" *ngIf="getAddressInstructions()">{{
     getAddressInstructions()
   }}</strong>
   <data-area [settings]="area2"></data-area>
 
-  <button mat-raised-button (click)="send()">שלח בקשה</button>
+  <button mat-raised-button color="primary" (click)="send()">שלח בקשה</button>
 </ng-container>
-<h2 *ngIf="result">{{ result }}</h2>
+<div *ngIf="result" style="padding: 16px">
+  <h2>{{ result }}</h2>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="createAndCopyWhatsappLink()"
+  >
+    לחצו כאן להעתקת הודעה עם כל הפרטים לווטסאפ
+  </button>
+  <app-event-info [e]="r" [noClose]="true"></app-event-info>
+</div>

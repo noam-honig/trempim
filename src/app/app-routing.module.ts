@@ -1,4 +1,4 @@
-import { CommonUIElementsModule } from 'common-ui-elements'
+import { AuthenticatedGuard, CommonUIElementsModule } from 'common-ui-elements'
 import { NgModule, ErrorHandler } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 import { UsersComponent } from './users/users.component'
@@ -20,6 +20,7 @@ import { VerifyRelevanceComponent } from './verify-relevance/verify-relevance.co
 import { ProblemComponent } from './problem/problem.component'
 import { OverviewComponent } from './overview/overview.component'
 import { AboutComponent } from './about/about.component'
+import { ShowPublicEventComponent } from './show-public-event/show-public-event.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -32,6 +33,12 @@ const routes: Routes = [
     path: 't/:id',
     component: OrgEventsComponent,
     data: { name: 'נסיעות' },
+  },
+
+  {
+    path: 'p/:id',
+    component: ShowPublicEventComponent,
+    data: { hide: true, noLogin: true },
   },
   {
     path: 'מבט על',

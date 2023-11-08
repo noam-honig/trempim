@@ -78,12 +78,27 @@ async function startup() {
         return
       }
 
+      /*
+[14:32, 11/8/2023] Yoni Rapoport: שאני מבין את הבעיה
+[14:32, 11/8/2023] Yoni Rapoport: אם אתה מצפה לקוקי ברקווסט הראשון ל INDEX.HTML זה בעיה בגלל ה SAMESITE
+[14:33, 11/8/2023] Noam Honig: זה לא המצב, יש לי קריאת API לקבל את הUSER הנוכי
+[14:34, 11/8/2023] Yoni Rapoport: אולי המידלוור רץ גם ברקווסט של הקבצים הסטטיים ועושה משהו אם הוא לא מוצא את הקוקי?
+[14:36, 11/8/2023] Noam Honig: אתה אומר בעצם שיכול להיות שהקבצים הסטטים רצים לפני, לא מוצאים את הCOOKIE ועושים SET COOKIE  - ואז זה מנקה את הCOOKIE עם הUSER?
+[14:36, 11/8/2023] Yoni Rapoport: מצד שני אם זו היתה הבעיה זה היה קורה גם באייפון...
+[14:36, 11/8/2023] Yoni Rapoport: זו השערה...
+[14:36, 11/8/2023] Noam Honig: לא מופרח
+[14:36, 11/8/2023] Yoni Rapoport: אני די בטוח שברקווסט הראשון שמגיע מהלחיצה על הלינק הקוקי לא אמור להיות בגלל הגדרת ה SAMESITE
+[14:37, 11/8/2023] Yoni Rapoport: סוג של הגנה מפני CSRF
+[14:37, 11/8/2023] Noam Honig: זה גם אומר שנוכל לשחזר את זה די בקלות
+[14:37, 11/8/2023] Yoni Rapoport: כן שווה לבדוק
+*/
+
       session({
         path: '/' + siteUrl,
 
-        // sameSite: !production ? false : 'strict', //https://securityheaders.com/
-        // httpOnly: production, //https://securityheaders.com/
-        // secure: production, //https://securityheaders.com/
+        // sameSite: !production ? false : 'strict', commented out because it prevented remembering of user on device //https://securityheaders.com/
+        // httpOnly: production,  commented out because it prevented remembering of user on device //https://securityheaders.com/
+        // secure: production, commented out because it prevented remembering of user on device //https://securityheaders.com/
         secret: production ? process.env['SESSION_SECRET'] : 'my secret1',
       })(req, res, next)
     })
@@ -162,6 +177,28 @@ async function startup() {
     }
   })
 
+  app.get('/*/p/:id', async (req, res) => {
+    try {
+      const id = req.params?.['id']
+      if (id) {
+        const t = await repo(Task).findFirst({
+          id,
+          taskStatus: { $ne: [taskStatus.completed, taskStatus.notRelevant] },
+          publicVisible: true,
+        })
+        if (t) {
+          sendIndex(res, {
+            image: t.imageId,
+            description: t.getShortDescription(),
+          })
+          return
+        }
+      }
+      sendIndex(res)
+    } catch (err: any) {
+      res.status(500).send(err.message)
+    }
+  })
   app.get('/*/t/:id', async (req, res) => {
     try {
       const id = req.params?.['id']
