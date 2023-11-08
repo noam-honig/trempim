@@ -26,13 +26,6 @@ SqlDatabase.LogToConsole = false
 const production = process.env['NODE_ENV'] === 'production'
 async function startup() {
   const app = express()
-  app.use((req, res, next) => {
-    if (req.path.startsWith('/ngim')) {
-      const target = '/lev1' + req.path.substring(5)
-      console.log('redirecting to ' + target)
-      res.redirect(target)
-    } else next()
-  })
   app.use(sslRedirect())
 
   app.use(compression())
