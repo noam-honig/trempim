@@ -227,12 +227,9 @@ https://sh.hagai.co/wrc`
       case ACTIVE_DELIVERY:
       case DELIVERY_DONE:
         break
-      case ON_HOLD:
+      default:
         if (item.isNew()) return
         break
-
-      default:
-        return
     }
     item.__disableValidation = true
     item.phone1Description = mondayItem.name
@@ -310,12 +307,6 @@ https://sh.hagai.co/wrc`
 
     if (statusOrDriverChange)
       switch (mondayStatus.index) {
-        case ON_HOLD:
-          if (item.taskStatus !== taskStatus.draft) {
-            item.taskStatus = taskStatus.draft
-            await item.insertStatusChange('הועבר להמתנה בMONDAY')
-          }
-          break
         case PACKED_READY_FOR_DELIVERY:
         case NO_PACK_READY_FOR_DELIVERY:
           let relevantStatus = item.driverId
@@ -340,8 +331,14 @@ https://sh.hagai.co/wrc`
             await item.insertStatusChange('נסיעה הושלמה בMONDAY')
           }
           break
-        default:
-          return
+        case ON_HOLD:
+          if (item.taskStatus !== taskStatus.draft) {
+            item.taskStatus = taskStatus.draft
+            await item.insertStatusChange(
+              'הועבר בMONDAY לסטטוס ' + mondayStatus.text
+            )
+          }
+          break
       }
     if (item.taskStatus === taskStatus.active) item.driverId = ''
     await item.save()
