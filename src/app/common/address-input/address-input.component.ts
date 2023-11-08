@@ -54,7 +54,7 @@ export class AddressInputComponent
     }
   }
   onBlur() {
-    this.selectIfNotSelected()
+    // this.selectIfNotSelected()
   }
   inputSinceSelected = false
 
