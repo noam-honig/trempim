@@ -71,12 +71,14 @@ ${
   toAddressName?: string
   addressInstructions?: string
   driverCanMarkAsNonRelevant = true
+
   get canSeeUrgency() {
     return true
   }
   onlyCities = false
   syncWithMonday = false
   showPastEvents = true
+  allowShareLink = false
 }
 
 export class BikeIlSite extends Site {
@@ -106,6 +108,7 @@ export class Hahatul extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
   override registerVolunteerLink =
     'https://wa.me/972545276812?text=' +
     encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: ')
+  override allowShareLink: boolean = true
 }
 export class Civil extends Site {
   override showContactToAnyDriver = true

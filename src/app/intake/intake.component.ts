@@ -88,6 +88,9 @@ export class IntakeComponent implements OnInit {
     this.ui.report('קישור לטופס הוספה', '')
     this.documentTitle.setTitle(getTitle() + ' בקשה')
   }
+  allowShare() {
+    return getSite().allowShareLink
+  }
   async createAndCopyWhatsappLink() {
     await Task.makePublicVisible(this.r.id)
     copy(

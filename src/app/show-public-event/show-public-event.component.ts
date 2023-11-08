@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { remult } from 'remult'
+import { remult, repo } from 'remult'
 import { Task } from '../events/tasks'
 
 @Component({
@@ -17,7 +17,7 @@ export class ShowPublicEventComponent implements OnInit {
       if (remult.authenticated()) {
         this.router.navigate(['/t', tripId])
       } else {
-        const json = await Task.getPublicTaskInfo(tripId)
+        this.r = repo(Task).fromJson(await Task.getPublicTaskInfo(tripId))
       }
     })
   }

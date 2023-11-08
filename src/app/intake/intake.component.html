@@ -27,6 +27,7 @@
     mat-raised-button
     color="primary"
     (click)="createAndCopyWhatsappLink()"
+    *ngIf="allowShare()"
   >
     לחצו כאן להעתקת הודעה עם כל הפרטים לווטסאפ
   </button>

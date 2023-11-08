@@ -72,9 +72,9 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         return true
       if (getSite().showContactToAnyDriver) return true
       if (t!.driverId === remult.user.id) return true
-      if (remult.context.availableTaskIds?.includes(t?.id!)) return true
-      if (t?.publicVisible) return true
     }
+    if (remult.context.availableTaskIds?.includes(t?.id!)) return true
+    if (t?.publicVisible) return true
     if (t!.isNew()) return true
     return false
   },
@@ -510,6 +510,7 @@ ${this.getLink()}`
   static async makePublicVisible(id: string) {
     if (!remult.context.availableTaskIds.includes(id))
       throw Error('לא ניתן לבצע זאת למשימה זו')
+    if (!getSite().allowShareLink) throw Error('לא ניתן לבצע זאת')
     const t = await repo(Task).findId(id)
     t.publicVisible = true
     await t.save()
@@ -517,6 +518,7 @@ ${this.getLink()}`
   }
   @BackendMethod({ allowed: true })
   static async getPublicTaskInfo(id: string) {
+    if (!getSite().allowShareLink) throw Error('פעולה לא מורשת')
     const r = await repo(Task).findFirst({ id, publicVisible: true })
     if (!r) throw Error('לא נמצאה משימה זו')
     return r._.toApiJson()
