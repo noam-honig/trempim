@@ -1,7 +1,7 @@
 import { remultExpress } from 'remult/remult-express'
 import { User } from '../app/users/user'
 import { SignInController } from '../app/users/SignInController'
-import { initRequestUser } from './server-session'
+import { Session, initRequestUser } from './server-session'
 import { Task } from '../app/events/tasks'
 import { TaskImage } from 'src/app/events/TaskImage'
 import { TaskStatusChanges } from 'src/app/events/TaskStatusChanges'
@@ -55,6 +55,7 @@ const entities = [
   Locks,
   TaskImage,
   ChangeLog,
+  Session,
 ]
 
 const postgres = getPostgresSchemaManager({

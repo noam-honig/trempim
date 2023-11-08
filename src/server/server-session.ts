@@ -1,4 +1,4 @@
-import { UserInfo, remult, repo } from 'remult'
+import { Entity, Field, Fields, UserInfo, remult, repo } from 'remult'
 import type { Request } from 'express'
 import type from 'cookie-session' //needed for build - do not remove
 import { User } from '../app/users/user'
@@ -19,8 +19,12 @@ declare module 'remult' {
 export async function initRequestUser(req: Request) {
   remult.context.session = req.session!
   remult.context.sessionOptions = req.sessionOptions
-  remult.context.sessionId =
-    req.session!['sessionID'] || (req.session!['sessionID'] = createId())
+  if (!req.session!['sessionID']) {
+    req.session!['sessionID'] = (
+      await repo(Session).insert({ headers: req.headers })
+    ).id
+  }
+  remult.context.sessionId = req.session!['sessionID']
 
   const sessionUser = req.session!['user']
   if (!sessionUser || !sessionUser.id) return
@@ -73,4 +77,14 @@ export function setSessionUserBasedOnUserRow(user: User, remember?: boolean) {
     },
     remember
   )
+}
+
+@Entity('session', { allowApiCrud: false })
+export class Session {
+  @Fields.cuid()
+  id = ''
+  @Fields.createdAt()
+  createdAt = new Date()
+  @Fields.json()
+  headers: any
 }
