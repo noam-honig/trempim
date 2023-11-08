@@ -110,6 +110,9 @@ export class Hahatul extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
     encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: ')
   override allowShareLink: boolean = true
 }
+export class DShinua extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
+  override allowShareLink: boolean = true
+}
 export class Civil extends Site {
   override showContactToAnyDriver = true
   override showValidUntil = true
@@ -233,6 +236,8 @@ export function initSite(site?: string) {
       remult.context.site = new Hahatul(site)
       break
     case 'dshinua':
+      remult.context.site = new DShinua(site)
+      break
     case 'ngim':
     case 'mgln':
     case 'teva':

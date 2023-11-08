@@ -521,6 +521,7 @@ ${this.getLink()}`
     if (!getSite().allowShareLink) throw Error('פעולה לא מורשת')
     const r = await repo(Task).findFirst({ id, publicVisible: true })
     if (!r) throw Error('לא נמצאה משימה זו')
+    await r.insertStatusChange('צפייה ציבורית')
     return r._.toApiJson()
   }
 
