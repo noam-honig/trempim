@@ -35,7 +35,9 @@ export function setSessionUser(user: UserInfo, remember?: boolean): UserInfo {
   const current = remult.context.session['user']
   if (JSON.stringify(user) != JSON.stringify(current))
     remult.context.session['user'] = user
-  if (remember) remult.context.sessionOptions.maxAge = 365 * 24 * 60 * 60 * 1000 //remember for a year
+  if (remember) {
+    remult.context.sessionOptions.maxAge = 365 * 24 * 60 * 60 * 1000 //remember for a year
+  }
   remult.user = user
   return user
 }

@@ -140,7 +140,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       if (f.value === null) f.value = f.originalValue
     }
     for (const f of [task.$.addressApiResult, task.$.toAddressApiResult]) {
-      if (f.valueChanged()) await updateGeocodeResult(f.value)
+      if (f.value && !f.value.district) await updateGeocodeResult(f.value)
       task.distance = parseFloat(
         GetDistanceBetween(
           getLocation(task.addressApiResult),
