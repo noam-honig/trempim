@@ -229,6 +229,7 @@ export function initSite(site?: string) {
       remult.context.site = new BikeIlSite(site)
       break
     case 'hahatul':
+    case 'test1':
       remult.context.site = new Hahatul(site)
       break
     case 'dshinua':
@@ -251,7 +252,6 @@ export function initSite(site?: string) {
       remult.context.site = new Yedidim(site)
       break
     case 'wrc':
-    case 'test1':
       remult.context.site = new WarRoomCars(site)
       break
 
