@@ -805,8 +805,7 @@ ${this.getLink()}`
         icon: 'content_copy',
         visible: (x) => x.taskStatus === taskStatus.active,
         click: (e) => {
-          copy(e.getShortDescription() + '\n' + e.getLink())
-          ui.info('הקישור הועתק ללוח, ניתן לשלוח בקבוצה')
+          e.copyWhatsappMessage(ui)
         },
       },
       {
@@ -1030,6 +1029,10 @@ ${e.getShortDescription()}
         },
       },
     ]
+  }
+  copyWhatsappMessage(ui: UITools) {
+    copy(this.getShortDescription() + '\n' + this.getLink())
+    ui.info('הקישור הועתק ללוח, ניתן לשלוח בקבוצה')
   }
   getLink(): string {
     return remult.context.origin + '/t/' + this.id

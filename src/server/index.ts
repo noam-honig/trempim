@@ -223,9 +223,10 @@ async function startup() {
       .replace(/!!!ORG!!!/g, getBackendSite()!.urlPrefix)
       .replace(/\/assets\/favicon.png/g, url + '/assets/favicon.png')
       .replace(/\/assets\/logo.png/g, url + '/assets/logo.png')
-    if (args?.image) {
-      result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
-    }
+    if (args?.description)
+      if (args?.image) {
+        result = result.replace(/\/assets\/logo.png/g, '/images/' + args.image)
+      } else result = result.replace(/\/assets\/logo.png/g, '')
     let info = args?.description || getSite().defaultLinkDescription || title
     info = info.replace(/"/g, '&quot;')
     result = result.replace(/!!!INFO!!!/g, info)
