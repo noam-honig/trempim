@@ -562,7 +562,7 @@ export class EventCardComponent implements OnInit {
       },
     },
     {
-      caption: 'מרחק ממני',
+      caption: 'קרוב אלי',
       selected: async () => {
         try {
           this.volunteerLocation = { location: await getCurrentLocation() }
@@ -584,7 +584,7 @@ export class EventCardComponent implements OnInit {
       },
     },
     {
-      caption: 'מרחק מכתובת',
+      caption: 'קרוב לכתובת',
       selected: async () => {
         const t = repo(Task).create()
         this.tools.areaDialog({
@@ -605,7 +605,10 @@ export class EventCardComponent implements OnInit {
                 this.sortRegions()
                 this.tools.report(
                   'מיון לפי מרחק מכתובת',
-                  JSON.stringify(t.addressApiResult)
+                  JSON.stringify({
+                    address: t.address,
+                    apiResult: t.addressApiResult,
+                  })
                 )
               },
             })
@@ -620,7 +623,7 @@ export class EventCardComponent implements OnInit {
       },
     },
     {
-      caption: 'מרחק יעד מכתובת',
+      caption: 'קרוב לכתובת יעד',
       selected: async () => {
         const t = repo(Task).create()
         this.tools.areaDialog({
@@ -642,7 +645,10 @@ export class EventCardComponent implements OnInit {
                 this.sortRegions()
                 this.tools.report(
                   'מיון לפי מרחק יעד מכתובת',
-                  JSON.stringify(t.addressApiResult)
+                  JSON.stringify({
+                    address: t.address,
+                    apiResult: t.addressApiResult,
+                  })
                 )
               },
             })
