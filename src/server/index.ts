@@ -81,9 +81,9 @@ async function startup() {
       session({
         path: '/' + siteUrl,
 
-        sameSite: !production ? false : 'strict', //https://securityheaders.com/
-        httpOnly: production, //https://securityheaders.com/
-        secure: production, //https://securityheaders.com/
+        // sameSite: !production ? false : 'strict', //https://securityheaders.com/
+        // httpOnly: production, //https://securityheaders.com/
+        // secure: production, //https://securityheaders.com/
         secret: production ? process.env['SESSION_SECRET'] : 'my secret1',
       })(req, res, next)
     })
