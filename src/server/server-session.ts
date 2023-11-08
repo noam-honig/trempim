@@ -13,6 +13,7 @@ declare module 'remult' {
     sessionId: string
     origin: string
     site: Site
+    availableTaskIds: string[]
   }
 }
 
@@ -26,6 +27,8 @@ export async function initRequestUser(req: Request) {
   }
   remult.context.sessionId = req.session!['sessionID']
 
+  remult.context.availableTaskIds =
+    req.session!['availableTaskIds'] || (req.session!['availableTaskIds'] = [])
   const sessionUser = req.session!['user']
   if (!sessionUser || !sessionUser.id) return
   const user = await repo(User).findFirst({

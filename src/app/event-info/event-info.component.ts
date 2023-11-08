@@ -132,6 +132,9 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     await this.e.completedStatusClickedByMistake()
   }
 
+  isAuthenticated() {
+    return remult.authenticated()
+  }
   isDispatcher() {
     return remult.isAllowed(Roles.dispatcher)
   }
@@ -147,15 +150,19 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
   ngOnInit(): void {
     this.dialog.report('צפייה', this.context, this.e.id)
-    repo(Task)
-      .findFirst({ id: this.e.id })
-      .then((x) => {
-        if (!x) {
-          this.dialog.error('הנסיעה כנראה כבר נלקחה על ידי נהג אחר', this.e.id)
-          this.e.taskStatus = taskStatus.assigned
-          this.closeDialog?.()
-        }
-      })
+    if (this.isAuthenticated())
+      repo(Task)
+        .findFirst({ id: this.e.id })
+        .then((x) => {
+          if (!x) {
+            this.dialog.error(
+              'הנסיעה כנראה כבר נלקחה על ידי נהג אחר',
+              this.e.id
+            )
+            this.e.taskStatus = taskStatus.assigned
+            this.closeDialog?.()
+          }
+        })
     if (this.e.driverId && this.isDispatcher())
       this.e._.relations.driver.findOne().then((x) => (this.driver = x))
   }
