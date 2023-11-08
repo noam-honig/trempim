@@ -112,8 +112,8 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       }
       remult.user = { id: user.id }
       task.createUserId = remult.user.id
-      remult.context.availableTaskIds.push(task.id!)
     }
+    if (task.isNew()) remult.context.availableTaskIds.push(task.id!)
     if (
       !remult.isAllowed(Roles.dispatcher) &&
       task.isNew() &&
