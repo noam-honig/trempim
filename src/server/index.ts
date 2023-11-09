@@ -189,7 +189,7 @@ async function startup() {
         if (t) {
           sendIndex(res, {
             image: t.imageId,
-            description: t.getShortDescription(),
+            description: ' ', // don't want anything
             title: t.category,
           })
           return

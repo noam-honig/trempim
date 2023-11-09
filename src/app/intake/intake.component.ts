@@ -95,7 +95,7 @@ export class IntakeComponent implements OnInit {
     await Task.makePublicVisible(this.r.id)
     copy(
       this.r.getShortDescription() +
-        '\n' +
+        '\nלחצו על הקישור לפרטים נוספים \n' +
         remult.context.origin +
         '/p/' +
         this.r.id
