@@ -326,7 +326,7 @@ export const backendSites = [
   { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמל האזרחי' },
   { urlPrefix: 'teva', dbSchema: 'teva', title: 'תופעת טבע' },
 ]
-const groups: string[][] = [['test1', 'test2']]
+const groups: string[][] = [] // [['test1', 'test2']]
 export function getBackendSite(urlPrefix?: string) {
   if (!urlPrefix) urlPrefix = getSite().urlPrefix
   const result = backendSites.find((x) => x.urlPrefix === urlPrefix)
