@@ -292,11 +292,12 @@ export const backendSites = [
   },
   {
     urlPrefix: 'hahatul',
-    dbSchema: 'hahatul',
+    dbSchema: 'shinuim',
     title: 'עמותת החתול – בוגרי 669',
   },
-  { urlPrefix: 'lev1', dbSchema: 'lev1', title: 'לב אחד שינועים' },
-  { urlPrefix: 'bikeil', dbSchema: 'bikeil', title: 'חמל אופנועים' },
+  { urlPrefix: 'lev1', dbSchema: 'shinuim', title: 'לב אחד שינועים' },
+  { urlPrefix: 'bikeil', dbSchema: 'shinuim', title: 'חמל אופנועים' },
+  { urlPrefix: 'ngim', dbSchema: 'shinuim', title: 'חמל נהגים' },
   { urlPrefix: 'vdri', dbSchema: 'vdri', title: 'חמ"ל נהגים מתנדבים ארצי' },
   { urlPrefix: 'y', dbSchema: 'ezion', org: 'yedidim', title: 'ידידים' },
   {
@@ -307,11 +308,10 @@ export const backendSites = [
     ignore: true,
   },
   { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
-  { urlPrefix: 'ngim', dbSchema: 'ngim', title: 'חמל נהגים' },
   { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
   {
     urlPrefix: 'test1',
-    dbSchema: 'dshinua',
+    dbSchema: 'shinuim',
     title: 'פיתוח',
     ignore: true,
   },
@@ -338,10 +338,24 @@ export function getSiteFromPath(req: { path: string }) {
 }
 
 /*
-insert into dshinua.users
+insert into shinuim.users
 ( id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories)  
-select id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories from hahatul.users
-insert into dshinua.changelog select * from hahatul.changelog
-insert into dshinua.taskstatuschanges select * from hahatul.taskstatuschanges
-insert into dshinua.images select * from hahatul.images
+select id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories 
+from bikeil.users;
+
+insert into shinuim.tasks (id, org, title, taskStatus, statusChangeDate, description, urgency, category, eventDate, startTime, relevantHours, validUntil, addressApiResult, address, toAddressApiResult, toAddress, distance, requesterPhone1, requesterPhone1Description, phone1, phone1Description, phone2, phone2Description, toPhone1, tpPhone1Description, toPhone2, tpPhone2Description, privateDriverNotes, createdAt, createUserId, driverId, statusNotes, externalId, internalComments, imageId, returnMondayStatus, publicVisible, responsibleDispatcherId)
+select id, org, title, taskStatus, statusChangeDate, description, urgency, category, eventDate, startTime, relevantHours, validUntil, addressApiResult, address, toAddressApiResult, toAddress, distance, requesterPhone1, requesterPhone1Description, phone1, phone1Description, phone2, phone2Description, toPhone1, tpPhone1Description, toPhone2, tpPhone2Description, privateDriverNotes, createdAt, createUserId, driverId, statusNotes, externalId, internalComments, imageId, returnMondayStatus, publicVisible, responsibleDispatcherId
+from bikeil.tasks;
+
+insert into shinuim.changelog (id, org, relatedId, relatedName, entity, appUrl, apiUrl, changeDate, userId, userName, changes, changedFields) 
+select id, org, relatedId, relatedName, entity, appUrl, apiUrl, changeDate, userId, userName, changes, changedFields
+from bikeil.changelog;
+
+insert into shinuim.taskstatuschanges (id, org, taskId, what, eventStatus, notes, driverId, createUserId, session, createdAt)
+select id, org, taskId, what, eventStatus, notes, driverId, createUserId, session, createdAt 
+from bikeil.taskstatuschanges;
+insert into shinuim.images select * from bikeil.images;
+insert into shinuim.session (id,createdat,headers,ip) 
+select id,createdat,headers,ip from bikeil.session;
+
 */
