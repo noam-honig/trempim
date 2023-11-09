@@ -18,7 +18,7 @@ import {
 } from '../../server/server-session'
 import { sendSms } from '../../server/send-sms'
 import { OnlyAllowIsraeliPhones, PhoneField } from '../events/phone'
-import { getTitle } from './sites'
+import { getSite, getTitle } from './sites'
 import { TaskStatusChanges } from '../events/TaskStatusChanges'
 
 const otp = '123456'
@@ -55,12 +55,11 @@ export class SignInController extends ControllerBase {
    * 2. When a user that has no password signs in, that password that they've signed in with is set as the users password
    */
   async signIn() {
-    const userRepo = remult.repo(User)
-    let u = await userRepo.findFirst({ phone: this.phone, deleted: false })
+    let u = await this.findUserByPhone()
     if (!u) {
-      if ((await userRepo.count()) === 0) {
+      if ((await repo(User).count()) === 0) {
         //first ever user is the admin
-        u = await userRepo.insert({
+        u = await repo(User).insert({
           name: '',
           phone: this.phone,
           admin: true,
@@ -83,6 +82,17 @@ export class SignInController extends ControllerBase {
         this.askForName = true
     }
   }
+  private async findUserByPhone() {
+    const result = await repo(User).find({
+      where: { phone: this.phone, deleted: false },
+    })
+    if (result.length == 0) return undefined
+    if (result.length == 1) return result[0]
+    let orgUser = result.find((x) => x.org === getSite().org)
+    if (orgUser) return orgUser
+    return result[0]
+  }
+
   @BackendMethod({ allowed: true })
   async signInWithOtp(): Promise<UserInfo | undefined> {
     const otp = getOtp(this.phone)
@@ -91,10 +101,7 @@ export class SignInController extends ControllerBase {
       throw Error('פג תוקף הקוד, נסה שנית')
     }
     if (otp != this.otp?.trim()) throw Error('קוד לא תקין')
-    let user = await repo(User).findFirst({
-      phone: this.phone,
-      deleted: false,
-    })
+    let user = await this.findUserByPhone()
 
     if (!user) {
       if (await setUserToSelfSignInIfAllowed()) {
