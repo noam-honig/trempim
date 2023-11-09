@@ -26,6 +26,8 @@ export class VersionInfo extends IdEntity {
 }
 
 export async function versionUpdate() {
+  const db = SqlDatabase.getDb()
+  const site = getSite()
   let version = async (ver: number, what: () => Promise<void>) => {
     let v = await remult.repo(VersionInfo).findFirst()
     if (!v) {
@@ -34,18 +36,19 @@ export async function versionUpdate() {
     }
     if (v.version <= ver - 1) {
       try {
+        console.time(`version: ` + ver + ' ' + getSite().urlPrefix)
         await what()
       } catch (err) {
         console.error(err)
         throw err
+      } finally {
+        console.timeEnd(`version: ` + ver + ' ' + getSite().urlPrefix)
       }
 
       v.version = ver
       await v.save()
     }
   }
-  const db = SqlDatabase.getDb()
-  const site = getSite()
 
   await version(1, async () => {
     await db.execute(`CREATE SEQUENCE task_seq
@@ -108,7 +111,7 @@ export async function versionUpdate() {
       await task.save()
     }
   })
-  await version(9, async () => {
+  await version(13, async () => {
     for (const entity of [User, Task, TaskStatusChanges, ChangeLog]) {
       const names = await dbNamesOf<OrgEntity>(entity as any)
 

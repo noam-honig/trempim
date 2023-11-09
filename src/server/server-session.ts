@@ -54,16 +54,18 @@ export function setSessionUserBasedOnUserRow(user: User, remember?: boolean) {
     return setSessionUser(undefined!, true)
   }
   const roles: string[] = []
-  if (user.admin) {
-    roles.push(Roles.admin)
-    roles.push(Roles.dispatcher)
-    roles.push(Roles.trainee)
-    roles.push(Roles.manageDrivers)
-  } else if (user.dispatcher) {
-    roles.push(Roles.dispatcher)
-    roles.push(Roles.trainee)
-  } else if (user.trainee) roles.push(Roles.trainee)
-  if (user.manageDrivers) roles.push(Roles.manageDrivers)
+  if (user.org === getSite().org) {
+    if (user.admin) {
+      roles.push(Roles.admin)
+      roles.push(Roles.dispatcher)
+      roles.push(Roles.trainee)
+      roles.push(Roles.manageDrivers)
+    } else if (user.dispatcher) {
+      roles.push(Roles.dispatcher)
+      roles.push(Roles.trainee)
+    } else if (user.trainee) roles.push(Roles.trainee)
+    if (user.manageDrivers) roles.push(Roles.manageDrivers)
+  }
   if (
     (getSite().urlPrefix === 'dshinua' || getSite().urlPrefix === 'test1') &&
     user.admin &&
