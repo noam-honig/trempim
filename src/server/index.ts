@@ -190,6 +190,7 @@ async function startup() {
           sendIndex(res, {
             image: t.imageId,
             description: t.getShortDescription(),
+            title: t.category,
           })
           return
         }
@@ -248,10 +249,10 @@ async function startup() {
 
   function sendIndex(
     res: Response,
-    args?: { image: string; description: string }
+    args?: { image: string; description: string; title?: string }
   ) {
     const url = remult.context.origin
-    let title = getBackendSite().title.replace(/"/g, '&quot;')
+    let title = (args?.title || getBackendSite().title).replace(/"/g, '&quot;')
     //if (title.length < 30) title += ' - אפליקציית שינועים'
     let result = fs
       .readFileSync(process.cwd() + '/dist/angular-starter-project/index.html')
