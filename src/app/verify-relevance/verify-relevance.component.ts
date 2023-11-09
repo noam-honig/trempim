@@ -4,6 +4,7 @@ import { UIToolsService } from '../common/UIToolsService'
 import { tripsGrid } from '../events/tripsGrid'
 import { UpdatesService } from '../updates/updates.component'
 import { taskStatus } from '../events/taskStatus'
+import { getSite } from '../users/sites'
 
 @Component({
   selector: 'app-verify-relevance',
@@ -23,6 +24,7 @@ export class VerifyRelevanceComponent implements OnInit {
     busy: this.busy,
     where: {
       taskStatus: taskStatus.relevanceCheck,
+      org: getSite().org,
     },
 
     orderBy: {

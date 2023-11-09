@@ -14,6 +14,7 @@ import { User } from '../users/user'
 import { CreatedAtField } from './date-utils'
 import { taskStatus } from './taskStatus'
 import { Task } from './tasks'
+import { OrgEntity } from '../users/OrgEntity'
 
 @Entity<TaskStatusChanges>('taskStatusChanges', {
   allowApiCrud: false,
@@ -22,7 +23,7 @@ import { Task } from './tasks'
     createdAt: 'desc',
   },
 })
-export class TaskStatusChanges extends IdEntity {
+export class TaskStatusChanges extends OrgEntity {
   @Fields.string()
   taskId = ''
   @Fields.string({ caption: 'פעולה' })

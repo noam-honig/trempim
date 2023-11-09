@@ -10,6 +10,7 @@ import {
   remult,
 } from 'remult'
 import { Roles } from '../../users/roles'
+import { OrgEntity } from 'src/app/users/OrgEntity'
 
 @Entity<ChangeLog>('changeLog', {
   allowApiRead: Roles.admin,
@@ -17,7 +18,7 @@ import { Roles } from '../../users/roles'
     changeDate: 'desc',
   },
 })
-export class ChangeLog extends IdEntity {
+export class ChangeLog extends OrgEntity {
   @Fields.string()
   relatedId: string = ''
   @Fields.string()

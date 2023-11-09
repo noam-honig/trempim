@@ -18,6 +18,7 @@ export class Site {
   defaultLinkDescription = `כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד`
   showContactToAnyDriver = false
   showValidUntil = false
+  visibleOrgs: string[]
   getIntroText() {
     return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
 
@@ -36,7 +37,15 @@ ${
 }
 צאו לעשות חסדים!`
   }
-  constructor(public urlPrefix: string) {}
+  constructor(public urlPrefix: string) {
+    this.visibleOrgs = [urlPrefix]
+    for (const g of groups) {
+      if (g.includes(urlPrefix)) {
+        this.visibleOrgs = g
+        break
+      }
+    }
+  }
   onlyAskForSecondAddress = false
   countUpdates = true
   useFillerInfo = false
@@ -79,6 +88,9 @@ ${
   syncWithMonday = false
   showPastEvents = true
   allowShareLink = false
+  get org() {
+    return getBackendSite(this.urlPrefix)?.org || this.urlPrefix
+  }
 }
 
 export class BikeIlSite extends Site {
@@ -233,6 +245,7 @@ export function initSite(site?: string) {
       break
     case 'hahatul':
     case 'test1':
+    case 'test2':
       remult.context.site = new Hahatul(site)
       break
     case 'dshinua':
@@ -285,20 +298,38 @@ export const backendSites = [
   { urlPrefix: 'lev1', dbSchema: 'lev1', title: 'לב אחד שינועים' },
   { urlPrefix: 'bikeil', dbSchema: 'bikeil', title: 'חמל אופנועים' },
   { urlPrefix: 'vdri', dbSchema: 'vdri', title: 'חמ"ל נהגים מתנדבים ארצי' },
-  { urlPrefix: 'y', dbSchema: 'ezion', title: 'ידידים' },
-  { urlPrefix: 'ezion', dbSchema: 'ezion', title: 'ידידים', ignore: true },
+  { urlPrefix: 'y', dbSchema: 'ezion', org: 'yedidim', title: 'ידידים' },
+  {
+    urlPrefix: 'ezion',
+    dbSchema: 'ezion',
+    org: 'yedidim',
+    title: 'ידידים',
+    ignore: true,
+  },
   { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
   { urlPrefix: 'ngim', dbSchema: 'ngim', title: 'חמל נהגים' },
   { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
-  { urlPrefix: 'test1', dbSchema: 'ezion', title: 'פיתוח', ignore: true },
+  {
+    urlPrefix: 'test1',
+    dbSchema: 'dshinua',
+    title: 'פיתוח',
+    ignore: true,
+  },
+  {
+    urlPrefix: 'test2',
+    dbSchema: 'dshinua',
+    title: 'test2',
+    ignore: true,
+  },
   { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
   { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
   { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמל האזרחי' },
   { urlPrefix: 'teva', dbSchema: 'teva', title: 'תופעת טבע' },
 ]
-export function getBackendSite(schema?: string) {
-  if (!schema) schema = getSite().urlPrefix
-  const result = backendSites.find((x) => x.urlPrefix === schema)
+const groups: string[][] = [['test1', 'test2', 'dshinua']]
+export function getBackendSite(urlPrefix?: string) {
+  if (!urlPrefix) urlPrefix = getSite().urlPrefix
+  const result = backendSites.find((x) => x.urlPrefix === urlPrefix)
   return result!
 }
 

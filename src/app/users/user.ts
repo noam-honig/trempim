@@ -23,10 +23,12 @@ import { sendSms } from '../../server/send-sms'
 import { getSite, getTitle } from './sites'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
 import { recordChanges } from '../common/change-log/change-log'
+import { OrgEntity, readonlyForNonAdminOfSameOrg } from './OrgEntity'
 
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,
   allowApiUpdate: (user) => {
+    if (user?.org != getSite().org) return false
     if (!user) return false
     if (user.canBeUpdatedByDriverManager()) return true
     return false
@@ -49,7 +51,7 @@ import { recordChanges } from '../common/change-log/change-log'
     }
   },
 })
-export class User extends IdEntity {
+export class User extends OrgEntity {
   canBeUpdatedByDriverManager() {
     if (!remult.user) return false
     if (this.id === remult.user.id) return true
@@ -62,6 +64,7 @@ export class User extends IdEntity {
       !this.trainee
     )
   }
+
   @DataControl<User>({
     width: '140px',
     readonly: (e) => !e?._.apiUpdateAllowed,
@@ -97,7 +100,7 @@ export class User extends IdEntity {
   createUserId = remult.user?.id || 'no user'
   @DataControl({
     width: '130px',
-    readonly: () => !remult.isAllowed(Roles.admin),
+    readonly: readonlyForNonAdminOfSameOrg,
   })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
@@ -106,7 +109,7 @@ export class User extends IdEntity {
   admin = false
   @DataControl({
     width: '130px',
-    readonly: () => !remult.isAllowed(Roles.admin),
+    readonly: readonlyForNonAdminOfSameOrg,
   })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
@@ -115,7 +118,7 @@ export class User extends IdEntity {
   dispatcher = false
   @DataControl({
     width: '130px',
-    readonly: () => !remult.isAllowed(Roles.admin),
+    readonly: readonlyForNonAdminOfSameOrg,
   })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,
@@ -124,7 +127,7 @@ export class User extends IdEntity {
   trainee = false
   @DataControl({
     width: '130px',
-    readonly: () => !remult.isAllowed(Roles.admin),
+    readonly: readonlyForNonAdminOfSameOrg,
   })
   @Fields.boolean({
     allowApiUpdate: Roles.admin,

@@ -10,7 +10,7 @@ import { UIToolsService } from '../common/UIToolsService'
 import { openDialog } from '../common-ui-elements'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { Roles } from '../users/roles'
-import { getTitle } from '../users/sites'
+import { getSite, getTitle } from '../users/sites'
 import { Title } from '@angular/platform-browser'
 import { User } from '../users/user'
 
@@ -30,6 +30,7 @@ export class DraftOverviewComponent implements OnInit {
       .find({
         where: {
           taskStatus: taskStatus.draft,
+          org: getSite().org,
         },
         include: {
           createUser: true,
