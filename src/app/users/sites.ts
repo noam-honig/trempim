@@ -336,3 +336,12 @@ export function getBackendSite(urlPrefix?: string) {
 export function getSiteFromPath(req: { path: string }) {
   return req.path.split('/')[1]
 }
+
+/*
+insert into dshinua.users
+( id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories)  
+select id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories from hahatul.users
+insert into dshinua.changelog select * from hahatul.changelog
+insert into dshinua.taskstatuschanges select * from hahatul.taskstatuschanges
+insert into dshinua.images select * from hahatul.images
+*/
