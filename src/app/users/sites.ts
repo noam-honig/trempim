@@ -38,9 +38,9 @@ ${
 צאו לעשות חסדים!`
   }
   constructor(public urlPrefix: string) {
-    this.visibleOrgs = [urlPrefix]
+    this.visibleOrgs = [this.org]
     for (const g of groups) {
-      if (g.includes(urlPrefix)) {
+      if (g.includes(this.org)) {
         this.visibleOrgs = g
         break
       }

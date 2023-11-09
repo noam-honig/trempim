@@ -12,13 +12,13 @@ export class OrgEntity extends IdEntity {
     valueList: () =>
       getSite().visibleOrgs.map((x) => ({
         id: x,
-        caption: getBackendSite(x).title,
+        caption: getBackendSite(x)?.title,
       })),
   })
   @Fields.string<OrgEntity>({
     allowApiUpdate: false,
     caption: 'ארגון',
-    displayValue: (x) => getBackendSite(x.org).title,
+    displayValue: (x) => getBackendSite(x.org)?.title,
   })
   org = getSite().org
 }

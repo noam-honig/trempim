@@ -47,7 +47,6 @@ import fetch from 'node-fetch'
 
 config() //loads the configuration from the .env file
 
-//SqlDatabase.LogToConsole = true
 const entities = [
   User,
   Task,
