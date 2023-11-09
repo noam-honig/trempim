@@ -155,7 +155,7 @@ export class Civil extends Site {
     'אחר',
   ]
   override showPastEvents = false
-  override defaultLinkDescription = 'החמל האזרחי, מערכת ניהול טרמפים'
+  override defaultLinkDescription = 'מתנדבי טרמפים, מערכת ניהול טרמפים'
 }
 export class WarRoomCars extends Site {
   override showCopyLink? = true
@@ -323,7 +323,7 @@ export const backendSites = [
   },
   { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
   { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
-  { urlPrefix: 'civil', dbSchema: 'civil', title: 'החמל האזרחי' },
+  { urlPrefix: 'civil', dbSchema: 'civil', title: 'מתנדבי טרמפים' },
   { urlPrefix: 'teva', dbSchema: 'teva', title: 'תופעת טבע' },
 ]
 const groups: string[][] = [['test1', 'test2']]
