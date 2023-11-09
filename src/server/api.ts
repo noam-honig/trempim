@@ -18,6 +18,7 @@ import {
 import { VersionInfo } from './version'
 import { Locks } from '../app/events/locks'
 import {
+  Site,
   getBackendSite,
   getSite,
   getSiteFromPath,
@@ -46,7 +47,6 @@ import fetch from 'node-fetch'
 
 config() //loads the configuration from the .env file
 
-//SqlDatabase.LogToConsole = true
 const entities = [
   User,
   Task,
@@ -104,8 +104,9 @@ export const api = remultExpress({
 
   initApi: async () => {
     try {
+      remult.context.site = new Site('test1')
       remult.dataProvider = await postgres.getConnectionForSchema(
-        getBackendSite('test1')!.dbSchema
+        getBackendSite(remult.context.site.urlPrefix)!.dbSchema
       )
 
       remult.subscriptionServer = new SseSubscriptionServer()

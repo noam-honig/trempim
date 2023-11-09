@@ -58,6 +58,7 @@ export class UsersComponent implements OnInit {
     columnSettings: (users) => [
       users.name,
       users.phone,
+      users.org,
       users.allowedCategories,
       users.dispatcher,
       users.trainee,

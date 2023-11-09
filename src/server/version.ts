@@ -13,6 +13,9 @@ import { TaskStatusChanges } from 'src/app/events/TaskStatusChanges'
 import { taskStatus } from 'src/app/events/taskStatus'
 import { phoneConfig } from '../app/events/phone'
 import { getSite } from '../app/users/sites'
+import { OrgEntity } from 'src/app/users/OrgEntity'
+import { User } from '../app/users/user'
+import { ChangeLog } from '../app/common/change-log/change-log'
 
 @Entity(undefined!, {
   dbName: 'versionInfo',
@@ -42,6 +45,7 @@ export async function versionUpdate() {
     }
   }
   const db = SqlDatabase.getDb()
+  const site = getSite()
 
   await version(1, async () => {
     await db.execute(`CREATE SEQUENCE task_seq
@@ -88,8 +92,6 @@ export async function versionUpdate() {
     }
   })
   await version(8, async () => {
-    const site = getSite()
-
     for await (const task of await repo(Task).query()) {
       task.__disableValidation = true
       switch (task.category) {
@@ -104,6 +106,18 @@ export async function versionUpdate() {
           break
       }
       await task.save()
+    }
+  })
+  await version(9, async () => {
+    for (const entity of [User, Task, TaskStatusChanges, ChangeLog]) {
+      const names = await dbNamesOf<OrgEntity>(entity as any)
+
+      const c = db.createCommand()
+      await c.execute(
+        `update ${await names.$entityName}  set ${
+          names.org
+        }=${c.addParameterAndReturnSqlToken(site.org)}`
+      )
     }
   })
 }

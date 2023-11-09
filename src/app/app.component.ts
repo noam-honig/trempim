@@ -61,8 +61,11 @@ export class AppComponent implements OnInit, OnDestroy {
   async updateStats() {
     this.busy.donotWait(async () => {
       ;[this.drafts, this.relevanceCheck, this.problems] = await Promise.all([
-        repo(Task).count({ taskStatus: taskStatus.draft }),
-        repo(Task).count({ taskStatus: taskStatus.relevanceCheck }),
+        repo(Task).count({ taskStatus: taskStatus.draft, org: getSite().org }),
+        repo(Task).count({
+          taskStatus: taskStatus.relevanceCheck,
+          org: getSite().org,
+        }),
         repo(Task).count({ taskStatus: taskStatus.otherProblem }),
         this.updates.updateWaitingUpdates(),
       ])

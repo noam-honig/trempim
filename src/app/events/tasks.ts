@@ -33,6 +33,7 @@ import {
 } from '../common/address-input/google-api-helpers'
 import { Roles } from '../users/roles'
 import { getSite, getTitle } from '../users/sites'
+import { OrgEntity } from '../users/OrgEntity'
 import { User } from '../users/user'
 import { createId } from '@paralleldrive/cuid2'
 import { TaskImage } from './TaskImage'
@@ -227,7 +228,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
     return Task.filterActiveTasks()
   },
 })
-export class Task extends IdEntity {
+export class Task extends OrgEntity {
   __disableValidation = false
   sendWhatsappInvite() {
     sendWhatsappToPhone(
