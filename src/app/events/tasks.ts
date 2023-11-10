@@ -7,6 +7,7 @@ import {
   EntityFilter,
   Field,
   FieldOptions,
+  FieldRef,
   Fields,
   IdEntity,
   Relations,
@@ -392,6 +393,12 @@ ${this.getLink()}`
   @Fields.string({
     caption: 'שם ממלא הבקשה',
     ...onlyDriverRules,
+    validate: requiredOnChange(
+      () =>
+        getSite().requireContactName &&
+        getSite().useFillerInfo &&
+        !remult.isAllowed(Roles.dispatcher)
+    ),
   })
   requesterPhone1Description = !remult.isAllowed(Roles.dispatcher)
     ? remult.user?.name
@@ -400,15 +407,13 @@ ${this.getLink()}`
   @PhoneField<Task>({
     caption: 'טלפון מוצא *',
     ...onlyDriverRules,
-    validate: (entity, ref) => {
-      if (entity.__disableValidation) return
-      if (getSite().onlyAskForSecondAddress) return
-      if (entity.isNew() || ref.valueChanged()) Validators.required(entity, ref)
-    },
+    validate: requiredOnChange(() => true),
   })
   phone1 = ''
   @Fields.string({
     caption: 'איש קשר מוצא',
+    validate: requiredOnChange(() => getSite().requireContactName),
+
     ...onlyDriverRules,
   })
   phone1Description = ''
@@ -431,7 +436,7 @@ ${this.getLink()}`
 
       if (
         (entity.isNew() || ref.valueChanged()) &&
-        getSite().onlyAskForSecondAddress
+        (getSite().onlyAskForSecondAddress || getSite().requireContactName)
       )
         Validators.required(entity, ref)
     },
@@ -440,6 +445,7 @@ ${this.getLink()}`
   toPhone1 = ''
   @Fields.string({
     caption: 'איש קשר ליעד',
+    validate: requiredOnChange(() => getSite().requireContactName),
     ...onlyDriverRules,
   })
   tpPhone1Description = ''
@@ -1075,6 +1081,15 @@ ${e.getShortDescription()}
 }
 
 export const day = 86400000
+
+function requiredOnChange(condition: () => boolean) {
+  return (entity: Task, ref: FieldRef) => {
+    if (entity.__disableValidation) return
+    if (getSite().onlyAskForSecondAddress) return
+    if (!condition()) return
+    if (entity.isNew() || ref.valueChanged()) Validators.required(entity, ref)
+  }
+}
 
 export function eventDisplayDate(
   e: Task,

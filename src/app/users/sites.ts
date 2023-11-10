@@ -45,6 +45,7 @@ export class Site {
   showContactToAnyDriver = false
   showValidUntil = false
   requireValidUntil = false
+  requireContactName = false
   getVisibleOrgs = () => [this, ...this.getOtherVisibleOrgs()]
   getOtherVisibleOrgs = () => {
     return [] as Site[]
@@ -126,6 +127,7 @@ ${
 }
 
 const bikeIl: Site = new Site('bikeil', {
+  requireContactName: true,
   getIntroTextImplementation: () => {
     return `ברוכים הבאים לאפליקציית השינועים של חמל אופנועים.
 
