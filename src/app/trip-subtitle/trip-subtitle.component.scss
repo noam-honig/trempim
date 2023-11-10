@@ -1,0 +1,81 @@
+.event-detail {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  @media (max-width: 300px) {}
+
+  .route-start-finish {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 10px;
+
+    .route-indicator-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+      .row {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #3f51b5;
+
+        &.left {
+          margin-right: 1px;
+        }
+
+        &.right {
+          margin-left: 1px;
+        }
+      }
+
+      .line {
+        position: relative;
+        top: 4px;
+        flex: 1;
+        height: 2px;
+        background-color: #3f51b5;
+      }
+
+      .arrow-container {
+        position: absolute;
+        left: 50%;
+
+        .arrow {
+          width: 8px;
+          height: 8px;
+          border-bottom: 3px solid #3f51b5;
+          border-right: 3px solid #3f51b5;
+          transform: rotate(135deg);
+        }
+
+        .distance-text {
+          position: absolute;
+          top: 18px;
+          right: -11px;
+          font-size: 12px;
+          text-wrap: nowrap;
+        }
+      }
+    }
+  }
+
+  .bottom-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .id-text {
+      position: relative;
+      top: 5px;
+      color: gray;
+      font-size: 14px;
+    }
+  }
+}

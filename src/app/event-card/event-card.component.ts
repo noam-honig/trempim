@@ -524,9 +524,6 @@ export class EventCardComponent implements OnInit {
       }
     })
   }
-  displayDate(e: Task) {
-    return e.displayDate()
-  }
 
   clickButton(b: RowButton<Task>, e: Task) {
     b.click!(e)
@@ -679,22 +676,7 @@ export class EventCardComponent implements OnInit {
   isRegisteredToEvent(task: Task) {
     return task.driverId === remult.user?.id
   }
-  eventCity(e: Task) {
-    return getCity(e.addressApiResult, e.address)
-  }
-  eventToCity(e: Task) {
-    return getCity(e.toAddressApiResult, e.toAddress)
-  }
-  travelDistance(e: Task) {
-    return (
-      GetDistanceBetween(
-        getLocation(e.addressApiResult),
-        getLocation(e.toAddressApiResult)
-      ).toFixed(1) +
-      ' ' +
-      'ק"מ'
-    )
-  }
+
   compareEventDate(a: Task, b: Task) {
     let startOfDay = new Date()
     startOfDay.setHours(0, 0, 0, 0)

@@ -59,7 +59,8 @@ import { YedidimBranchListComponent } from './yedidim-branch-list/yedidim-branch
 import { OverviewComponent } from './overview/overview.component'
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AboutComponent } from './about/about.component';
-import { ShowPublicEventComponent } from './show-public-event/show-public-event.component'
+import { ShowPublicEventComponent } from './show-public-event/show-public-event.component';
+import { TripSubtitleComponent } from './trip-subtitle/trip-subtitle.component'
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { ShowPublicEventComponent } from './show-public-event/show-public-event.
     OverviewComponent,
     AboutComponent,
     ShowPublicEventComponent,
+    TripSubtitleComponent,
   ],
   imports: [
     NgApexchartsModule,

@@ -1,0 +1,48 @@
+<div class="event-detail">
+  <span style="margin-bottom: 10px">
+    <span *ngIf="onTheWayBack" style="font-weight: bold; color: red"
+      >בדרך חזרה,
+    </span>
+    {{ e.category || '' }}<span style="font-size: 12px"> {{ distance }}</span>
+  </span>
+
+  <div class="route-start-finish">
+    <div class="route-indicator-container">
+      <div class="row" style="padding-left: 10px; padding-right: 10px">
+        <div class="dot right"></div>
+        <div class="line"></div>
+        <div class="arrow-container">
+          <div class="arrow"></div>
+          <div class="distance-text" *ngIf="e.toAddressApiResult">
+            {{ travelDistance(e) }}
+          </div>
+        </div>
+        <div class="dot left"></div>
+      </div>
+      <div class="row" style="padding-top: 5px">
+        <div class="text">{{ eventCity(e) }}</div>
+        <div class="text">
+          <span *ngIf="e.toAddressApiResult"> {{ eventToCity(e) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom: 10px">
+    {{ e.displayDate() }}
+  </div>
+  <!-- <span>
+    {{ eventCity(e) }}
+    <span *ngIf="e.toAddressApiResult">
+      => {{ eventToCity(e) }} ({{ travelDistance(e) }})</span
+    >
+  </span> -->
+
+  <div class="bottom-container">
+    <a *ngIf="showDetailsLink">{{ 'לפרטים' }}</a>
+    <strong *ngIf="isFull(e)">
+      {{ e.taskStatus.caption }}
+      <span *ngIf="e.driver">, {{ e.driver.name }}</span>
+    </strong>
+    <div class="id-text">{{ e.externalId }}#</div>
+  </div>
+</div>
