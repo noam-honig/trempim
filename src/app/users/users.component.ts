@@ -17,6 +17,7 @@ import {
 } from '../events/phone'
 import * as xlsx from 'xlsx'
 import { ChangeLogComponent } from '../common/change-log/change-log.component'
+import { getSite } from './sites'
 
 @Component({
   selector: 'app-users',
@@ -40,15 +41,18 @@ export class UsersComponent implements OnInit {
     allowUpdate: true,
     columnOrderStateKey: 'users',
     where: () => {
-      if (!this.searchString) return {}
-      let or: EntityFilter<User>[] = [
-        { name: { $contains: this.searchString } },
-      ]
-      const searchDigits = fixPhoneInput(this.searchString)
-      if (searchDigits) or.push({ phone: { $contains: searchDigits } })
-      return {
-        $or: or,
+      const result: EntityFilter<User> = {
+        org: getSite().org,
       }
+      if (this.searchString) {
+        let or: EntityFilter<User>[] = [
+          { name: { $contains: this.searchString } },
+        ]
+        const searchDigits = fixPhoneInput(this.searchString)
+        if (searchDigits) or.push({ phone: { $contains: searchDigits } })
+        result.$or = or
+      }
+      return result
     },
 
     orderBy: { name: 'asc' },
