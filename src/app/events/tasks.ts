@@ -158,7 +158,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       await task.insertStatusChange('יצירה')
       if (task.taskStatus === taskStatus.draft && getSite().sendSmsOnNewDraft) {
         for (const user of await repo(User).find({
-          where: { dispatcher: true },
+          where: { dispatcher: true, org: getSite().org },
         })) {
           sendSms(
             user.phone,
