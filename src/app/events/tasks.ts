@@ -561,9 +561,11 @@ ${this.getLink()}`
         (await repo(Task).count({
           driverId: remult.user!.id!,
           taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
-        })) >= 5
+        })) >= getSite().maxActiveTripsPerDriver
       )
-        throw Error('ניתן להרשם במקביל לעד 5 נסיעות')
+        throw Error(
+          `ניתן להרשם במקביל לעד ${getSite().maxActiveTripsPerDriver} נסיעות`
+        )
 
       if (
         (await repo(TaskStatusChanges).count({

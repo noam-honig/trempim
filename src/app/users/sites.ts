@@ -30,6 +30,7 @@ export class Site {
   dbSchema?: string
   ignore?: boolean
   title!: string
+  maxActiveTripsPerDriver = 5
 
   signInFilter: () => EntityFilter<User> = () => ({
     org: this.getVisibleOrgs().map((x) => x.org),
@@ -150,6 +151,7 @@ const bikeIl: Site = new Site('bikeil', {
 })
 
 const hahatul: Site = new Site('hahatul', {
+  maxActiveTripsPerDriver: 20,
   dbSchema: 'shinuim',
   title: 'עמותת החתול – בוגרי 669',
   showCopyLink: true,
@@ -353,7 +355,7 @@ export const backendSites = [
     title: 'פיתוח',
     ignore: true,
     org: 'test1',
-    requireValidUntil: true,
+    maxActiveTripsPerDriver: 5,
   }),
   new Site('test2', {
     dbSchema: 'dshinua',
