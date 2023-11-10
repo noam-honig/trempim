@@ -43,6 +43,7 @@ export class Site {
   defaultLinkDescription = `כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד`
   showContactToAnyDriver = false
   showValidUntil = false
+  requireValidUntil = false
   getVisibleOrgs = () => [this, ...this.getOtherVisibleOrgs()]
   getOtherVisibleOrgs = () => {
     return [] as Site[]
@@ -246,49 +247,12 @@ function yedidimEnv(urlPrefix: string) {
 }
 const yedidim = yedidimEnv('y')
 
-export class AnyoneCanAddRequest_VolunteerCantSelfRegister extends Site {
-  override showCopyLink? = true
-  override allowAnyVolunteerToAdd = true
-  override sendSmsOnNewDraft = true
-  override useFillerInfo = true
-}
-
-export class Civil extends Site {
-  override showContactToAnyDriver = true
-  override showValidUntil = true
-  override getIntroText(): string {
-    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
-
-אם טרם נרשמתם כנהגים, [אנא מלאו את הטופס פה](https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U)
-
-אם נרשמתם כבר, אמורים להתקשר אליכם לאימות נתונים.
-
-מספר שעות לאחר האימות, פרטיכם יוזנו למערכת, ואז מסי הטלפון שלכם יוכר. מכאן ואילך, לאחר אימות SMS, תוכלו לחפש בקשות מתאימות, ולממש את רוח ההתנדבות שלכם.
-יש  בעיות? דווחו בקבוצת הוואטסאפ "טרמפים+ כלל הארץ". הצטרפות לקבוצה הנ"ל - https://bit.ly/3Q7HJ2R`
-  }
-  override showCopyLink? = true
-  override allowAnyVolunteerToAdd = true
-  override useFillerInfo = true
-  override allDeliveryRequestsAreApprovedAutomatically = true
-  override defaultCategory = 'הסעת חיילים'
-  override registerVolunteerLink =
-    'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U'
-  override categories = [
-    this.defaultCategory!,
-    'הסעת מפונים',
-    'הסעות אחר',
-    'שינוע ציוד',
-    'שינוע אוכל חם',
-    'אחר',
-  ]
-  override showPastEvents = false
-  override defaultLinkDescription = 'מתנדבי טרמפים, מערכת ניהול טרמפים'
-}
 const civil = new Site('civil', {
   dbSchema: 'civil',
   title: 'מתנדבי טרמפים',
   showContactToAnyDriver: true,
   showValidUntil: true,
+  requireValidUntil: true,
   getIntroText: () => {
     return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
 
@@ -389,6 +353,7 @@ export const backendSites = [
     title: 'פיתוח',
     ignore: true,
     org: 'test1',
+    requireValidUntil: true,
   }),
   new Site('test2', {
     dbSchema: 'dshinua',

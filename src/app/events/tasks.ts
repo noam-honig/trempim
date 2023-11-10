@@ -333,8 +333,15 @@ ${this.getLink()}`
     minute: '2-digit',
   })
 
-  @Fields.integer({ caption: 'למשך כמה שעות הסיוע רלוונטי' })
-  relevantHours = 12
+  @Fields.integer({
+    caption: 'למשך כמה שעות הסיוע רלוונטי',
+    validate: (_, c) => {
+      if (getSite().requireValidUntil && !c.value) {
+        throw Error('ערך חסר')
+      }
+    },
+  })
+  relevantHours = getSite().requireValidUntil ? 0 : 12
   @DataControl({ width: '240' })
   @DateField({ caption: 'בתוקף עד', allowApiUpdate: false })
   validUntil = new Date()
