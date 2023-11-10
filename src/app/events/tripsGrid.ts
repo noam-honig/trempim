@@ -61,6 +61,7 @@ export function tripsGrid({
           }),
       },
     ],
+    columnOrderStateKey: 'trips',
     ...gridOptions,
     columnSettings: (t) => [
       t.externalId,

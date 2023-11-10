@@ -385,9 +385,10 @@ export const backendSites = [
     useFillerInfo: true,
   }),
   new Site('test1', {
-    dbSchema: 'shinuim',
+    dbSchema: 'dshinua',
     title: 'פיתוח',
     ignore: true,
+    org: 'test1',
   }),
   new Site('test2', {
     dbSchema: 'dshinua',
