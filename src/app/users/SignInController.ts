@@ -84,7 +84,11 @@ export class SignInController extends ControllerBase {
   }
   private async findUserByPhone() {
     const result = await repo(User).find({
-      where: { phone: this.phone, deleted: false },
+      where: {
+        phone: this.phone,
+        deleted: false,
+        $and: [getSite().signInFilter()],
+      },
     })
     if (result.length == 0) return undefined
     if (result.length == 1) return result[0]

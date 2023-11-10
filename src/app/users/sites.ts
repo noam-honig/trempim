@@ -1,8 +1,9 @@
-import { remult } from 'remult'
+import { EntityFilter, remult } from 'remult'
 import { Roles } from './roles'
 import { taskStatus } from '../events/taskStatus'
 import { UpdateMessage } from '../events/UpdatesChannel'
-import { DriverCanceledAssign } from '../events/tasks'
+import { DriverCanceledAssign, Task } from '../events/tasks'
+import { User } from './user'
 
 let title = ''
 export function getTitle() {
@@ -12,14 +13,53 @@ export function getTitle() {
 }
 
 export class Site {
-  deliveryCaption: string | undefined
+  constructor(
+    public urlPrefix: string,
+    set?: Partial<Site> & { dbSchema: string; title: string }
+  ) {
+    if (set) {
+      Object.assign(this, set)
+    }
+    if (!this.org) {
+      this.org = this.urlPrefix
+    }
+
+    if (!this.categories.includes(this.defaultCategory))
+      this.categories = [this.defaultCategory, ...this.categories]
+  }
+  dbSchema?: string
+  ignore?: boolean
+  title!: string
+
+  signInFilter: () => EntityFilter<User> = () => ({
+    org: this.getVisibleOrgs().map((x) => x.org),
+  })
+  tasksFilter: () => EntityFilter<Task> = () => ({
+    org: this.getVisibleOrgs().map((x) => x.org),
+  })
+
   allDeliveryRequestsAreApprovedAutomatically = false
   taskTitleCaption?: string
   defaultLinkDescription = `כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד`
   showContactToAnyDriver = false
   showValidUntil = false
-  visibleOrgs: string[]
+  getVisibleOrgs = () => [this, ...this.getOtherVisibleOrgs()]
+  getOtherVisibleOrgs = () => {
+    return [] as Site[]
+  }
   getIntroText() {
+    return this.getIntroTextImplementation({
+      title: this.title,
+      registerVolunteerLink: this.registerVolunteerLink,
+    })
+  }
+  getIntroTextImplementation({
+    title,
+    registerVolunteerLink,
+  }: {
+    title: string
+    registerVolunteerLink?: string
+  }): string {
     return `ברוכים הבאים לאפליקציית השינועים של ${getTitle()}.
 
 כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים לבסיסים, בשינוע ציוד לחיילים או בשינועים שונים הנדרשים לכוחות העורף.
@@ -27,25 +67,17 @@ export class Site {
 המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
 
 ${
-  this.registerVolunteerLink
+  registerVolunteerLink
     ? `
 
-עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](${this.registerVolunteerLink})
+עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](${registerVolunteerLink})
 
 `
     : ''
 }
 צאו לעשות חסדים!`
   }
-  constructor(public urlPrefix: string) {
-    this.visibleOrgs = [this.org]
-    for (const g of groups) {
-      if (g.includes(this.org)) {
-        this.visibleOrgs = g
-        break
-      }
-    }
-  }
+
   onlyAskForSecondAddress = false
   countUpdates = true
   useFillerInfo = false
@@ -81,34 +113,129 @@ ${
   addressInstructions?: string
   driverCanMarkAsNonRelevant = true
 
-  get canSeeUrgency() {
+  canSeeUrgency() {
     return true
   }
   onlyCities = false
   syncWithMonday = false
   showPastEvents = true
   allowShareLink = false
-  get org() {
-    return getBackendSite(this.urlPrefix)?.org || this.urlPrefix
-  }
+  org!: string
 }
 
-export class BikeIlSite extends Site {
-  override bikeCategoryCaption = 'שינוע באופנוע'
-  override defaultCategory = this.bikeCategoryCaption
-  override truckCategoryCaption? = 'שינוע מסחרי או נגרר'
-  override categories = [
-    this.bikeCategoryCaption!,
-    this.truckCategoryCaption!,
-    'רכב פרטי',
-    'אחר',
-  ]
-  override showCopyLink? = true
-  override imageIsMandatory? = true
-  override useFillerInfo = true
-  override allowAnyVolunteerToAdd = true
-  override sendSmsOnNewDraft = true
+const bikeIl: Site = new Site('bikeil', {
+  dbSchema: 'shinuim',
+  title: 'חמל אופנועים',
+  defaultCategory: 'שינוע באופנוע',
+  categories: ['שינוע מסחרי או נגרר', 'רכב פרטי', 'אחר'],
+  showCopyLink: true,
+  imageIsMandatory: true,
+  useFillerInfo: true,
+  allowAnyVolunteerToAdd: true,
+  sendSmsOnNewDraft: true,
+  getOtherVisibleOrgs: () => [hahatul],
+  tasksFilter: () => ({
+    org: [bikeIl.org],
+  }),
+})
+
+const hahatul: Site = new Site('hahatul', {
+  dbSchema: 'shinuim',
+  title: 'עמותת החתול – בוגרי 669',
+  showCopyLink: true,
+  allowAnyVolunteerToAdd: true,
+  sendSmsOnNewDraft: true,
+  useFillerInfo: true,
+  registerVolunteerLink:
+    'https://wa.me/972545276812?text=' +
+    encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
+  allowShareLink: true,
+  getOtherVisibleOrgs: () => [ngim, lev1, bikeIl],
+  signInFilter: () => ({ org: [hahatul, lev1, ngim].map((x) => x.org) }),
+  tasksFilter: () => ({
+    $or: [
+      {
+        org: [hahatul, ngim, lev1].map((x) => x.org),
+      },
+      {
+        org: [bikeIl.org],
+        category: ['שינוע מסחרי או נגרר', 'רכב פרטי'],
+      },
+    ],
+  }),
+})
+const ngim: Site = new Site('ngim', {
+  dbSchema: 'shinuim',
+  title: 'חמל נהגים',
+  showCopyLink: true,
+  allowAnyVolunteerToAdd: true,
+  sendSmsOnNewDraft: true,
+  useFillerInfo: true,
+  getOtherVisibleOrgs: () => [hahatul, lev1],
+})
+const lev1: Site = new Site('lev1', {
+  dbSchema: 'shinuim',
+  title: 'לב אחד שינועים',
+  getOtherVisibleOrgs: () => [hahatul, ngim],
+})
+
+const vdri = new Site('vdri', {
+  dbSchema: 'vdri',
+  title: 'חמ"ל נהגים מתנדבים ארצי',
+  showCopyLink: true,
+  allowAnyVolunteerToAdd: true,
+  showTwoContacts: false,
+  fromAddressName: 'ישוב מוצא',
+  toAddressName: 'ישוב יעד',
+  addressInstructions:
+    'אין למלא כתובות מדויקות או בסיסים, יש לרשום רק את העיר.',
+  onlyCities: true,
+})
+function yedidimEnv(urlPrefix: string) {
+  return new Site(urlPrefix, {
+    dbSchema: 'ezion',
+    org: 'yedidim',
+    title: 'ידידים',
+    countUpdates: false,
+    messageBySnif: true,
+    canSeeUrgency: () => remult.isAllowed(Roles.admin),
+    getIntroTextImplementation: ({ registerVolunteerLink }) => {
+      return `ברוכים הבאים למערכת השינועים של ידידים!
+  
+  כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים לבסיסים, בשינוע ציוד לחיילים או בשינועים שונים הנדרשים לכוחות העורף.
+  
+  המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
+  
+  ${
+    registerVolunteerLink
+      ? `
+  
+  עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](${registerVolunteerLink})
+  
+  `
+      : ''
+  }
+  
+  במידה ונתקלתם בבעיה בהתחברות למערכת יש לפנות למנהל הסניף, או להתקשר למוקד הכוננים במספר [077-600-1230](tel:077-600-1230) שלוחה 1.
+  
+  צאו לעשות חסדים!`
+    },
+
+    registerVolunteerLink: 'https://forms.gle/E4DGSCtEgfSYfJvy9',
+    showInfoSnackbarFor(message: UpdateMessage): boolean {
+      if (message.userId === remult.user?.id) return false
+      if ([DriverCanceledAssign].includes(message.action)) return true
+      if (
+        [taskStatus.draft, taskStatus.otherProblem]
+          .map((x) => x.id)
+          .includes(message.status)
+      )
+        return true
+      return false
+    },
+  })
 }
+const yedidim = yedidimEnv('y')
 
 export class AnyoneCanAddRequest_VolunteerCantSelfRegister extends Site {
   override showCopyLink? = true
@@ -116,15 +243,7 @@ export class AnyoneCanAddRequest_VolunteerCantSelfRegister extends Site {
   override sendSmsOnNewDraft = true
   override useFillerInfo = true
 }
-export class Hahatul extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
-  override registerVolunteerLink =
-    'https://wa.me/972545276812?text=' +
-    encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: ')
-  override allowShareLink: boolean = true
-}
-export class DShinua extends AnyoneCanAddRequest_VolunteerCantSelfRegister {
-  override allowShareLink: boolean = true
-}
+
 export class Civil extends Site {
   override showContactToAnyDriver = true
   override showValidUntil = true
@@ -142,8 +261,7 @@ export class Civil extends Site {
   override allowAnyVolunteerToAdd = true
   override useFillerInfo = true
   override allDeliveryRequestsAreApprovedAutomatically = true
-  override deliveryCaption = 'הסעת חיילים'
-  override defaultCategory = this.deliveryCaption
+  override defaultCategory = 'הסעת חיילים'
   override registerVolunteerLink =
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U'
   override categories = [
@@ -157,77 +275,60 @@ export class Civil extends Site {
   override showPastEvents = false
   override defaultLinkDescription = 'מתנדבי טרמפים, מערכת ניהול טרמפים'
 }
-export class WarRoomCars extends Site {
-  override showCopyLink? = true
-  override allowAnyVolunteerToAdd = true
-  override useFillerInfo = true
-  override driverCanMarkAsNonRelevant = false
-  override defaultCategory = 'שינוע ציוד'
-  override syncWithMonday = true
-  override registerVolunteerLink = `https://forms.monday.com/forms/2ecb222fecfb8b8d7404f754362d2c6d?r=euc1`
-}
-export class Showers extends Site {
-  override taskTitleCaption = 'כמה חיילים? *'
-  override onlyAskForSecondAddress = true
-  override defaultCategory = 'מקלחות ניידות'
-  override categories = [
-    this.defaultCategory,
-    'רכב גורר עד 1.5 טון',
-    'רכב גורר עד 3.5 טון',
-  ]
-}
+const civil = new Site('civil', {
+  dbSchema: 'civil',
+  title: 'מתנדבי טרמפים',
+  showContactToAnyDriver: true,
+  showValidUntil: true,
+  getIntroText: () => {
+    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
 
-export class vdri extends Site {
-  override showCopyLink? = true
-  override allowAnyVolunteerToAdd = true
-  override showTwoContacts = false
-  override fromAddressName = 'ישוב מוצא'
-  override toAddressName = 'ישוב יעד'
-  override addressInstructions? =
-    'אין למלא כתובות מדויקות או בסיסים, יש לרשום רק את העיר.'
-  override onlyCities = true
-}
-export class Yedidim extends Site {
-  override countUpdates = false
-  override messageBySnif = true
-  override get canSeeUrgency() {
-    return remult.isAllowed(Roles.admin)
-  }
-  override getIntroText(): string {
-    return `ברוכים הבאים למערכת השינועים של ידידים!
+אם טרם נרשמתם כנהגים, [אנא מלאו את הטופס פה](https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U)
 
-כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים לבסיסים, בשינוע ציוד לחיילים או בשינועים שונים הנדרשים לכוחות העורף.
+אם נרשמתם כבר, אמורים להתקשר אליכם לאימות נתונים.
 
-המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
+מספר שעות לאחר האימות, פרטיכם יוזנו למערכת, ואז מסי הטלפון שלכם יוכר. מכאן ואילך, לאחר אימות SMS, תוכלו לחפש בקשות מתאימות, ולממש את רוח ההתנדבות שלכם.
+יש  בעיות? דווחו בקבוצת הוואטסאפ "טרמפים+ כלל הארץ". הצטרפות לקבוצה הנ"ל - https://bit.ly/3Q7HJ2R`
+  },
+  showCopyLink: true,
+  allowAnyVolunteerToAdd: true,
+  useFillerInfo: true,
+  allDeliveryRequestsAreApprovedAutomatically: true,
 
-${
-  this.registerVolunteerLink
-    ? `
+  defaultCategory: 'הסעת חיילים',
+  registerVolunteerLink:
+    'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
+  categories: [
+    'הסעת מפונים',
+    'הסעות אחר',
+    'שינוע ציוד',
+    'שינוע אוכל חם',
+    'אחר',
+  ],
+  showPastEvents: false,
+  defaultLinkDescription: 'מתנדבי טרמפים, מערכת ניהול טרמפים',
+})
 
-עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](${this.registerVolunteerLink})
+const warRoom = new Site('wrc', {
+  dbSchema: 'wrc',
+  title: 'אופנוענים ונהגים מתנדבים',
+  showCopyLink: true,
+  allowAnyVolunteerToAdd: true,
+  useFillerInfo: true,
+  driverCanMarkAsNonRelevant: false,
+  defaultCategory: 'שינוע ציוד',
+  syncWithMonday: true,
+  registerVolunteerLink: `https://forms.monday.com/forms/2ecb222fecfb8b8d7404f754362d2c6d?r=euc1`,
+})
 
-`
-    : ''
-}
-
-במידה ונתקלתם בבעיה בהתחברות למערכת יש לפנות למנהל הסניף, או להתקשר למוקד הכוננים במספר [077-600-1230](tel:077-600-1230) שלוחה 1.
-
-צאו לעשות חסדים!`
-  }
-
-  override registerVolunteerLink = 'https://forms.gle/E4DGSCtEgfSYfJvy9'
-  override showInfoSnackbarFor(message: UpdateMessage): boolean {
-    if (message.userId === remult.user?.id) return false
-    if ([DriverCanceledAssign].includes(message.action)) return true
-    if (
-      [taskStatus.draft, taskStatus.otherProblem]
-        .map((x) => x.id)
-        .includes(message.status)
-    )
-      return true
-    return false
-  }
-}
+const showers = new Site('showers', {
+  dbSchema: 'showers',
+  title: 'מקלחות ניידות לשטח',
+  taskTitleCaption: 'כמה חיילים? *',
+  onlyAskForSecondAddress: true,
+  defaultCategory: 'מקלחות ניידות',
+  categories: ['רכב גורר עד 1.5 טון', 'רכב גורר עד 3.5 טון'],
+})
 
 export function initSite(site?: string) {
   if (!site && typeof document !== 'undefined') {
@@ -238,45 +339,9 @@ export function initSite(site?: string) {
       site = document.location.pathname.split('/')[1]
     }
   }
-  remult.context.site = new Site(site!)
-  switch (site) {
-    case 'bikeil':
-      remult.context.site = new BikeIlSite(site)
-      break
-    case 'hahatul':
-    case 'test1':
-    case 'test2':
-      remult.context.site = new Hahatul(site)
-      break
-    case 'dshinua':
-      remult.context.site = new DShinua(site)
-      break
-    case 'ngim':
-    case 'mgln':
-    case 'teva':
-      remult.context.site = new AnyoneCanAddRequest_VolunteerCantSelfRegister(
-        site
-      )
-      break
-    case 'civil':
-      remult.context.site = new Civil(site)
-      break
-    case 'vdri':
-      remult.context.site = new vdri(site)
-      break
-    case 'yedidim':
-    case 'ezion':
-    case 'y':
-      remult.context.site = new Yedidim(site)
-      break
-    case 'wrc':
-      remult.context.site = new WarRoomCars(site)
-      break
-
-    case 'showers':
-      remult.context.site = new Showers(site)
-      break
-  }
+  remult.context.site =
+    backendSites.find((x) => x.urlPrefix === site) ||
+    new Site('error', { dbSchema: 'error', title: 'error' })
 }
 
 export function getSite() {
@@ -284,49 +349,55 @@ export function getSite() {
 }
 
 export const backendSites = [
-  {
-    urlPrefix: 'dshinua',
+  new Site('dshinua', {
     dbSchema: 'dshinua',
     title: 'שינוע - הדגמה',
+    allowShareLink: true,
     ignore: true,
-  },
-  {
-    urlPrefix: 'hahatul',
-    dbSchema: 'shinuim',
-    title: 'עמותת החתול – בוגרי 669',
-  },
-  { urlPrefix: 'lev1', dbSchema: 'shinuim', title: 'לב אחד שינועים' },
-  { urlPrefix: 'bikeil', dbSchema: 'shinuim', title: 'חמל אופנועים' },
-  { urlPrefix: 'ngim', dbSchema: 'shinuim', title: 'חמל נהגים' },
-  { urlPrefix: 'vdri', dbSchema: 'vdri', title: 'חמ"ל נהגים מתנדבים ארצי' },
-  { urlPrefix: 'y', dbSchema: 'ezion', org: 'yedidim', title: 'ידידים' },
-  {
-    urlPrefix: 'ezion',
-    dbSchema: 'ezion',
-    org: 'yedidim',
-    title: 'ידידים',
-    ignore: true,
-  },
-  { urlPrefix: 'brdls', dbSchema: 'brdls', title: 'ברדלס' },
-  { urlPrefix: 'mgln', dbSchema: 'mgln', title: 'ידידי מגלן' },
-  {
-    urlPrefix: 'test1',
+    showCopyLink: true,
+    allowAnyVolunteerToAdd: true,
+    sendSmsOnNewDraft: true,
+    useFillerInfo: true,
+  }),
+  hahatul,
+  lev1,
+  bikeIl,
+  ngim,
+  vdri,
+  yedidim,
+  yedidimEnv('ezion'),
+  new Site('brdls', { dbSchema: 'brdls', title: 'ברדלס' }),
+  new Site('mgln', {
+    dbSchema: 'mgln',
+    title: 'ידידי מגלן',
+    showCopyLink: true,
+    allowAnyVolunteerToAdd: true,
+    sendSmsOnNewDraft: true,
+    useFillerInfo: true,
+  }),
+  new Site('test1', {
     dbSchema: 'shinuim',
     title: 'פיתוח',
     ignore: true,
-  },
-  {
-    urlPrefix: 'test2',
+  }),
+  new Site('test2', {
     dbSchema: 'dshinua',
     title: 'סביבת בדיקות החתול',
     ignore: true,
-  },
-  { urlPrefix: 'wrc', dbSchema: 'wrc', title: 'אופנוענים ונהגים מתנדבים' },
-  { urlPrefix: 'showers', dbSchema: 'showers', title: 'מקלחות ניידות לשטח' },
-  { urlPrefix: 'civil', dbSchema: 'civil', title: 'מתנדבי טרמפים' },
-  { urlPrefix: 'teva', dbSchema: 'teva', title: 'תופעת טבע' },
+  }),
+  warRoom,
+  showers,
+  civil,
+  new Site('teva', {
+    dbSchema: 'teva',
+    title: 'תופעת טבע',
+    showCopyLink: true,
+    allowAnyVolunteerToAdd: true,
+    sendSmsOnNewDraft: true,
+    useFillerInfo: true,
+  }),
 ]
-const groups: string[][] = [['test1', 'test2']]
+
 export function getBackendSite(urlPrefix?: string) {
   if (!urlPrefix) urlPrefix = getSite().urlPrefix
   const result = backendSites.find((x) => x.urlPrefix === urlPrefix)

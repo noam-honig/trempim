@@ -1,4 +1,4 @@
-import { Yedidim, getSite } from '../app/users/sites'
+import { getSite } from '../app/users/sites'
 
 export async function sendSms(phone: string, message: string): Promise<any> {
   if (process.env['disable_sms']) {
@@ -14,7 +14,7 @@ export async function sendSms(phone: string, message: string): Promise<any> {
   let useGlobalSms = !inforuToken
   var from = 'Hagai'
   const YEDIDIM_API_KEY = process.env['YEDIDIM_API_KEY']
-  const useYedidim = getSite() instanceof Yedidim && YEDIDIM_API_KEY
+  const useYedidim = getSite().urlPrefix === 'y' && YEDIDIM_API_KEY
   if (!accid && !inforuToken && !YEDIDIM_API_KEY) return 'חשבון SMS לא הוגדר'
   phone = phone.replace(/\D/g, '')
 

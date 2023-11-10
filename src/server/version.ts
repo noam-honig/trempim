@@ -94,23 +94,7 @@ export async function versionUpdate() {
       await task.save()
     }
   })
-  await version(8, async () => {
-    for await (const task of await repo(Task).query()) {
-      task.__disableValidation = true
-      switch (task.category) {
-        case Category.delivery.id:
-          task.category = site.deliveryCaption || 'שינוע חיילים'
-          break
-        case Category.bike.id:
-          task.category = site.bikeCategoryCaption || task.category
-          break
-        case Category.truck.id:
-          task.category = site.truckCategoryCaption || task.category
-          break
-      }
-      await task.save()
-    }
-  })
+
   await version(13, async () => {
     for (const entity of [User, Task, TaskStatusChanges, ChangeLog]) {
       const names = await dbNamesOf<OrgEntity>(entity as any)
@@ -123,37 +107,4 @@ export async function versionUpdate() {
       )
     }
   })
-}
-
-class Category {
-  static delivery = new Category(
-    'שינוע חיילים',
-    'שינוע',
-    () => getSite().deliveryCaption
-  )
-  static equipment = new Category('שינוע ציוד')
-  static bike = new Category(
-    'מתאים גם לאופנוע',
-    undefined,
-    () => getSite().bikeCategoryCaption
-  )
-  static truck = new Category(
-    'שינוע במשאית',
-    undefined,
-    () => getSite().truckCategoryCaption
-  )
-
-  static other = new Category('אחר')
-  _caption: string
-  constructor(
-    caption: string,
-    public id: string | undefined = undefined,
-    private getCaption?: () => string | undefined
-  ) {
-    this._caption = caption
-    if (!id) this.id = caption
-  }
-  get caption() {
-    return this.getCaption?.() || this._caption
-  }
 }

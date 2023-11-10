@@ -205,6 +205,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
     if (!task.toAddressApiResult?.results)
       task.$.toAddress.error = 'כתובת לא נמצאה'
   },
+  backendPrefilter: () => getSite().tasksFilter(),
   //@ts-ignore
   apiPrefilter: () => {
     if (remult.isAllowed(Roles.dispatcher)) return {}
@@ -309,7 +310,7 @@ ${this.getLink()}`
     customInput: (x) => x.textarea(),
   })
   description = ''
-  @DataControl({ visible: () => getSite().canSeeUrgency })
+  @DataControl({ visible: () => getSite().canSeeUrgency() })
   @Field(() => Urgency)
   urgency = Urgency.normal
   @DataControl({

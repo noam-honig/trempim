@@ -4,16 +4,22 @@ import { DataControl } from '../common-ui-elements/interfaces'
 import { Roles } from './roles'
 
 @Entity<OrgEntity>(undefined!, {
-  backendPrefilter: () => ({ org: getSite().visibleOrgs }),
+  backendPrefilter: () => ({
+    org: getSite()
+      .getVisibleOrgs()
+      .map((x) => x.org),
+  }),
 })
 export class OrgEntity extends IdEntity {
   @DataControl({
-    visible: () => getSite().visibleOrgs.length > 1,
+    visible: () => getSite().getVisibleOrgs.length > 1,
     valueList: () =>
-      getSite().visibleOrgs.map((x) => ({
-        id: x,
-        caption: getBackendSite(x)?.title,
-      })),
+      getSite()
+        .getVisibleOrgs()
+        .map((x) => ({
+          id: x.org,
+          caption: x.title,
+        })),
   })
   @Fields.string<OrgEntity>({
     allowApiUpdate: false,
