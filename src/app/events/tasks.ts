@@ -583,6 +583,7 @@ ${this.getLink()}`
         break
       case 21:
         r.taskStatus = taskStatus.notRelevant
+        r.statusNotes = 'עודכן על ידי מבקש'
         await r.insertStatusChange(r.taskStatus.caption, 'עודכן על ידי מבקש')
         await r.save()
         break
