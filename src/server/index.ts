@@ -221,6 +221,26 @@ async function startup() {
       res.status(500).send(err.message)
     }
   })
+  app.get('/*/s/:id', async (req, res) => {
+    try {
+      const id = req.params?.['id']
+      if (id) {
+        const t = await repo(Task).findFirst({
+          editLink: id,
+        })
+        if (t) {
+          sendIndex(res, {
+            image: t.imageId,
+            description: t.getShortDescription(),
+          })
+          return
+        }
+      }
+      sendIndex(res)
+    } catch (err: any) {
+      res.status(500).send(err.message)
+    }
+  })
 
   app.get('/*/', (req, res) => sendIndex(res))
   app.get('/*/index.html', (req, res) => sendIndex(res))

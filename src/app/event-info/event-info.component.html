@@ -19,13 +19,14 @@
   class="dialog-container"
   [style.padding-bottom]="'30px'"
   [style.min-width]="'320px'"
+  [style.max-height]="noClose ? 'inherit' : undefined"
 >
   <app-trip-subtitle [e]="e">
     <button mat-raised-button (click)="showMap = !showMap" color="primary">
       <mat-icon>map</mat-icon> מפה
     </button>
   </app-trip-subtitle>
-
+  <ng-content></ng-content>
   <app-noam-test
     [tasks]="[e]"
     *ngIf="showMap"
@@ -190,6 +191,7 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions
+  *ngIf="isAuthenticated()"
   style="
     display: flex;
     flex-wrap: nowrap;

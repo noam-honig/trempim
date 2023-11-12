@@ -60,7 +60,8 @@ import { OverviewComponent } from './overview/overview.component'
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AboutComponent } from './about/about.component';
 import { ShowPublicEventComponent } from './show-public-event/show-public-event.component';
-import { TripSubtitleComponent } from './trip-subtitle/trip-subtitle.component'
+import { TripSubtitleComponent } from './trip-subtitle/trip-subtitle.component';
+import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.component'
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import { TripSubtitleComponent } from './trip-subtitle/trip-subtitle.component'
     AboutComponent,
     ShowPublicEventComponent,
     TripSubtitleComponent,
+    TaskSelfUpdateComponent,
   ],
   imports: [
     NgApexchartsModule,

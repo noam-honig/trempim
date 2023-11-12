@@ -1,0 +1,29 @@
+<app-card-in-middle>
+  <app-event-info *ngIf="r" [e]="r" [noClose]="true">
+    <div style="margin-top: 8px; margin-bottom: 8px" *ngIf="!result">
+      <h3>נשמח אם תעדכנו אם הנסיעה עוד רלוונטית</h3>
+      <mat-radio-group
+        [(ngModel)]="status"
+        style="display: flex; flex-direction: column"
+      >
+        <mat-radio-button [value]="1"> הנסיעה עדיין רלוונטית </mat-radio-button>
+        <mat-radio-button [value]="21">
+          הנסיעה כבר לא רלוונטית
+        </mat-radio-button>
+        <mat-radio-button [value]="22"
+          >הסר - אל תשלחו עוד הודעות SMS</mat-radio-button
+        >
+      </mat-radio-group>
+    </div>
+    <button
+      *ngIf="!result"
+      mat-raised-button
+      [disabled]="status == 0"
+      color="primary"
+      (click)="updateRelevance()"
+    >
+      שמור עדכון
+    </button>
+    <h2 *ngIf="result" style="margin-top: 10px">{{ result }}</h2>
+  </app-event-info>
+</app-card-in-middle>

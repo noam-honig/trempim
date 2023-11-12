@@ -13,6 +13,7 @@ export function getTitle() {
 }
 
 export class Site {
+  sendTextMessageToRequester = false
   constructor(
     public urlPrefix: string,
     set?: Partial<Site> & { dbSchema: string; title: string }
@@ -27,7 +28,7 @@ export class Site {
     if (!this.categories.includes(this.defaultCategory))
       this.categories = [this.defaultCategory, ...this.categories]
   }
-  dbSchema?: string
+  dbSchema!: string
   ignore?: boolean
   title!: string
   maxActiveTripsPerDriver = 5
@@ -207,6 +208,7 @@ const vdri = new Site('vdri', {
 })
 function yedidimEnv(urlPrefix: string) {
   return new Site(urlPrefix, {
+    sendTextMessageToRequester: true,
     dbSchema: 'ezion',
     org: 'yedidim',
     title: 'ידידים',

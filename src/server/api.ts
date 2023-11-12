@@ -41,6 +41,7 @@ import { ChangeLog } from '../app/common/change-log/change-log'
 
 import { OverviewController } from '../app/overview/overview.controller'
 import fetch from 'node-fetch'
+import { BlockedPhone } from '../app/events/blockedPhone'
 
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
@@ -56,6 +57,7 @@ const entities = [
   TaskImage,
   ChangeLog,
   Session,
+  BlockedPhone,
 ]
 
 const postgres = getPostgresSchemaManager({

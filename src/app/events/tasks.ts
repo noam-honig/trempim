@@ -62,6 +62,7 @@ import {
   updateDriverOnMonday,
   updateStatusOnMonday,
 } from '../../server/monday-work'
+import { BlockedPhone } from './blockedPhone'
 
 const onlyDriverRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
@@ -519,6 +520,8 @@ ${this.getLink()}`
   @Fields.integer<Task>({ includeInApi: false })
   returnMondayStatus = -1
 
+  @Fields.string({ includeInApi: Roles.dispatcher })
+  editLink = createId()
   @Fields.string({ allowApiUpdate: false })
   publicVisible = false
   @BackendMethod({ allowed: true })
@@ -538,6 +541,50 @@ ${this.getLink()}`
     if (!r) throw Error('לא נמצאה משימה זו')
     await r.insertStatusChange('צפייה ציבורית')
     return r._.toApiJson()
+  }
+
+  @BackendMethod({ allowed: true })
+  static async getTaskSelfUpdateInfo(id: string) {
+    const r = await repo(Task).findFirst({
+      editLink: id,
+      taskStatus: taskStatus.active,
+    })
+    if (!r) throw Error('לא נמצאה משימה זו')
+    return r._.toApiJson()
+  }
+  getTextMessagePhone() {
+    if (getSite().useFillerInfo && this.requesterPhone1)
+      return this.requesterPhone1
+    return this.phone1
+  }
+  @BackendMethod({ allowed: true })
+  static async SelfUpdateStatus(editLink: string, status: number) {
+    const r = await repo(Task).findFirst({
+      editLink,
+      taskStatus: taskStatus.active,
+    })
+    if (!r) throw Error('לא נמצאה משימה זו')
+
+    switch (status) {
+      case 1:
+        await r.insertStatusChange('מבקש עדכן שעדיין רלוונטי')
+        break
+      case 21:
+        r.taskStatus = taskStatus.notRelevant
+        await r.insertStatusChange(r.taskStatus.caption, 'עודכן על ידי מבקש')
+        await r.save()
+        break
+      case 22:
+        try {
+          await repo(BlockedPhone).insert({
+            phone: r.getTextMessagePhone(),
+          })
+        } catch (err) {
+          console.log(err)
+        }
+        break
+    }
+    return 'תודה על העדכון'
   }
 
   @BackendMethod({ allowed: Roles.admin })
@@ -884,6 +931,11 @@ ${e.getLink()}
             (getSite().useFillerInfo && e.requesterPhone1) ||
             e.phone1 ||
             e.toPhone1
+          if (!e.editLink) {
+            e.editLink = createId()
+            e.save()
+          }
+
           let name =
             getSite().useFillerInfo && e.requesterPhone1
               ? e.requesterPhone1Description
@@ -896,7 +948,9 @@ ${e.getLink()}
             `שלום ${name}, מופיע לנו בארגון "${getTitle()}" שביקשת את הנסיעה הבאה:
 ${e.getShortDescription()} 
 
-נשמח אם תעדכן אותנו בהודעה חוזרת אם הבקשה עדיין רלוונטית אם כבר לא רלוונטית
+נשמח אם תעדכן אותנו בקישור הבא או בהודעה חוזרת אם הבקשה עדיין רלוונטית או לא
+
+${remult.context.origin + '/s/' + e.editLink}
 
 בתודה ${getTitle()}
 `

@@ -24,7 +24,6 @@ export class VerifyRelevanceComponent implements OnInit {
     busy: this.busy,
     where: {
       taskStatus: taskStatus.relevanceCheck,
-      org: getSite().org,
     },
 
     orderBy: {

@@ -21,6 +21,7 @@ import { ProblemComponent } from './problem/problem.component'
 import { OverviewComponent } from './overview/overview.component'
 import { AboutComponent } from './about/about.component'
 import { ShowPublicEventComponent } from './show-public-event/show-public-event.component'
+import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -38,6 +39,11 @@ const routes: Routes = [
   {
     path: 'p/:id',
     component: ShowPublicEventComponent,
+    data: { hide: true, noLogin: true },
+  },
+  {
+    path: 's/:id',
+    component: TaskSelfUpdateComponent,
     data: { hide: true, noLogin: true },
   },
   {

@@ -54,7 +54,11 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
 
   showContactInfoMessage() {
     return (
-      !this.e.phone1 && !this.e.phone2 && !this.e.toPhone1 && !this.e.toPhone2
+      !this.e.phone1 &&
+      !this.e.phone2 &&
+      !this.e.toPhone1 &&
+      !this.e.toPhone2 &&
+      remult.authenticated()
     )
   }
   showMap = false
