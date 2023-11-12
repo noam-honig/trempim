@@ -198,6 +198,7 @@ const lev1: Site = new Site('lev1', {
 })
 
 const vdri = new Site('vdri', {
+  sendTextMessageToRequester: true,
   dbSchema: 'vdri',
   title: 'חמ"ל נהגים מתנדבים ארצי',
   showCopyLink: true,
