@@ -209,7 +209,7 @@ const vdri = new Site('vdri', {
 })
 function yedidimEnv(urlPrefix: string) {
   return new Site(urlPrefix, {
-    sendTextMessageToRequester: false,
+    sendTextMessageToRequester: true,
     dbSchema: 'ezion',
     org: 'yedidim',
     title: 'ידידים',
