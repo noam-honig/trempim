@@ -27,7 +27,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { WaitComponent } from './wait/wait.component'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
-
+import { MatSelectModule } from '@angular/material/select'
 import { DataArea2Component } from './data-area/dataArea2'
 import { SelectValueDialogComponent } from './add-filter-dialog/add-filter-dialog.component'
 import { MatButtonModule } from '@angular/material/button'
@@ -73,6 +73,7 @@ import { dialogConfigMember } from './dialogConfigMember'
     MatCheckboxModule,
     MatMenuModule,
     BidiModule,
+    MatSelectModule,
   ],
   providers: [
     {

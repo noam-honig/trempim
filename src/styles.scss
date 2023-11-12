@@ -116,12 +116,6 @@ a:hover {
 }
 
 
-.region-combo {
-
-
-
-
-  option:not([value*=":  -"]) {
-    font-weight: bold;
-  }
+.region-option {
+  font-weight: bold;
 }

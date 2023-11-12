@@ -401,14 +401,17 @@ export class EventCardComponent implements OnInit {
           {
             field: this.$.region,
             valueList: this.regions,
-            cssClass: 'region-combo',
+            valueListItemCss: (v) =>
+              !v.id.startsWith(' - ') ? 'region-option' : '',
+
             visible: () => this.regions.length > 2,
             valueChange: () => this.refreshFilters(true),
           },
           {
             field: this.$.toRegion,
             valueList: this.toRegions,
-            cssClass: 'region-combo',
+            valueListItemCss: (v) =>
+              !v.id.startsWith(' - ') ? 'region-option' : '',
             visible: () => this.toRegions.length > 2,
             valueChange: () => this.refreshFilters(true),
           },
