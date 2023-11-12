@@ -208,7 +208,7 @@ const vdri = new Site('vdri', {
 })
 function yedidimEnv(urlPrefix: string) {
   return new Site(urlPrefix, {
-    sendTextMessageToRequester: true,
+    sendTextMessageToRequester: false,
     dbSchema: 'ezion',
     org: 'yedidim',
     title: 'ידידים',
@@ -355,6 +355,7 @@ export const backendSites = [
     useFillerInfo: true,
   }),
   new Site('test1', {
+    sendTextMessageToRequester: false,
     dbSchema: 'dshinua',
     title: 'פיתוח',
     ignore: true,

@@ -47,7 +47,9 @@ import { OrgEntity, readonlyForNonAdminOfSameOrg } from './OrgEntity'
       if (user._.isNew()) {
         user.createDate = new Date()
       }
-      await recordChanges(user)
+      await recordChanges(user, {
+        excludeColumns: (e) => [e.lastUpdateView],
+      })
     }
   },
 })

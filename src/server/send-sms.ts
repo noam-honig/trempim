@@ -1,9 +1,15 @@
+import { repo } from 'remult'
 import { getSite } from '../app/users/sites'
+import { BlockedPhone } from '../app/events/blockedPhone'
 
 export async function sendSms(phone: string, message: string): Promise<any> {
+  if ((await repo(BlockedPhone).count({ phone: phone })) > 0) {
+    console.log('blocked phone', phone)
+    return 'blocked phone'
+  }
   if (process.env['disable_sms']) {
     console.log({ phone, message })
-    return
+    return 'disable sms'
   }
   const fetch = await import('node-fetch')
   const FormData = await import('form-data')

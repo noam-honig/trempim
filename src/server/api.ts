@@ -19,6 +19,7 @@ import { VersionInfo } from './version'
 import { Locks } from '../app/events/locks'
 import {
   Site,
+  backendSites,
   getBackendSite,
   getSite,
   getSiteFromPath,
@@ -42,6 +43,8 @@ import { ChangeLog } from '../app/common/change-log/change-log'
 import { OverviewController } from '../app/overview/overview.controller'
 import fetch from 'node-fetch'
 import { BlockedPhone } from '../app/events/blockedPhone'
+import { SendVerifyRelevanceSms } from '../app/events/send-verify-relevance-sms'
+import { settings } from 'cluster'
 
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
@@ -121,6 +124,42 @@ export const api = remultExpress({
     }
   },
 })
+
+async function runPeriodicOperations() {
+  for (const site of backendSites) {
+    if (site.sendTextMessageToRequester) {
+      try {
+        await new Promise((res, rej) => {
+          api.withRemult(
+            {
+              path: '/' + site.urlPrefix + '/api',
+              get: () => {
+                return 'sh.hagai.co'
+              },
+              session: {},
+            } as any,
+            {} as any,
+            async () => {
+              try {
+                if (!process.env['DISABLE_AUTO_SMS'])
+                  await SendVerifyRelevanceSms()
+                res({})
+              } catch (err: any) {
+                rej(err)
+              }
+            }
+          )
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  }
+  setTimeout(() => {
+    runPeriodicOperations()
+  }, 1000 * 60 * 10)
+}
+runPeriodicOperations()
 
 const siteEventPublishers = new Map<
   string,

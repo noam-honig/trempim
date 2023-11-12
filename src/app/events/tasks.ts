@@ -63,6 +63,7 @@ import {
   updateStatusOnMonday,
 } from '../../server/monday-work'
 import { BlockedPhone } from './blockedPhone'
+import { recordChanges } from '../common/change-log/change-log'
 
 const onlyDriverRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
@@ -154,10 +155,13 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         ).toFixed(1)
       )
     }
+    await recordChanges(task, {
+      excludeColumns: (e) => [e.imageId, e.statusChangeDate],
+    })
   },
   saved: async (task, { isNew }) => {
     if (isNew) {
-      await task.insertStatusChange('יצירה')
+      await task.insertStatusChange('יצירה', task.createUserId)
       if (task.taskStatus === taskStatus.draft && getSite().sendSmsOnNewDraft) {
         for (const user of await repo(User).find({
           where: { dispatcher: true, org: getSite().org },
@@ -593,6 +597,7 @@ ${this.getLink()}`
     for (const task of await repo(Task).find({
       where: { id: ids, taskStatus: taskStatus.active },
     })) {
+      task.__disableValidation = true
       await task.markForRelevanceCheck()
       i++
     }
@@ -648,7 +653,7 @@ ${this.getLink()}`
       userId: remult.user?.id!,
       action: what,
     })
-    await repo(TaskStatusChanges).insert({
+    return await repo(TaskStatusChanges).insert({
       taskId: this.id,
       what,
       eventStatus: this.taskStatus,
@@ -872,6 +877,33 @@ ${this.getLink()}`
       buttons: [],
     })
   }
+  verifyRelevanceMessage(replyToText: boolean) {
+    let phone =
+      (getSite().useFillerInfo && this.requesterPhone1) ||
+      this.phone1 ||
+      this.toPhone1
+
+    let name =
+      getSite().useFillerInfo && this.requesterPhone1
+        ? this.requesterPhone1Description
+        : this.phone1
+        ? this.phone1Description
+        : this.phone2Description
+    return {
+      phone,
+      message: `שלום ${name}, מופיע לנו בארגון "${getTitle()}" שביקשת את הנסיעה הבאה:
+${this.getShortDescription()} 
+
+נשמח אם תעדכן אותנו בקישור הבא ${
+        replyToText ? 'או בהודעה חוזרת ' : ''
+      }אם הבקשה עדיין רלוונטית או לא
+
+${remult.context.origin + '/s/' + this.editLink}
+
+בתודה ${getTitle()}
+    `,
+    }
+  }
 
   static rowButtons(
     ui: UITools,
@@ -927,34 +959,13 @@ ${e.getLink()}
         icon: 'sms',
 
         click: async (e) => {
-          let phone =
-            (getSite().useFillerInfo && e.requesterPhone1) ||
-            e.phone1 ||
-            e.toPhone1
           if (!e.editLink) {
             e.editLink = createId()
             e.save()
           }
+          const m = e.verifyRelevanceMessage(true)
 
-          let name =
-            getSite().useFillerInfo && e.requesterPhone1
-              ? e.requesterPhone1Description
-              : e.phone1
-              ? e.phone1Description
-              : e.phone2Description
-
-          sendWhatsappToPhone(
-            phone,
-            `שלום ${name}, מופיע לנו בארגון "${getTitle()}" שביקשת את הנסיעה הבאה:
-${e.getShortDescription()} 
-
-נשמח אם תעדכן אותנו בקישור הבא או בהודעה חוזרת אם הבקשה עדיין רלוונטית או לא
-
-${remult.context.origin + '/s/' + e.editLink}
-
-בתודה ${getTitle()}
-`
-          )
+          sendWhatsappToPhone(m.phone, m.message)
         },
       },
 
