@@ -155,6 +155,7 @@ const bikeIl: Site = new Site('bikeil', {
 })
 
 const hahatul: Site = new Site('hahatul', {
+  sendTextMessageToRequester: true,
   maxActiveTripsPerDriver: 20,
   dbSchema: 'shinuim',
   title: 'עמותת החתול – בוגרי 669',
@@ -181,6 +182,7 @@ const hahatul: Site = new Site('hahatul', {
   }),
 })
 const ngim: Site = new Site('ngim', {
+  sendTextMessageToRequester: true,
   dbSchema: 'shinuim',
   title: 'חמל נהגים',
   showCopyLink: true,

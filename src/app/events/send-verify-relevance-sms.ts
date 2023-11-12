@@ -31,6 +31,7 @@ export async function SendVerifyRelevanceSms() {
       where: {
         taskStatus: taskStatus.active,
         createdAt: { $lt: twoHoursAgo },
+        org: getSite().org,
       },
     })
     for (const task of tasks) {

@@ -27,13 +27,16 @@ select '${x.title.replace(/'/g, "''")}'  org, date(${
             t.statusChangeDate
           }) date, count(*) rides, count(distinct ${t.driverId}) drivers 
 from ${x.dbSchema}.${t} 
-where ${await SqlDatabase.filterToRaw(repo(Task), {
-            taskStatus: [
-              taskStatus.assigned,
-              taskStatus.driverPickedUp,
-              taskStatus.completed,
-            ],
-          })}
+where ${t.taskStatus} in (${[
+            taskStatus.assigned,
+            taskStatus.driverPickedUp,
+            taskStatus.completed,
+          ]
+            .map((x) => x.id)
+            .join(',')}) 
+            and ${t.org} = '${x.org}'
+
+          
 group by org, date(${t.statusChangeDate})
 
           `
