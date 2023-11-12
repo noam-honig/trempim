@@ -588,6 +588,7 @@ ${this.getLink()}`
         break
       case 22:
         try {
+          await r.insertStatusChange('לא לשלוח יותר SMS', 'עודכן על ידי מבקש')
           await repo(BlockedPhone).insert({
             phone: r.getTextMessagePhone(),
           })
