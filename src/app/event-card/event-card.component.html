@@ -70,7 +70,11 @@
     {{ title }}
   </div>
   <div *ngIf="showMap" class="grow-item" style="position: relative">
-    <app-noam-test [tasks]="tasksForMap"></app-noam-test>
+    <app-noam-test
+      [tasks]="tasksForMap"
+      [startLocation]="startLocation"
+      [endLocation]="endLocation"
+    ></app-noam-test>
   </div>
   <div *ngIf="!showMap" [class.grow-item]="!fromMap">
     <div *ngFor="let d of urgencies">

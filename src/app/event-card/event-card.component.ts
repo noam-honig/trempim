@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { Field, Fields, getFields, remult, repo } from 'remult'
+import { Field, FieldRef, Fields, getFields, remult, repo } from 'remult'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces'
 import { BusyService, openDialog } from '../common-ui-elements'
@@ -314,20 +314,35 @@ export class EventCardComponent implements OnInit {
       }
     }
 
-    this.regions.splice(0, 0, {
-      id: '',
-      count: regionStats,
-      distance: 0,
-      location: this.volunteerLocation?.location!,
-      caption: 'כל הארץ' + ' - ' + regionStats,
-    })
-    this.toRegions.splice(0, 0, {
-      id: '',
-      count: toRegionStats,
-      distance: 0,
-      location: this.volunteerLocation?.location!,
-      caption: 'כל הארץ' + ' - ' + toRegionStats,
-    })
+    const finishList = (regions: AreaFilterInfo[], stats: number) => {
+      regions.splice(
+        0,
+        0,
+        {
+          id: '',
+          count: stats,
+          distance: 0,
+          location: this.volunteerLocation?.location!,
+          caption: 'כל הארץ' + ' - ' + stats,
+        },
+        {
+          id: '!',
+          count: 0,
+          caption: 'קרוב אלי',
+          distance: 0,
+          location: undefined!,
+        },
+        {
+          id: '!!',
+          count: 0,
+          caption: 'קרוב לכתובת',
+          distance: 0,
+          location: undefined!,
+        }
+      )
+    }
+    finishList(this.regions, regionStats)
+    finishList(this.toRegions, toRegionStats)
 
     this.types.forEach((c) => (c.caption = c.caption + ' - ' + c.count))
 
@@ -360,7 +375,7 @@ export class EventCardComponent implements OnInit {
         })
       }
 
-      let entireCountry = regions.splice(0, 1)
+      let entireCountry = regions.splice(0, 3)
       let regionsForSort = regions.filter((r) => r.districts !== undefined)
 
       regionsForSort.forEach((r) =>
@@ -386,11 +401,11 @@ export class EventCardComponent implements OnInit {
         [] as AreaFilterInfo[]
       )
       regions.splice(0)
-      regions.push(entireCountry[0])
+      regions.push(...entireCountry)
       regions.push(...regionsForSort)
-      regions.forEach(
-        (c) => (c.caption = (c.id || 'כל הארץ') + ' - ' + c.count)
-      )
+      regions
+        .filter((x) => !x.id.startsWith('!'))
+        .forEach((c) => (c.caption = (c.id || 'כל הארץ') + ' - ' + c.count))
       return regions
     }
     sortRegion(this.regions, this.region)
@@ -405,7 +420,13 @@ export class EventCardComponent implements OnInit {
               !v.id.startsWith(' - ') ? 'region-option' : '',
 
             visible: () => this.regions.length > 2,
-            valueChange: () => this.refreshFilters(true),
+            valueChange: async () => {
+              await this.regionFilterChanged(
+                this.$.region,
+                (t) => t.addressApiResult,
+                (l) => (this.startLocation = l)
+              )
+            },
           },
           {
             field: this.$.toRegion,
@@ -413,7 +434,12 @@ export class EventCardComponent implements OnInit {
             valueListItemCss: (v) =>
               !v.id.startsWith(' - ') ? 'region-option' : '',
             visible: () => this.toRegions.length > 2,
-            valueChange: () => this.refreshFilters(true),
+            valueChange: () =>
+              this.regionFilterChanged(
+                this.$.toRegion,
+                (t) => t.toAddressApiResult,
+                (l) => (this.endLocation = l)
+              ),
           },
           {
             field: this.$.category,
@@ -424,6 +450,43 @@ export class EventCardComponent implements OnInit {
         ],
       ],
     })
+  }
+
+  private async regionFilterChanged(
+    region: FieldRef<any, string>,
+    relevantAddress: (t: Task) => GeocodeResult | null,
+    setLocation: (l: Location) => void
+  ) {
+    const setRegionBasedOnLocation = (location: Location) => {
+      setLocation(location)
+      let tasks = [...this.tasks]
+      tasks.sort(
+        (a, b) =>
+          GetDistanceBetween(getLocation(relevantAddress(a)), location) -
+          GetDistanceBetween(getLocation(relevantAddress(b)), location)
+      )
+      region.value = ' - ' + getDistrict(relevantAddress(tasks[0]))
+    }
+    if (region.value == '!') {
+      try {
+        const location = await getCurrentLocation()
+        setRegionBasedOnLocation(location)
+      } catch (err: any) {
+        openDialog(LocationErrorComponent, (x) => (x.args = { err }))
+        region.value = ''
+      }
+    } else if (region.value == '!!') {
+      await this.selectAddress({
+        ok: async (address) => {
+          setRegionBasedOnLocation(address.results[0].geometry.location!)
+        },
+        cancel: () => {
+          region.value = ''
+          this.refreshFilters(true)
+        },
+      })
+    }
+    this.refreshFilters(true)
   }
 
   onTheWayBack(e: Task) {
@@ -541,7 +604,13 @@ export class EventCardComponent implements OnInit {
 
   distance(e: Task) {
     if (!this.volunteerLocation) return undefined
-    return ', ' + this.distanceToTask(e).toFixed(1) + ' ' + 'ק"מ ממיקום נוכחי'
+    return (
+      ', ' +
+      this.distanceToTask(e).toFixed(1) +
+      ' ' +
+      'ק"מ ' +
+      (this.volunteerLocation?.toAddress ? 'מהיעד' : 'ממיקום')
+    )
   }
   distanceToTask(e: Task) {
     if (this.volunteerLocation)
@@ -556,6 +625,27 @@ export class EventCardComponent implements OnInit {
       )
     return 0
   }
+  selectAddress({
+    caption,
+    ok,
+    cancel,
+  }: {
+    caption?: string
+    ok: (address: GeocodeResult) => Promise<void>
+    cancel: VoidFunction
+  }) {
+    const t = repo(Task).create()
+    return this.tools.areaDialog({
+      fields: [{ field: t.$.address, caption }],
+      title: 'בחר כתובת',
+      validate: async () => {
+        if (!t.addressApiResult?.results?.[0]) throw 'לא נמצאה כתובת'
+      },
+      ok: () => ok(t.addressApiResult!),
+      cancel,
+    })
+  }
+
   showSortOptions = false
   sortOptions = [
     {
@@ -572,6 +662,7 @@ export class EventCardComponent implements OnInit {
         try {
           this.volunteerLocation = { location: await getCurrentLocation() }
           if (this.volunteerLocation) {
+            this.startLocation = this.volunteerLocation.location
             this.tools.report(
               'מיון לפי מיקום',
               this.volunteerLocation.location.lng +
@@ -591,28 +682,22 @@ export class EventCardComponent implements OnInit {
     {
       caption: 'קרוב לכתובת',
       selected: async () => {
-        const t = repo(Task).create()
-        this.tools.areaDialog({
-          fields: [t.$.address],
-          title: 'בחר כתובת',
-          validate: async () => {
-            if (!t.addressApiResult?.results?.[0]) throw 'לא נמצאה כתובת'
-          },
-          ok: async () => {
+        this.selectAddress({
+          ok: async (address) => {
             this.sortOptions.push({
-              caption: 'מרחק מ' + t.address,
+              caption: 'מרחק מ' + address.results[0].formatted_address,
               selected: () => {
                 this.volunteerLocation = {
-                  location: t.addressApiResult?.results[0].geometry.location!,
+                  location: address?.results[0].geometry.location!,
                 }
+                this.startLocation = this.volunteerLocation.location
                 this.sortEvents()
                 this.refreshTasksForMap()
                 this.sortRegions()
                 this.tools.report(
                   'מיון לפי מרחק מכתובת',
                   JSON.stringify({
-                    address: t.address,
-                    apiResult: t.addressApiResult,
+                    apiResult: address,
                   })
                 )
               },
@@ -630,29 +715,24 @@ export class EventCardComponent implements OnInit {
     {
       caption: 'קרוב לכתובת יעד',
       selected: async () => {
-        const t = repo(Task).create()
-        this.tools.areaDialog({
-          fields: [{ field: t.$.address, caption: 'כתובת יעד' }],
-          title: 'בחר כתובת',
-          validate: async () => {
-            if (!t.addressApiResult?.results?.[0]) throw 'לא נמצאה כתובת'
-          },
-          ok: async () => {
+        this.selectAddress({
+          caption: 'כתובת יעד',
+          ok: async (address) => {
             this.sortOptions.push({
-              caption: 'מרחק יעד מ' + t.address,
+              caption: 'מרחק יעד מ' + address.results[0].formatted_address,
               selected: () => {
                 this.volunteerLocation = {
-                  location: t.addressApiResult?.results[0].geometry.location!,
+                  location: address?.results[0].geometry.location!,
                   toAddress: true,
                 }
+                this.endLocation = this.volunteerLocation.location
                 this.sortEvents()
                 this.refreshTasksForMap()
                 this.sortRegions()
                 this.tools.report(
                   'מיון לפי מרחק יעד מכתובת',
                   JSON.stringify({
-                    address: t.address,
-                    apiResult: t.addressApiResult,
+                    apiResult: address,
                   })
                 )
               },
@@ -670,6 +750,8 @@ export class EventCardComponent implements OnInit {
   ]
 
   currentSort = this.sortOptions[0]
+  startLocation?: Location
+  endLocation?: Location
   volunteerLocation?: { location: Location; toAddress?: boolean }
   async sortByDistance() {
     this.showSortOptions = true

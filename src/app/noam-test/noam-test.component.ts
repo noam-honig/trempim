@@ -26,6 +26,7 @@ const lineSymbol = {
   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
 }
 function pin(start: boolean, selected?: boolean) {
+  //https://kml4earth.appspot.com/icons.html
   if (!start) return '/assets/finish.png'
   return `https://maps.google.com/mapfiles/ms/micons/${
     start ? 'yellow' : 'red'
@@ -47,6 +48,32 @@ export class NoamTestComponent implements OnInit {
     this.clear()
     this.loadIt()
   }
+  start?: google.maps.Marker
+  end?: google.maps.Marker
+  @Input()
+  set startLocation(x: Location | undefined | null) {
+    if (x) {
+      if (!this.start)
+        this.start = new google.maps.Marker({
+          icon: 'http://maps.google.com/mapfiles/kml/paddle/go-lv.png',
+          map: this.map,
+        })
+      this.start.setPosition(x)
+    } else this.start?.setMap(null)
+  }
+
+  @Input()
+  set endLocation(x: Location | undefined | null) {
+    if (x) {
+      if (!this.end)
+        this.end = new google.maps.Marker({
+          icon: 'http://maps.google.com/mapfiles/kml/paddle/grn-square-lv.png',
+          map: this.map,
+        })
+      this.end.setPosition(x)
+    } else this.end?.setMap(null)
+  }
+
   @Output() tasksClicked = new EventEmitter<string[]>()
 
   lines: google.maps.Polyline[] = []
@@ -265,6 +292,8 @@ export class NoamTestComponent implements OnInit {
         fullscreenControl: true,
       }
       this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp)
+      this.start?.setMap(this.map)
+      this.end?.setMap(this.map)
       this.mapInit = true
     }
   }
