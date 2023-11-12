@@ -38,11 +38,7 @@
   </span> -->
 
   <div class="bottom-container">
-    <a *ngIf="showDetailsLink">{{ 'לפרטים' }}</a>
-    <strong *ngIf="isFull(e)">
-      {{ e.taskStatus.caption }}
-      <span *ngIf="e.driver">, {{ e.driver.name }}</span>
-    </strong>
+    <ng-content></ng-content>
     <div class="id-text">{{ e.externalId }}#</div>
   </div>
 </div>

@@ -19,7 +19,7 @@ export class TripSubtitleComponent implements OnInit {
   @Input() onTheWayBack = false
   @Input() distance?: string
   @Input() e!: Task
-  @Input() showDetailsLink = true
+
   travelDistance(e: Task) {
     return (
       GetDistanceBetween(

@@ -24,7 +24,7 @@
         (click)="sortByDistance()"
         *ngIf="!showSortOptions"
       >
-        <mat-icon>location_on</mat-icon>קרוב אלי
+        <mat-icon>near_me</mat-icon>קרוב אלי
       </button>
       <mat-form-field
         *ngIf="showSortOptions"
@@ -109,8 +109,13 @@
                   [onTheWayBack]="onTheWayBack(e)"
                   [distance]="distance(e)"
                   [e]="e"
-                  [showDetailsLink]="!isFull(e) && !fromMap"
-                ></app-trip-subtitle>
+                >
+                  <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים' }}</a>
+                  <strong *ngIf="isFull(e)">
+                    {{ e.taskStatus.caption }}
+                    <span *ngIf="e.driver">, {{ e.driver.name }}</span>
+                  </strong>
+                </app-trip-subtitle>
               </div>
             </mat-card>
           </ng-container>

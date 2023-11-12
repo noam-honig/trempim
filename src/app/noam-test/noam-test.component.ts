@@ -14,6 +14,7 @@ import {
   EMPTY_LOCATION,
   Location,
   getAddress,
+  getCity,
   getLocation,
 } from '../common/address-input/google-api-helpers'
 import { taskStatus } from '../events/taskStatus'
@@ -39,6 +40,7 @@ export class NoamTestComponent implements OnInit {
   loadedPotentialFamilies: string[] = []
 
   _tasks: Task[] = []
+  @Input() singleTrip = false
   @Input()
   set tasks(value: Task[]) {
     this._tasks = value
@@ -62,11 +64,7 @@ export class NoamTestComponent implements OnInit {
     this.lines = []
   }
   userClickedOnFamilyOnMap: (familyId: string[]) => void = () => {}
-  setFamilyOnMap(
-    familyId: string,
-    startLocation: Location,
-    endLocation: Location
-  ) {
+  setFamilyOnMap(task: Task) {
     const createMarker = (position: Location, icon: string) => {
       if (!position || position === EMPTY_LOCATION) return
       let marker = new google.maps.Marker({
@@ -74,71 +72,72 @@ export class NoamTestComponent implements OnInit {
         position,
         icon,
       })
+      if (!this.singleTrip)
+        google.maps.event.addListener(marker, 'click', async () => {
+          // this.disableMapBoundsRefresh++
+          let taskIds: string[] = []
 
-      google.maps.event.addListener(marker, 'click', async () => {
-        // this.disableMapBoundsRefresh++
-        let taskIds: string[] = []
+          this.dict.forEach((m, id) => {
+            if (m.start?.getMap() != null || m.end?.getMap() != null) {
+              let start = m.start?.getPosition()
+              let end = m.end?.getPosition()
+              let p3 = marker?.getPosition()
 
-        this.dict.forEach((m, id) => {
-          if (m.start?.getMap() != null || m.end?.getMap() != null) {
-            let start = m.start?.getPosition()
-            let end = m.end?.getPosition()
-            let p3 = marker?.getPosition()
-
-            if (
-              (end?.lng() == p3?.lng() && end?.lat() == p3?.lat()) ||
-              (start?.lng() == p3?.lng() && start?.lat() == p3?.lat())
-            ) {
-              taskIds.push(id!)
-              m.start?.setIcon(pin(true, true))
-              m.end?.setIcon(pin(false, true))
+              if (
+                (end?.lng() == p3?.lng() && end?.lat() == p3?.lat()) ||
+                (start?.lng() == p3?.lng() && start?.lat() == p3?.lat())
+              ) {
+                taskIds.push(id!)
+                m.start?.setIcon(pin(true, true))
+                m.end?.setIcon(pin(false, true))
+              }
             }
-          }
-        })
-        if (taskIds.length > 0) {
-          this.tasksClicked.next(taskIds)
-          let tasks = this._tasks.filter((t) => taskIds.includes(t.id))
-          this.adjustBounds(tasks)
-          this.clearLines()
-          for (const t of tasks) {
-            if (
-              t.toAddressApiResult?.results?.length &&
-              t.addressApiResult?.results?.length
-            )
-              this.lines.push(
-                new google.maps.Polyline({
-                  path: [
-                    getLocation(t.addressApiResult),
-                    getLocation(t.toAddressApiResult),
-                  ],
-                  icons: [
-                    {
-                      icon: lineSymbol,
-                      offset: '100%',
-                    },
-                  ],
-                  // strokeColor: 'gray',
-                  // strokeWeight: 2,
-                  map: this.map,
-                })
+          })
+          if (taskIds.length > 0) {
+            this.tasksClicked.next(taskIds)
+            let tasks = this._tasks.filter((t) => taskIds.includes(t.id))
+            this.adjustBounds(tasks)
+            this.clearLines()
+            for (const t of tasks) {
+              if (
+                t.toAddressApiResult?.results?.length &&
+                t.addressApiResult?.results?.length
               )
+                this.lines.push(
+                  new google.maps.Polyline({
+                    path: [
+                      getLocation(t.addressApiResult),
+                      getLocation(t.toAddressApiResult),
+                    ],
+                    icons: [
+                      {
+                        icon: lineSymbol,
+                        offset: '100%',
+                      },
+                    ],
+                    // strokeColor: 'gray',
+                    // strokeWeight: 2,
+                    map: this.map,
+                  })
+                )
+            }
+            this.selectedTasks = tasks
           }
-          this.selectedTasks = tasks
-        }
 
-        setTimeout(() => {
-          //  this.disableMapBoundsRefresh--
-        }, 10000)
-      })
+          setTimeout(() => {
+            //  this.disableMapBoundsRefresh--
+          }, 10000)
+        })
       return marker
     }
 
-    let info = this.dict.get(familyId)
+    let info = this.dict.get(task.id)
     if (info && info.start?.getMap() == null && info.end?.getMap() == null)
       info = undefined
     if (!info) {
-      let start = createMarker(startLocation, pin(true))
-      let end = createMarker(endLocation, pin(false))
+      let start = createMarker(getLocation(task.addressApiResult), pin(true))
+      let end = createMarker(getLocation(task.toAddressApiResult), pin(false))
+
       let line =
         start && end && this._tasks?.length <= 10
           ? new google.maps.Polyline({
@@ -154,7 +153,7 @@ export class NoamTestComponent implements OnInit {
               map: this.map,
             })
           : undefined
-      this.dict.set(familyId, { start, end, line })
+      this.dict.set(task.id, { start, end, line })
     }
     return info
   }
@@ -195,20 +194,20 @@ export class NoamTestComponent implements OnInit {
   async loadIt() {
     this.bounds = new google.maps.LatLngBounds()
     for (const t of this._tasks) {
-      const start = getLocation(t.addressApiResult!),
-        end = getLocation(t.toAddressApiResult!)
-      this.setFamilyOnMap(t.id, start, end)
+      this.setFamilyOnMap(t)
     }
     this.adjustBounds(this._tasks)
   }
   adjustBounds(tasks: Task[]) {
     this.bounds = new google.maps.LatLngBounds()
+    const extend = (m?: google.maps.Marker) => {
+      if (m) this.bounds.extend(m.getPosition()!)
+    }
     for (const t of tasks) {
-      const start = getLocation(t.addressApiResult!),
-        end = getLocation(t.toAddressApiResult!)
-      this.setFamilyOnMap(t.id, start, end)
-      if (this.israel.contains(start)) this.bounds.extend(start)
-      if (this.israel.contains(end)) this.bounds.extend(end)
+      this.setFamilyOnMap(t)
+      const p = this.dict.get(t.id)
+      extend(p?.start)
+      extend(p?.end)
     }
     this.fitBounds()
   }

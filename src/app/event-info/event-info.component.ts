@@ -57,6 +57,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
       !this.e.phone1 && !this.e.phone2 && !this.e.toPhone1 && !this.e.toPhone2
     )
   }
+  showMap = false
 
   args?: {
     closeScreenAfterAdd?: () => Promise<boolean>

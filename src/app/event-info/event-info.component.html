@@ -20,7 +20,17 @@
   [style.padding-bottom]="'30px'"
   [style.min-width]="'320px'"
 >
-  <app-trip-subtitle [e]="e" [showDetailsLink]="false"></app-trip-subtitle>
+  <app-trip-subtitle [e]="e">
+    <button mat-raised-button (click)="showMap = !showMap" color="primary">
+      <mat-icon>map</mat-icon> מפה
+    </button>
+  </app-trip-subtitle>
+
+  <app-noam-test
+    [tasks]="[e]"
+    *ngIf="showMap"
+    [singleTrip]="true"
+  ></app-noam-test>
   <hr />
   <div *ngIf="e.imageId" style="width: 200px; height: 200px">
     <img
