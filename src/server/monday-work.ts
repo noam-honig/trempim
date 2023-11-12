@@ -115,7 +115,7 @@ export interface MondayItem {
   }[]
   subitems: any[]
 }
-const MONDAY_USER_PHONE = '0500000002'
+export const MONDAY_USER_PHONE = '0500000002'
 const DRIVER_PHONE_COLUMN = 'text63'
 const DRIVER_NAME_COLUMN = 'text6'
 
@@ -124,19 +124,7 @@ export async function upsertTaskBasedOnMondayValues(
   id: number,
   statusOrDriverChange = false
 ) {
-  const mondayUser = await repo(User).findFirst(
-    { phone: MONDAY_USER_PHONE },
-    { createIfNotFound: true }
-  )
-  if (mondayUser.isNew()) {
-    mondayUser.name = 'Monday'
-    await mondayUser.save()
-  }
-  if (mondayUser.deleted) throw 'monday Integration disabled'
-  remult.user = {
-    id: mondayUser.id,
-    roles: [Roles.admin, Roles.dispatcher],
-  }
+  await initIntegrationUser('Monday')
   const warRoomDriversBoard = board == 1307656994
   const apiKey = warRoomDriversBoard
     ? process.env['MONDAY_WARROOM_API_TOKEN']
@@ -375,4 +363,20 @@ export interface Country {
 export interface StreetNumber {
   long_name: string
   short_name: string
+}
+export async function initIntegrationUser(name: string) {
+  const mondayUser = await repo(User).findFirst(
+    { phone: MONDAY_USER_PHONE },
+    { createIfNotFound: true }
+  )
+  if (mondayUser.isNew()) {
+    mondayUser.name = name
+    await mondayUser.save()
+  }
+  if (mondayUser.deleted) throw 'monday Integration disabled'
+  remult.user = {
+    id: mondayUser.id,
+    phone: MONDAY_USER_PHONE,
+    roles: [Roles.admin, Roles.dispatcher],
+  }
 }

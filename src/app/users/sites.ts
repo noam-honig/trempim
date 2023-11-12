@@ -355,6 +355,13 @@ export const backendSites = [
     sendSmsOnNewDraft: true,
     useFillerInfo: true,
   }),
+  new Site('shadag_test', {
+    dbSchema: 'dshinua',
+    title: 'סביבת בדיקות שדג',
+    driverCanMarkAsNonRelevant: false,
+    defaultCategory: 'שינוע ציוד',
+    syncWithShadag: true,
+  }),
   new Site('test1', {
     syncWithShadag: true,
     dbSchema: 'dshinua',

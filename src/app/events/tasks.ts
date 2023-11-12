@@ -64,6 +64,7 @@ import {
 } from '../../server/monday-work'
 import { BlockedPhone } from './blockedPhone'
 import { recordChanges } from '../common/change-log/change-log'
+import { updateShadagBasedOnTask } from '../../server/shadag-work'
 
 const onlyDriverRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
@@ -201,6 +202,11 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         if (task.driverId) {
           await updateDriverOnMonday(task)
         }
+      }
+    }
+    if (getSite().syncWithShadag && task.externalId.startsWith('s:')) {
+      if (task.$.driverId.valueChanged() || task.$.taskStatus.valueChanged()) {
+        await updateShadagBasedOnTask(task)
       }
     }
   },
@@ -555,6 +561,7 @@ ${this.getLink()}`
       taskStatus: taskStatus.active,
     })
     if (!r) throw Error('לא נמצאה משימה זו')
+    await r.insertStatusChange('צפייה למטרת עדכון על ידי מבקש')
     return r._.toApiJson()
   }
   getTextMessagePhone() {

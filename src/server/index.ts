@@ -21,6 +21,7 @@ import {
   getLocation,
   updateGeocodeResult,
 } from '../app/common/address-input/google-api-helpers'
+import { upsertShadagTrip } from './shadag-work'
 
 SqlDatabase.LogToConsole = false
 const production = process.env['NODE_ENV'] === 'production'
@@ -118,10 +119,11 @@ async function startup() {
   app.post('/*/api/shadag', express.json(), async (req, res) => {
     if (getSite().syncWithShadag) {
       fs.writeFileSync(
-        '/tmp/shadag.json',
+        'tmp/shadag.json',
         JSON.stringify(req.body, undefined, 2)
       )
       console.log(req.body)
+      await upsertShadagTrip(req.body)
       res.send(req.body)
     } else {
       res.status(500).json('Shadag sync is disabled')
