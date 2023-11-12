@@ -107,4 +107,10 @@ export async function versionUpdate() {
       )
     }
   })
+  await version(14, async () => {
+    const s = await dbNamesOf(TaskStatusChanges)
+    await db.execute(
+      `create index if not exists task_status_changes_task_id on ${s.$entityName}(${s.taskId})`
+    )
+  })
 }
