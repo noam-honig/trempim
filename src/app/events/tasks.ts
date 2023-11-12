@@ -33,7 +33,7 @@ import {
   updateGeocodeResult,
 } from '../common/address-input/google-api-helpers'
 import { Roles } from '../users/roles'
-import { getSite, getTitle } from '../users/sites'
+import { getSite, getSiteByOrg, getTitle } from '../users/sites'
 import { OrgEntity } from '../users/OrgEntity'
 import { User } from '../users/user'
 import { createId } from '@paralleldrive/cuid2'
@@ -326,6 +326,7 @@ ${this.getLink()}`
   category: string = getSite().defaultCategory
   @Fields.dateOnly<Task>({
     caption: 'תאריך הסיוע המבוקש',
+    displayValue: (e, v) => eventDisplayDate(e),
     validate: (s, c) => {
       if (s.__disableValidation) return
       if (!c.value || c.value.getFullYear() < 2018) c.error = 'תאריך שגוי'
@@ -878,30 +879,33 @@ ${this.getLink()}`
     })
   }
   verifyRelevanceMessage(replyToText: boolean) {
-    let phone =
-      (getSite().useFillerInfo && this.requesterPhone1) ||
-      this.phone1 ||
-      this.toPhone1
+    let phone = this.phone1 || this.toPhone1
 
-    let name =
-      getSite().useFillerInfo && this.requesterPhone1
-        ? this.requesterPhone1Description
-        : this.phone1
-        ? this.phone1Description
-        : this.phone2Description
+    let name = this.phone1 ? this.phone1Description : this.phone2Description
+    const site = getSiteByOrg(this.org)
+    const parts = remult.context.origin.split('/')
+    parts[parts.length - 1] = site?.urlPrefix!
+    const url = parts.join('/')
+    let description = this.getShortDescription()
+    let twoDaysAgo = new Date()
+    twoDaysAgo.setHours(0, 0, 0)
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 1)
+    if (this.eventDate < twoDaysAgo) {
+      description += ' מ' + eventDisplayDate(this)
+    }
+
     return {
       phone,
-      message: `שלום ${name}, מופיע לנו בארגון "${getTitle()}" שביקשת את הנסיעה הבאה:
-${this.getShortDescription()} 
+      message: `שלום ${name}, בהמשך לפנייתך ל"${site?.title}":
+${description} 
 
-נשמח אם תעדכן אותנו בקישור הבא ${
+על מנת שנוכל לעזור ולסייע ואזרחים נוספים בצורה יעילה יותר, נשמח שתעדכן בקישור הבא ${
         replyToText ? 'או בהודעה חוזרת ' : ''
-      }אם הבקשה עדיין רלוונטית או לא
+      }אם הבקשה עדיין רלוונטית או הסתדרת כבר 
 
-${remult.context.origin + '/s/' + this.editLink}
+${url + '/s/' + this.editLink}
 
-בתודה ${getTitle()}
-    `,
+תודה ${site?.title}`,
     }
   }
 

@@ -115,6 +115,18 @@ async function startup() {
       res.status(500).json('Monday sync is disabled')
     }
   })
+  app.post('/*/api/shadag', express.json(), async (req, res) => {
+    if (getSite().syncWithShadag) {
+      fs.writeFileSync(
+        '/tmp/shadag.json',
+        JSON.stringify(req.body, undefined, 2)
+      )
+      console.log(req.body)
+      res.send(req.body)
+    } else {
+      res.status(500).json('Shadag sync is disabled')
+    }
+  })
   app.get('/*/assets/logo.png', (req, res) =>
     sendSchemaSpecificFile('logo', res)
   )

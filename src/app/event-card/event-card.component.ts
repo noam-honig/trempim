@@ -766,16 +766,16 @@ export class EventCardComponent implements OnInit {
     let startOfDay = new Date()
     startOfDay.setHours(0, 0, 0, 0)
     function fixDate(d: Date) {
-      if (d.valueOf() < startOfDay.valueOf()) {
-        d = new Date(d)
-        d.setFullYear(d.getFullYear() + 1)
-      }
+      // if (d.valueOf() < startOfDay.valueOf()) {
+      //   d = new Date(d)
+      //   d.setFullYear(d.getFullYear() + 1)
+      // }
       return d.valueOf()
     }
     return (
       (this.onTheWayBack(a) ? 1 : 0) - (this.onTheWayBack(b) ? 1 : 0) ||
-      fixDate(a.eventDate) - fixDate(b.eventDate) ||
-      a.startTime.localeCompare(b.startTime) ||
+      fixDate(b.eventDate) - fixDate(a.eventDate) ||
+      b.startTime.localeCompare(a.startTime) ||
       b.createdAt.valueOf() - a.createdAt.valueOf()
     )
   }

@@ -122,6 +122,7 @@ ${
   }
   onlyCities = false
   syncWithMonday = false
+  syncWithShadag = false
   showPastEvents = true
   allowShareLink = false
   org!: string
@@ -355,7 +356,7 @@ export const backendSites = [
     useFillerInfo: true,
   }),
   new Site('test1', {
-    sendTextMessageToRequester: false,
+    syncWithShadag: true,
     dbSchema: 'dshinua',
     title: 'פיתוח',
     ignore: true,
@@ -379,6 +380,9 @@ export const backendSites = [
     useFillerInfo: true,
   }),
 ]
+export function getSiteByOrg(org: string) {
+  return backendSites.find((x) => x.org === org)
+}
 
 export function getBackendSite(urlPrefix?: string) {
   if (!urlPrefix) urlPrefix = getSite().urlPrefix
