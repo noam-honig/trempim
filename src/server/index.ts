@@ -118,10 +118,6 @@ async function startup() {
   })
   app.post('/*/api/shadag', express.json(), async (req, res) => {
     if (getSite().syncWithShadag) {
-      fs.writeFileSync(
-        'tmp/shadag.json',
-        JSON.stringify(req.body, undefined, 2)
-      )
       console.log(req.body)
       await upsertShadagTrip(req.body)
       res.send(req.body)
