@@ -46,6 +46,7 @@ async function startup() {
             'maps.google.com', //https://securityheaders.com/
             '*.googleapis.com', //https://securityheaders.com/
             '*.ggpht.com', //https://securityheaders.com/
+            'v5.airtableusercontent.com', //https://securityheaders.com/
           ],
         },
       },
