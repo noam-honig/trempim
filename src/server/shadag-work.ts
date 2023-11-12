@@ -66,6 +66,7 @@ export async function updateShadagBasedOnTask(t: Task) {
       method: 'POST',
       body: JSON.stringify({
         status: t.taskStatus?.id,
+        statusText: t.taskStatus?.caption,
         driverName: driver?.name,
         driverPhone: driver?.phone,
       }),
