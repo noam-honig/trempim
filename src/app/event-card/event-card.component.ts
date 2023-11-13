@@ -765,10 +765,10 @@ export class EventCardComponent implements OnInit {
     let startOfDay = new Date()
     startOfDay.setHours(0, 0, 0, 0)
     function fixDate(d: Date) {
-      // if (d.valueOf() < startOfDay.valueOf()) {
-      //   d = new Date(d)
-      //   d.setFullYear(d.getFullYear() + 1)
-      // }
+      if (d.valueOf() < startOfDay.valueOf() && getSite().sortTasksAscending) {
+        d = new Date(d)
+        d.setFullYear(d.getFullYear() + 1)
+      }
       return d.valueOf()
     }
     return (
