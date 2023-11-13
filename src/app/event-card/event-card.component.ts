@@ -773,9 +773,10 @@ export class EventCardComponent implements OnInit {
     }
     return (
       (this.onTheWayBack(a) ? 1 : 0) - (this.onTheWayBack(b) ? 1 : 0) ||
-      fixDate(b.eventDate) - fixDate(a.eventDate) ||
-      b.startTime.localeCompare(a.startTime) ||
-      b.createdAt.valueOf() - a.createdAt.valueOf()
+      (fixDate(a.eventDate) - fixDate(b.eventDate) ||
+        a.startTime.localeCompare(b.startTime) ||
+        a.createdAt.valueOf() - b.createdAt.valueOf()) *
+        (getSite().sortTasksAscending ? 1 : -1)
     )
   }
   sortEvents() {

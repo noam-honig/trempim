@@ -32,6 +32,9 @@ export async function SendVerifyRelevanceSms() {
         taskStatus: taskStatus.active,
         createdAt: { $lt: twoHoursAgo },
         org: getSite().org,
+        validUntil: getSite().sendTextMessageOnlyForFutureEvents
+          ? { $gt: new Date() }
+          : undefined,
       },
     })
     for (const task of tasks) {

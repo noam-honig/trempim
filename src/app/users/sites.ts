@@ -13,7 +13,9 @@ export function getTitle() {
 }
 
 export class Site {
+  sortTasksAscending = false
   sendTextMessageToRequester = false
+  sendTextMessageOnlyForFutureEvents = false
   constructor(
     public urlPrefix: string,
     set?: Partial<Site> & { dbSchema: string; title: string }
@@ -260,6 +262,10 @@ function yedidimEnv(urlPrefix: string) {
 const yedidim = yedidimEnv('y')
 
 const civil = new Site('civil', {
+  sendTextMessageToRequester: true,
+  sendTextMessageOnlyForFutureEvents: true,
+
+  sortTasksAscending: true,
   dbSchema: 'civil',
   title: 'מתנדבי טרמפים',
   showContactToAnyDriver: true,
