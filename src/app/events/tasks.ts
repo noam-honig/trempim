@@ -580,6 +580,7 @@ ${this.getLink()}`
     switch (status) {
       case 1:
         await r.insertStatusChange('עדיין רלוונטי', 'עודכן על ידי מבקש')
+        r.statusChangeDate = new Date()
         break
       case 21:
         r.taskStatus = taskStatus.notRelevant
