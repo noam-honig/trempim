@@ -129,6 +129,7 @@ ${
 }
 
 const bikeIl: Site = new Site('bikeil', {
+  sendTextMessageToRequester: true,
   requireContactName: true,
   getIntroTextImplementation: () => {
     return `ברוכים הבאים לאפליקציית השינועים של חמל אופנועים.
