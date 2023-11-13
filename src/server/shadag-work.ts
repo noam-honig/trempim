@@ -78,6 +78,7 @@ export async function updateShadagBasedOnTask(t: Task) {
         statusText: t.taskStatus?.caption,
         driverName: driver?.name,
         driverPhone: driver?.phone,
+        statusNotes: t.statusNotes,
       }),
     })
     .then((x) => x.text())
