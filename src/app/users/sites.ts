@@ -193,6 +193,7 @@ const ngim: Site = new Site('ngim', {
   getOtherVisibleOrgs: () => [hahatul, lev1],
 })
 const lev1: Site = new Site('lev1', {
+  sendTextMessageToRequester: true,
   dbSchema: 'shinuim',
   title: 'לב אחד שינועים',
   getOtherVisibleOrgs: () => [hahatul, ngim],

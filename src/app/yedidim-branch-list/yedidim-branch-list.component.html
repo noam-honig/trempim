@@ -2,9 +2,15 @@
 
 <div mat-dialog-content>
   <ng-container *ngFor="let r of regions">
-    <h2 style="margin: 0">{{ r.name }}</h2>
+    <a (click)="copy(r.message)"
+      ><h2 style="margin: 0">{{ r.name }}</h2></a
+    >
     <ng-container *ngFor="let d of r.districts">
-      <h3 style="margin: 0" *ngIf="r.districts.length > 1">{{ d.name }}</h3>
+      <a (click)="copy(d.message)"
+        ><h3 style="margin: 0" *ngIf="r.districts.length > 1">
+          {{ d.name }}
+        </h3></a
+      >
       <ul style="margin: 0">
         <li *ngFor="let b of d.branches">
           <a (click)="copy(b.message)">{{ b.name }}</a>

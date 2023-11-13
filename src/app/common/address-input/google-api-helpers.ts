@@ -84,6 +84,7 @@ export function getRegion(r: GeocodeResult | undefined | null): string {
     case 'ים המלח':
     case 'נגב צפוני':
     case 'נגב דרומי':
+    case 'דימונה - ירוחם':
       return 'אזור דרום'
     case 'איילון':
     case 'ירושלים':

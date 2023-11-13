@@ -94,9 +94,8 @@ export class EventCardComponent implements OnInit {
       },
     },
     {
-      visible: () =>
-        remult.isAllowed(Roles.dispatcher) && getSite().messageBySnif,
-      name: 'הודעות לפי סניפים',
+      visible: () => remult.isAllowed(Roles.dispatcher),
+      name: 'הודעות לפי אזורים',
       click: () => {
         openDialog(
           YedidimBranchListComponent,
