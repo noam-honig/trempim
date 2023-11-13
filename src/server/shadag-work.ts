@@ -68,6 +68,9 @@ export async function updateShadagBasedOnTask(t: Task) {
   let r = await fetch
     .default(url, {
       method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
       body: JSON.stringify({
         id: t.externalId.substring(2),
         org: t.org,
