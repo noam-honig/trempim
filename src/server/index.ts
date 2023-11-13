@@ -118,12 +118,20 @@ async function startup() {
     }
   })
   app.post('/*/api/shadag', express.json(), async (req, res) => {
-    if (getSite().syncWithShadag) {
-      console.log(req.body)
-      await upsertShadagTrip(req.body)
-      res.send(req.body)
-    } else {
-      res.status(500).json('Shadag sync is disabled')
+    try {
+      console.log(req.body, req.headers)
+      if (req.headers['key'] !== process.env['SHADAG_KEY']) {
+        res.send(500).json({ error: 'wrong key' })
+      }
+      if (getSite().syncWithShadag) {
+        await upsertShadagTrip(req.body)
+        res.send(req.body)
+      } else {
+        res.status(500).json('Shadag sync is disabled')
+      }
+    } catch (err: any) {
+      console.error(err)
+      res.status(500).json(err)
     }
   })
   app.get('/*/assets/logo.png', (req, res) =>
@@ -303,3 +311,9 @@ async function startup() {
   }
 }
 startup()
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
+  console.trace()
+  // application specific logging, throwing an error, or other logic here
+  //1
+})

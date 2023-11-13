@@ -367,6 +367,7 @@ export const backendSites = [
     syncWithShadag: true,
   }),
   new Site('test1', {
+    syncWithShadag: true,
     dbSchema: 'dshinua',
     title: 'פיתוח',
     ignore: true,

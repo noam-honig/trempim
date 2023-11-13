@@ -344,7 +344,6 @@ export function getGoogleMapLink(api?: GeocodeResult | null) {
 let geojson: any = undefined
 export async function updateGeocodeResult(x: GeocodeResult | undefined | null) {
   if (!x?.results?.[0]) return
-  const turf = await import('@turf/turf')
   if (!geojson) {
     const fs = await import('fs')
     const x = await import('iconv-lite')
@@ -356,6 +355,7 @@ export async function updateGeocodeResult(x: GeocodeResult | undefined | null) {
       x.default.decode(fs.readFileSync(geoJsonFile), 'win1255').toString()
     )
   }
+  const turf = await import('@turf/turf')
   const point = turf.point([
     x.results[0].geometry.location.lng,
     x.results[0].geometry.location.lat,

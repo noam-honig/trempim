@@ -126,35 +126,35 @@ export const api = remultExpress({
 })
 
 async function runPeriodicOperations() {
-  for (const site of backendSites) {
-    if (site.sendTextMessageToRequester) {
-      try {
-        await new Promise((res, rej) => {
-          api.withRemult(
-            {
-              path: '/' + site.urlPrefix + '/api',
-              get: () => {
-                return 'sh.hagai.co'
-              },
-              session: {},
-            } as any,
-            {} as any,
-            async () => {
-              try {
-                if (!process.env['DISABLE_AUTO_SMS'])
+  if (!process.env['DISABLE_PERIODIC_OPERATIONS'])
+    for (const site of backendSites) {
+      if (site.sendTextMessageToRequester) {
+        try {
+          await new Promise((res, rej) => {
+            api.withRemult(
+              {
+                path: '/' + site.urlPrefix + '/api',
+                get: () => {
+                  return 'sh.hagai.co'
+                },
+                session: {},
+              } as any,
+              {} as any,
+              async () => {
+                try {
                   await SendVerifyRelevanceSms()
-                res({})
-              } catch (err: any) {
-                rej(err)
+                  res({})
+                } catch (err: any) {
+                  rej(err)
+                }
               }
-            }
-          )
-        })
-      } catch (err) {
-        console.error(err)
+            )
+          })
+        } catch (err) {
+          console.error(err)
+        }
       }
     }
-  }
   setTimeout(() => {
     runPeriodicOperations()
   }, 1000 * 60 * 10)

@@ -26,12 +26,15 @@ export async function upsertShadagTrip(trip: ShadagItem) {
   item.category = trip['קטגוריה לשינוע']
   item.title = trip['מס בקשה']
   item.address = trip['כתובת חמל'] + ' ' + trip['עיר חמל']
-  if (item.$.address.valueChanged()) {
-    item.toAddressApiResult = await GetGeoInformation(item.address)
+  if (item.$.address.valueChanged() || !item.addressApiResult?.results?.[0]) {
+    item.addressApiResult = await GetGeoInformation(item.address)
   }
 
   item.toAddress = trip['כתובת'] + ' ' + trip['ישוב']
-  if (item.$.toAddress.valueChanged()) {
+  if (
+    item.$.toAddress.valueChanged() ||
+    !item.toAddressApiResult?.results?.[0]
+  ) {
     item.toAddressApiResult = await GetGeoInformation(item.toAddress)
   }
   item.description = ''
@@ -43,6 +46,7 @@ export async function upsertShadagTrip(trip: ShadagItem) {
     }
   }
   setDesc('הערות לכתובת')
+  setDesc('כתובת 2')
   setDesc('פירוט הבקשה')
   setDesc('הערות לשינוע')
   item.phone1 = trip['טלפון נציג']
@@ -51,7 +55,7 @@ export async function upsertShadagTrip(trip: ShadagItem) {
   item.phone2Description = trip['שם מלא מנהל חמל']
   item.toPhone1 = trip['טלפון איש קשר']
   item.tpPhone1Description = trip['שם מלא איש קשר']
-  item.toPhone2 = trip['עבור מי ההזמנה']
+
   item.imageId = trip.image
   await item.save()
 }
@@ -65,6 +69,8 @@ export async function updateShadagBasedOnTask(t: Task) {
     .default(url, {
       method: 'POST',
       body: JSON.stringify({
+        id: t.externalId.substring(2),
+        org: t.org,
         status: t.taskStatus?.id,
         statusText: t.taskStatus?.caption,
         driverName: driver?.name,
@@ -81,6 +87,7 @@ interface ShadagItem {
   'כתובת חמל': string
   'עיר חמל': string
   כתובת: string
+  'כתובת 2': string
   ישוב: string
   'הערות לכתובת': string
   'פירוט הבקשה': string
