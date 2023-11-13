@@ -37,6 +37,7 @@ export async function SendVerifyRelevanceSms() {
           : undefined,
       },
     })
+    console.log(getSite().org, tasks.length)
     for (const task of tasks) {
       if (!task.editLink) {
         task.editLink = createId()
