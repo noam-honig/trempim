@@ -1,5 +1,5 @@
 <app-card-in-middle>
-  <app-event-info *ngIf="r" [e]="r" [noClose]="true">
+  <app-event-info *ngIf="r" [e]="r" [forExternalViewer]="true">
     <div style="margin-top: 8px; margin-bottom: 8px" *ngIf="!result">
       <h3>נשמח אם תעדכנו אם הנסיעה עוד רלוונטית</h3>
       <mat-radio-group

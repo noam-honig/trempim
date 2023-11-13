@@ -10,7 +10,7 @@
       *ngIf="isDispatcher()"
     ></app-dots-menu>
 
-    <button mat-icon-button *ngIf="!noClose" [mat-dialog-close]>
+    <button mat-icon-button *ngIf="!forExternalViewer" [mat-dialog-close]>
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -19,7 +19,7 @@
   class="dialog-container"
   [style.padding-bottom]="'30px'"
   [style.min-width]="'320px'"
-  [style.max-height]="noClose ? 'inherit' : undefined"
+  [style.max-height]="forExternalViewer ? 'inherit' : undefined"
 >
   <app-trip-subtitle [e]="e">
     <button mat-raised-button (click)="showMap = !showMap" color="primary">
@@ -191,7 +191,7 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions
-  *ngIf="isAuthenticated()"
+  *ngIf="!forExternalViewer"
   style="
     display: flex;
     flex-wrap: nowrap;

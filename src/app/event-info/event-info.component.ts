@@ -42,7 +42,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   e!: Task
   public refresh = () => {}
   driver?: User
-  @Input() noClose = false
+  @Input() forExternalViewer = false
 
   @Input() context = ''
   displayDate() {
@@ -155,7 +155,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
   ngOnInit(): void {
     this.dialog.report('צפייה', this.context, this.e.id)
-    if (this.isAuthenticated())
+    if (!this.forExternalViewer)
       repo(Task)
         .findFirst({ id: this.e.id })
         .then((x) => {
