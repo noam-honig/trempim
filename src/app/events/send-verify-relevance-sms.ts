@@ -9,7 +9,7 @@ import { createId } from '@paralleldrive/cuid2'
 export async function SendVerifyRelevanceSms() {
   console.log('I am here ' + getSite().urlPrefix)
   const lastStatusCheck = await repo(TaskStatusChanges).findFirst(
-    { what: verifyRelevanceSms },
+    { what: verifyRelevanceSms, org: getSite().org },
     {
       orderBy: {
         createdAt: 'desc',
