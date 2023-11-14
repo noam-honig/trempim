@@ -49,7 +49,10 @@ export class Site {
   showValidUntil = false
   requireValidUntil = false
   requireContactName = false
-  getVisibleOrgs = () => [this, ...this.getOtherVisibleOrgs()]
+  getVisibleOrgs = () => [
+    this,
+    ...this.getOtherVisibleOrgs().filter((x) => x != this),
+  ]
   getOtherVisibleOrgs = () => {
     return [] as Site[]
   }
@@ -156,6 +159,9 @@ const bikeIl: Site = new Site('bikeil', {
     org: [bikeIl.org],
   }),
 })
+function theBigGroup() {
+  return [hahatul, ngim, lev1, lev1j, lev1ms]
+}
 
 const hahatul: Site = new Site('hahatul', {
   sendTextMessageToRequester: true,
@@ -170,12 +176,12 @@ const hahatul: Site = new Site('hahatul', {
     'https://wa.me/972545276812?text=' +
     encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
   allowShareLink: true,
-  getOtherVisibleOrgs: () => [ngim, lev1, bikeIl],
-  signInFilter: () => ({ org: [hahatul, lev1, ngim].map((x) => x.org) }),
+  getOtherVisibleOrgs: theBigGroup,
+  signInFilter: () => ({ org: theBigGroup().map((x) => x.org) }),
   tasksFilter: () => ({
     $or: [
       {
-        org: [hahatul, ngim, lev1].map((x) => x.org),
+        org: theBigGroup().map((x) => x.org),
       },
       {
         org: [bikeIl.org],
@@ -192,13 +198,13 @@ const ngim: Site = new Site('ngim', {
   allowAnyVolunteerToAdd: true,
   sendSmsOnNewDraft: true,
   useFillerInfo: true,
-  getOtherVisibleOrgs: () => [hahatul, lev1],
+  getOtherVisibleOrgs: theBigGroup,
 })
 const lev1: Site = new Site('lev1', {
   sendTextMessageToRequester: true,
   dbSchema: 'shinuim',
   title: 'לב אחד שינועים',
-  getOtherVisibleOrgs: () => [hahatul, ngim],
+  getOtherVisibleOrgs: theBigGroup,
 })
 
 const lev1ms: Site = new Site('lev1ms', {
@@ -208,7 +214,16 @@ const lev1ms: Site = new Site('lev1ms', {
   registerVolunteerLink:
     'https://wa.me/972547800671?text=' +
     encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
-  //getOtherVisibleOrgs: () => [hahatul, ngim],
+  getOtherVisibleOrgs: theBigGroup,
+})
+const lev1j: Site = new Site('lev1j', {
+  //sendTextMessageToRequester: true,
+  dbSchema: 'shinuim',
+  title: 'לב אחד ירושלים',
+  registerVolunteerLink:
+    'https://wa.me/972549805636?text=' +
+    encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
+  getOtherVisibleOrgs: () => theBigGroup(),
 })
 const vdri = new Site('vdri', {
   sendTextMessageToRequester: true,
@@ -362,15 +377,7 @@ export const backendSites = [
   hahatul,
   lev1,
   lev1ms,
-  new Site('lev1j', {
-    //sendTextMessageToRequester: true,
-    dbSchema: 'shinuim',
-    title: 'לב אחד ירושלים',
-    registerVolunteerLink:
-      'https://wa.me/972549805636?text=' +
-      encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
-    //getOtherVisibleOrgs: () => [hahatul, ngim],
-  }),
+  lev1j,
   bikeIl,
   ngim,
   vdri,
