@@ -168,7 +168,7 @@ export class UsersComponent implements OnInit {
 
           for (let index = 1; index < dataArray.length; index++) {
             const element = dataArray[index] as string[]
-            let phone = element[0]
+            let phone = fixPhoneInput(element[0])
             let name = element[2] || element[1]
             if (!isPhoneValidForIsrael(phone)) {
               if (element[6] === 'כן') {
