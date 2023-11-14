@@ -205,6 +205,9 @@ const lev1ms: Site = new Site('lev1ms', {
   //sendTextMessageToRequester: true,
   dbSchema: 'shinuim',
   title: 'לב אחד מוקד שרון',
+  registerVolunteerLink:
+    'https://wa.me/972547800671?text=' +
+    encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
   //getOtherVisibleOrgs: () => [hahatul, ngim],
 })
 const vdri = new Site('vdri', {
