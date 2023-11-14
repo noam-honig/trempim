@@ -362,6 +362,15 @@ export const backendSites = [
   hahatul,
   lev1,
   lev1ms,
+  new Site('lev1j', {
+    //sendTextMessageToRequester: true,
+    dbSchema: 'shinuim',
+    title: 'לב אחד ירושלים',
+    registerVolunteerLink:
+      'https://wa.me/972549805636?text=' +
+      encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
+    //getOtherVisibleOrgs: () => [hahatul, ngim],
+  }),
   bikeIl,
   ngim,
   vdri,
