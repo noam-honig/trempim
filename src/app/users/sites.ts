@@ -201,6 +201,12 @@ const lev1: Site = new Site('lev1', {
   getOtherVisibleOrgs: () => [hahatul, ngim],
 })
 
+const lev1ms: Site = new Site('lev1ms', {
+  //sendTextMessageToRequester: true,
+  dbSchema: 'shinuim',
+  title: 'לב אחד מוקד שרון',
+  //getOtherVisibleOrgs: () => [hahatul, ngim],
+})
 const vdri = new Site('vdri', {
   sendTextMessageToRequester: true,
   dbSchema: 'vdri',
@@ -352,6 +358,7 @@ export const backendSites = [
   }),
   hahatul,
   lev1,
+  lev1ms,
   bikeIl,
   ngim,
   vdri,
