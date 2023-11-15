@@ -124,8 +124,7 @@ async function startup() {
         res.send(500).json({ error: 'wrong key' })
       }
       if (getSite().syncWithShadag) {
-        await upsertShadagTrip(req.body)
-        res.send(req.body)
+        res.send(await upsertShadagTrip(req.body))
       } else {
         res.status(500).json('Shadag sync is disabled')
       }

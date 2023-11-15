@@ -5,6 +5,7 @@ import { Roles } from '../app/users/roles'
 import { Task } from '../app/events/tasks'
 import e from 'express'
 import { GetGeoInformation } from '../app/common/address-input/google-api-helpers'
+import { taskStatus } from '../app/events/taskStatus'
 
 export async function upsertShadagTrip(trip: ShadagItem) {
   initIntegrationUser('Shadag integration')
@@ -17,9 +18,14 @@ export async function upsertShadagTrip(trip: ShadagItem) {
   )
   switch (trip['סטטוס טיפול']) {
     case 'מוכן לשילוח':
+    case 'בשילוח':
+    case 'נמסרה':
       break
     default:
       if (item.isNew()) return
+      item.taskStatus = taskStatus.notRelevant
+      await item.insertStatusChange('הועבר בשדג לסטטוס ' + trip['סטטוס טיפול'])
+      return 'unknown status ' + trip['סטטוס טיפול']
       break
   }
   item.__disableValidation = true
@@ -58,6 +64,7 @@ export async function upsertShadagTrip(trip: ShadagItem) {
 
   item.imageId = trip.image
   await item.save()
+  return 'OK'
 }
 export async function updateShadagBasedOnTask(t: Task) {
   if (remult.user?.phone === MONDAY_USER_PHONE) return
