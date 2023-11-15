@@ -17,14 +17,11 @@ export class PhoneDetailsComponent implements OnInit {
     title?: string
     closeDialog?: VoidFunction
     messageContext?: string
-    message?: string
   }
   sendWhatsapp() {
     sendWhatsappToPhone(
       this.args.phone!,
-      this.args.message
-        ? this.args.message
-        : `שלום ${this.args.name}
+      `שלום ${this.args.name}
 זה ${remult.user?.name} מ${getTitle()}
 ${this.args.messageContext ? 'בקשר ל' + this.args.messageContext : ''}
 `

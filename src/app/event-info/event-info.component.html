@@ -168,7 +168,7 @@
           phone: driver.phone,
           name: driver.name,
           title: 'נהג',
-          message: e.getMessageForDriver()
+          messageContext: e.getShortDescription() + '\n' + e.getLink() + '\n'
         }"
       ></app-phone-details>
     </div>
