@@ -171,7 +171,7 @@ export class UsersComponent implements OnInit {
             let phone = fixPhoneInput(element[0])
             let name = element[2] || element[1]
             if (!isPhoneValidForIsrael(phone)) {
-              if (element[6] === 'כן') {
+              if ((element[6] || '').trim() === 'כן') {
                 phone = element[4]
                 name = element[2] + ' ' + element[3]
               }
