@@ -262,6 +262,17 @@ ${this.getLink()}`
       message += ' ל' + getCity(this.toAddressApiResult, this.toAddress)
     return message + ` (${this.externalId})`
   }
+
+  getMessageForDriver() {
+    return `שלום ${this.driver?.name || ''} ,מופיע באפליקציה שלקחת את הנסיעה:
+${this.getShortDescription()} של ארגון "${getTitle()}"
+והיא טרם הושלמה
+
+נשמח אם תעדכן אותנו מה הסטטוס שלה, בקישור הבא או בהודעה חוזרת
+
+${this.getLink()}
+`
+  }
   displayDate() {
     const e = this
     let result = eventDisplayDate(e)
@@ -954,18 +965,7 @@ ${url + '/s/' + this.editLink}
             e.driver = await e._.relations.driver.findOne()
           }
 
-          sendWhatsappToPhone(
-            e.driver?.phone!,
-            `שלום ${e.driver?.name || ''} ,מופיע באפליקציה שלקחת את הנסיעה:
-${e.getShortDescription()} של ארגון "${getTitle()}"
-והיא טרם הושלמה
-
-נשמח אם תעדכן אותנו מה הסטטוס שלה, בקישור הבא או בהודעה חוזרת
-
-${e.getLink()}
-
-`
-          )
+          sendWhatsappToPhone(e.driver?.phone!, e.getMessageForDriver())
         },
       },
       {

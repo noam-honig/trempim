@@ -163,30 +163,14 @@
     </app-phone-details>
     <div *ngIf="driver">
       <hr />
-      <strong>נהג: {{ driver.name }}</strong>
-      <div *ngIf="driver.phone" class="space-above">
-        <div class="phone-container">
-          <span
-            mat-mini-fab
-            style="vertical-align: middle; cursor: pointer"
-            color="primary"
-            (click)="sendWhatsapp(driver.phone!)"
-          >
-            <img src="assets/whatsapp.png" />
-          </span>
-          <a href="tel:{{ driver.phone }}">
-            <button mat-mini-fab style="vertical-align: middle" color="primary">
-              <mat-icon>call</mat-icon>
-            </button>
-          </a>
-          <div>
-            <a href="tel:{{ driver.phone }}"
-              >{{ driver.name }},
-              {{ driver.$.phone.displayValue }}
-            </a>
-          </div>
-        </div>
-      </div>
+      <app-phone-details
+        [args]="{
+          phone: driver.phone,
+          name: driver.name,
+          title: 'נהג',
+          messageContext: e.getMessageForDriver()
+        }"
+      ></app-phone-details>
     </div>
   </div>
 </mat-dialog-content>
