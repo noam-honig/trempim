@@ -364,6 +364,7 @@ export class EventCardComponent implements OnInit {
       count: this._tasks.length,
       caption: 'הכל ' + ' - ' + this.types.reduce((a, b) => a + b.count, 0),
     })
+    this.dates.sort((a, b) => a.id - b.id)
     this.dates.forEach((c) => (c.caption = c.caption + ' - ' + c.count))
 
     this.dates.splice(0, 0, {

@@ -12,10 +12,12 @@
     <data-area [settings]="area"></data-area>
     <div
       *ngIf="tasks.length"
+      class="one-line-of-combos"
       style="
         display: flex;
         justify-content: space-between;
         flex-direction: row-reverse;
+        gap: 4px;
       "
     >
       <div style="align-self: center">
@@ -28,30 +30,12 @@
           <mat-icon>near_me</mat-icon>קרוב אלי
         </button>
       </div>
-      <mat-form-field
-        *ngIf="dates.length >= 2"
-        appearance="outline"
-        class="dense-form-field"
-        style="margin-bottom: -8px"
-      >
-        <mat-label>מתי</mat-label>
-        <div>
-          <select
-            matNativeControl
-            [(ngModel)]="filterDate"
-            (change)="refreshFilters(true)"
-          >
-            <option *ngFor="let v of dates" [ngValue]="v.id">
-              {{ v.caption }}
-            </option>
-          </select>
-        </div>
-      </mat-form-field>
+
       <mat-form-field
         *ngIf="showSortOptions"
         appearance="outline"
         class="dense-form-field"
-        style="margin-bottom: -8px"
+        style="margin-bottom: -8px; flex-basis: 1px; flex-grow: 1"
       >
         <mat-label>הצג לפי</mat-label>
         <div>
@@ -65,6 +49,23 @@
             </option>
           </select>
         </div>
+      </mat-form-field>
+      <mat-form-field
+        *ngIf="dates.length >= 2"
+        appearance="outline"
+        class="dense-form-field"
+        style="margin-bottom: -8px; flex-basis: 1px; flex-grow: 1"
+      >
+        <mat-label>מתי</mat-label>
+        <select
+          matNativeControl
+          [(ngModel)]="filterDate"
+          (change)="refreshFilters(true)"
+        >
+          <option *ngFor="let v of dates" [ngValue]="v.id">
+            {{ v.caption }}
+          </option>
+        </select>
       </mat-form-field>
       <div style="align-self: center">
         <button
