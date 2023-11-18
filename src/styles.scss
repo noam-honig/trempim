@@ -125,3 +125,21 @@ a:hover {
 .one-line-of-combos .mat-form-field-infix {
   width: inherit !important;
 }
+
+
+.table,
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 10px 10px;
+}
+
+th {
+  background-color: #f1f1f1;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}

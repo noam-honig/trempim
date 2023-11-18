@@ -13,3 +13,18 @@
     [tooltip]="commonOptions.tooltip"
   ></apx-chart>
 </ng-container>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>נהג</th>
+      <th>נסיעות</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let d of topDrivers; let i = index">
+      <td style="text-align: right">{{ i + 1 }}. {{ d.name }}</td>
+      <td>{{ d.sum }}</td>
+    </tr>
+  </tbody>
+</table>

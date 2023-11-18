@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { OverviewController } from './overview.controller'
+import { OverviewController, TopDriver } from './overview.controller'
 import {
   ApexAxisChartSeries,
   ApexTitleSubtitle,
@@ -20,7 +20,9 @@ import { Roles } from '../users/roles'
   styleUrls: ['./overview.component.scss'],
 })
 export class OverviewComponent implements OnInit {
+  topDrivers: TopDriver[] = []
   ngOnInit(): void {
+    this.refreshTopDrivers()
     OverviewController.getOverview().then((data) => {
       let orgs = new Map<string, Map<string, dataPoint>>()
 
@@ -91,6 +93,15 @@ export class OverviewComponent implements OnInit {
       this.stats.sort((a, b) => b.total - a.total)
     })
   }
+
+  async refreshTopDrivers() {
+    this.topDrivers = await OverviewController.topDrivers(
+      '2023-01-01',
+      '2024-01-01',
+      false
+    )
+  }
+
   stats: {
     name: string
     chart: ChartOptions
