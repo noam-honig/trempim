@@ -46,10 +46,10 @@
       "
     />
   </div>
-  <strong *ngIf="showContactInfoMessage()" style="text-align: center"
-    >פרטי הקשר יוצגו לאחר שתלחץ על הכפתור "אני רוצה לבצע" למטה. תוכל לחזור בך על
-    "ידי לחיצה על "נקלתי בבעיה</strong
-  >
+  <strong *ngIf="showContactInfoMessage()" style="text-align: center">
+    פרטי הקשר יוצגו לאחר שתלחץ על הכפתור "אני רוצה לבצע" למטה - תוכל לחזור בך על
+    הכפתור ידי לחיצה על "נתקלתי בבעיה"
+  </strong>
   <app-phone-details
     *ngIf="useFillerInfo()"
     [args]="{
