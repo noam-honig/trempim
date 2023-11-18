@@ -778,6 +778,25 @@ ${this.getLink()}
     this.statusNotes = notes
     await this.insertStatusChange(this.taskStatus.caption, notes)
     await this.save()
+    if (this.driverId == remult.user?.id)
+      return await repo(Task)
+        .find({
+          where: {
+            driverId: this.driverId,
+            taskStatus: taskStatus.completed,
+          },
+        })
+        .then((x) =>
+          x.reduce(
+            (sum, t) => {
+              sum.rides++
+              sum.km += t.distance
+              return sum
+            },
+            { rides: 0, km: 0 }
+          )
+        )
+    return undefined
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async completedStatusClickedByMistake() {

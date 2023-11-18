@@ -7,9 +7,7 @@ import { User } from './user'
 
 let title = ''
 export function getTitle() {
-  if (title) return title
-  if (typeof localStorage !== 'undefined') return (title = document.title)
-  return getBackendSite()!.title
+  return getSite().title
 }
 
 export class Site {

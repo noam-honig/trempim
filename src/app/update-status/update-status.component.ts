@@ -4,8 +4,9 @@ import { Task } from '../events/tasks'
 import { DialogRef } from '@angular/cdk/dialog'
 import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
-import { getSite } from '../users/sites'
+import { getSite, getTitle } from '../users/sites'
 import { Roles } from '../users/roles'
+import { sendWhatsappToPhone } from '../events/phone'
 
 @Component({
   selector: 'app-update-status',
@@ -49,7 +50,36 @@ export class UpdateStatusComponent implements OnInit {
             break
         }
       } else {
-        await this.args.task.completed(this.notes)
+        const result = await this.args.task.completed(this.notes)
+        if (result) {
+          if (result.rides == 1) {
+            if (
+              await this.ui.yesNoQuestion(
+                `כל הכבוד, השלמת את הנסיעה הראשונה שלך עם "${
+                  getSite().title
+                }", רוצה לשתף בווטסאפ?`
+              )
+            ) {
+              sendWhatsappToPhone(
+                '',
+                `השלמתי את הנסיעה הראשונה שלי עם ${getSite().title}`
+              )
+            }
+          } else if (
+            await this.ui.yesNoQuestion(
+              `כל הכבוד, השלמת ${result.rides} נסיעות עם "${
+                getSite().title
+              }", סה"כ ${result.km} ק"מ - רוצה לשתף בווטסאפ?`
+            )
+          ) {
+            sendWhatsappToPhone(
+              '',
+              `השלמתי ${result.rides} נסיעות עם ${getTitle()}, סה"כ ${
+                result.km
+              } ק"מ`
+            )
+          }
+        }
       }
       this.dialogRef.close()
     } catch (err: any) {
