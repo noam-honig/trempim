@@ -189,6 +189,9 @@ export class EventCardComponent implements OnInit {
           region: this.region,
           toRegion: this.toRegion,
           category: this.category,
+          date: this.filterDate
+            ? Math.round((this.filterDate - new Date().valueOf()) / 86400000)
+            : undefined,
         })
       )
     this.refreshTasksForMap()

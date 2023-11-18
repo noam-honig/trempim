@@ -6,6 +6,7 @@ import {
   getLocation,
 } from '../common/address-input/google-api-helpers'
 import { taskStatus } from '../events/taskStatus'
+import { getSite } from '../users/sites'
 
 @Component({
   selector: 'app-trip-subtitle',
@@ -38,5 +39,9 @@ export class TripSubtitleComponent implements OnInit {
   }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active
+  }
+  eventOrg() {
+    if (getSite().getVisibleOrgs().length > 1) return this.e.$.org.displayValue
+    return ''
   }
 }

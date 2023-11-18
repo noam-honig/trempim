@@ -324,6 +324,7 @@ const civil = new Site('civil', {
 })
 
 const warRoom = new Site('wrc', {
+  sendTextMessageToRequester: true,
   dbSchema: 'wrc',
   title: 'אופנוענים ונהגים מתנדבים',
   showCopyLink: true,
@@ -399,6 +400,7 @@ export const backendSites = [
     syncWithShadag: true,
   }),
   new Site('test1', {
+    getOtherVisibleOrgs: () => [hahatul],
     //syncWithShadag: true,
     requireValidUntil: true,
     dbSchema: 'dshinua',
