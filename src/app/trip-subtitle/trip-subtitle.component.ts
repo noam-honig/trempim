@@ -32,10 +32,10 @@ export class TripSubtitleComponent implements OnInit {
     )
   }
   eventCity(e: Task) {
-    return getCity(e.addressApiResult, e.address)
+    return getCity(e.addressApiResult)
   }
   eventToCity(e: Task) {
-    return getCity(e.toAddressApiResult, e.toAddress)
+    return getCity(e.toAddressApiResult)
   }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active

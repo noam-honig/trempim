@@ -36,7 +36,7 @@ import { getCity } from '../common/address-input/google-api-helpers'
               *ngIf="o.addressApiResult"
               style="color:gray"
             >
-             &nbsp; - {{ getCity(o) }}
+              &nbsp; - {{ getCity(o) }}
             </span>
           </mat-list-item>
           <mat-divider></mat-divider>
@@ -62,7 +62,7 @@ export class SelectUserComponent implements OnInit {
     this.loadProducts()
   }
   getCity(u: User) {
-    return getCity(u.addressApiResult, u.address)
+    return getCity(u.addressApiResult)
   }
   async loadProducts() {
     this.users = await repo(User).find({

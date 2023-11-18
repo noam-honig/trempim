@@ -176,7 +176,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     this.e.openEditDialog(this.dialog, () => this.refresh())
   }
   getCity() {
-    return getCity(this.e.addressApiResult!, this.e.address)
+    return getCity(this.e.addressApiResult!)
   }
   closeDialog!: VoidFunction
 

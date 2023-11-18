@@ -257,9 +257,9 @@ ${this.getLink()}`
     if (this.category) message = this.category + ': '
     if (this.title) message += this.title + ' '
     if (this.addressApiResult?.results?.length)
-      message += 'מ' + getCity(this.addressApiResult!, this.address)
+      message += 'מ' + getCity(this.addressApiResult!)
     if (this.toAddressApiResult?.results?.length)
-      message += ' ל' + getCity(this.toAddressApiResult, this.toAddress)
+      message += ' ל' + getCity(this.toAddressApiResult)
     return message + ` (${this.externalId})`
   }
 
@@ -794,6 +794,7 @@ ${this.getLink()}
     )
       this.taskStatus = taskStatus.driverPickedUp
     else this.taskStatus = taskStatus.assigned
+    this.statusNotes = ''
     await this.insertStatusChange('עדכון סטטוס נלחץ בטעות')
     await this.save()
   }

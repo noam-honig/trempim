@@ -27,7 +27,7 @@ export function getDistrict(g: GeocodeResult | undefined | null) {
   return g.district
 }
 
-export function getCity(g: GeocodeResult | undefined | null, address: string) {
+export function getCity(g: GeocodeResult | undefined | null) {
   const address_component = g?.results[0]?.address_components
   let r = undefined
   if (!address_component) return g?.results?.[0]?.formatted_address || ''
@@ -43,7 +43,7 @@ export function getCity(g: GeocodeResult | undefined | null, address: string) {
     address_component.forEach((x) => {
       if (x.types.includes('administrative_area_level_1')) r = x.long_name
     })
-  if (!r) return address_component?.[0]?.short_name || ''
+  if (!r) return address_component?.[0]?.short_name || g.branch || g.district
   return r
 }
 const districtToRegion = new Map<string, string>()
@@ -72,7 +72,7 @@ function getGoogleRegion(r: GeocodeResult | undefined | null) {
   }
   if (r?.district) return r.district
   if (r?.branch) return r.branch
-  const city = getCity(r, '')
+  const city = getCity(r)
   if (city) return city
   return 'לא ידוע'
 }
@@ -128,7 +128,7 @@ export function getAddress(result: {
     ) {
       const x = result.address_components[index]
       if (x.types[0] == 'country' || x.types[0] == 'postal_code') {
-        let i = r.lastIndexOf(', ' + x.long_name)
+        let i: number = r.lastIndexOf(', ' + x.long_name)
         if (i > 0)
           r = r.substring(0, i) + r.substring(i + x.long_name.length + 2)
       }
