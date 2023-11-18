@@ -150,12 +150,15 @@ export class EventCardComponent implements OnInit {
   }
 
   showMap = false // document.location.host.includes('localhost')
-  toggleShowMap(val: boolean) {
+  async toggleShowMap(val: boolean) {
     this.showMap = val
     this.tools.report(
       val ? 'הצג מפה' : 'הצג רשימה',
       this.showingAllTasks ? 'חיפוש נסיעה' : 'נסיעות שלי'
     )
+    if (!this.startLocation) {
+      this.startLocation = await getCurrentLocation()
+    }
   }
 
   tasksForMap: Task[] = []
