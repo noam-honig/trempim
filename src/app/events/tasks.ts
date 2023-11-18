@@ -347,6 +347,10 @@ ${this.getLink()}
     validate: (s, c) => {
       if (s.__disableValidation) return
       if (!c.value || c.value.getFullYear() < 2018) c.error = 'תאריך שגוי'
+      var twoDaysAgo = new Date()
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+      if ((s.isNew() || c.valueChanged()) && c.value < twoDaysAgo)
+        c.error = 'תאריך עבר'
     },
   })
   eventDate: Date = new Date()
