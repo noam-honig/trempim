@@ -902,10 +902,7 @@ ${this.getLink()}
       buttons: [],
     })
   }
-  verifyRelevanceMessage(replyToText: boolean) {
-    let phone = this.phone1 || this.toPhone1
-
-    let name = this.phone1 ? this.phone1Description : this.phone2Description
+  verifyRelevanceMessage(name: string, replyToText: boolean) {
     const site = getSiteByOrg(this.org)
     const parts = remult.context.origin.split('/')
     parts[parts.length - 1] = site?.urlPrefix!
@@ -918,19 +915,16 @@ ${this.getLink()}
       description += ' מ' + eventDisplayDate(this)
     }
 
-    return {
-      phone,
-      message: `שלום ${name}, בהמשך לפנייתך ל"${site?.title}":
+    return `שלום ${name}, בהמשך לפנייתך ל"${site?.title}":
 ${description} 
 
 על מנת שנוכל לעזור ולסייע ואזרחים נוספים בצורה יעילה יותר, נשמח שתעדכן בקישור הבא ${
-        replyToText ? 'או בהודעה חוזרת ' : ''
-      }אם הבקשה עדיין רלוונטית או הסתדרת כבר 
+      replyToText ? 'או בהודעה חוזרת ' : ''
+    }אם הבקשה עדיין רלוונטית או הסתדרת כבר 
 
 ${url + '/s/' + this.editLink}
 
-תודה ${site?.title}`,
-    }
+תודה ${site?.title}`
   }
 
   static rowButtons(
@@ -974,15 +968,32 @@ ${url + '/s/' + this.editLink}
       {
         name: 'ווטסאפ למבקש הנסיעה',
         icon: 'sms',
-
+        visible: (x) => Boolean(x.requesterPhone1),
         click: async (e) => {
           if (!e.editLink) {
             e.editLink = createId()
             e.save()
           }
-          const m = e.verifyRelevanceMessage(true)
+          const m = e.verifyRelevanceMessage(
+            e.requesterPhone1Description!,
+            true
+          )
 
-          sendWhatsappToPhone(m.phone, m.message)
+          sendWhatsappToPhone(e.requesterPhone1!, m)
+        },
+      },
+      {
+        name: 'ווטסאפ לאיש קשר לאיסוף',
+        icon: 'sms',
+        visible: (x) => Boolean(x.phone1) && x.phone1 != x.requesterPhone1,
+        click: async (e) => {
+          if (!e.editLink) {
+            e.editLink = createId()
+            e.save()
+          }
+          const m = e.verifyRelevanceMessage(e.phone1Description, true)
+
+          sendWhatsappToPhone(e.phone1, m)
         },
       },
 

@@ -5,6 +5,7 @@ import { Task } from './tasks'
 import { taskStatus } from './taskStatus'
 import { sendSms } from '../../server/send-sms'
 import { createId } from '@paralleldrive/cuid2'
+import { BlockedPhone } from './blockedPhone'
 
 export async function SendVerifyRelevanceSms() {
   console.log('I am here ' + getSite().urlPrefix)
@@ -44,19 +45,27 @@ export async function SendVerifyRelevanceSms() {
         task.__disableValidation = true
         await task.save()
       }
-      const m = task.verifyRelevanceMessage(false)
-      if (m.phone) {
-        const smsResult = await sendSms(m.phone, m.message)
+      if (!task.externalId.startsWith('m:')) {
+        let phone = task.phone1
+        if (phone) {
+          if ((await repo(BlockedPhone).count({ phone: phone })) == 0) {
+            const m = task.verifyRelevanceMessage(
+              task.phone1Description!,
+              false
+            )
+            const smsResult = await sendSms(phone, m)
 
-        await task.insertStatusChange(
-          verifyRelevanceSms,
-          JSON.stringify({
-            phone: m.phone,
-            response: smsResult,
-          })
-        )
+            await task.insertStatusChange(
+              verifyRelevanceSms,
+              JSON.stringify({
+                phone: phone,
+                response: smsResult,
+              })
+            )
+          }
+        }
       } else {
-        console.log('no phone')
+        console.log('no phone for ', task.externalId)
       }
     }
   }
