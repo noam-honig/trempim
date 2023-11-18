@@ -1160,14 +1160,25 @@ ${url + '/s/' + this.editLink}
         },
       },
       {
-        name: 'שכפול נסיעה',
+        name: 'שכפול נסיעה לכתובת אחרת',
+        icon: 'content_copy',
         click: async (oldE) => {
           const e = remult.repo(Task).create(oldE)
           e.eventDate = new Date()
-          e.eventDate.setDate(e.eventDate.getDate() + 1)
+          e.toAddress = ''
+          e.toAddressApiResult = null
+          e.toPhone1 = ''
+          e.toPhone2 = ''
+          e.tpPhone1Description = ''
+          e.tpPhone2Description = ''
           ui.areaDialog({
-            title: 'שכפול נסיעה',
-            fields: [e.$.eventDate],
+            title: 'שכפול נסיעה לכתובת אחרת',
+            fields: [
+              e.$.toAddress,
+              [e.$.toPhone1, e.$.tpPhone1Description],
+              [e.$.toPhone2, e.$.tpPhone2Description],
+              e.$.eventDate,
+            ],
             ok: async () => {
               await e.save()
               args?.taskAdded?.(e)
