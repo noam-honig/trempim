@@ -544,7 +544,7 @@ ${this.getLink()}
 
   @Fields.string({ includeInApi: Roles.dispatcher })
   editLink = createId()
-  @Fields.string({ allowApiUpdate: false })
+  @Fields.boolean({ allowApiUpdate: false, dbName: 'publicVisibleBoolean' })
   publicVisible = false
   @BackendMethod({ allowed: true })
   static async makePublicVisible(id: string) {
