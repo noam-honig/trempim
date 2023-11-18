@@ -18,14 +18,35 @@
         flex-direction: row-reverse;
       "
     >
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="sortByDistance()"
-        *ngIf="!showSortOptions"
+      <div style="align-self: center">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="sortByDistance()"
+          *ngIf="!showSortOptions"
+        >
+          <mat-icon>near_me</mat-icon>קרוב אלי
+        </button>
+      </div>
+      <mat-form-field
+        *ngIf="dates.length >= 2"
+        appearance="outline"
+        class="dense-form-field"
+        style="margin-bottom: -8px"
       >
-        <mat-icon>near_me</mat-icon>קרוב אלי
-      </button>
+        <mat-label>מתי</mat-label>
+        <div>
+          <select
+            matNativeControl
+            [(ngModel)]="filterDate"
+            (change)="refreshFilters(true)"
+          >
+            <option *ngFor="let v of dates" [ngValue]="v.id">
+              {{ v.caption }}
+            </option>
+          </select>
+        </div>
+      </mat-form-field>
       <mat-form-field
         *ngIf="showSortOptions"
         appearance="outline"

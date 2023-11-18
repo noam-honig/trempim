@@ -120,6 +120,7 @@ export class EventCardComponent implements OnInit {
   regions: AreaFilterInfo[] = []
   toRegions: AreaFilterInfo[] = []
   types: { id: string; count: number; caption: string }[] = []
+  dates: { id: number; count: number; caption: string }[] = []
   trackBy(i: number, e: { id: any }): any {
     return e.id as any
   }
@@ -132,6 +133,8 @@ export class EventCardComponent implements OnInit {
   toRegion: string = ''
   @Fields.string({ caption: 'קטגוריה' })
   category = ''
+  @Fields.integer({ caption: 'מתי' })
+  filterDate = 0
   area!: DataAreaSettings
 
   _tasks!: Task[]
@@ -189,7 +192,7 @@ export class EventCardComponent implements OnInit {
         })
       )
     this.refreshTasksForMap()
-    this.urgencies = []
+    this.urgencies.forEach((u) => u.events.splice(0))
     this.tasks.sort((a, b) => this.compareEventDate(a, b))
 
     let firstLongLat: string | undefined
@@ -197,6 +200,7 @@ export class EventCardComponent implements OnInit {
     this.regions.splice(0)
     this.toRegions.splice(0)
     this.types.splice(0)
+    this.dates.splice(0)
     let regionStats = 0,
       toRegionStats = 0
 
@@ -311,6 +315,16 @@ export class EventCardComponent implements OnInit {
           })
         } else type.count++
       }
+      if (this.filter(e, { date: 0 })) {
+        let d = this.dates.find((c) => c.id == e.eventDate.valueOf())
+        if (!d) {
+          this.dates.push({
+            id: e.eventDate.valueOf(),
+            count: 1,
+            caption: eventDisplayDate(e),
+          })
+        } else d.count++
+      }
     }
 
     const finishList = (regions: AreaFilterInfo[], stats: number) => {
@@ -349,6 +363,13 @@ export class EventCardComponent implements OnInit {
       id: '',
       count: this._tasks.length,
       caption: 'הכל ' + ' - ' + this.types.reduce((a, b) => a + b.count, 0),
+    })
+    this.dates.forEach((c) => (c.caption = c.caption + ' - ' + c.count))
+
+    this.dates.splice(0, 0, {
+      id: 0,
+      count: this._tasks.length,
+      caption: 'כל יום ' + ' - ' + this.tasks.length,
     })
 
     this.urgencies = this.urgencies.filter((d) => d.events.length > 0)
@@ -509,12 +530,18 @@ export class EventCardComponent implements OnInit {
   }
   filter(
     e: Task,
-    overrideSearch?: { region?: string; toRegion?: string; category?: string }
+    overrideSearch?: {
+      region?: string
+      toRegion?: string
+      category?: string
+      date?: number
+    }
   ) {
     const search: Required<typeof overrideSearch> = {
       region: this.region,
       toRegion: this.toRegion,
       category: this.category,
+      date: this.filterDate,
       ...overrideSearch,
     }
 
@@ -533,7 +560,8 @@ export class EventCardComponent implements OnInit {
           this.toRegion &&
           filterRegion(search.region, e.toAddressApiResult) &&
           filterRegion(search.toRegion, e.addressApiResult))) &&
-      (search.category == '' || e.category == search.category)
+      (search.category == '' || e.category == search.category) &&
+      (search.date == 0 || search.date == e.eventDate.valueOf())
     )
   }
   hasEvents(d: dateEvents) {
