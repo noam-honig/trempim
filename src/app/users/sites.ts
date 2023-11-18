@@ -292,7 +292,6 @@ const civil = new Site('civil', {
   sortTasksAscending: true,
   dbSchema: 'civil',
   title: 'מתנדבי טרמפים',
-  showContactToAnyDriver: true,
   showValidUntil: true,
   requireValidUntil: true,
   getIntroText: () => {
@@ -401,6 +400,7 @@ export const backendSites = [
   }),
   new Site('test1', {
     //syncWithShadag: true,
+    requireValidUntil: true,
     dbSchema: 'dshinua',
     title: 'פיתוח',
     ignore: true,

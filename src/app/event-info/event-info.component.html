@@ -46,8 +46,9 @@
       "
     />
   </div>
-  <strong *ngIf="showContactInfoMessage()"
-    >פרטי הקשר יוצגו לאחר שתלחץ על הכפתור "אני אבצע" למטה</strong
+  <strong *ngIf="showContactInfoMessage()" style="text-align: center"
+    >פרטי הקשר יוצגו לאחר שתלחץ על הכפתור "אני רוצה לבצע" למטה. תוכל לחזור בך על
+    "ידי לחיצה על "נקלתי בבעיה</strong
   >
   <app-phone-details
     *ngIf="useFillerInfo()"
@@ -191,7 +192,7 @@
     *ngIf="showAssign()"
     (click)="registerToEvent()"
   >
-    אני אבצע
+    אני רוצה לבצע
   </button>
   <button
     mat-raised-button

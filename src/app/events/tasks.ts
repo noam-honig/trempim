@@ -363,6 +363,9 @@ ${this.getLink()}
       if (getSite().requireValidUntil && !c.value) {
         throw Error('ערך חסר')
       }
+      if (getSite().requireValidUntil && +c.value > 72) {
+        throw Error('ערך גדול מדי, נא להזין עד 72 שעות')
+      }
     },
   })
   relevantHours = getSite().requireValidUntil ? 0 : 12
