@@ -335,6 +335,11 @@ const warRoom = new Site('wrc', {
   syncWithMonday: true,
   registerVolunteerLink: `https://forms.monday.com/forms/2ecb222fecfb8b8d7404f754362d2c6d?r=euc1`,
 })
+const trmps = new Site('trmps', {
+  dbSchema: 'shinuim',
+  title: 'חמ"ל השינוע הארצי',
+  //syncWithMonday: true,
+})
 
 const showers = new Site('showers', {
   dbSchema: 'showers',
