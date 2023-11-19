@@ -36,6 +36,7 @@ export interface MondayItem {
     id: string
     title: string
     value: string
+    text: string
   }[]
   subitems: any[]
 }
@@ -91,4 +92,20 @@ column_values(ids:[$column_id]){
       error: err.message,
     }
   }
+}
+
+export function get(
+  item: MondayItem,
+  mondayColumn: string,
+  useVal?: boolean
+): any {
+  for (const c of item.column_values) {
+    if (c.id == mondayColumn) {
+      let val = c.text
+      if (useVal) val = JSON.parse(c.value)
+
+      if (val) return val
+    }
+  }
+  return ''
 }

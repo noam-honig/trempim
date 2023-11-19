@@ -1,6 +1,6 @@
-import { ValueConverters, remult, repo } from 'remult'
+import { JsonDataProvider, ValueConverters, remult, repo } from 'remult'
 import { Task } from '../app/events/tasks'
-import { gql, update } from './getGraphQL'
+import { MondayItem, get, gql, update } from './getGraphQL'
 import { User } from '../app/users/user'
 import { fixPhoneInput, isPhoneValidForIsrael } from '../app/events/phone'
 import { GetGeoInformation } from '../app/common/address-input/google-api-helpers'
@@ -105,19 +105,11 @@ export interface Style {
   var_name: string
 }
 
-export interface MondayItem {
-  id: string
-  name: string
-  column_values: {
-    id: string
-    text: string
-    value: string
-  }[]
-  subitems: any[]
-}
 export const MONDAY_USER_PHONE = '0500000002'
 const DRIVER_PHONE_COLUMN = 'text63'
 const DRIVER_NAME_COLUMN = 'text6'
+
+const TRMPS_BOARD = 1287079265
 
 export async function upsertTaskBasedOnMondayValues(
   board: number,
@@ -333,6 +325,87 @@ https://sh.hagai.co/wrc`
   }
 }
 
+export async function listTasks() {
+  const fs = await import('fs')
+  if (false) {
+    const items = await gql(
+      { board: TRMPS_BOARD },
+      `#graphql
+
+query ($board: ID!) {
+  boards(ids: [$board]) {
+    id
+    name
+    board_folder_id
+    board_kind
+    items_page(limit:500,
+    query_params:{
+      rules:[
+        {
+          column_id:"status"
+          compare_value:2
+        }
+      ]
+    }
+    ) {
+      items {
+        id
+        name
+        column_values {
+          id
+          text
+          value
+        }
+      }
+    }
+  }
+}
+  `,
+      process.env['MONDAY_TREMPS_API_TOKEN']
+    )
+
+    const mondayItems = items.boards[0].items_page.items as MondayItem[]
+    fs.writeFileSync('tmp/trmps.json', JSON.stringify(mondayItems, null, 2))
+  }
+  const mondayItems: MondayItem[] = JSON.parse(
+    fs.readFileSync('tmp/trmps.json').toString()
+  )
+  await initIntegrationUser('Monday')
+  for (const item of mondayItems) {
+    await upsertTrmpsMondayItem(item)
+  }
+}
+export async function upsertTrmpsMondayItem(item: MondayItem) {
+  const task = await repo(Task).findFirst(
+    { externalId: 'm:' + item.id },
+    {
+      createIfNotFound: true,
+    }
+  )
+  switch (get(item, 'status', true).index) {
+    case 2:
+      break
+    default:
+      if (task.isNew()) return
+  }
+  task.title = 'שינוע'
+  task.__disableValidation = true
+  task.phone1Description = item.name
+  task.eventDate = task.$.eventDate.metadata.valueConverter.fromInput(
+    get(item, 'date')
+  )
+  task.description = get(item, 'text12')
+  task.address = get(item, 'location')
+  if (task.$.address.valueChanged())
+    task.addressApiResult = await GetGeoInformation(task.address)
+  task.toAddress = get(item, 'location5')
+  if (task.$.toAddress.valueChanged())
+    task.toAddressApiResult = await GetGeoInformation(task.toAddress)
+  task.phone1 = get(item, 'phone') || ''
+  task.category = get(item, 'status3')
+  await task.save()
+}
+
 export interface MondayAddress {
   lat: string
   lng: string
@@ -379,4 +452,5 @@ export async function initIntegrationUser(name: string) {
     phone: MONDAY_USER_PHONE,
     roles: [Roles.admin, Roles.dispatcher],
   }
+  remult.context.availableTaskIds = []
 }
