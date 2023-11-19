@@ -108,14 +108,11 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   allowApiDelete: false,
   saving: async (task) => {
     if (!remult.user && task.isNew()) {
-      const user = await repo(User).findFirst({
-        phone: '0500000000',
-        deleted: false,
-      })
+      const user = await Task.intakeUserId()
       if (!user) {
         throw new Error('לא ניתן להוסיף בקשות חדשות')
       }
-      remult.user = { id: user.id }
+      remult.user = { id: user }
       task.createUserId = remult.user.id
     }
     if (task.isNew()) remult.context.availableTaskIds.push(task.id!)
@@ -581,6 +578,16 @@ ${this.getLink()}
     if (!r) throw Error('לא נמצאה משימה זו')
     await r.insertStatusChange('צפייה למטרת עדכון על ידי מבקש')
     return r._.toApiJson()
+  }
+
+  @BackendMethod({ allowed: true })
+  static async intakeUserId() {
+    if (remult.user) return remult.user.id
+    const user = await repo(User).findFirst({
+      phone: '0500000000',
+      deleted: false,
+    })
+    return user?.id
   }
   getTextMessagePhone() {
     if (getSite().useFillerInfo && this.requesterPhone1)

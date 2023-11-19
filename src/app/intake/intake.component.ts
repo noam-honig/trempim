@@ -11,6 +11,7 @@ import { getSite, getTitle } from '../users/sites'
 import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
 import copy from 'copy-to-clipboard'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-intake',
@@ -18,7 +19,11 @@ import copy from 'copy-to-clipboard'
   styleUrls: ['./intake.component.scss'],
 })
 export class IntakeComponent implements OnInit {
-  constructor(private documentTitle: Title, private ui: UIToolsService) {}
+  constructor(
+    private documentTitle: Title,
+    private ui: UIToolsService,
+    private router: Router
+  ) {}
   title = document.title
   getLogo() {
     return '/' + getSite().urlPrefix + '/assets/logo.png'
@@ -86,6 +91,12 @@ export class IntakeComponent implements OnInit {
       }
     }
     this.ui.report('קישור לטופס הוספה', '')
+    Task.intakeUserId().then((x) => {
+      if (!x) {
+        this.ui.error('הוספת נסיעה על ידי משתמשים לא מורשים חסומה')
+        this.router.navigate(['/'])
+      }
+    })
     this.documentTitle.setTitle(getTitle() + ' בקשה')
   }
   allowShare() {
