@@ -13,6 +13,7 @@ export function getTitle() {
 export class Site {
   driverAssignButtonText = 'אני רוצה לבצע'
   sortTasksAscending = false
+  sendTextMessageOnApprove = false
   sendTextMessageToRequester = false
   sendTextMessageOnlyForFutureEvents = false
   constructor(
@@ -243,6 +244,7 @@ function yedidimEnv(urlPrefix: string) {
     sendTextMessageToRequester: true,
     dbSchema: 'ezion',
     org: 'yedidim',
+    sendTextMessageOnApprove: true,
     title: 'ידידים',
     countUpdates: false,
     messageBySnif: true,
@@ -288,7 +290,7 @@ const yedidim = yedidimEnv('y')
 const civil = new Site('civil', {
   sendTextMessageToRequester: true,
   sendTextMessageOnlyForFutureEvents: true,
-
+  sendTextMessageOnApprove: true,
   sortTasksAscending: true,
   dbSchema: 'civil',
   title: 'מתנדבי טרמפים',

@@ -164,7 +164,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         for (const user of await repo(User).find({
           where: { dispatcher: true, org: getSite().org },
         })) {
-          sendSms(
+          await sendSms(
             user.phone,
             'נוספה בקשה: ' +
               task.getShortDescription() +
@@ -205,6 +205,32 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       if (task.$.driverId.valueChanged() || task.$.taskStatus.valueChanged()) {
         await updateShadagBasedOnTask(task)
       }
+    }
+    if (
+      getSite().sendTextMessageOnApprove &&
+      task.taskStatus == taskStatus.active &&
+      (task.$.taskStatus.valueChanged() || isNew)
+    ) {
+      let phone = task.getTextMessagePhone()
+      if (phone?.phone)
+        await task.insertStatusChange(
+          'הודעת SMS באישור',
+          JSON.stringify({
+            phone: phone.phone,
+            message: await sendSms(
+              phone.phone,
+              `שלום ${phone.name},
+
+קיבלנו את פנייתך ${task.getShortDescription()}.
+
+ברגע שמתנדב או מתנדבת שלנו יהיו זמינים לסייע לך, הם ייצרו איתך קשר בשיחת טלפון - נא זמינותך.
+במידה והסתדרת בכל דרך אחרת, נודה לעדכון בקישור הבא, בכדי שנוכל לייעל את השירות שלנו עבור פונים נוספים. לעדכון/הסרה יש להיכנס לקישור
+${remult.context.origin + '/s/' + task.editLink}
+שנדע ימים טובים יותר!
+תודה, ${getTitle()}`
+            ),
+          })
+        )
     }
   },
   validation: (task) => {
@@ -591,8 +617,11 @@ ${this.getLink()}
   }
   getTextMessagePhone() {
     if (getSite().useFillerInfo && this.requesterPhone1)
-      return this.requesterPhone1
-    return this.phone1
+      return {
+        phone: this.requesterPhone1,
+        name: this.requesterPhone1Description,
+      }
+    return { phone: this.phone1, name: this.phone1Description }
   }
   @BackendMethod({ allowed: true })
   static async SelfUpdateStatus(editLink: string, status: number) {
@@ -617,7 +646,7 @@ ${this.getLink()}
         try {
           await r.insertStatusChange('לא לשלוח יותר SMS', 'עודכן על ידי מבקש')
           await repo(BlockedPhone).insert({
-            phone: r.getTextMessagePhone(),
+            phone: r.getTextMessagePhone().phone,
           })
         } catch (err) {
           console.log(err)

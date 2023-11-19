@@ -46,13 +46,11 @@ export async function SendVerifyRelevanceSms() {
         await task.save()
       }
       if (!task.externalId.startsWith('m:')) {
-        let phone = task.phone1
+        const p = task.getTextMessagePhone()
+        let phone = p.phone
         if (phone) {
           if ((await repo(BlockedPhone).count({ phone: phone })) == 0) {
-            const m = task.verifyRelevanceMessage(
-              task.phone1Description!,
-              false
-            )
+            const m = task.verifyRelevanceMessage(p.name!, false)
             const smsResult = await sendSms(phone, m)
 
             await task.insertStatusChange(
