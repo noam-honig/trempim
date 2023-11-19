@@ -64,6 +64,7 @@ export class UpdateStatusComponent implements OnInit {
                 '',
                 `השלמתי את הנסיעה הראשונה שלי עם ${getSite().title}`
               )
+              this.ui.report('שיתוף ביצוע נסיעה', '', this.args.task.id)
             }
           } else if (
             await this.ui.yesNoQuestion(
@@ -78,6 +79,7 @@ export class UpdateStatusComponent implements OnInit {
                 result.km
               } ק"מ`
             )
+            this.ui.report('שיתוף ביצוע נסיעה', '', this.args.task.id)
           }
         }
       }

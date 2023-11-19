@@ -11,6 +11,7 @@ export function getTitle() {
 }
 
 export class Site {
+  driverAssignButtonText = 'אני רוצה לבצע'
   sortTasksAscending = false
   sendTextMessageToRequester = false
   sendTextMessageOnlyForFutureEvents = false
@@ -132,6 +133,7 @@ ${
 }
 
 const bikeIl: Site = new Site('bikeil', {
+  driverAssignButtonText: 'אני אבצע',
   sendTextMessageToRequester: true,
   requireContactName: true,
   getIntroTextImplementation: () => {

@@ -47,8 +47,8 @@
     />
   </div>
   <strong *ngIf="showContactInfoMessage()" style="text-align: center">
-    פרטי הקשר יוצגו לאחר שתלחץ על הכפתור "אני רוצה לבצע" למטה. תוכל לחזור בך על
-    ידי לחיצה על הכפתור "נתקלתי בבעיה"
+    פרטי הקשר יוצגו לאחר שתלחץ על הכפתור "{{ driverAssignButtonText() }}" למטה.
+    תוכל לחזור בך על ידי לחיצה על הכפתור "נתקלתי בבעיה"
   </strong>
   <app-phone-details
     *ngIf="useFillerInfo()"
@@ -192,7 +192,7 @@
     *ngIf="showAssign()"
     (click)="registerToEvent()"
   >
-    אני רוצה לבצע
+    {{ driverAssignButtonText() }}
   </button>
   <button
     mat-raised-button

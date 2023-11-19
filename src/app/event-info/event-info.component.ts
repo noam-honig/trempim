@@ -149,6 +149,9 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   showAssign() {
     return this.e.taskStatus == taskStatus.active
   }
+  driverAssignButtonText() {
+    return getSite().driverAssignButtonText
+  }
   contactInfo: TaskContactInfo = {
     origin: [],
     target: [],

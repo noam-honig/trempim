@@ -992,7 +992,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'ווטסאפ למבקש הנסיעה',
         icon: 'sms',
-        visible: (x) => Boolean(x.requesterPhone1),
+        visible: (x) => Boolean(x.requesterPhone1) && getSite().useFillerInfo,
         click: async (e) => {
           if (!e.editLink) {
             e.editLink = createId()
