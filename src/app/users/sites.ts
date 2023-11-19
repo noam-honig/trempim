@@ -387,6 +387,7 @@ export const backendSites = [
   ngim,
   vdri,
   yedidim,
+  trmps,
   yedidimEnv('ezion'),
   new Site('brdls', { dbSchema: 'brdls', title: 'ברדלס' }),
   new Site('mgln', {
