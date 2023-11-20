@@ -205,7 +205,7 @@ export class OverviewComponent implements OnInit {
     this.topDrivers = await OverviewController.topDrivers(
       ValueConverters.DateOnly.toJson!(x.from),
       ValueConverters.DateOnly.toJson!(x.to),
-      false
+      this.showKm
     )
   }
 
