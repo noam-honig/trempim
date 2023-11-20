@@ -166,6 +166,7 @@ function theBigGroup() {
 }
 
 const hahatul: Site = new Site('hahatul', {
+  sendTextMessageOnApprove: true,
   sendTextMessageToRequester: true,
   maxActiveTripsPerDriver: 20,
   dbSchema: 'shinuim',
