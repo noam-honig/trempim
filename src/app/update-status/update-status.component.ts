@@ -48,6 +48,9 @@ export class UpdateStatusComponent implements OnInit {
           case 22:
             await this.args.task.otherProblem(this.notes)
             break
+          case 23:
+            this.args.task.otherProblem('לא עונים ' + this.notes)
+            break
         }
       } else {
         const result = await this.args.task.completed(this.notes)
