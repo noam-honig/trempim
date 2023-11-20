@@ -15,11 +15,12 @@
 </ng-container>
 
 <strong>עשרת הנהגים המובילים</strong>
+<data-area [settings]="area"></data-area>
 <table class="table">
   <thead>
     <tr>
       <th>נהג</th>
-      <th>נסיעות</th>
+      <th>{{ showKm ? 'ק"מ' : 'נסיעות' }}</th>
     </tr>
   </thead>
   <tbody>

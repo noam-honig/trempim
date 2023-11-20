@@ -382,11 +382,13 @@ ${this.getLink()}
   @Fields.integer({
     caption: 'למשך כמה שעות הסיוע רלוונטי',
     validate: (_, c) => {
-      if (getSite().requireValidUntil && !c.value) {
-        throw Error('ערך חסר')
-      }
-      if (getSite().requireValidUntil && +c.value > 72) {
-        throw Error('ערך גדול מדי, נא להזין עד 72 שעות')
+      if (_.isNew() || c.valueChanged()) {
+        if (getSite().requireValidUntil && !c.value) {
+          throw Error('ערך חסר')
+        }
+        if (getSite().requireValidUntil && +c.value > 72) {
+          throw Error('ערך גדול מדי, נא להזין עד 72 שעות')
+        }
       }
     },
   })

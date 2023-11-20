@@ -11,8 +11,11 @@ import {
   ApexTooltip,
   ApexStroke,
 } from 'ng-apexcharts'
-import { remult } from 'remult'
+import { Fields, ValueConverters, getFields, remult } from 'remult'
 import { Roles } from '../users/roles'
+import { DataAreaSettings } from '../common-ui-elements/interfaces'
+
+let today = new Date()
 
 @Component({
   selector: 'app-overview',
@@ -21,7 +24,110 @@ import { Roles } from '../users/roles'
 })
 export class OverviewComponent implements OnInit {
   topDrivers: TopDriver[] = []
+
+  periodOptions: dateRange[] = [
+    {
+      caption: 'היום',
+
+      from: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+      to: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1),
+    },
+    {
+      caption: 'אתמול',
+
+      from: new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - 1
+      ),
+      to: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+    },
+    {
+      caption: 'השבוע',
+
+      from: new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - today.getDay()
+      ),
+      to: new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - today.getDay() + 7
+      ),
+    },
+    {
+      caption: 'השבוע שעבר',
+
+      from: new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - today.getDay() - 7
+      ),
+      to: new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - today.getDay()
+      ),
+    },
+    {
+      caption: 'החודש',
+
+      from: new Date(today.getFullYear(), today.getMonth(), 1),
+      to: new Date(today.getFullYear(), today.getMonth() + 1, 1),
+    },
+    {
+      caption: 'חודש שעבר',
+
+      from: new Date(today.getFullYear(), today.getMonth() - 1, 1),
+      to: new Date(today.getFullYear(), today.getMonth(), 1),
+    },
+    {
+      caption: 'השנה',
+
+      from: new Date(today.getFullYear(), 0, 1),
+      to: new Date(today.getFullYear() + 1, 0, 1),
+    },
+    {
+      caption: 'שנה שעברה',
+
+      from: new Date(today.getFullYear() - 1, 0, 1),
+      to: new Date(today.getFullYear(), 0, 1),
+    },
+    {
+      caption: 'אי פעם',
+      from: new Date(2017, 0, 1),
+      to: new Date(today.getFullYear() + 1, 0, 1),
+    },
+  ]
+
+  @Fields.string({ caption: 'תקופה' })
+  period = 'השבוע'
+  area!: DataAreaSettings
+  @Fields.boolean({ caption: 'מדד' })
+  showKm = false
+
+  get $() {
+    return getFields(this)
+  }
+
   ngOnInit(): void {
+    this.area = new DataAreaSettings({
+      fields: () => [
+        [
+          {
+            field: this.$.period,
+            valueList: this.periodOptions.map((x) => x.caption),
+            valueChange: () => this.refreshTopDrivers(),
+          },
+          {
+            field: this.$.showKm,
+            caption: 'לפי ק"מ',
+            valueChange: () => this.refreshTopDrivers(),
+          },
+        ],
+      ],
+    })
     this.refreshTopDrivers()
     OverviewController.getOverview().then((data) => {
       let orgs = new Map<string, Map<string, dataPoint>>()
@@ -95,9 +201,10 @@ export class OverviewComponent implements OnInit {
   }
 
   async refreshTopDrivers() {
+    var x = this.periodOptions.find((x) => x.caption == this.period)!
     this.topDrivers = await OverviewController.topDrivers(
-      '2023-01-01',
-      '2024-01-01',
+      ValueConverters.DateOnly.toJson!(x.from),
+      ValueConverters.DateOnly.toJson!(x.to),
       false
     )
   }
@@ -171,3 +278,8 @@ export type ChartOptions = {
   toolbar: any
 }
 type dataPoint = { rides: number; drivers: number }
+export interface dateRange {
+  caption: string
+  from: Date
+  to: Date
+}
