@@ -304,14 +304,9 @@ ${this.getLink()}
       if (time.startsWith('0')) time = time.substring(1)
       result += ' ' + time
     }
-    if (getSite().showValidUntil)
-      if (e.validUntil.getDate() == e.eventDate.getDate()) {
-        result +=
-          ' - ' +
-          e.validUntil.getHours() +
-          ':' +
-          e.validUntil.getMinutes().toString().padStart(2, '0')
-      }
+    if (getSite().showValidUntil) {
+      result += ' - ' + formatDate(e.validUntil).split(' ').reverse().join(' ')
+    }
 
     return 'רלוונטי מ: ' + result
   }
@@ -1266,7 +1261,7 @@ export function eventDisplayDate(
     today = ValueConverters.DateOnly.fromJson!(
       ValueConverters.DateOnly.toJson!(new Date())
     )
-    let todayJson = ValueConverters.DateOnly.toJson!(today)
+
     let t = today.valueOf()
     let d = edd.valueOf()
     if (d > t - day) {
