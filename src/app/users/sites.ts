@@ -11,6 +11,7 @@ export function getTitle() {
 }
 
 export class Site {
+  showComfortIntakeMessage = false
   driverAssignButtonText = 'אני רוצה לבצע'
   sortTasksAscending = false
   sendTextMessageOnApprove = false
@@ -288,6 +289,7 @@ function yedidimEnv(urlPrefix: string) {
 const yedidim = yedidimEnv('y')
 
 const civil = new Site('civil', {
+  showComfortIntakeMessage: true,
   sendTextMessageToRequester: true,
   sendTextMessageOnlyForFutureEvents: true,
   sendTextMessageOnApprove: true,

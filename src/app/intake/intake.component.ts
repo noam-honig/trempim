@@ -28,6 +28,9 @@ export class IntakeComponent implements OnInit {
   getLogo() {
     return '/' + getSite().urlPrefix + '/assets/logo.png'
   }
+  getSite() {
+    return getSite()
+  }
   r = repo(Task).create()
   area = new DataAreaSettings({
     fields: () => {

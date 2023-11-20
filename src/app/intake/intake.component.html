@@ -12,6 +12,17 @@
     </div>
     <strong style="align-self: center">{{ title }}</strong>
     <h2>בקשת משימה</h2>
+    <div
+      *ngIf="getSite().showComfortIntakeMessage"
+      style="
+        text-align: center;
+        border: 1px solid;
+        padding: 8px;
+        font-weight: 500;
+      "
+    >
+      כל הנהגים המתנדבים, זוהו ואושרו <BR />בשיחת טלפון אישית
+    </div>
   </div>
   <data-area [settings]="area"></data-area>
   <strong style="color: red" *ngIf="getAddressInstructions()">{{
