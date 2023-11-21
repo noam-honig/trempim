@@ -126,7 +126,7 @@
                 <app-dots-menu
                   [item]="e"
                   [buttons]="menuOptions"
-                  *ngIf="isDispatcher() && !fromMap"
+                  *ngIf="e.isDispatcher() && !fromMap"
                 ></app-dots-menu>
               </div>
               <div class="event-info" (click)="eventDetails(e)">

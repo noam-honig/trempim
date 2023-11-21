@@ -141,7 +141,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return remult.authenticated()
   }
   isDispatcher() {
-    return remult.isAllowed(Roles.dispatcher)
+    return this.e.isDispatcher()
   }
   registered() {
     return matchesCurrentUserId(this.e.driverId, this.e.org)

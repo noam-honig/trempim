@@ -115,7 +115,15 @@ export const api = remultExpress({
       )
 
       remult.subscriptionServer = new SseSubscriptionServer()
-
+      // SqlDatabase.LogToConsole = true
+      // await repo(User).findFirst()
+      // await repo(Task).findFirst()
+      // await repo(ChangeLog).findFirst()
+      // await repo(TaskStatusChanges).findFirst()
+      // await repo(TaskImage).findFirst()
+      // await repo(Session).findFirst()
+      // await repo(User).findFirst()
+      // SqlDatabase.LogToConsole = true
       //await updateStatusOnMonday(item, ACTIVE_DELIVERY)
 
       //await upsertTaskBasedOnMondayValues(1290250715, 1299715447)

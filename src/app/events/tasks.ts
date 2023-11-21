@@ -74,7 +74,11 @@ import { updateShadagBasedOnTask } from '../../server/shadag-work'
 const onlyDriverRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
     if (remult.user) {
-      if (remult.isAllowed([Roles.trainee, Roles.dispatcher])) return true
+      if (
+        t?.eventBelongToOrgUser() &&
+        remult.isAllowed([Roles.trainee, Roles.dispatcher])
+      )
+        return true
       if (
         t!.createUserId === remult.user?.id &&
         remult.isAllowed(Roles.trainee)
@@ -289,6 +293,15 @@ export class Task extends OrgEntity {
 ${this.getShortDescription()}
 ${this.getLink()}`
     )
+  }
+  eventBelongToOrgUser() {
+    return (
+      remult.user?.orgs.find((x) => x.org == this.org)?.userId ==
+      remult.user?.id
+    )
+  }
+  isDispatcher() {
+    return this.eventBelongToOrgUser() && remult.isAllowed(Roles.dispatcher)
   }
 
   getShortDescription(): string {

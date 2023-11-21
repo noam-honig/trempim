@@ -1,5 +1,5 @@
 import { Entity, Fields, IdEntity, remult } from 'remult'
-import { getBackendSite, getSite } from './sites'
+import { getBackendSite, getSite, getSiteByOrg } from './sites'
 import { DataControl } from '../common-ui-elements/interfaces'
 import { Roles } from './roles'
 
@@ -26,7 +26,7 @@ export class OrgEntity extends IdEntity {
   @Fields.string<OrgEntity>({
     allowApiUpdate: false,
     caption: 'ארגון',
-    displayValue: (x) => getBackendSite(x.org)?.title,
+    displayValue: (x) => getSiteByOrg(x.org)?.title,
   })
   org = getSite().org
 }

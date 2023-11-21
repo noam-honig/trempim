@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router'
 import { Location } from '@angular/common'
 import { getImageUrl } from './getImageUrl'
 import { tripsGrid } from './tripsGrid'
-import { getSite } from '../users/sites'
+import { getSite, getSiteByOrg } from '../users/sites'
 import { EventCardComponent } from '../event-card/event-card.component'
 import { User } from '../users/user'
 
@@ -83,7 +83,14 @@ export class OrgEventsComponent implements OnInit {
       orgFilter = { $and: [getSite().tasksFilter()] }
     } else if (remult.user!.showAllOrgs == false) {
       orgFilter = { org: getSite().org }
-    }
+    } else
+      orgFilter = {
+        $or: remult.user?.orgs
+          .filter((x) => !getSiteByOrg(x.org).showPastEvents)
+          .map((x) => ({
+            $or: [{ org: { '!=': x.org } }, { validUntil: { $gt: date } }],
+          })),
+      }
 
     repo(Task)
       .find({
