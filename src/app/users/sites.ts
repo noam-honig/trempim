@@ -426,6 +426,13 @@ export const backendSites = [
     title: 'סביבת בדיקות החתול',
     ignore: true,
   }),
+  new Site('jshield', {
+    dbSchema: 'dshinua',
+    title: 'jshield',
+    registerVolunteerLink:
+      'https://wa.me/972585007888?text=' +
+      encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
+  }),
   warRoom,
   showers,
   civil,
