@@ -3,7 +3,7 @@ import { Roles } from './roles'
 import { taskStatus } from '../events/taskStatus'
 import { UpdateMessage } from '../events/UpdatesChannel'
 import { DriverCanceledAssign, Task } from '../events/tasks'
-import { User } from './user'
+import { User, matchesCurrentUserId } from './user'
 
 let title = ''
 export function getTitle() {
@@ -275,7 +275,7 @@ function yedidimEnv(urlPrefix: string) {
 
     registerVolunteerLink: 'https://forms.gle/E4DGSCtEgfSYfJvy9',
     showInfoSnackbarFor(message: UpdateMessage): boolean {
-      if (message.userId === remult.user?.id) return false
+      if (matchesCurrentUserId(message.userId)) return false
       if ([DriverCanceledAssign].includes(message.action)) return true
       if (
         [taskStatus.draft, taskStatus.otherProblem]

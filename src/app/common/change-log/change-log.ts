@@ -11,6 +11,7 @@ import {
 } from 'remult'
 import { Roles } from '../../users/roles'
 import { OrgEntity } from 'src/app/users/OrgEntity'
+import { getCurrentUserId } from '../../users/user'
 
 @Entity<ChangeLog>('changeLog', {
   allowApiRead: Roles.admin,
@@ -110,7 +111,7 @@ export async function recordChanges<entityType extends EntityBase>(
         entity: self._.metadata.key,
         relatedId: self._.getId().toString(),
         relatedName: self.$.find('name')?.value,
-        userId: remult.user?.id || '',
+        userId: getCurrentUserId() || '',
         userName: remult.user?.name || '',
       })
     }

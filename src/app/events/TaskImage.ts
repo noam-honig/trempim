@@ -1,4 +1,5 @@
 import { IdEntity, remult, Fields, Entity } from 'remult'
+import { getCurrentUserId } from '../users/user'
 
 @Entity(undefined!, { allowApiCrud: false, dbName: 'images' })
 export class TaskImage extends IdEntity {
@@ -7,5 +8,5 @@ export class TaskImage extends IdEntity {
   @Fields.createdAt()
   createdAt = new Date()
   @Fields.string()
-  createUser = remult.user?.id
+  createUser = getCurrentUserId()
 }

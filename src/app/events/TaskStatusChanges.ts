@@ -10,7 +10,7 @@ import {
   repo,
 } from 'remult'
 import { Roles } from '../users/roles'
-import { User } from '../users/user'
+import { User, getCurrentUserId } from '../users/user'
 import { CreatedAtField } from './date-utils'
 import { taskStatus } from './taskStatus'
 import { Task } from './tasks'
@@ -38,7 +38,7 @@ export class TaskStatusChanges extends OrgEntity {
   @Relations.toOne<TaskStatusChanges, User>(() => User, 'driverId')
   driver?: User
   @Fields.string({ caption: 'בוצע ע"י' })
-  createUserId = remult.user?.id!
+  createUserId = getCurrentUserId()
   @Fields.string()
   session = remult.context.sessionId
   @Relations.toOne<TaskStatusChanges, User>(() => User, 'createUserId')

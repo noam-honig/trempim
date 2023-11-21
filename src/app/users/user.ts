@@ -56,7 +56,7 @@ import { OrgEntity, readonlyForNonAdminOfSameOrg } from './OrgEntity'
 export class User extends OrgEntity {
   canBeUpdatedByDriverManager() {
     if (!remult.user) return false
-    if (this.id === remult.user.id) return true
+    if (matchesCurrentUserId(this.id)) return true
     if (remult.isAllowed(Roles.admin)) return true
 
     return (
@@ -99,7 +99,7 @@ export class User extends OrgEntity {
   createDate = new Date()
 
   @Fields.string({ allowApiUpdate: false, includeInApi: Roles.admin })
-  createUserId = remult.user?.id || 'no user'
+  createUserId = getCurrentUserId() || 'no user'
   @DataControl({
     width: '130px',
     readonly: readonlyForNonAdminOfSameOrg,
@@ -230,4 +230,11 @@ export class User extends OrgEntity {
 כדי להכנס למערכת השינועים של ${getTitle()} אנא הכנס לקישור הבא:
 ${origin}`
   }
+}
+
+export function getCurrentUserId() {
+  return remult.user?.id
+}
+export function matchesCurrentUserId(id: string) {
+  return getCurrentUserId() === id
 }

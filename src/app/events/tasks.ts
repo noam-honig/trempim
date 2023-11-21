@@ -35,7 +35,7 @@ import {
 import { Roles } from '../users/roles'
 import { getSite, getSiteByOrg, getTitle } from '../users/sites'
 import { OrgEntity } from '../users/OrgEntity'
-import { User } from '../users/user'
+import { User, getCurrentUserId, matchesCurrentUserId } from '../users/user'
 import { createId } from '@paralleldrive/cuid2'
 import { TaskImage } from './TaskImage'
 import { TaskStatusChanges } from './TaskStatusChanges'
@@ -76,7 +76,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       )
         return true
       if (getSite().showContactToAnyDriver) return true
-      if (t!.driverId === remult.user.id) return true
+      if (matchesCurrentUserId(t!.driverId)) return true
     }
     if (remult.context.availableTaskIds?.includes(t?.id!)) return true
     if (t?.publicVisible) return true
@@ -113,7 +113,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         throw new Error('לא ניתן להוסיף בקשות חדשות')
       }
       remult.user = { id: user }
-      task.createUserId = remult.user.id
+      task.createUserId = getCurrentUserId()!
     }
     if (task.isNew()) remult.context.availableTaskIds.push(task.id!)
     if (
@@ -527,7 +527,7 @@ ${this.getLink()}
     caption: 'משתמש מוסיף',
     displayValue: (u) => u.createUser?.name || '',
   })
-  createUserId = remult.user?.id!
+  createUserId = getCurrentUserId()
   @Relations.toOne<Task, User>(() => User, 'createUserId')
   createUser?: User
 
@@ -605,7 +605,7 @@ ${this.getLink()}
 
   @BackendMethod({ allowed: true })
   static async intakeUserId() {
-    if (remult.user) return remult.user.id
+    if (remult.user) return getCurrentUserId()
     const user = await repo(User).findFirst({
       phone: '0500000000',
       deleted: false,
@@ -673,7 +673,7 @@ ${this.getLink()}
     if (userId) {
       if ((await repo(User).count({ id: userId })) == 0)
         throw Error('משתמש לא קיים')
-      if (userId != remult.user?.id && !remult.isAllowed(Roles.dispatcher))
+      if (matchesCurrentUserId(userId) && !remult.isAllowed(Roles.dispatcher))
         throw Error('אינך רשאי לשייך לנהג אחר')
       assignUserId = userId
     } else {
@@ -712,7 +712,7 @@ ${this.getLink()}
     updateChannel.publish({
       status: this.taskStatus.id,
       message: what + ' - ' + this.getShortDescription(),
-      userId: remult.user?.id!,
+      userId: getCurrentUserId()!,
       action: what,
     })
     return await repo(TaskStatusChanges).insert({
@@ -734,25 +734,25 @@ ${this.getLink()}
 
   @BackendMethod({ allowed: Allow.authenticated })
   async cancelAssignment(notes: string) {
-    if (
-      this.driverId != remult.user?.id! &&
-      !remult.isAllowed(Roles.dispatcher)
-    )
-      throw new Error('נסיעה זו לא משוייכת לך')
+    this.checkAssignedToDriverOrDispatcher()
     this.driverId = ''
     this.taskStatus = taskStatus.active
     this.statusNotes = notes
     await this.insertStatusChange(DriverCanceledAssign, notes)
     await this.save()
   }
-  @BackendMethod({ allowed: Allow.authenticated })
-  async noLongerRelevant(notes: string) {
-    if (!notes) throw Error('אנא הזן הערות, שנדע מה קרה')
+  private checkAssignedToDriverOrDispatcher() {
     if (
-      this.driverId != remult.user?.id! &&
+      matchesCurrentUserId(this.driverId) &&
       !remult.isAllowed(Roles.dispatcher)
     )
       throw new Error('נסיעה זו לא משוייכת לך')
+  }
+
+  @BackendMethod({ allowed: Allow.authenticated })
+  async noLongerRelevant(notes: string) {
+    if (!notes) throw Error('אנא הזן הערות, שנדע מה קרה')
+    this.checkAssignedToDriverOrDispatcher()
     this.taskStatus = taskStatus.notRelevant
     this.statusNotes = notes
     await this.insertStatusChange(this.taskStatus.caption, notes)
@@ -790,11 +790,7 @@ ${this.getLink()}
   @BackendMethod({ allowed: Allow.authenticated })
   async otherProblem(notes: string) {
     if (!notes) throw Error('אנא הזן הערות, שנדע מה קרה')
-    if (
-      this.driverId != remult.user?.id! &&
-      !remult.isAllowed(Roles.dispatcher)
-    )
-      throw new Error('נסיעה זו לא משוייכת לך')
+    this.checkAssignedToDriverOrDispatcher()
     this.taskStatus = taskStatus.otherProblem
     this.statusNotes = notes
     await this.insertStatusChange(this.taskStatus.caption, notes)
@@ -802,16 +798,12 @@ ${this.getLink()}
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async completed(notes: string) {
-    if (
-      this.driverId != remult.user?.id! &&
-      !remult.isAllowed(Roles.dispatcher)
-    )
-      throw new Error('נסיעה זו לא משוייכת לך')
+    this.checkAssignedToDriverOrDispatcher()
     this.taskStatus = taskStatus.completed
     this.statusNotes = notes
     await this.insertStatusChange(this.taskStatus.caption, notes)
     await this.save()
-    if (this.driverId == remult.user?.id)
+    if (matchesCurrentUserId(this.driverId))
       return await repo(Task)
         .find({
           where: {
@@ -833,11 +825,7 @@ ${this.getLink()}
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async completedStatusClickedByMistake() {
-    if (
-      this.driverId != remult.user?.id! &&
-      !remult.isAllowed(Roles.dispatcher)
-    )
-      throw new Error('נסיעה זו לא משוייכת לך')
+    this.checkAssignedToDriverOrDispatcher()
     if (
       (await repo(TaskStatusChanges).count({
         taskId: this.id,
@@ -852,29 +840,21 @@ ${this.getLink()}
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async driverPickedUp() {
-    if (
-      this.driverId != remult.user?.id! &&
-      !remult.isAllowed(Roles.dispatcher)
-    )
-      throw new Error('נסיעה זו לא משוייכת לך')
+    this.checkAssignedToDriverOrDispatcher()
     this.taskStatus = taskStatus.driverPickedUp
     await this.insertStatusChange(this.taskStatus.caption)
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async pickedUpStatusClickedByMistake() {
-    if (
-      this.driverId != remult.user?.id! &&
-      !remult.isAllowed(Roles.dispatcher)
-    )
-      throw new Error('נסיעה זו לא משוייכת לך')
+    this.checkAssignedToDriverOrDispatcher()
     this.taskStatus = taskStatus.assigned
     await this.insertStatusChange('נאסף בהצלחה נלחץ בטעות')
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
   async getContactInfo(): Promise<TaskContactInfo> {
-    if (Roles.dispatcher || this.driverId == remult.user?.id!)
+    if (Roles.dispatcher || matchesCurrentUserId(this.driverId))
       return {
         origin: [
           {

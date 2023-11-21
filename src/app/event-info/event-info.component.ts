@@ -24,7 +24,7 @@ import {
   sendWhatsappToPhone,
 } from '../events/phone'
 import { UpdateStatusComponent } from '../update-status/update-status.component'
-import { User } from '../users/user'
+import { User, matchesCurrentUserId } from '../users/user'
 import { getImageUrl } from '../events/getImageUrl'
 import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 import { getSite } from '../users/sites'
@@ -144,7 +144,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return remult.isAllowed(Roles.dispatcher)
   }
   registered() {
-    return this.e.driverId === remult.user?.id
+    return matchesCurrentUserId(this.e.driverId)
   }
   showAssign() {
     return this.e.taskStatus == taskStatus.active

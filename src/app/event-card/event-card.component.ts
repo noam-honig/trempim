@@ -26,6 +26,7 @@ import { displayTime } from '../events/date-utils'
 import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 import { getSite } from '../users/sites'
 import { YedidimBranchListComponent } from '../yedidim-branch-list/yedidim-branch-list.component'
+import { matchesCurrentUserId } from '../users/user'
 
 @DialogConfig({ maxWidth: '95vw' })
 @Component({
@@ -793,7 +794,7 @@ export class EventCardComponent implements OnInit {
     this.currentSort.selected()
   }
   isRegisteredToEvent(task: Task) {
-    return task.driverId === remult.user?.id
+    return matchesCurrentUserId(task.driverId)
   }
 
   compareEventDate(a: Task, b: Task) {
