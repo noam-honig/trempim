@@ -2,7 +2,11 @@ import { repo } from 'remult'
 import { getSite } from '../app/users/sites'
 import { BlockedPhone } from '../app/events/blockedPhone'
 
-export async function sendSms(phone: string, message: string): Promise<any> {
+export async function sendSms(
+  phone: string,
+  message: string,
+  otp?: boolean
+): Promise<any> {
   if ((await repo(BlockedPhone).count({ phone: phone })) > 0) {
     console.log('blocked phone', phone)
     return 'blocked phone'
@@ -53,7 +57,7 @@ export async function sendSms(phone: string, message: string): Promise<any> {
                 user: {
                   username: 'giladc@howazit.com',
                 },
-                source: 'Yedidim',
+                source: 'Yedidim' + (otp ? 'OTP' : ''),
                 destinations: {
                   phone: [
                     {

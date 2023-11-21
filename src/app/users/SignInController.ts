@@ -72,7 +72,8 @@ export class SignInController extends ControllerBase {
 
     await sendSms(
       this.phone,
-      `הקוד לכניסה ל${getTitle()} הוא: ` + otp + ' \n\n@sh.hagai.co #' + otp
+      `הקוד לכניסה ל${getTitle()} הוא: ` + otp + ' \n\n@sh.hagai.co #' + otp,
+      true
     ).then((x) => console.log('sent', x))
     otps.set(this.phone, { otp: otp, expire: d })
     this.askForOtp = true
