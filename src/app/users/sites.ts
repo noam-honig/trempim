@@ -427,7 +427,7 @@ export const backendSites = [
     ignore: true,
   }),
   new Site('jshield', {
-    dbSchema: 'dshinua',
+    dbSchema: 'shinuim',
     title: 'jshield',
     registerVolunteerLink:
       'https://wa.me/972585007888?text=' +
