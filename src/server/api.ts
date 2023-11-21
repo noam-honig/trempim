@@ -172,7 +172,8 @@ function initRemultBasedOnRequestInfo(
   site: string,
   options: InitRequestOptions
 ) {
-  let found = siteEventPublishers.get(site)
+  var dbSchema = getBackendSite(site)!.dbSchema
+  let found = siteEventPublishers.get(dbSchema)
   if (!found) {
     let subscriptionServer: SubscriptionServer
     let x = new SseSubscriptionServer((channel, remult) => {
@@ -183,7 +184,7 @@ function initRemultBasedOnRequestInfo(
 
     var liveQueryStorage = new InMemoryLiveQueryStorage()
     siteEventPublishers.set(
-      site,
+      dbSchema,
       (found = {
         subscriptionServer,
         liveQueryStorage,

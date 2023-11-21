@@ -7,6 +7,7 @@ import {
   Fields,
   remult,
   BackendMethod,
+  SqlDatabase,
 } from 'remult'
 import { Roles } from './roles'
 import { terms } from '../terms'
@@ -24,7 +25,6 @@ import { getSite, getTitle } from './sites'
 import { GeocodeResult } from '../common/address-input/google-api-helpers'
 import { recordChanges } from '../common/change-log/change-log'
 import { OrgEntity, readonlyForNonAdminOfSameOrg } from './OrgEntity'
-
 @Entity<User>('Users', {
   allowApiRead: Allow.authenticated,
   allowApiUpdate: (user) => {
@@ -56,7 +56,7 @@ import { OrgEntity, readonlyForNonAdminOfSameOrg } from './OrgEntity'
 export class User extends OrgEntity {
   canBeUpdatedByDriverManager() {
     if (!remult.user) return false
-    if (matchesCurrentUserId(this.id)) return true
+    if (matchesCurrentUserId(this.id, this.org)) return true
     if (remult.isAllowed(Roles.admin)) return true
 
     return (
@@ -99,7 +99,7 @@ export class User extends OrgEntity {
   createDate = new Date()
 
   @Fields.string({ allowApiUpdate: false, includeInApi: Roles.admin })
-  createUserId = getCurrentUserId() || 'no user'
+  createUserId = getCurrentSiteUserId() || 'no user'
   @DataControl({
     width: '130px',
     readonly: readonlyForNonAdminOfSameOrg,
@@ -154,6 +154,9 @@ export class User extends OrgEntity {
       ),
   })
   address = ''
+
+  @Fields.boolean({ allowNull: true, caption: 'הצג נסיעות של כל הארגונים שלי' })
+  showAllOrgs: boolean | null = null
 
   @Fields.json<User, string[]>({
     allowNull: true,
@@ -231,10 +234,16 @@ export class User extends OrgEntity {
 ${origin}`
   }
 }
-
-export function getCurrentUserId() {
-  return remult.user?.id
+export function getCurrentSiteUserId() {
+  return getCurrentUserId(getSite().org)
 }
-export function matchesCurrentUserId(id: string) {
-  return getCurrentUserId() === id
+
+export function getCurrentUserId(org: string) {
+  return remult.user?.orgs.find((x) => x.org == org)?.userId
+}
+export function matchesCurrentUserId(id: string, org: string) {
+  return getCurrentUserId(org) === id
+}
+export function matchesCurrentSiteUserId(id: string) {
+  return getCurrentSiteUserId() === id
 }

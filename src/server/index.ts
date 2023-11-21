@@ -23,7 +23,6 @@ import {
 } from '../app/common/address-input/google-api-helpers'
 import { upsertShadagTrip } from './shadag-work'
 
-SqlDatabase.LogToConsole = false
 const production = process.env['NODE_ENV'] === 'production'
 async function startup() {
   const app = express()

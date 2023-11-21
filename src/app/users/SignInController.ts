@@ -163,7 +163,13 @@ async function setUserToSelfSignInIfAllowed() {
     deleted: false,
   })
   if (user) {
-    remult.user = { id: user.id, name: user.name, phone: user.phone }
+    remult.user = {
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      showAllOrgs: user.showAllOrgs,
+      orgs: [{ org: getSite().org, userId: user.id }],
+    }
     return true
   }
   return false

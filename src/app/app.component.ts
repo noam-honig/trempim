@@ -49,7 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (remult.isAllowed(Roles.dispatcher)) {
       this.updateStats()
-      updateChannel
+      updateChannel(getSite().org)
         .subscribe((message) => {
           if (getSite().showInfoSnackbarFor(message))
             this.uiService.info(message.message)
@@ -66,7 +66,10 @@ export class AppComponent implements OnInit, OnDestroy {
           taskStatus: taskStatus.relevanceCheck,
           org: getSite().org,
         }),
-        repo(Task).count({ taskStatus: taskStatus.otherProblem }),
+        repo(Task).count({
+          taskStatus: taskStatus.otherProblem,
+          $and: [getSite().tasksFilter()],
+        }),
         this.updates.updateWaitingUpdates(),
       ])
     })
@@ -153,9 +156,11 @@ export class AppComponent implements OnInit, OnDestroy {
       (i) =>
         (i.args = {
           title: terms.updateInfo,
-          fields: [user.$.name],
+          fields: [user.$.name, user.$.showAllOrgs],
           ok: async () => {
+            let reload = user.$.showAllOrgs.valueChanged()
             await user._.save()
+            if (reload) location.reload()
           },
         })
     )

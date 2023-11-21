@@ -119,4 +119,10 @@ export async function versionUpdate() {
       `update ${t} set ${t.publicVisible}=true where publicVisible='true'`
     )
   })
+  await version(16, async () => {
+    const u = await dbNamesOf(User)
+    await db.execute(
+      `create index if not exists user_phone on ${u.$entityName}(${u.phone})`
+    )
+  })
 }

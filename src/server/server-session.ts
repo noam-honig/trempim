@@ -14,6 +14,7 @@ declare module 'remult' {
     origin: string
     site: Site
     availableTaskIds: string[]
+    disableOrgFiltering?: boolean
   }
 }
 
@@ -35,7 +36,7 @@ export async function initRequestUser(req: Request) {
     id: sessionUser!.id,
     deleted: false,
   })
-  setSessionUserBasedOnUserRow(user)
+  await setSessionUserBasedOnUserRow(user)
 }
 
 export function setSessionUser(user: UserInfo, remember?: boolean): UserInfo {
@@ -49,7 +50,10 @@ export function setSessionUser(user: UserInfo, remember?: boolean): UserInfo {
   return user
 }
 
-export function setSessionUserBasedOnUserRow(user: User, remember?: boolean) {
+export async function setSessionUserBasedOnUserRow(
+  user: User,
+  remember?: boolean
+) {
   if (!user) {
     return setSessionUser(undefined!, true)
   }
@@ -72,16 +76,30 @@ export function setSessionUserBasedOnUserRow(user: User, remember?: boolean) {
     ['0507330590', '0523307014'].includes(user.phone)
   )
     roles.push(Roles.superAdmin)
-  return setSessionUser(
-    {
-      id: user.id,
-      name: user.name,
-      phone: user.phone,
-      roles,
-      allowedCategories: user.allowedCategories,
-    },
-    remember
-  )
+  remult.context.disableOrgFiltering = true
+  try {
+    const userInstances = await repo(User).find({
+      where: {
+        phone: user.phone,
+        deleted: false,
+      },
+    })
+    return setSessionUser(
+      {
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        roles,
+        allowedCategories: user.allowedCategories,
+        orgs: userInstances.map(({ org, id }) => ({ org, userId: id })),
+
+        showAllOrgs: user.showAllOrgs,
+      },
+      remember
+    )
+  } finally {
+    remult.context.disableOrgFiltering = false
+  }
 }
 
 @Entity('session', { allowApiCrud: false })

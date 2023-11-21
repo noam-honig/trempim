@@ -7,6 +7,7 @@ import { GetGeoInformation } from '../app/common/address-input/google-api-helper
 import { Roles } from '../app/users/roles'
 import { taskStatus } from '../app/events/taskStatus'
 import { sendSms } from './send-sms'
+import { getSite } from '../app/users/sites'
 
 export const PACKED_READY_FOR_DELIVERY = 3,
   ACTIVE_DELIVERY = 0,
@@ -451,6 +452,8 @@ export async function initIntegrationUser(name: string) {
     id: mondayUser.id,
     phone: MONDAY_USER_PHONE,
     roles: [Roles.admin, Roles.dispatcher],
+    orgs: [{ org: getSite().org, userId: mondayUser.id }],
+    showAllOrgs: false,
   }
   remult.context.availableTaskIds = []
 }

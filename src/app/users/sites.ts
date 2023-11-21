@@ -3,7 +3,7 @@ import { Roles } from './roles'
 import { taskStatus } from '../events/taskStatus'
 import { UpdateMessage } from '../events/UpdatesChannel'
 import { DriverCanceledAssign, Task } from '../events/tasks'
-import { User, matchesCurrentUserId } from './user'
+import { User, matchesCurrentSiteUserId, matchesCurrentUserId } from './user'
 
 let title = ''
 export function getTitle() {
@@ -275,7 +275,7 @@ function yedidimEnv(urlPrefix: string) {
 
     registerVolunteerLink: 'https://forms.gle/E4DGSCtEgfSYfJvy9',
     showInfoSnackbarFor(message: UpdateMessage): boolean {
-      if (matchesCurrentUserId(message.userId)) return false
+      if (matchesCurrentSiteUserId(message.userId)) return false
       if ([DriverCanceledAssign].includes(message.action)) return true
       if (
         [taskStatus.draft, taskStatus.otherProblem]
@@ -439,7 +439,7 @@ export const backendSites = [
   }),
 ]
 export function getSiteByOrg(org: string) {
-  return backendSites.find((x) => x.org === org)
+  return backendSites.find((x) => x.org === org)!
 }
 
 export function getBackendSite(urlPrefix?: string) {

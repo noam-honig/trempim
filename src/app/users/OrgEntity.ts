@@ -5,9 +5,11 @@ import { Roles } from './roles'
 
 @Entity<OrgEntity>(undefined!, {
   backendPrefilter: () => ({
-    org: getSite()
-      .getVisibleOrgs()
-      .map((x) => x.org),
+    org: remult.context.disableOrgFiltering
+      ? undefined
+      : getSite()
+          .getVisibleOrgs()
+          .map((x) => x.org),
   }),
 })
 export class OrgEntity extends IdEntity {

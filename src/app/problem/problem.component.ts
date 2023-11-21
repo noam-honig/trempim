@@ -3,6 +3,7 @@ import { tripsGrid } from '../events/tripsGrid'
 import { taskStatus } from '../events/taskStatus'
 import { BusyService } from '../common-ui-elements'
 import { UIToolsService } from '../common/UIToolsService'
+import { getSite } from '../users/sites'
 
 @Component({
   selector: 'app-problem',
@@ -18,6 +19,7 @@ export class ProblemComponent implements OnInit {
     busy: this.busy,
     where: {
       taskStatus: taskStatus.otherProblem,
+      $and: [getSite().tasksFilter()],
     },
 
     orderBy: {

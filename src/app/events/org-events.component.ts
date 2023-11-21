@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 
-import { remult, repo, Unsubscribe } from 'remult'
+import { EntityFilter, remult, repo, Unsubscribe } from 'remult'
 import { Roles } from '../users/roles'
 import { Task } from './tasks'
 import { taskStatus } from './taskStatus'
@@ -15,6 +15,7 @@ import { getImageUrl } from './getImageUrl'
 import { tripsGrid } from './tripsGrid'
 import { getSite } from '../users/sites'
 import { EventCardComponent } from '../event-card/event-card.component'
+import { User } from '../users/user'
 
 @Component({
   selector: 'app-org-events',
@@ -58,12 +59,31 @@ export class OrgEventsComponent implements OnInit {
       this.tripId = param.get('id')!
       if (this.tripId) this.activeTab = 1
       this.loadEvents()
+      if (remult.user?.showAllOrgs == null && remult.user!.orgs.length > 1) {
+        this.tools
+          .yesNoQuestion(
+            `הנך רשום במספר ארגונים, האם תרצה להציג את הנסיעות של כל הארגונים?\n תמיד תוכל לשנות הגדרה זו במסך עדכון פרטים`
+          )
+          .then((showAllOrgs) => {
+            remult.user!.showAllOrgs = showAllOrgs
+            repo(User).update(remult.user!.id, {
+              showAllOrgs,
+            })
+            this.ngOnInit()
+          })
+      }
     })
   }
 
   private loadEvents() {
     let date = new Date()
     date.setHours(date.getHours() - 2)
+    let orgFilter: EntityFilter<Task> = {}
+    if (remult.user!.showAllOrgs == null) {
+      orgFilter = { $and: [getSite().tasksFilter()] }
+    } else if (remult.user!.showAllOrgs == false) {
+      orgFilter = { org: getSite().org }
+    }
 
     repo(Task)
       .find({
@@ -71,7 +91,7 @@ export class OrgEventsComponent implements OnInit {
           this.activeTab == 0
             ? {
                 taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
-                driverId: remult.user!.id,
+                driverId: remult.user!.orgs.map((x) => x.userId),
               }
             : // : document.location.host.includes('localhost') && false
             // ? {}
@@ -85,6 +105,7 @@ export class OrgEventsComponent implements OnInit {
                 validUntil: getSite().showPastEvents
                   ? undefined!
                   : { $gt: date },
+                ...orgFilter,
               }
             : {
                 taskStatus: [
@@ -92,6 +113,7 @@ export class OrgEventsComponent implements OnInit {
                   taskStatus.driverPickedUp,
                   taskStatus.otherProblem,
                 ],
+                $and: [getSite().tasksFilter()],
               },
         include:
           this.activeTab == 2

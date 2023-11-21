@@ -28,6 +28,9 @@ export class UpdatesComponent implements OnInit {
       if (!this.rowsLoaded) this.updates.updateLastUpdatedView()
       this.rowsLoaded = true
     },
+    where: {
+      $and: [getSite().tasksFilter()],
+    },
     rowCssClass: (t) =>
       t.statusChangeDate > this.updates.lastUpdateViewed ? 'new-update' : '',
     orderBy: {

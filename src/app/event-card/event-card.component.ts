@@ -794,7 +794,7 @@ export class EventCardComponent implements OnInit {
     this.currentSort.selected()
   }
   isRegisteredToEvent(task: Task) {
-    return matchesCurrentUserId(task.driverId)
+    return matchesCurrentUserId(task.driverId, task.org)
   }
 
   compareEventDate(a: Task, b: Task) {

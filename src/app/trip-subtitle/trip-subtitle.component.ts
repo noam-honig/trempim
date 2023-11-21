@@ -7,6 +7,7 @@ import {
 } from '../common/address-input/google-api-helpers'
 import { taskStatus } from '../events/taskStatus'
 import { getSite } from '../users/sites'
+import { remult } from 'remult'
 
 @Component({
   selector: 'app-trip-subtitle',
@@ -41,7 +42,11 @@ export class TripSubtitleComponent implements OnInit {
     return e.taskStatus !== taskStatus.active
   }
   eventOrg() {
-    if (getSite().getVisibleOrgs().length > 1) return this.e.$.org.displayValue
+    if (
+      getSite().getVisibleOrgs().length > 1 ||
+      ((remult.user?.orgs.length || 0) > 1 && remult.user!.showAllOrgs)
+    )
+      return this.e.$.org.displayValue
     return ''
   }
 }

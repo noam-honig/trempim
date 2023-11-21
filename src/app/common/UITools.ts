@@ -62,7 +62,9 @@ declare module 'remult' {
   }
   export interface UserInfo {
     phone?: string
+    orgs: { org: string; userId: string }[]
     allowedCategories?: string[]
+    showAllOrgs: boolean | null
   }
 }
 
