@@ -57,7 +57,7 @@ export async function sendSms(
                 user: {
                   username: 'giladc@howazit.com',
                 },
-                source: 'Yedidim' + (otp ? 'OTP' : ''),
+                source: 'Yedidim', // + (otp ? 'OTP' : ''),
                 destinations: {
                   phone: [
                     {
