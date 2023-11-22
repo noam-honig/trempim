@@ -158,7 +158,9 @@ export class EventCardComponent implements OnInit {
       this.showingAllTasks ? 'חיפוש נסיעה' : 'נסיעות שלי'
     )
     if (!this.startLocation) {
-      this.startLocation = await getCurrentLocation()
+      try {
+        this.startLocation = await getCurrentLocation()
+      } catch {}
     }
   }
 
@@ -377,7 +379,7 @@ export class EventCardComponent implements OnInit {
     this.dates.splice(0, 0, {
       id: 0,
       count: this._tasks.length,
-      caption: 'כל יום ' + ' - ' + this.tasks.length,
+      caption: 'כל יום ' + ' - ' + this.dates.reduce((a, b) => a + b.count, 0),
     })
 
     this.urgencies = this.urgencies.filter((d) => d.events.length > 0)
@@ -487,7 +489,9 @@ export class EventCardComponent implements OnInit {
   ) {
     const setRegionBasedOnLocation = (location: Location) => {
       setLocation(location)
-      let tasks = [...this.tasks]
+      let tasks = this.tasks.filter((x) =>
+        this.filter(x, { [region.metadata.key]: '' })
+      )
       tasks.sort(
         (a, b) =>
           GetDistanceBetween(getLocation(relevantAddress(a)), location) -
