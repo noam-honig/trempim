@@ -1,6 +1,7 @@
 import copy from 'copy-to-clipboard'
 import {
   Allow,
+  Allowed,
   AllowedForInstance,
   BackendMethod,
   Entity,
@@ -74,17 +75,14 @@ import { updateShadagBasedOnTask } from '../../server/shadag-work'
 const onlyDriverRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
     if (remult.user) {
-      if (
-        t?.eventBelongToOrgUser() &&
-        remult.isAllowed([Roles.trainee, Roles.dispatcher])
-      )
+      if (t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
         return true
       if (
         t!.createUserId === remult.user?.id &&
         remult.isAllowed(Roles.trainee)
       )
         return true
-      if (getSite().showContactToAnyDriver) return true
+      if (t?.getSite().showContactToAnyDriver) return true
       if (matchesCurrentUserId(t!.driverId, t!.org)) return true
     }
     if (remult.context.availableTaskIds?.includes(t?.id!)) return true
@@ -94,7 +92,8 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   },
   allowApiUpdate: (t) => {
     if (remult.user) {
-      if (remult.isAllowed([Roles.trainee, Roles.dispatcher])) return true
+      if (t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
+        return true
       if (
         t!.createUserId === remult.user?.id &&
         remult.isAllowed(Roles.trainee)
@@ -110,8 +109,8 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   allowApiInsert: true,
   allowApiUpdate: (t) => {
     if (t!.taskStatus === taskStatus.draft)
-      return remult.isAllowed([Roles.trainee, Roles.dispatcher])
-    return remult.isAllowed(Roles.dispatcher)
+      return Boolean(t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
+    return Boolean(t?.eventBelongToOrgUser(Roles.dispatcher))
   },
   allowApiRead: Allow.authenticated,
   allowApiDelete: false,
@@ -132,7 +131,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
     if (
       !remult.isAllowed(Roles.dispatcher) &&
       task.isNew() &&
-      !getSite().allDeliveryRequestsAreApprovedAutomatically
+      !task.getSite().allDeliveryRequestsAreApprovedAutomatically
     )
       task.taskStatus = taskStatus.draft
     if (task.$.taskStatus.valueChanged()) task.statusChangeDate = new Date()
@@ -188,7 +187,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         }
       }
     }
-    if (getSite().syncWithMonday && task.externalId.startsWith('m:')) {
+    if (task.getSite().syncWithMonday && task.externalId.startsWith('m:')) {
       if (task.$.taskStatus.valueChanged()) {
         switch (task.taskStatus) {
           case taskStatus.active:
@@ -214,13 +213,13 @@ const onlyDriverRules: FieldOptions<Task, string> = {
         }
       }
     }
-    if (getSite().syncWithShadag && task.externalId.startsWith('s:')) {
+    if (task.getSite().syncWithShadag && task.externalId.startsWith('s:')) {
       if (task.$.driverId.valueChanged() || task.$.taskStatus.valueChanged()) {
         await updateShadagBasedOnTask(task)
       }
     }
     if (
-      getSite().sendTextMessageOnApprove &&
+      task.getSite().sendTextMessageOnApprove &&
       task.taskStatus == taskStatus.active &&
       (task.$.taskStatus.valueChanged() || isNew)
     ) {
@@ -248,7 +247,10 @@ ${remult.context.origin + '/s/' + task.editLink}
   },
   validation: (task) => {
     if (phoneConfig.disableValidation || task.__disableValidation) return
-    if (!task.addressApiResult?.results && !getSite().onlyAskForSecondAddress)
+    if (
+      !task.addressApiResult?.results &&
+      !task.getSite().onlyAskForSecondAddress
+    )
       task.$.address.error = 'כתובת לא נמצאה'
     if (!task.toAddressApiResult?.results)
       task.$.toAddress.error = 'כתובת לא נמצאה'
@@ -294,14 +296,18 @@ ${this.getShortDescription()}
 ${this.getLink()}`
     )
   }
-  eventBelongToOrgUser() {
+  eventBelongToOrgUser(allowed?: Allowed) {
     return (
       remult.user?.orgs.find((x) => x.org == this.org)?.userId ==
-      remult.user?.id
+        remult.user?.id &&
+      (allowed === undefined || remult.isAllowed(allowed))
     )
   }
   isDispatcher() {
-    return this.eventBelongToOrgUser() && remult.isAllowed(Roles.dispatcher)
+    return this.eventBelongToOrgUser(Roles.dispatcher)
+  }
+  getSite() {
+    return getSiteByOrg(this.org)
   }
 
   getShortDescription(): string {
@@ -333,7 +339,7 @@ ${this.getLink()}
       if (time.startsWith('0')) time = time.substring(1)
       result += ' ' + time
     }
-    if (getSite().showValidUntil) {
+    if (this.getSite().showValidUntil) {
       result += ' - ' + formatDate(e.validUntil).split(' ').reverse().join(' ')
     }
 
@@ -383,7 +389,7 @@ ${this.getLink()}
     customInput: (x) => x.textarea(),
   })
   description = ''
-  @DataControl({ visible: () => getSite().canSeeUrgency() })
+  @DataControl<Task>({ visible: (t) => t.getSite().canSeeUrgency() })
   @Field(() => Urgency)
   urgency = Urgency.normal
   @DataControl({
@@ -463,7 +469,7 @@ ${this.getLink()}
 
       if (
         (entity.isNew() || ref.valueChanged()) &&
-        getSite().useFillerInfo &&
+        entity.getSite().useFillerInfo &&
         !remult.isAllowed(Roles.dispatcher)
       )
         Validators.required(entity, ref)
@@ -577,8 +583,8 @@ ${this.getLink()}
   @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
   @Fields.string({ caption: 'מזהה ', allowApiUpdate: false })
   externalId = ''
-  @DataControl({
-    visible: (t) => remult.isAllowed([Roles.trainee, Roles.dispatcher]),
+  @DataControl<Task>({
+    visible: (t) => t.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]),
   })
   @Fields.string({
     caption: 'הערה פנימית לחמ"ל',
@@ -707,7 +713,7 @@ ${this.getLink()}
         throw Error('משתמש לא קיים')
       if (
         matchesCurrentUserId(userId, this.org) &&
-        !remult.isAllowed(Roles.dispatcher)
+        !this.eventBelongToOrgUser(Roles.dispatcher)
       )
         throw Error('אינך רשאי לשייך לנהג אחר')
       assignUserId = userId
@@ -779,7 +785,7 @@ ${this.getLink()}
   private checkAssignedToDriverOrDispatcher() {
     if (
       !matchesCurrentUserId(this.driverId, this.org) &&
-      !remult.isAllowed(Roles.dispatcher)
+      !this.eventBelongToOrgUser(Roles.dispatcher)
     )
       throw new Error('נסיעה זו לא משוייכת לך')
   }

@@ -422,6 +422,7 @@ export const backendSites = [
     maxActiveTripsPerDriver: 5,
   }),
   new Site('test2', {
+    showValidUntil: false,
     dbSchema: 'dshinua',
     title: 'סביבת בדיקות החתול',
     ignore: true,

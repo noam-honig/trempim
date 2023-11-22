@@ -72,7 +72,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     taskSaved: () => this.refresh(),
   })
   useFillerInfo() {
-    return getSite().useFillerInfo
+    return this.e.getSite().useFillerInfo
   }
   openSourceWaze() {
     openWaze(getLongLat(this.e.addressApiResult), this.e.address)
@@ -150,7 +150,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return this.e.taskStatus == taskStatus.active
   }
   driverAssignButtonText() {
-    return getSite().driverAssignButtonText
+    return this.e.getSite().driverAssignButtonText
   }
   contactInfo: TaskContactInfo = {
     origin: [],
