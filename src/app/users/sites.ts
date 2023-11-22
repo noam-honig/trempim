@@ -230,7 +230,7 @@ const lev1j: Site = new Site('lev1j', {
 })
 const vdri = new Site('vdri', {
   sendTextMessageToRequester: true,
-  dbSchema: 'vdri',
+  dbSchema: 'shinuim',
   title: 'חמ"ל נהגים מתנדבים ארצי',
   showCopyLink: true,
   allowAnyVolunteerToAdd: true,
@@ -244,7 +244,7 @@ const vdri = new Site('vdri', {
 function yedidimEnv(urlPrefix: string) {
   return new Site(urlPrefix, {
     sendTextMessageToRequester: true,
-    dbSchema: 'ezion',
+    dbSchema: 'shinuim',
     org: 'yedidim',
     sendTextMessageOnApprove: true,
     title: 'ידידים',
@@ -295,7 +295,7 @@ const civil = new Site('civil', {
   sendTextMessageOnlyForFutureEvents: true,
   sendTextMessageOnApprove: true,
   sortTasksAscending: true,
-  dbSchema: 'civil',
+  dbSchema: 'shinuim',
   title: 'מתנדבי טרמפים',
   showValidUntil: true,
   requireValidUntil: true,
@@ -330,7 +330,7 @@ const civil = new Site('civil', {
 
 const warRoom = new Site('wrc', {
   sendTextMessageToRequester: true,
-  dbSchema: 'wrc',
+  dbSchema: 'shinuim',
   title: 'אופנוענים ונהגים מתנדבים',
   showCopyLink: true,
   allowAnyVolunteerToAdd: true,
