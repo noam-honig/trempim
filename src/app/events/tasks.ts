@@ -1137,7 +1137,7 @@ ${url + '/s/' + this.editLink}
                 x.eventStatus,
               ],
             }),
-            title: 'היסטורית נסיעה',
+            title: 'היסטורית נסיעה ' + e.externalId + ' ' + e.title,
           })
         },
       },
