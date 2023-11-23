@@ -35,8 +35,8 @@ export function sendWhatsappToPhone(
 
 export function fixPhoneInput(s: string) {
   if (!s) return s
-  let orig = s.trim()
-  s = s.replace(/\D/g, '')
+  let orig = s.toString().trim()
+  s = s.toString().replace(/\D/g, '')
   if (s.startsWith('972')) s = s.substring(3)
   else if (orig.startsWith('+')) return '+' + s
   if (s.length == 9 && s[0] != '0' && s[0] != '3') s = '0' + s
