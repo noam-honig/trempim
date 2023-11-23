@@ -116,7 +116,7 @@ export const api = remultExpress({
       )
 
       remult.subscriptionServer = new SseSubscriptionServer()
-      await investigate()
+      //await investigate()
       // SqlDatabase.LogToConsole = true
       // await repo(User).findFirst()
       // await repo(Task).findFirst()
