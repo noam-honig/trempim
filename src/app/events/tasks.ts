@@ -224,9 +224,15 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       (task.$.taskStatus.valueChanged() || isNew)
     ) {
       let phone = task.getTextMessagePhone()
-      if (phone?.phone)
+      if (
+        phone?.phone &&
+        (await repo(TaskStatusChanges).count({
+          what: SMS_CONFIRM_MESSAGE,
+          taskId: task.id,
+        })) == 0
+      )
         await task.insertStatusChange(
-          'הודעת SMS באישור',
+          SMS_CONFIRM_MESSAGE,
           JSON.stringify({
             phone: phone.phone,
             message: await sendSms(
@@ -1347,3 +1353,4 @@ export function calcValidUntil(
 }
 
 export const DriverCanceledAssign = 'נהג ביטל שיוך'
+export const SMS_CONFIRM_MESSAGE = 'הודעת SMS באישור'

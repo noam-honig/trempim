@@ -1,7 +1,7 @@
 import { repo } from 'remult'
 import { getSite } from '../users/sites'
 import { TaskStatusChanges } from './TaskStatusChanges'
-import { Task } from './tasks'
+import { SMS_CONFIRM_MESSAGE, Task } from './tasks'
 import { taskStatus } from './taskStatus'
 import { sendSms } from '../../server/send-sms'
 import { createId } from '@paralleldrive/cuid2'
@@ -26,12 +26,12 @@ export async function SendVerifyRelevanceSms() {
     (current > sevenPm && lastCheck < sevenPm) ||
     (current > nineAm && lastCheck < nineAm)
   ) {
-    let twoHoursAgo = new Date()
-    twoHoursAgo.setHours(twoHoursAgo.getHours() - 2)
+    let fourHoursAgo = new Date()
+    fourHoursAgo.setHours(fourHoursAgo.getHours() - 4)
     const tasks = await repo(Task).find({
       where: {
         taskStatus: taskStatus.active,
-        createdAt: { $lt: twoHoursAgo },
+        createdAt: { $lt: fourHoursAgo },
         org: getSite().org,
         category: { $ne: 'שינוע רכב' },
         validUntil: getSite().sendTextMessageOnlyForFutureEvents
@@ -49,7 +49,14 @@ export async function SendVerifyRelevanceSms() {
       if (!task.externalId.startsWith('m:')) {
         const p = task.getTextMessagePhone()
         let phone = p.phone
-        if (phone) {
+        if (
+          phone &&
+          (await repo(TaskStatusChanges).count({
+            taskId: task.id,
+            what: SMS_CONFIRM_MESSAGE,
+            createdAt: { $gt: fourHoursAgo },
+          })) == 0
+        ) {
           if ((await repo(BlockedPhone).count({ phone: phone })) == 0) {
             const m = task.verifyRelevanceMessage(p.name!, false)
             const smsResult = await sendSms(phone, m)

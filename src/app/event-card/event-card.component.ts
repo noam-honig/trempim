@@ -172,7 +172,6 @@ export class EventCardComponent implements OnInit {
   }
 
   isDev() {
-    return false
     return document.location.host.includes('localhost')
   }
   title = ''
@@ -186,6 +185,42 @@ export class EventCardComponent implements OnInit {
         (x, i) => i < 10 || this.distanceToTask(x) < 25
       )
     }
+  }
+  testIt() {
+    if (!this.isDev()) return
+    //  this.showMap = true
+    this.startLocation = { lat: 32.794044, lng: 34.989571 }
+    this.endLocation = { lat: 31.252973, lng: 34.791462 }
+    let distance = GetDistanceBetween(this.startLocation, this.endLocation)
+    this.tasksForMap = [...this.tasks.filter((x) => this.filter(x))]
+    for (const task of this.tasksForMap) {
+      const a = this.startLocation,
+        b = this.endLocation,
+        ta = getLocation(task.addressApiResult),
+        tb = getLocation(task.toAddressApiResult)
+      let d = 999999
+      for (const route of [
+        GetDistanceBetween(a, ta) +
+          GetDistanceBetween(ta, tb) +
+          GetDistanceBetween(tb, b),
+        GetDistanceBetween(a, ta) +
+          GetDistanceBetween(ta, b) +
+          GetDistanceBetween(b, tb),
+        GetDistanceBetween(ta, a) +
+          GetDistanceBetween(a, tb) +
+          GetDistanceBetween(tb, b),
+        GetDistanceBetween(ta, a) +
+          GetDistanceBetween(a, b) +
+          GetDistanceBetween(b, tb),
+      ]) {
+        if (route < d) d = route
+      }
+      // task._delme = d / distance
+      // task._delme2 = d - distance
+    }
+
+    // this.tasksForMap.sort((a, b) => a._delme - b._delme)
+    this.tasksForMap = this.tasksForMap.filter((a, i) => i <= 10)
   }
   refreshFilters(report: boolean) {
     if (report)
@@ -201,6 +236,7 @@ export class EventCardComponent implements OnInit {
         })
       )
     this.refreshTasksForMap()
+    this.testIt()
     this.urgencies.forEach((u) => u.events.splice(0))
     this.tasks.sort((a, b) => this.compareEventDate(a, b))
 
