@@ -764,6 +764,7 @@ ${this.getLink()}
       action: what,
     })
     return await repo(TaskStatusChanges).insert({
+      org: this.org,
       taskId: this.id,
       what,
       eventStatus: this.taskStatus,
