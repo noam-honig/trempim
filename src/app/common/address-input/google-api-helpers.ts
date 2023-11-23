@@ -30,19 +30,21 @@ export function getDistrict(g: GeocodeResult | undefined | null) {
 export function getCity(g: GeocodeResult | undefined | null) {
   const address_component = g?.results[0]?.address_components
   let r = undefined
-  if (!address_component) return g?.results?.[0]?.formatted_address || ''
-  address_component.forEach((x) => {
-    if (x.types.includes('locality')) r = x.long_name
-  })
-  if (!r)
+  if (address_component) {
     address_component.forEach((x) => {
-      if (x.types.includes('postal_town')) r = x.long_name
+      if (x.types.includes('locality')) r = x.long_name
     })
-  if (!r) r = g.branch
-  if (!r)
-    address_component.forEach((x) => {
-      if (x.types.includes('administrative_area_level_1')) r = x.long_name
-    })
+    if (!r)
+      address_component.forEach((x) => {
+        if (x.types.includes('postal_town')) r = x.long_name
+      })
+    if (!r) r = g.branch
+    if (!r)
+      address_component.forEach((x) => {
+        if (x.types.includes('administrative_area_level_1')) r = x.long_name
+      })
+  }
+  if (!g) return 'ישראל'
   if (!r) return address_component?.[0]?.short_name || g.branch || g.district
   return r
 }
