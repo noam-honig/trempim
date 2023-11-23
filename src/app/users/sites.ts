@@ -34,7 +34,7 @@ export class Site {
   dbSchema!: string
   ignore?: boolean
   title!: string
-  maxActiveTripsPerDriver = 5
+  maxActiveTripsPerDriver = 15
 
   signInFilter: () => EntityFilter<User> = () => ({
     org: this.getVisibleOrgs().map((x) => x.org),
@@ -419,7 +419,6 @@ export const backendSites = [
     title: 'פיתוח',
     ignore: true,
     org: 'test1',
-    maxActiveTripsPerDriver: 5,
   }),
   new Site('test2', {
     showValidUntil: false,

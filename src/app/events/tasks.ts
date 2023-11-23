@@ -743,7 +743,7 @@ ${this.getLink()}
           },
         })) >= 20
       ) {
-        throw Error('ניתן להרשם לעד 7 נסיעות בשעה')
+        throw Error('ניתן להרשם לעד 20 נסיעות בשעה')
       }
     }
     await this._.reload()
