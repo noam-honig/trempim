@@ -262,6 +262,7 @@ ${remult.context.origin + '/s/' + task.editLink}
       task.$.toAddress.error = 'כתובת לא נמצאה'
   },
   backendPrefilter: () => {
+    if (remult.context.disableOrgFiltering) return {}
     let orgs = remult.user?.orgs
 
     if (!orgs?.[0]) return getSite().tasksFilter()

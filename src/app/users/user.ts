@@ -242,7 +242,8 @@ export function getCurrentUserId(org: string) {
   return remult.user?.orgs.find((x) => x.org == org)?.userId
 }
 export function matchesCurrentUserId(id: string, org: string) {
-  return getCurrentUserId(org) === id
+  return Boolean(remult.user?.orgs.find((x) => x.userId === id))
+  //return getCurrentUserId(org) === id
 }
 export function matchesCurrentSiteUserId(id: string) {
   return getCurrentSiteUserId() === id
