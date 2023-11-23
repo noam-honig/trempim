@@ -2,9 +2,8 @@ import { Entity, Field, Fields, UserInfo, remult, repo } from 'remult'
 import type { Request } from 'express'
 import type from 'cookie-session' //needed for build - do not remove
 import { User } from '../app/users/user'
-import { Site, getSite } from '../app/users/sites'
+import { Site, getSite, getSiteByOrg } from '../app/users/sites'
 import { Roles } from '../app/users/roles'
-import { createId } from '@paralleldrive/cuid2'
 
 declare module 'remult' {
   export interface RemultContext {
@@ -84,6 +83,14 @@ export async function setSessionUserBasedOnUserRow(
         deleted: false,
       },
     })
+    let orgs: UserInfo['orgs'] = []
+    for (const u of userInstances) {
+      orgs.push(
+        ...getSiteByOrg(u.org)
+          .getVisibleOrgs()
+          .map((x) => ({ org: x.org, userId: u.id }))
+      )
+    }
     return setSessionUser(
       {
         id: user.id,
@@ -91,7 +98,7 @@ export async function setSessionUserBasedOnUserRow(
         phone: user.phone,
         roles,
         allowedCategories: user.allowedCategories,
-        orgs: userInstances.map(({ org, id }) => ({ org, userId: id })),
+        orgs,
 
         showAllOrgs: user.showAllOrgs,
       },

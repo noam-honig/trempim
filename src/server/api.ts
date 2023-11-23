@@ -45,6 +45,7 @@ import fetch from 'node-fetch'
 import { BlockedPhone } from '../app/events/blockedPhone'
 import { SendVerifyRelevanceSms } from '../app/events/send-verify-relevance-sms'
 import { settings } from 'cluster'
+import { investigate } from './investigate'
 
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
@@ -109,12 +110,13 @@ export const api = remultExpress({
 
   initApi: async () => {
     try {
-      remult.context.site = new Site('test1')
+      remult.context.site = new Site('hahatul')
       remult.dataProvider = await postgres.getConnectionForSchema(
         getBackendSite(remult.context.site.urlPrefix)!.dbSchema
       )
 
       remult.subscriptionServer = new SseSubscriptionServer()
+      await investigate()
       // SqlDatabase.LogToConsole = true
       // await repo(User).findFirst()
       // await repo(Task).findFirst()
