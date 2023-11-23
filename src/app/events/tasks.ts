@@ -726,7 +726,7 @@ ${this.getLink()}
     } else {
       if (
         (await repo(Task).count({
-          driverId: remult.user!.id!,
+          driverId: assignUserId,
           taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
         })) >= getSite().maxActiveTripsPerDriver
       )
@@ -736,7 +736,7 @@ ${this.getLink()}
 
       if (
         (await repo(TaskStatusChanges).count({
-          driverId: remult.user!.id!,
+          driverId: assignUserId,
           what: assignedChangeType,
           createdAt: {
             $gt: new Date(new Date().getTime() - 1000 * 60 * 60),
@@ -748,6 +748,7 @@ ${this.getLink()}
     }
     await this._.reload()
     if (this.driverId) throw Error('מתנדב אחר כבר לקח משימה זו')
+    if (!assignUserId) throw Error('משהו לא הסתדר בשיוך, מזהה נהג ריק')
     this.driverId = assignUserId
     this.taskStatus = taskStatus.assigned
     this.statusNotes = ''
