@@ -436,6 +436,11 @@ export const backendSites = [
   warRoom,
   showers,
   civil,
+  new Site('darkenu', {
+    dbSchema: 'shinuim',
+    title: 'דרכנו',
+    showCopyLink: true,
+  }),
   new Site('teva', {
     dbSchema: 'teva',
     title: 'תופעת טבע',
