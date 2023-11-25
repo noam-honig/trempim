@@ -16,7 +16,6 @@ import { User } from '../users/user'
 export class OverviewController {
   @BackendMethod({ allowed: Roles.admin })
   static async getOverview() {
-    SqlDatabase.LogToConsole = 'oneLiner'
     const db = SqlDatabase.getDb()
     const t = await dbNamesOf(Task)
     let sites = [...backendSites]
