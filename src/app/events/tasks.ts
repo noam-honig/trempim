@@ -304,11 +304,13 @@ ${this.getLink()}`
     )
   }
   eventBelongToOrgUser(allowed?: Allowed) {
-    return (
-      remult.user?.orgs.find((x) => x.org == this.org)?.userId ==
-        remult.user?.id &&
-      (allowed === undefined || remult.isAllowed(allowed))
+    const user = remult.user
+    if (!user) return false
+    const userOrg = user.orgs.find(
+      (x) => x.org == this.org && user.id == x.userId
     )
+    const rolesAllowed = allowed === undefined || remult.isAllowed(allowed)
+    return userOrg?.userId == user.id && rolesAllowed
   }
   isDispatcher() {
     return this.eventBelongToOrgUser(Roles.dispatcher)

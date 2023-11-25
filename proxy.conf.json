@@ -26,5 +26,13 @@
    "/test2/images": {
       "target": "http://localhost:3002",
       "secure": false
+   },
+   "/hahatul/api": {
+      "target": "http://localhost:3002",
+      "secure": false
+   },
+   "/hahatul/images": {
+      "target": "http://localhost:3002",
+      "secure": false
    }
 }
