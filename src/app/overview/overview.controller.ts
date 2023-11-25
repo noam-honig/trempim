@@ -16,6 +16,7 @@ import { User } from '../users/user'
 export class OverviewController {
   @BackendMethod({ allowed: Roles.admin })
   static async getOverview() {
+    SqlDatabase.LogToConsole = 'oneLiner'
     const db = SqlDatabase.getDb()
     const t = await dbNamesOf(Task)
     let sites = [...backendSites]
@@ -59,29 +60,32 @@ group by org, date(${t.statusChangeDate})
   }
   @BackendMethod({ allowed: Roles.admin })
   static async topDrivers(from: string, to: string, km: boolean) {
-    const fromDate = ValueConverters.DateOnly.fromJson!(from)
-    const toDate = ValueConverters.DateOnly.fromJson!(to)
+    const fromDate = new Date(Date.parse(from))
+    const toDate = new Date(Date.parse(to))
     const db = SqlDatabase.getDb()
-    const t = new Proxy(await dbNamesOf(Task), {
-      get: (target, prop) => {
-        //@ts-ignore
-        const t = target[prop]
-        if (typeof t === 'string') return 't.' + t
-        return t
-      },
-    })
+    const t = await dbNamesOf(Task)
     const u = await dbNamesOf(User)
+
+    const c = db.createCommand()
+
     return (
-      await db.execute(`select ${u.name}, ${u.phone}, sum(${
+      await c.execute(`select ${u.name}, ${u.phone}, sum(${
         km ? t.distance : 1
       }) 
-    from (select * from ${t} where ${await SqlDatabase.filterToRaw(repo(Task), {
-        taskStatus: taskStatus.completed,
-        statusChangeDate: {
-          $gte: fromDate,
-          $lt: toDate,
-        },
-      })} ) as t join ${u} as u on u.${u.id}=${t.driverId}
+    from (select * from ${t} where ${t.taskStatus} in (${[
+        taskStatus.assigned,
+        taskStatus.driverPickedUp,
+        taskStatus.completed,
+      ]
+        .map((x) => x.id)
+        .join(',')}) 
+      and ${t.org} = '${getSite().org}' and ${
+        t.statusChangeDate
+      }>=${c.addParameterAndReturnSqlToken(fromDate)} and ${
+        t.statusChangeDate
+      }<=${c.addParameterAndReturnSqlToken(
+        toDate
+      )}   ) as t join ${u} as u on u.${u.id}=${t.driverId}
     where   u.${u.org}='${getSite().org}'
     group by ${u.name}, ${u.phone}
     order by 3 desc
