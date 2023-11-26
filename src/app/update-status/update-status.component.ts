@@ -19,6 +19,7 @@ export class UpdateStatusComponent implements OnInit {
   args!: {
     showFailStatus: boolean
     task: Task
+    onSave?: VoidFunction
   }
   whatWentWrong = 0
 
@@ -87,6 +88,7 @@ export class UpdateStatusComponent implements OnInit {
         }
       }
       this.dialogRef.close()
+      this.args.onSave?.()
     } catch (err: any) {
       this.ui.error(err)
     }

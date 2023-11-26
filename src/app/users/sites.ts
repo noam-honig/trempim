@@ -12,7 +12,7 @@ export function getTitle() {
 
 export class Site {
   showComfortIntakeMessage = false
-  driverAssignButtonText = 'אני רוצה לבצע'
+  driverAssignButtonText = 'אני אבצע'
   sortTasksAscending = false
   sendTextMessageOnApprove = false
   sendTextMessageToRequester = false
@@ -46,7 +46,7 @@ export class Site {
   allDeliveryRequestsAreApprovedAutomatically = false
   taskTitleCaption?: string
   defaultLinkDescription = `כאן תוכלו להתעדכן ולסייע בהסעת חיילים, מפונים וציוד`
-  showContactToAnyDriver = false
+  showContactToAnyDriver = true
   showValidUntil = false
   requireValidUntil = false
   requireContactName = false
@@ -135,6 +135,7 @@ ${
 }
 
 const bikeIl: Site = new Site('bikeil', {
+  showContactToAnyDriver: false,
   driverAssignButtonText: 'אני אבצע',
   sendTextMessageToRequester: true,
   requireContactName: true,
@@ -243,6 +244,7 @@ const vdri = new Site('vdri', {
 })
 function yedidimEnv(urlPrefix: string) {
   return new Site(urlPrefix, {
+    showContactToAnyDriver: false,
     sendTextMessageToRequester: true,
     dbSchema: 'shinuim',
     org: 'yedidim',
@@ -412,6 +414,7 @@ export const backendSites = [
   }),
   new Site('test1', {
     getOtherVisibleOrgs: () => [hahatul],
+    showContactToAnyDriver: true,
     showComfortIntakeMessage: true,
     showValidUntil: true,
     //syncWithShadag: true,

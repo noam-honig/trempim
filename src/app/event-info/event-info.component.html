@@ -205,10 +205,10 @@
   <button
     mat-raised-button
     color="error"
-    *ngIf="isAssigned()"
+    *ngIf="showWillNotDo()"
     (click)="problem()"
   >
-    נתקלתי בבעיה
+    לא אבצע
   </button>
   <ng-container *ngIf="showCancel()">
     <strong>{{ e.taskStatus.caption }} </strong>

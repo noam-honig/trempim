@@ -787,13 +787,19 @@ ${this.getLink()}
   @BackendMethod({ allowed: Allow.authenticated })
   async cancelAssignment(notes: string) {
     this.checkAssignedToDriverOrDispatcher()
+    let hadDriverId = Boolean(this.driverId)
     this.driverId = ''
     this.taskStatus = taskStatus.active
     this.statusNotes = notes
-    await this.insertStatusChange(DriverCanceledAssign, notes)
+    await this.insertStatusChange(
+      hadDriverId ? DriverCanceledAssign : 'נהג בחר לא לבצע',
+      notes
+    )
     await this.save()
   }
   private checkAssignedToDriverOrDispatcher() {
+    const s = this.getSite()
+    if (!this.driverId && s.showContactToAnyDriver) return
     if (
       !matchesCurrentUserId(this.driverId, this.org) &&
       !this.eventBelongToOrgUser(Roles.dispatcher)

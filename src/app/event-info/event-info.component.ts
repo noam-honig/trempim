@@ -109,7 +109,14 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   async problem() {
     await openDialog(
       UpdateStatusComponent,
-      (x) => (x.args = { showFailStatus: true, task: this.e })
+      (x) =>
+        (x.args = {
+          showFailStatus: true,
+          task: this.e,
+          onSave: () => {
+            this.closeDialog?.()
+          },
+        })
     )
   }
   async completed() {
@@ -133,6 +140,15 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
       this.e.taskStatus == taskStatus.driverPickedUp
     )
   }
+
+  showWillNotDo() {
+    return (
+      this.isAssigned() ||
+      (this.e.getSite().showContactToAnyDriver &&
+        this.e.taskStatus == taskStatus.active)
+    )
+  }
+
   async clickedByMistake() {
     await this.e.completedStatusClickedByMistake()
   }
