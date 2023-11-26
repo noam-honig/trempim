@@ -412,6 +412,7 @@ export const backendSites = [
   }),
   new Site('test1', {
     getOtherVisibleOrgs: () => [hahatul],
+    showComfortIntakeMessage: true,
     showValidUntil: true,
     //syncWithShadag: true,
     requireValidUntil: true,
