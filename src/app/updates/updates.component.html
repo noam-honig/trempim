@@ -1,1 +1,14 @@
-<data-grid [settings]="tripGrid"></data-grid>
+<div class="full-page">
+  <div style="display: flex; justify-content: space-between">
+    <mat-form-field>
+      <input
+        matInput
+        [(ngModel)]="searchString"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="חיפוש"
+        (input)="doSearch()"
+      />
+    </mat-form-field>
+  </div>
+  <data-grid [settings]="tripGrid" class="grow-item"></data-grid>
+</div>

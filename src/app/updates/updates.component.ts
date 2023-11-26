@@ -2,10 +2,11 @@ import { Component, Injectable, OnInit } from '@angular/core'
 import { UIToolsService } from '../common/UIToolsService'
 import { BusyService } from '../common-ui-elements'
 import { tripsGrid } from '../events/tripsGrid'
-import { remult, repo } from 'remult'
+import { EntityFilter, remult, repo } from 'remult'
 import { User } from '../users/user'
 import { Task } from '../events/tasks'
 import { getSite } from '../users/sites'
+import { fixPhoneInput } from '../events/phone'
 
 @Component({
   selector: 'app-updates',
@@ -19,6 +20,12 @@ export class UpdatesComponent implements OnInit {
     private busy: BusyService
   ) {}
 
+  searchString = ''
+  doSearch() {
+    this.tripGrid.page = 1
+    this.busy.donotWait(() => this.tripGrid.reloadData())
+  }
+
   ngOnInit(): void {}
   rowsLoaded = false
   tripGrid = tripsGrid({
@@ -28,8 +35,29 @@ export class UpdatesComponent implements OnInit {
       if (!this.rowsLoaded) this.updates.updateLastUpdatedView()
       this.rowsLoaded = true
     },
-    where: {
-      $and: [getSite().tasksFilter()],
+
+    where: () => {
+      const result: EntityFilter<Task> = {
+        $and: [getSite().tasksFilter()],
+      }
+      if (this.searchString) {
+        let or: EntityFilter<Task>[] = [
+          { title: { $contains: this.searchString } },
+          { externalId: { $contains: this.searchString } },
+          { requesterPhone1Description: { $contains: this.searchString } },
+          { phone1Description: { $contains: this.searchString } },
+          { phone2Description: { $contains: this.searchString } },
+        ]
+        const searchDigits = fixPhoneInput(this.searchString)
+        if (searchDigits)
+          or.push(
+            { phone1: { $contains: searchDigits } },
+            { phone2: { $contains: searchDigits } },
+            { requesterPhone1: { $contains: searchDigits } }
+          )
+        result.$or = or
+      }
+      return result
     },
     rowCssClass: (t) =>
       t.statusChangeDate > this.updates.lastUpdateViewed ? 'new-update' : '',
