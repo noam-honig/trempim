@@ -8,6 +8,9 @@ import { createId } from '@paralleldrive/cuid2'
 import { BlockedPhone } from './blockedPhone'
 
 export async function SendVerifyRelevanceSms() {
+  var d = new Date()
+  if (d.getDay() == 5 && d.getHours() > 15) return
+  if (d.getDay() == 6 && d.getHours() < 20) return
   console.log('I am here ' + getSite().urlPrefix)
   const lastStatusCheck = await repo(TaskStatusChanges).findFirst(
     { what: verifyRelevanceSms, org: getSite().org },
