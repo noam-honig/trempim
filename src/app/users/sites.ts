@@ -396,15 +396,15 @@ export const backendSites = [
   yedidim,
   trmps,
   yedidimEnv('ezion'),
-  new Site('brdls', { dbSchema: 'brdls', title: 'ברדלס' }),
-  new Site('mgln', {
-    dbSchema: 'mgln',
-    title: 'ידידי מגלן',
-    showCopyLink: true,
-    allowAnyVolunteerToAdd: true,
-    sendSmsOnNewDraft: true,
-    useFillerInfo: true,
-  }),
+  // new Site('brdls', { dbSchema: 'brdls', title: 'ברדלס' }),
+  // new Site('mgln', {
+  //   dbSchema: 'mgln',
+  //   title: 'ידידי מגלן',
+  //   showCopyLink: true,
+  //   allowAnyVolunteerToAdd: true,
+  //   sendSmsOnNewDraft: true,
+  //   useFillerInfo: true,
+  // }),
   new Site('shadag_test', {
     dbSchema: 'dshinua',
     title: 'סביבת בדיקות שדג',
@@ -447,14 +447,14 @@ export const backendSites = [
     registerVolunteerLink:
       'https://forms.monday.com/forms/771b9449be6dac38889b9ea2226bfef7?r=euc1',
   }),
-  new Site('teva', {
-    dbSchema: 'teva',
-    title: 'תופעת טבע',
-    showCopyLink: true,
-    allowAnyVolunteerToAdd: true,
-    sendSmsOnNewDraft: true,
-    useFillerInfo: true,
-  }),
+  // new Site('teva', {
+  //   dbSchema: 'teva',
+  //   title: 'תופעת טבע',
+  //   showCopyLink: true,
+  //   allowAnyVolunteerToAdd: true,
+  //   sendSmsOnNewDraft: true,
+  //   useFillerInfo: true,
+  // }),
 ]
 export function getSiteByOrg(org: string) {
   return backendSites.find((x) => x.org === org)!
