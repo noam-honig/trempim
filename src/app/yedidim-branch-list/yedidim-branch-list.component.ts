@@ -117,9 +117,9 @@ export class YedidimBranchListComponent implements OnInit {
       message += ` (${this.args.category})`
     }
     let t = new Date()
-    message += ` - שעה ${t.getHours()}:${(t.getMinutes() / 10).toFixed()}0 (${
-      tasks?.length
-    } קריאות): \n`
+    message += ` - שעה ${t.getHours()}:${Math.min(
+      t.getMinutes() / 10
+    ).toFixed()}0 (${tasks?.length} קריאות): \n`
     message += tasks
       ?.map((e) => '* ' + e.getShortDescription() + '\n' + e.getLink())
       .join('\n\n')
