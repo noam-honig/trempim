@@ -157,7 +157,7 @@ const bikeIl: Site = new Site('bikeil', {
   useFillerInfo: true,
   allowAnyVolunteerToAdd: true,
   sendSmsOnNewDraft: true,
-  getOtherVisibleOrgs: () => [hahatul],
+  // getOtherVisibleOrgs: () => [hahatul],
   tasksFilter: () => ({
     org: [bikeIl.org],
   }),
