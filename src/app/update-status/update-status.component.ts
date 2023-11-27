@@ -74,7 +74,7 @@ export class UpdateStatusComponent implements OnInit {
             await this.ui.yesNoQuestion(
               `כל הכבוד, השלמת ${result.rides} נסיעות עם "${
                 getSite().title
-              }", סה"כ ${result.km} ק"מ - רוצה לשתף בווטסאפ?`
+              }", סה"כ ${result.km.toFixed()} ק"מ - רוצה לשתף בווטסאפ?`
             )
           ) {
             sendWhatsappToPhone(
