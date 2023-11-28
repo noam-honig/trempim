@@ -34,7 +34,7 @@ import {
   updateGeocodeResult,
 } from '../common/address-input/google-api-helpers'
 import { Roles } from '../users/roles'
-import { getSite, getSiteByOrg, getTitle } from '../users/sites'
+import { getSite, getSiteByOrg, getTitle, lev1j } from '../users/sites'
 import { OrgEntity } from '../users/OrgEntity'
 import {
   User,
@@ -71,6 +71,7 @@ import {
 import { BlockedPhone } from './blockedPhone'
 import { recordChanges } from '../common/change-log/change-log'
 import { updateShadagBasedOnTask } from '../../server/shadag-work'
+import { updateLev1Monday } from '../../server/monday-lev1j'
 
 const onlyDriverRules: FieldOptions<Task, string> = {
   includeInApi: (t) => {
@@ -188,28 +189,32 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       }
     }
     if (task.getSite().syncWithMonday && task.externalId.startsWith('m:')) {
-      if (task.$.taskStatus.valueChanged()) {
-        switch (task.taskStatus) {
-          case taskStatus.active:
-          case taskStatus.assigned:
-            updateStatusOnMonday(
-              task,
-              task.returnMondayStatus === NO_PACK_READY_FOR_DELIVERY
-                ? task.returnMondayStatus
-                : PACKED_READY_FOR_DELIVERY
-            )
-            break
-          case taskStatus.driverPickedUp:
-            updateStatusOnMonday(task, ACTIVE_DELIVERY)
-            break
-          case taskStatus.completed:
-            updateStatusOnMonday(task, DELIVERY_DONE)
-            break
+      if (task.getSite() === lev1j) {
+        await updateLev1Monday(task)
+      } else {
+        if (task.$.taskStatus.valueChanged()) {
+          switch (task.taskStatus) {
+            case taskStatus.active:
+            case taskStatus.assigned:
+              updateStatusOnMonday(
+                task,
+                task.returnMondayStatus === NO_PACK_READY_FOR_DELIVERY
+                  ? task.returnMondayStatus
+                  : PACKED_READY_FOR_DELIVERY
+              )
+              break
+            case taskStatus.driverPickedUp:
+              updateStatusOnMonday(task, ACTIVE_DELIVERY)
+              break
+            case taskStatus.completed:
+              updateStatusOnMonday(task, DELIVERY_DONE)
+              break
+          }
         }
-      }
-      if (task.$.driverId.valueChanged()) {
-        if (task.driverId) {
-          await updateDriverOnMonday(task)
+        if (task.$.driverId.valueChanged()) {
+          if (task.driverId) {
+            await updateDriverOnMonday(task)
+          }
         }
       }
     }

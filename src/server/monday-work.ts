@@ -1,13 +1,21 @@
 import { JsonDataProvider, ValueConverters, remult, repo } from 'remult'
 import { Task } from '../app/events/tasks'
-import { MondayItem, get, gql, update } from './getGraphQL'
+import {
+  MondayEvent,
+  MondayItem,
+  get,
+  getMondayItem,
+  gql,
+  update,
+} from './getGraphQL'
 import { User } from '../app/users/user'
 import { fixPhoneInput, isPhoneValidForIsrael } from '../app/events/phone'
 import { GetGeoInformation } from '../app/common/address-input/google-api-helpers'
 import { Roles } from '../app/users/roles'
 import { taskStatus } from '../app/events/taskStatus'
 import { sendSms } from './send-sms'
-import { getSite } from '../app/users/sites'
+import { getSite, lev1j } from '../app/users/sites'
+import { updateReceivedFromMondayLev1j } from './monday-lev1j'
 
 export const PACKED_READY_FOR_DELIVERY = 3,
   ACTIVE_DELIVERY = 0,
@@ -15,7 +23,7 @@ export const PACKED_READY_FOR_DELIVERY = 3,
   NO_PACK_READY_FOR_DELIVERY = 6,
   ON_HOLD = 14
 
-export async function updateReceivedFromMonday(event: Root) {
+export async function updateReceivedFromMonday(event: MondayEvent) {
   try {
     if (event?.event?.type == 'update_column_value') {
       const id = event.event.pulseId
@@ -23,13 +31,16 @@ export async function updateReceivedFromMonday(event: Root) {
       const value = event.event.value
       const board = event.event.boardId
 
-      await upsertTaskBasedOnMondayValues(
-        board,
-        id,
-        ['status73', DRIVER_NAME_COLUMN, DRIVER_PHONE_COLUMN].includes(
-          column_id
+      if (getSite() === lev1j) {
+        await updateReceivedFromMondayLev1j(event.event)
+      } else
+        await upsertTaskBasedOnMondayValues(
+          board,
+          id,
+          ['status73', DRIVER_NAME_COLUMN, DRIVER_PHONE_COLUMN].includes(
+            column_id
+          )
         )
-      )
     }
   } catch (err) {
     console.error(err)
@@ -63,49 +74,6 @@ export async function updateDriverOnMonday(task: Task) {
   }
 }
 
-export interface Root {
-  event: Event
-}
-
-export interface Event {
-  app: string
-  type: string
-  triggerTime: string
-  subscriptionId: number
-  userId: number
-  originalTriggerUuid: any
-  boardId: number
-  groupId: string
-  pulseId: number
-  pulseName: string
-  columnId: string
-  columnType: string
-  columnTitle: string
-  value: Value
-  previousValue: Value
-  changedAt: number
-  isTopGroup: boolean
-  triggerUuid: string
-}
-
-export interface Value {
-  label: Label
-  post_id: any
-}
-
-export interface Label {
-  index: number
-  text: string
-  style: Style
-  is_done: boolean
-}
-
-export interface Style {
-  color: string
-  border: string
-  var_name: string
-}
-
 export const MONDAY_USER_PHONE = '0500000002'
 const DRIVER_PHONE_COLUMN = 'text63'
 const DRIVER_NAME_COLUMN = 'text6'
@@ -123,34 +91,7 @@ export async function upsertTaskBasedOnMondayValues(
     ? process.env['MONDAY_WARROOM_API_TOKEN']
     : undefined
 
-  const monday = await gql(
-    {
-      board: board,
-      item: id,
-    },
-    `#graphql
-        query ($board: ID!, $item: ID!) {
-          boards(ids: [$board]) {
-            id
-            name
-            board_folder_id
-            board_kind
-            items_page(query_params: {ids: [$item]}) {
-              items {
-                id
-                name
-                column_values {
-                  id
-                  text
-                  value
-                }
-              }
-            }
-          }
-        }`,
-    apiKey
-  )
-  const mondayItem = monday.boards[0].items_page.items[0] as MondayItem
+  const mondayItem = await getMondayItem(board, id, apiKey)
 
   if (warRoomDriversBoard) {
     await updateDriverBasedOnMonday()
@@ -407,37 +348,6 @@ export async function upsertTrmpsMondayItem(item: MondayItem) {
   await task.save()
 }
 
-export interface MondayAddress {
-  lat: string
-  lng: string
-  city: City
-  street: Street
-  address: string
-  country: Country
-  placeId: string
-  changed_at: string
-  streetNumber: StreetNumber
-}
-
-export interface City {
-  long_name: string
-  short_name: string
-}
-
-export interface Street {
-  long_name: string
-  short_name: string
-}
-
-export interface Country {
-  long_name: string
-  short_name: string
-}
-
-export interface StreetNumber {
-  long_name: string
-  short_name: string
-}
 export async function initIntegrationUser(name: string) {
   const mondayUser = await repo(User).findFirst(
     { phone: MONDAY_USER_PHONE },

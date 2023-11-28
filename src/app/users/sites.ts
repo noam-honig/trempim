@@ -220,8 +220,9 @@ const lev1ms: Site = new Site('lev1ms', {
     encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
   getOtherVisibleOrgs: theBigGroup,
 })
-const lev1j: Site = new Site('lev1j', {
+export const lev1j: Site = new Site('lev1j', {
   //sendTextMessageToRequester: true,
+  syncWithMonday: true,
   dbSchema: 'shinuim',
   title: 'לב אחד ירושלים',
   registerVolunteerLink:
