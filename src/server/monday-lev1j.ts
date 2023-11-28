@@ -87,7 +87,7 @@ export async function updateLev1Monday(task: Task) {
     const driver =
       task.driverId != '' ? await repo(User).findId(task.driverId) : undefined
     update(BOARD_ID, +id, 'text_2', driver?.name || '', API_TOKEN())
-    update(BOARD_ID, +id, 'text_3', driver?.name || '', API_TOKEN())
+    update(BOARD_ID, +id, 'text_3', driver?.phone || '', API_TOKEN())
   }
 
   if (task.$.taskStatus.valueChanged()) {
