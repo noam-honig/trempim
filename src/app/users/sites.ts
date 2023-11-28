@@ -230,6 +230,16 @@ export const lev1j: Site = new Site('lev1j', {
     encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
   getOtherVisibleOrgs: () => theBigGroup(),
 })
+export const lev1ge: Site = new Site('lev1ge', {
+  //sendTextMessageToRequester: true,
+  syncWithMonday: true,
+  dbSchema: 'shinuim',
+  title: 'לב אחד גוש עציון',
+  registerVolunteerLink:
+    'https://wa.me/972506238081?text=' +
+    encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
+  showCopyLink: true,
+})
 const vdri = new Site('vdri', {
   sendTextMessageToRequester: true,
   dbSchema: 'shinuim',
@@ -391,6 +401,7 @@ export const backendSites = [
   lev1,
   lev1ms,
   lev1j,
+  lev1ge,
   bikeIl,
   ngim,
   vdri,
