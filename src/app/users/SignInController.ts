@@ -127,7 +127,7 @@ export class SignInController extends ControllerBase {
 
     if (!user) throw Error(UNKNOWN_USER)
     try {
-      return setSessionUserBasedOnUserRow(user, this.rememberOnThisDevice)
+      return await setSessionUserBasedOnUserRow(user, this.rememberOnThisDevice)
     } finally {
       await await repo(TaskStatusChanges).insert({
         what: 'לוגין',
