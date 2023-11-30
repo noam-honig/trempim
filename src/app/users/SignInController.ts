@@ -35,10 +35,6 @@ export class SignInController extends ControllerBase {
     inputType: 'numeric',
   })
   otp = ''
-  @Fields.boolean({
-    caption: terms.rememberOnThisDevice,
-  })
-  rememberOnThisDevice = false
 
   @Fields.boolean()
   askForOtp = false
@@ -127,17 +123,19 @@ export class SignInController extends ControllerBase {
 
     if (!user) throw Error(UNKNOWN_USER)
     try {
-      return await setSessionUserBasedOnUserRow(user, this.rememberOnThisDevice)
+      return await setSessionUserBasedOnUserRow(user)
     } finally {
-      await await repo(TaskStatusChanges).insert({
+      await repo(TaskStatusChanges).insert({
         what: 'לוגין',
-        notes: this.rememberOnThisDevice ? 'זכור אותי' : 'אל תזכור אותי',
       })
     }
   }
 
   @BackendMethod({ allowed: Allow.authenticated })
-  static signOut() {
+  static async signOut() {
+    await repo(TaskStatusChanges).insert({
+      what: 'התנתקות',
+    })
     setSessionUser(undefined!, true)
   }
   @BackendMethod({ allowed: true })

@@ -25,6 +25,9 @@ export async function initRequestUser(req: Request) {
       await repo(Session).insert({ headers: req.headers, ip: req.ip })
     ).id
   }
+  if (!req.session!['keepit']) {
+    req.session!['keepit'] = true
+  }
   remult.context.sessionId = req.session!['sessionID']
 
   remult.context.availableTaskIds =
@@ -49,10 +52,7 @@ export function setSessionUser(user: UserInfo, remember?: boolean): UserInfo {
   return user
 }
 
-export async function setSessionUserBasedOnUserRow(
-  user: User,
-  remember?: boolean
-) {
+export async function setSessionUserBasedOnUserRow(user: User) {
   if (!user) {
     return setSessionUser(undefined!, true)
   }
@@ -91,19 +91,16 @@ export async function setSessionUserBasedOnUserRow(
           .map((x) => ({ org: x.org, userId: u.id }))
       )
     }
-    return setSessionUser(
-      {
-        id: user.id,
-        name: user.name,
-        phone: user.phone,
-        roles,
-        allowedCategories: user.allowedCategories,
-        orgs,
+    return setSessionUser({
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      roles,
+      allowedCategories: user.allowedCategories,
+      orgs,
 
-        showAllOrgs: user.showAllOrgs,
-      },
-      remember
-    )
+      showAllOrgs: user.showAllOrgs,
+    })
   } finally {
     remult.context.disableOrgFiltering = false
   }

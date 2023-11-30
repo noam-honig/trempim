@@ -101,6 +101,7 @@ async function startup() {
         // httpOnly: production,  commented out because it prevented remembering of user on device //https://securityheaders.com/
         // secure: production, commented out because it prevented remembering of user on device //https://securityheaders.com/
         secret: production ? process.env['SESSION_SECRET'] : 'my secret1',
+        maxAge: 365 * 24 * 60 * 60 * 1000,
       })(req, res, next)
     })
   })

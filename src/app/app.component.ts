@@ -87,7 +87,6 @@ export class AppComponent implements OnInit, OnDestroy {
         cssClass: 'otp',
       },
       { field: this.signIn.$.name, visible: () => this.signIn.askForName },
-      { field: this.signIn.$.rememberOnThisDevice },
     ],
   })
   async doSignIn() {
