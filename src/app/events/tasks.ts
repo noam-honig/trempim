@@ -1157,8 +1157,18 @@ ${url + '/s/' + this.editLink}
       {
         name: 'פרטי מוקדן',
         icon: 'contact_emergency',
-        click: (e) =>
-          ui.showUserInfo({ userId: e.createUserId, title: 'מוקדן' }),
+        click: async (e) => {
+          const s = await repo(TaskStatusChanges).findFirst(
+            { taskId: e.id, createUserId: { $ne: '' } },
+
+            {
+              orderBy: {
+                createdAt: 'asc',
+              },
+            }
+          )
+          ui.showUserInfo({ userId: s.createUserId, title: 'מוקדן' })
+        },
       },
       {
         name: 'פרטי נהג',
