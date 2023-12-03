@@ -23,9 +23,20 @@
     width: 90px;
     height: 90px;
 
+    img {
+      max-width: 90px;
+      max-height: 90px;
+    }
+
+
     @media (min-width: 720px) {
       width: 150px;
       height: 150px;
+
+      img {
+        max-width: 150px;
+        max-height: 150px;
+      }
     }
   }
 
