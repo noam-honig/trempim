@@ -200,7 +200,7 @@ const ngim: Site = new Site('ngim', {
   title: 'חמל נהגים',
   showCopyLink: true,
   allowAnyVolunteerToAdd: true,
-  sendSmsOnNewDraft: true,
+  //sendSmsOnNewDraft: true,
   useFillerInfo: true,
   getOtherVisibleOrgs: theBigGroup,
 })
