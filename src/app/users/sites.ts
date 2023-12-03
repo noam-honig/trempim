@@ -404,7 +404,7 @@ export function getSite() {
   return remult.context.site || new Site('')
 }
 
-export const advertizeForDrivers = [vdri, hahatul, warRoom, yedidim]
+export const advertizeForDrivers = [vdri, civil, hahatul, warRoom, yedidim]
 
 export const backendSites = [
   new Site('dshinua', {
