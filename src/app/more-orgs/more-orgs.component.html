@@ -1,0 +1,23 @@
+<div style="padding: 8px">
+  <h2>ארגונים נוספים המחלקים עם האפליקציה</h2>
+  <p>
+    כל הארגונים הבאים גם משתמשים באפליקציה, כך שאם תרשמו אצלהם כנהגים - תוכלו
+    לראות רשימה מרוכזת של כל הנסיעות שלכם מכל הארגונים במסך אחד, ותוכלו לנצל
+    יותר טוב את ההתנדבות שלכם
+  </p>
+</div>
+<div>
+  <div class="events-container">
+    <mat-card class="event-card" *ngFor="let org of orgs">
+      <div class="event-image">
+        <img [src]="'/' + org.urlPrefix + '/assets/logo.png'" />
+      </div>
+      <div class="orgs-list-item-name">
+        {{ org.title }}
+        <div>
+          <a [href]="'/' + org.urlPrefix">לכניסה והרשמה</a>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

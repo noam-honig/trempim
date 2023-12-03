@@ -61,7 +61,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { AboutComponent } from './about/about.component';
 import { ShowPublicEventComponent } from './show-public-event/show-public-event.component';
 import { TripSubtitleComponent } from './trip-subtitle/trip-subtitle.component';
-import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.component'
+import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.component';
+import { MoreOrgsComponent } from './more-orgs/more-orgs.component'
 
 @NgModule({
   declarations: [
@@ -99,6 +100,7 @@ import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.com
     ShowPublicEventComponent,
     TripSubtitleComponent,
     TaskSelfUpdateComponent,
+    MoreOrgsComponent,
   ],
   imports: [
     NgApexchartsModule,

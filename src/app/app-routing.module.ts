@@ -22,6 +22,7 @@ import { OverviewComponent } from './overview/overview.component'
 import { AboutComponent } from './about/about.component'
 import { ShowPublicEventComponent } from './show-public-event/show-public-event.component'
 import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.component'
+import { MoreOrgsComponent } from './more-orgs/more-orgs.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -79,6 +80,11 @@ const routes: Routes = [
     path: terms.userAccounts,
     component: UsersComponent,
     canActivate: [CanSeeUsersGuard],
+  },
+  {
+    path: 'volunteer',
+    component: MoreOrgsComponent,
+    data: { hide: true, noLogin: true, name: 'עוד ארגונים' },
   },
   {
     path: 'intake',

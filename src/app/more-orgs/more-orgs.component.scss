@@ -1,0 +1,32 @@
+.event-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  width: 150px;
+
+
+  @media (max-width: 720px) {
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+    flex-direction: row !important;
+  }
+
+  strong {
+    @media (max-width: 720px) {
+      font-weight: 600;
+    }
+  }
+
+  .event-image {
+    width: 90px;
+    height: 90px;
+
+    @media (min-width: 720px) {
+      width: 150px;
+      height: 150px;
+    }
+  }
+
+}

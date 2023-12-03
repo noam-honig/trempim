@@ -367,6 +367,24 @@ const showers = new Site('showers', {
   defaultCategory: 'מקלחות ניידות',
   categories: ['רכב גורר עד 1.5 טון', 'רכב גורר עד 3.5 טון'],
 })
+const test1 = new Site('test1', {
+  getOtherVisibleOrgs: () => [hahatul],
+  showContactToAnyDriver: true,
+  showComfortIntakeMessage: true,
+  showValidUntil: true,
+  //syncWithShadag: true,
+  requireValidUntil: true,
+  dbSchema: 'dshinua',
+  title: 'פיתוח',
+  ignore: true,
+  org: 'test1',
+})
+const test2 = new Site('test2', {
+  showValidUntil: false,
+  dbSchema: 'dshinua',
+  title: 'סביבת בדיקות החתול',
+  ignore: true,
+})
 
 export function initSite(site?: string) {
   if (!site && typeof document !== 'undefined') {
@@ -385,6 +403,8 @@ export function initSite(site?: string) {
 export function getSite() {
   return remult.context.site || new Site('')
 }
+
+export const advertizeForDrivers = [vdri, hahatul, warRoom, yedidim]
 
 export const backendSites = [
   new Site('dshinua', {
@@ -424,24 +444,8 @@ export const backendSites = [
     defaultCategory: 'שינוע ציוד',
     syncWithShadag: true,
   }),
-  new Site('test1', {
-    getOtherVisibleOrgs: () => [hahatul],
-    showContactToAnyDriver: true,
-    showComfortIntakeMessage: true,
-    showValidUntil: true,
-    //syncWithShadag: true,
-    requireValidUntil: true,
-    dbSchema: 'dshinua',
-    title: 'פיתוח',
-    ignore: true,
-    org: 'test1',
-  }),
-  new Site('test2', {
-    showValidUntil: false,
-    dbSchema: 'dshinua',
-    title: 'סביבת בדיקות החתול',
-    ignore: true,
-  }),
+  test1,
+  test2,
   new Site('jshield', {
     dbSchema: 'shinuim',
     title: 'jshield',
