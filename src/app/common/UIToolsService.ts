@@ -58,6 +58,7 @@ export class UIToolsService implements UITools {
   }
   async error(err: any, taskId?: string) {
     const message = extractError(err)
+    if (message == 'Network Error') return
     this.report('שגיאה', message, taskId)
     return await openDialog(
       YesNoQuestionComponent,
