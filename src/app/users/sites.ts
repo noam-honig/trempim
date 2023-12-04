@@ -463,7 +463,7 @@ export const backendSites = [
     registerVolunteerLink:
       'https://forms.monday.com/forms/771b9449be6dac38889b9ea2226bfef7?r=euc1',
   }),
-  new Site('pets', {
+  new Site('dogs', {
     dbSchema: 'shinuim',
     title: 'החמל הארצי לכלבים',
     showCopyLink: true,
