@@ -241,6 +241,7 @@ export const lev1ge: Site = new Site('lev1ge', {
   showCopyLink: true,
 })
 const vdri = new Site('vdri', {
+  allDeliveryRequestsAreApprovedAutomatically: true,
   sendTextMessageToRequester: true,
   dbSchema: 'shinuim',
   title: 'חמ"ל נהגים מתנדבים ארצי',
