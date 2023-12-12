@@ -108,7 +108,7 @@ export class OverviewComponent implements OnInit {
   showKm = false
 
   get $() {
-    return getFields(this)
+    return getFields<OverviewComponent>(this)
   }
 
   ngOnInit(): void {

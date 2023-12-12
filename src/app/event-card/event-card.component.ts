@@ -619,7 +619,7 @@ export class EventCardComponent implements OnInit {
     return this._tasks
   }
   get $() {
-    return getFields(this, remult)
+    return getFields<EventCardComponent>(this, remult)
   }
 
   ngOnInit(): void {

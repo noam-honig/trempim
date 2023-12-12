@@ -105,7 +105,8 @@ export class OrgEventsComponent implements OnInit {
             this.activeTab == 1
             ? {
                 category:
-                  (remult.user?.allowedCategories?.length || 0) > 0
+                  (remult.user?.allowedCategories?.filter((x) => x)?.length ||
+                    0) > 0
                     ? remult.user!.allowedCategories
                     : undefined,
                 taskStatus: [taskStatus.active],
