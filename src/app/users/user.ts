@@ -174,7 +174,11 @@ export class User extends OrgEntity {
       })
     },
     valueConverter: {
-      fromInput: (val) => val?.split(',').map((x) => x.trim()),
+      fromInput: (val) =>
+        val
+          ?.split(',')
+          .map((x) => x.trim())
+          .filter((x) => x),
       toInput: (val) => val?.join(', '),
       fieldTypeInDb: 'json',
     },
