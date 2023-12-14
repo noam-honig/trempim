@@ -1,28 +1,22 @@
-# Angular Starter Project
+# Trempim app
 
-This project is a starter project for using remult & angular that already has a menu, basic user management and other utilities.
+This project uses Postgres for the db, node js for the server and angular for the frontend.
 
-To use in a new project:
-```sh
-npx degit noam-honig/angular-starter-project.git my-project
-cd my-project
-npm i
-```
+It uses the (remult.dev)[https://remult.dev] for fullstack end-to-end data manipulation.
 
-To run:
-```sh
-npm run dev
-```
+Here's a (short talk about remult given in Node TLV 2023)[https://www.youtube.com/watch?v=YdMHU0rFX4U]
 
-# Tutorial:
-See [Creating a Fullstack Angular Remult app for non web developer](https://github.com/noam-honig/angular-starter-project/wiki/Creating-a-Fullstack-Angular-Remult-app-for-non-web-developer)
+To work on this project:
 
+1. please copy the `.env.sample` to `.env`
+2. Update the `DATABASE_URL` to your postgres database
+3. Create an empty dbschema called `dshinua`
+4. npm i
+5. npm run dev
+6. navigate to http://localhost:4200/test1
+7. Sign in with your phone number, the OTP will appear in the terminal - and you're good to go.
 
-# Create an Heroku site and deploy to it
-```sh
-heroku apps:create 
-heroku addons:create heroku-postgresql:hobby-dev
-heroku config:set SESSION_SECRET=some-very-secret-key
-git push heroku master 
-heroku apps:open
-```
+For deployment you'll also need an sms account, and google maps api keys
+
+Feel free to contact me, I'll be happy to help you set it up:
++972507330590
