@@ -19,4 +19,5 @@ To work on this project:
 For deployment you'll also need an sms account, and google maps api keys
 
 Feel free to contact me, I'll be happy to help you set it up:
+Noam Honig
 +972507330590
