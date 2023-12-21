@@ -32,9 +32,12 @@ export class OverviewController {
       await Promise.all(
         sites.map(
           async (x) => `
-select '${x.title.replace(/'/g, "''")}'  org, date(${
+select '${x.title.replace(/'/g, "''")}'  org,
+date_trunc('week', ${
             t.statusChangeDate
-          }) date, count(*) rides, count(distinct ${t.driverId}) drivers 
+          }) - interval '1 day' date, count(*) rides, count(distinct ${
+            t.driverId
+          }) drivers 
 from ${x.dbSchema}.${t} 
 where ${t.taskStatus} in (${[
             taskStatus.assigned,
@@ -46,7 +49,7 @@ where ${t.taskStatus} in (${[
             and ${t.org} = '${x.org}'
 
           
-group by org, date(${t.statusChangeDate})
+group by org, date_trunc('week', ${t.statusChangeDate}) - interval '1 day' 
 
           `
         )
