@@ -44,14 +44,14 @@ export class EventCardComponent implements OnInit {
     },
     taskSaved: () => this.refreshFilters(false),
   })
-  addTask() {
+  addDriverTask() {
     const t = repo(Task).create()
     t.openEditDialog(this.tools, async () => {
       this.tasks = [t, ...this.tasks]
       if (await this.tools.yesNoQuestion('האם להעתיק הודעה לפרסום בווטסאפ?')) {
         t.copyWhatsappMessage(this.tools)
       }
-    })
+    }, true)
   }
   buttons: RowButton<any>[] = [
     {

@@ -80,7 +80,7 @@ export async function versionUpdate() {
     const t = await dbNamesOf(Task)
     const s = await dbNamesOf(TaskStatusChanges)
     await db.execute(
-      `insert into ${s} (${s.id}, ${s.taskId},${s.what},${s.eventStatus},${s.driverId},${s.createUserId},${s.createdAt}) 
+      `insert into ${s} (${s.id}, ${s.taskId},${s.what},${s.eventStatus},${s.driverId},${s.createUserId},${s.createdAt})
       select ${t.id},${t.id},'יצירה',${t.taskStatus},${t.driverId},${t.createUserId},${t.createdAt} from ${t}`
     )
   })
@@ -113,12 +113,12 @@ export async function versionUpdate() {
       `create index if not exists task_status_changes_task_id on ${s.$entityName}(${s.taskId})`
     )
   })
-  await version(15, async () => {
-    const t = await dbNamesOf(Task)
-    await db.execute(
-      `update ${t} set ${t.publicVisible}=true where publicVisible='true'`
-    )
-  })
+  // await version(15, async () => {
+  //   const t = await dbNamesOf(Task)
+  //   await db.execute(
+  //     `update ${t} set ${t.publicVisible}=true where publicVisible='true'`
+  //   )
+  // })
   await version(16, async () => {
     const u = await dbNamesOf(User)
     await db.execute(

@@ -626,6 +626,23 @@ ${this.getLink()}
   editLink = createId()
   @Fields.boolean({ allowApiUpdate: false, dbName: 'publicVisibleBoolean' })
   publicVisible = false
+
+  /* Driver only fields start */
+  @Fields.integer({
+    caption: 'מספר מקומות',
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (+c.value > 10) {
+          throw Error('ערך גדול מדי, נא להזין עד 10')
+        }
+      }
+    }
+  })
+  spaceAvailable = null
+
+
+  /* Driver only fields end */
+
   @BackendMethod({ allowed: true })
   static async makePublicVisible(id: string) {
     if (!remult.context.availableTaskIds.includes(id))
@@ -952,7 +969,7 @@ ${this.getLink()}
     }
   }
 
-  async openEditDialog(ui: UITools, saved?: VoidFunction) {
+  async openEditDialog(ui: UITools, saved?: VoidFunction, isDrive?: boolean) {
     const doLocks = !this.isNew()
     if (doLocks)
       try {
@@ -968,6 +985,54 @@ ${this.getLink()}
         }
       }
 
+    const cleanupCb = (success: boolean) => {
+      if (success) saved?.()
+      if (doLocks) Locks.unlock(this.id)
+    }
+
+    if (isDrive) {
+      await this.openDriverEditDialog(ui, cleanupCb)
+    } else {
+      await this.openConsumerEditDialog(ui, cleanupCb)
+    }
+  }
+
+  private async openDriverEditDialog(ui: UITools, cleanupCb: (ok: boolean) => void) {
+    const e = this.$
+    ui.areaDialog({
+      title: 'פרטי נסיעה',
+      fields: [
+        [e.category!],
+        e.title,
+        e.spaceAvailable,
+        e.description,
+        e.address,
+        e.toAddress,
+        e.privateDriverNotes,
+        [e.eventDate, e.startTime, e.relevantHours],
+        // ...(getSite().useFillerInfo
+        //   ? [[e.requesterPhone1, e.requesterPhone1Description]]
+        //   : []),
+        [e.phone1, e.phone1Description],
+        [e.phone2, e.phone2Description],
+        [e.toPhone1, e.tpPhone1Description],
+        [e.toPhone2, e.tpPhone2Description],
+
+        e.imageId,
+        e.internalComments,
+        e.externalId,
+      ],
+      ok: () =>
+        this.save().then(() => cleanupCb(true)),
+      cancel: () => {
+        this._.undoChanges()
+        cleanupCb(false)
+      },
+      buttons: [],
+    })
+  }
+
+  private async openConsumerEditDialog(ui: UITools, cleanupCb: (ok: boolean) => void) {
     const e = this.$
     ui.areaDialog({
       title: 'פרטי נסיעה',
@@ -992,17 +1057,16 @@ ${this.getLink()}
         e.externalId,
       ],
       ok: () =>
-        this.save().then(() => {
-          saved?.()
-          if (doLocks) Locks.unlock(this.id)
-        }),
+        this.save().then(() => cleanupCb(true)),
       cancel: () => {
         this._.undoChanges()
-        if (doLocks) Locks.unlock(this.id)
+        cleanupCb(false)
       },
       buttons: [],
     })
   }
+
+
   verifyRelevanceMessage(name: string, replyToText: boolean) {
     const site = getSiteByOrg(this.org)
     const parts = remult.context.origin.split('/')
@@ -1017,11 +1081,11 @@ ${this.getLink()}
     }
 
     return `שלום ${name}, בהמשך לפנייתך ל"${site?.title}":
-${description} 
+${description}
 
 על מנת שנוכל לעזור ולסייע ואזרחים נוספים בצורה יעילה יותר, נשמח שתעדכן בקישור הבא ${
       replyToText ? 'או בהודעה חוזרת ' : ''
-    }אם הבקשה עדיין רלוונטית או הסתדרת כבר 
+    }אם הבקשה עדיין רלוונטית או הסתדרת כבר
 
 ${url + '/s/' + this.editLink}
 
