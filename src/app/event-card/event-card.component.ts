@@ -45,7 +45,7 @@ export class EventCardComponent implements OnInit {
     taskSaved: () => this.refreshFilters(false),
   })
   addDriverTask() {
-    const t = repo(Task).create()
+    const t = repo(Task).create({isDrive: true})
     t.openEditDialog(this.tools, async () => {
       this.tasks = [t, ...this.tasks]
       if (await this.tools.yesNoQuestion('האם להעתיק הודעה לפרסום בווטסאפ?')) {

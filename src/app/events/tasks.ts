@@ -627,7 +627,12 @@ ${this.getLink()}
   @Fields.boolean({ allowApiUpdate: false, dbName: 'publicVisibleBoolean' })
   publicVisible = false
 
-  /* Driver only fields start */
+  @Fields.boolean({
+    allowApiUpdate: false,
+  })
+  isDrive = false
+
+  /* Drive only fields start */
   @Fields.integer({
     caption: 'מספר מקומות',
     validate: (_, c) => {
@@ -639,9 +644,7 @@ ${this.getLink()}
     }
   })
   spaceAvailable = null
-
-
-  /* Driver only fields end */
+  /* Drive only fields end */
 
   @BackendMethod({ allowed: true })
   static async makePublicVisible(id: string) {
