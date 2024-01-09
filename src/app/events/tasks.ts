@@ -633,7 +633,7 @@ ${this.getLink()}
   publicVisible = false
 
   @Fields.boolean({
-    allowApiUpdate: false,
+    allowApiUpdate: true, // TODO how to set this on task creation without this being true?
   })
   isDrive = false
 
@@ -1006,8 +1006,6 @@ ${this.getLink()}
   }
 
   private async openDriverEditDialog(ui: UITools, cleanupCb: (ok: boolean) => void) {
-    this.isDrive = true;
-
     const e = this.$
     ui.areaDialog({
       title: 'פרטי נסיעה',
@@ -1032,8 +1030,9 @@ ${this.getLink()}
         e.internalComments,
         e.externalId,
       ],
-      ok: () =>
-        this.save().then(() => cleanupCb(true)),
+      ok: () => {
+        this.save().then(() => cleanupCb(true)).then(() => { this.isDrive =true; this.save(); })
+      },
       cancel: () => {
         this._.undoChanges()
         cleanupCb(false)
