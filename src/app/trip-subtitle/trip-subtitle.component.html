@@ -10,7 +10,7 @@
     <div class="route-indicator-container">
       <div class="row" style="padding-left: 10px; padding-right: 10px">
         <div class="dot right"></div>
-        <div class="line"></div>
+        <div class="{{isDrive(e)}}"></div>
         <div class="arrow-container">
           <div class="arrow"></div>
           <div class="distance-text" *ngIf="e.toAddressApiResult">

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, HostBinding } from '@angular/core'
+import { Component, Input, OnInit } from '@angular/core'
 import { Task } from '../events/tasks'
 import {
   GetDistanceBetween,
@@ -17,11 +17,7 @@ import { remult } from 'remult'
 export class TripSubtitleComponent implements OnInit {
   constructor() {}
 
-  @HostBinding("style.--color") color: string = '';
-
-  ngOnInit(): void {
-    this.color = '#3f51b5';
-  }
+  ngOnInit(): void {}
   @Input() onTheWayBack = false
   @Input() distance?: string
   @Input() e!: Task
@@ -41,6 +37,9 @@ export class TripSubtitleComponent implements OnInit {
   }
   eventToCity(e: Task) {
     return getCity(e.toAddressApiResult)
+  }
+  isDrive(e: Task)  {
+   return(e.isDrive ? 'line-grn' : 'line')
   }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active
