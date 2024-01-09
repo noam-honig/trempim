@@ -94,7 +94,7 @@ export class OrgEventsComponent implements OnInit {
 
     let tabs = []
     if (this.isPublicView()) {
-      tabs = [1]
+      tabs = [1] // TODO are we missing some further authentications in case user forcefully requests tab 0/2?
     } else {
       tabs = [0, 1, 2]
     }

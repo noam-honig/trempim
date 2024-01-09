@@ -650,6 +650,8 @@ export class EventCardComponent implements OnInit {
     return false
   }
   eventDetails(e: Task) {
+    if (!remult.authenticated()) return // TODO this is probably not the best check. Rather, a sort of isGuest? where?
+
     openDialog(EventInfoComponent, (x) => {
       x.e = e
       x.refresh = () => this.refreshFilters(false)
