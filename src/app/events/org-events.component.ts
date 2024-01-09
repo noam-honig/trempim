@@ -57,9 +57,9 @@ export class OrgEventsComponent implements OnInit {
     this.events = []
     this.route.paramMap.subscribe((param) => {
       this.tripId = param.get('id')!
-      if (this.tripId) this.activeTab = 1
+      if (this.tripId) this.activeTab = this.isPublicView() ? 0 : 1
       this.loadEvents()
-      if (remult.user?.showAllOrgs == null && remult.user!.orgs.length > 1) {
+      if (remult.user && remult.user.showAllOrgs == null && remult.user!.orgs.length > 1) {
         this.tools
           .yesNoQuestion(
             `הנך רשום במספר ארגונים, האם תרצה להציג את הנסיעות של כל הארגונים?\n תמיד תוכל לשנות הגדרה זו במסך עדכון פרטים`
@@ -79,7 +79,7 @@ export class OrgEventsComponent implements OnInit {
     let date = new Date()
     date.setHours(date.getHours() - 2)
     let orgFilter: EntityFilter<Task> = {}
-    if (remult.user!.showAllOrgs == null) {
+    if (remult.user?.showAllOrgs == null) { // TODO are volunteers allowed to see all orgs?
       orgFilter = { $and: [getSite().tasksFilter()] }
     } else if (remult.user!.showAllOrgs == false) {
       orgFilter = { org: getSite().org }
@@ -92,17 +92,24 @@ export class OrgEventsComponent implements OnInit {
           })),
       }
 
+    let tabs = []
+    if (this.isPublicView()) {
+      tabs = [1]
+    } else {
+      tabs = [0, 1, 2]
+    }
+
     repo(Task)
       .find({
         where:
-          this.activeTab == 0
+          tabs[this.activeTab] == 0
             ? {
                 taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
                 driverId: remult.user!.orgs.map((x) => x.userId),
               }
             : // : document.location.host.includes('localhost') && false
             // ? {}
-            this.activeTab == 1
+            tabs[this.activeTab] == 1
             ? {
                 category:
                   (remult.user?.allowedCategories?.filter((x) => x)?.length ||
@@ -110,6 +117,7 @@ export class OrgEventsComponent implements OnInit {
                     ? remult.user!.allowedCategories
                     : undefined,
                 taskStatus: [taskStatus.active],
+                isDrive: this.isPublicView() ? true : undefined,
                 validUntil: getSite().showPastEvents
                   ? undefined!
                   : { $gt: date },
@@ -124,7 +132,7 @@ export class OrgEventsComponent implements OnInit {
                 $and: [getSite().tasksFilter()],
               },
         include:
-          this.activeTab == 2
+          tabs[this.activeTab] == 2
             ? {
                 driver: true,
               }
@@ -167,5 +175,9 @@ export class OrgEventsComponent implements OnInit {
 
   private gotoSearchEvents() {
     this.tabGroup.selectedIndex = 1
+  }
+
+  public isPublicView() {
+    return !remult.authenticated() // TODO are volunteers authenticated?
   }
 }

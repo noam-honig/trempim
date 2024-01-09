@@ -5,9 +5,9 @@
       (selectedTabChange)="onTabChange($event)"
       [selectedIndex]="activeTab"
     >
-      <mat-tab label="נסיעות שלי"></mat-tab>
+      <mat-tab label="נסיעות שלי" *ngIf="!isPublicView()"></mat-tab>
       <mat-tab label="חיפוש נסיעה"></mat-tab>
-      <mat-tab label="נסיעות פעילות" *ngIf="isDispatcher()"> </mat-tab>
+      <mat-tab label="נסיעות פעילות" *ngIf="isDispatcher() && !isPublicView()"> </mat-tab>
     </mat-tab-group>
   </div>
 

@@ -113,7 +113,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       return Boolean(t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
     return Boolean(t?.eventBelongToOrgUser(Roles.dispatcher))
   },
-  allowApiRead: Allow.authenticated,
+  allowApiRead: true, // TODO WARNING: Audit this. I've added an apiPrefilter.
   allowApiDelete: false,
   saving: async (task) => {
     if (!remult.user && task.isNew()) {
@@ -278,6 +278,11 @@ ${remult.context.origin + '/s/' + task.editLink}
   },
   //@ts-ignore
   apiPrefilter: () => {
+    if (!remult.authenticated()) {
+      return {
+        isDrive: true
+      }
+    }
     if (remult.isAllowed(Roles.dispatcher)) return {}
     if (remult.isAllowed(Roles.trainee))
       return {
@@ -1001,6 +1006,8 @@ ${this.getLink()}
   }
 
   private async openDriverEditDialog(ui: UITools, cleanupCb: (ok: boolean) => void) {
+    this.isDrive = true;
+
     const e = this.$
     ui.areaDialog({
       title: 'פרטי נסיעה',

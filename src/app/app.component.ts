@@ -141,6 +141,14 @@ export class AppComponent implements OnInit, OnDestroy {
     )
   }
 
+  showDriverTrips() {
+    return (
+      remult.isAllowed(Roles.trainee) ||
+      getSite().allowAnyVolunteerToAdd // hack for now
+      //TODO showCopyLink needed? What is it?
+    )
+  }
+
   async signOut() {
     await SignInController.signOut()
     remult.user = undefined

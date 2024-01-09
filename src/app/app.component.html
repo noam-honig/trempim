@@ -186,6 +186,15 @@
             >הוספת נסיעה</a
           >
         </mat-list-item>
+        <mat-list-item routerLinkActive="active-route" *ngIf="showDriverTrips()">
+          <a
+            matLine
+            [routerLink]="['/מסיעים']"
+            (click)="routeClicked()"
+            class="alert-line-badge"
+            >מסיעים</a
+          >
+        </mat-list-item>
         <mat-list-item *ngIf="showCopyLink()" routerLinkActive="active-route">
           <a matLine (click)="copyAddLink()">העתק קישור לטופס</a>
         </mat-list-item>
