@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, HostBinding } from '@angular/core'
 import { Task } from '../events/tasks'
 import {
   GetDistanceBetween,
@@ -17,7 +17,11 @@ import { remult } from 'remult'
 export class TripSubtitleComponent implements OnInit {
   constructor() {}
 
-  ngOnInit(): void {}
+  @HostBinding("style.--color") color: string = '';
+
+  ngOnInit(): void {
+    this.color = '#3f51b5';
+  }
   @Input() onTheWayBack = false
   @Input() distance?: string
   @Input() e!: Task
