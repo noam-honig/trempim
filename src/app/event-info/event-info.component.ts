@@ -143,9 +143,12 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
 
   showWillNotDo() {
     return (
-      this.isAssigned() ||
-      (this.e.getSite().showContactToAnyDriver &&
-        this.e.taskStatus == taskStatus.active)
+      this.isAuthenticated() &&
+      (
+        this.isAssigned() ||
+        (this.e.getSite().showContactToAnyDriver &&
+          this.e.taskStatus == taskStatus.active)
+      )
     )
   }
 
@@ -163,7 +166,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return matchesCurrentUserId(this.e.driverId, this.e.org)
   }
   showAssign() {
-    return this.e.taskStatus == taskStatus.active
+    return this.e.taskStatus == taskStatus.active && this.isAuthenticated()
   }
   driverAssignButtonText() {
     return this.e.getSite().driverAssignButtonText
