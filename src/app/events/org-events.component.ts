@@ -75,6 +75,11 @@ export class OrgEventsComponent implements OnInit {
     })
   }
 
+  public taskSearchTabName() {
+    return this.isPublicView() ? 'חיפוש הצעות נסיעה' : 'חיפוש נסיעה'
+
+  }
+
   private loadEvents() {
     let date = new Date()
     date.setHours(date.getHours() - 2)
