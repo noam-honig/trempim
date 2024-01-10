@@ -9,15 +9,15 @@
   <div class="route-start-finish">
     <div class="route-indicator-container">
       <div class="row" style="padding-left: 10px; padding-right: 10px">
-        <div class="dot right"></div>
-        <div class="{{isDrive(e)}}"></div>
+        <div class="dot right {{isDrive(e)}}"></div>
+        <div class="line {{isDrive(e)}}"></div>
         <div class="arrow-container">
           <div class="arrow"></div>
           <div class="distance-text" *ngIf="e.toAddressApiResult">
             {{ travelDistance(e) }}
           </div>
         </div>
-        <div class="dot left"></div>
+        <div class="dot left {{isDrive(e)}}"></div>
       </div>
       <div class="row" style="padding-top: 5px">
         <div class="text">{{ eventCity(e) }}</div>

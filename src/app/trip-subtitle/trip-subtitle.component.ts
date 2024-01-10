@@ -39,7 +39,7 @@ export class TripSubtitleComponent implements OnInit {
     return getCity(e.toAddressApiResult)
   }
   isDrive(e: Task)  {
-   return(e.isDrive ? 'line-grn' : 'line')
+   return(e.isDrive ? 'grn' : '')
   }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active
