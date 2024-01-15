@@ -44,14 +44,17 @@ export class EventCardComponent implements OnInit {
     },
     taskSaved: () => this.refreshFilters(false),
   })
-  addDriverTask() {
-    const t = repo(Task).create()
+  addTask(isDrive: boolean) {
+    const t = repo(Task).create({isDrive: isDrive})
     t.openEditDialog(this.tools, async () => {
       this.tasks = [t, ...this.tasks]
       if (await this.tools.yesNoQuestion('האם להעתיק הודעה לפרסום בווטסאפ?')) {
         t.copyWhatsappMessage(this.tools)
       }
-    }, true)
+    }, isDrive, isDrive)
+  }
+  allowDriveTasks() {
+    return getSite().allowDriveTasks
   }
   buttons: RowButton<any>[] = [
     {
@@ -116,6 +119,9 @@ export class EventCardComponent implements OnInit {
   }
   isDispatcher() {
     return remult.isAllowed(Roles.dispatcher)
+  }
+  isVolunteer() {
+    return remult.authenticated() // TODO How do you identify a volunteer+? Anyone that's authenticated? don't see role
   }
   urgencies: dateEvents[] = []
   regions: AreaFilterInfo[] = []

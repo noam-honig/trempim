@@ -144,8 +144,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showDriverTrips() {
     return (
       remult.isAllowed(Roles.trainee) ||
-      getSite().allowAnyVolunteerToAdd // hack for now
-      //TODO showCopyLink needed? What is it?
+      getSite().allowDriveTasks
     )
   }
 

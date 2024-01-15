@@ -84,7 +84,7 @@ export class OrgEventsComponent implements OnInit {
     let date = new Date()
     date.setHours(date.getHours() - 2)
     let orgFilter: EntityFilter<Task> = {}
-    if (remult.user?.showAllOrgs == null) { // TODO are volunteers allowed to see all orgs?
+    if (remult.user?.showAllOrgs == null) { // If a user is unauthenticated, then show all (drive) tasks.
       orgFilter = { $and: [getSite().tasksFilter()] }
     } else if (remult.user!.showAllOrgs == false) {
       orgFilter = { org: getSite().org }
@@ -99,11 +99,13 @@ export class OrgEventsComponent implements OnInit {
 
     let tabs = []
     if (this.isPublicView()) {
-      tabs = [1] // TODO are we missing some further authentications in case user forcefully requests tab 0/2?
+      tabs = [1]
     } else {
       tabs = [0, 1, 2]
     }
 
+    // Beware. API Prefilter is the only thing protecting this component from giving
+    //  access to all tasks to anonymous users. isDrive is forced back there already.
     repo(Task)
       .find({
         where:
@@ -121,8 +123,10 @@ export class OrgEventsComponent implements OnInit {
                     0) > 0
                     ? remult.user!.allowedCategories
                     : undefined,
-                taskStatus: [taskStatus.active],
-                isDrive: this.isPublicView() ? true : undefined,
+                $or: [
+                  { taskStatus: [taskStatus.active], isDrive: false },
+                  { taskStatus: [taskStatus.assigned], isDrive: true },
+                ],
                 validUntil: getSite().showPastEvents
                   ? undefined!
                   : { $gt: date },
@@ -183,6 +187,6 @@ export class OrgEventsComponent implements OnInit {
   }
 
   public isPublicView() {
-    return !remult.authenticated() // TODO are volunteers authenticated?
+    return getSite().allowDriveTasks && !remult.authenticated()
   }
 }

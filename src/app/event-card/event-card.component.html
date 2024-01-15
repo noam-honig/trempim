@@ -1,11 +1,20 @@
 <div class="full-page">
   <div *ngIf="!isDialog() && !fromMap">
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addTask(false)"
+      *ngIf="!allowDriveTasks() && isDispatcher()"
+    >
+      הוספת נסיעה
+    </button>
     <button
       mat-raised-button
       color="primary"
       style="background-color: green;"
-      (click)="addDriverTask()"
-      *ngIf="isDispatcher()"
+      (click)="addTask(true)"
+      *ngIf="allowDriveTasks() && isVolunteer()"
     >
       פרסם הצעת נסיעה
     </button>
@@ -140,7 +149,7 @@
                   <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים' }}</a>
                   <strong *ngIf="isFull(e)">
                     {{ e.taskStatus.caption }}
-                    <span *ngIf="e.driver">, {{ e.driver.name }}</span>
+                    <span *ngIf="e.driver">, {{ e.driver.name }}</span> <!-- TODO bug: Why is e.driver null for same task on tab index 1 but not 2? -->
                   </strong>
                 </app-trip-subtitle>
               </div>

@@ -113,7 +113,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       return Boolean(t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
     return Boolean(t?.eventBelongToOrgUser(Roles.dispatcher))
   },
-  allowApiRead: true, // TODO WARNING: Audit this. I've added an apiPrefilter.
+  allowApiRead: true,
   allowApiDelete: false,
   saving: async (task) => {
     if (!remult.user && task.isNew()) {
@@ -278,11 +278,14 @@ ${remult.context.origin + '/s/' + task.editLink}
   },
   //@ts-ignore
   apiPrefilter: () => {
+    // Intentionally not checking site config. If drive tasks aren't enabled, this will show nothing.
+    //  TODO but preferrably we error like we would if allowApiRead were auth-only like before.
     if (!remult.authenticated()) {
       return {
         isDrive: true
       }
     }
+
     if (remult.isAllowed(Roles.dispatcher)) return {}
     if (remult.isAllowed(Roles.trainee))
       return {
@@ -515,12 +518,24 @@ ${this.getLink()}
   @PhoneField<Task>({
     caption: 'טלפון מוצא *',
     ...onlyDriverRules,
-    validate: requiredOnChange(() => true),
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (!_.isDrive) {
+          throw Error('ערך חסר')
+        }
+      }
+    },
   })
   phone1 = ''
   @Fields.string({
     caption: 'איש קשר מוצא',
-    validate: requiredOnChange(() => getSite().requireContactName),
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (getSite().requireContactName && !_.isDrive) {
+          throw Error('ערך חסר')
+        }
+      }
+    },
 
     ...onlyDriverRules,
   })
@@ -644,6 +659,9 @@ ${this.getLink()}
       if (_.isNew() || c.valueChanged()) {
         if (+c.value > 10) {
           throw Error('ערך גדול מדי, נא להזין עד 10')
+        }
+        if (!c.value) {
+          throw Error('ערך חייב להיות לפחות 1')
         }
       }
     }
@@ -977,7 +995,7 @@ ${this.getLink()}
     }
   }
 
-  async openEditDialog(ui: UITools, saved?: VoidFunction, isDrive?: boolean) {
+  async openEditDialog(ui: UITools, saved?: VoidFunction, isDrive?: boolean, assign?: boolean) {
     const doLocks = !this.isNew()
     if (doLocks)
       try {
@@ -996,6 +1014,7 @@ ${this.getLink()}
     const cleanupCb = (success: boolean) => {
       if (success) saved?.()
       if (doLocks) Locks.unlock(this.id)
+      if (assign) this.assignToMe()
     }
 
     if (isDrive) {
@@ -1018,20 +1037,12 @@ ${this.getLink()}
         e.toAddress,
         e.privateDriverNotes,
         [e.eventDate, e.startTime, e.relevantHours],
-        // ...(getSite().useFillerInfo
-        //   ? [[e.requesterPhone1, e.requesterPhone1Description]]
-        //   : []),
-        [e.phone1, e.phone1Description],
-        [e.phone2, e.phone2Description],
-        [e.toPhone1, e.tpPhone1Description],
-        [e.toPhone2, e.tpPhone2Description],
-
         e.imageId,
         e.internalComments,
         e.externalId,
       ],
       ok: () => {
-        this.save().then(() => cleanupCb(true)).then(() => { this.isDrive =true; this.save(); })
+        this.save().then(() => cleanupCb(true)).then(() => { this.save(); })
       },
       cancel: () => {
         this._.undoChanges()

@@ -200,7 +200,7 @@
     *ngIf="isAssigned()"
     (click)="completed()"
   >
-    השלמתי בהצלחה
+    {{e.isDrive ? 'נסיעה מלאה' : 'השלמתי בהצלחה'}}
   </button>
   <button
     mat-raised-button

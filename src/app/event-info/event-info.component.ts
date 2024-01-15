@@ -54,6 +54,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
 
   showContactInfoMessage() {
     return (
+      !this.e.isDrive &&
       !this.e.phone1 &&
       !this.e.phone2 &&
       !this.e.toPhone1 &&
@@ -203,10 +204,10 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   closeDialog!: VoidFunction
 
   showPickedUp() {
-    return this.e.taskStatus === taskStatus.assigned
+    return this.e.taskStatus === taskStatus.assigned && !this.e.isDrive
   }
   showCancelPickedUp() {
-    return this.e.taskStatus === taskStatus.driverPickedUp
+    return this.e.taskStatus === taskStatus.driverPickedUp && !this.e.isDrive
   }
   showThumbsUpOnPickup() {
     return [taskStatus.driverPickedUp, taskStatus.completed].includes(
