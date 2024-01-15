@@ -381,6 +381,7 @@ const test1 = new Site('test1', {
   title: 'פיתוח',
   ignore: true,
   org: 'test1',
+  allowDriveTasks: true,
 })
 const test2 = new Site('test2', {
   showValidUntil: false,
