@@ -224,4 +224,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showCopyLink() {
     return getSite().showCopyLink
   }
+  showSideMenu() {
+    return remult.authenticated()
+  }
 }

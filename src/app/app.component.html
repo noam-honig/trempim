@@ -70,7 +70,7 @@
         matBadgePosition="below before"
         class="draft-badge"
       >
-        <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
+        <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()" *ngIf="showSideMenu()">
           <mat-icon>menu</mat-icon>
         </button>
       </div>
@@ -95,6 +95,7 @@
       class="app-sidenav mat-elevation-z10 no-print"
       [opened]="!uiService.isScreenSmall()"
       [mode]="uiService.isScreenSmall() ? 'over' : 'side'"
+      *ngIf="showSideMenu()"
     >
       <div style="width: 100%; text-align: center"></div>
       <h4>{{ title }}</h4>
