@@ -382,6 +382,7 @@ const test1 = new Site('test1', {
   ignore: true,
   org: 'test1',
   allowDriveTasks: true,
+  allowAnyVolunteerToAdd: true,
 })
 const test2 = new Site('test2', {
   showValidUntil: false,

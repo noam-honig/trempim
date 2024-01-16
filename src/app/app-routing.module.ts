@@ -92,12 +92,12 @@ const routes: Routes = [
     data: { hide: true, name: 'הוספת נסיעה', noLogin: true },
   },
   { path: 'noam-test/:1', component: NoamTestComponent },
-  { path: 'אודות', component: AboutComponent, data: { noLogin: true } },
   {
     path: 'מסיעים',
     component: OrgEventsComponent,
     data: { hide: true, noLogin: true },
   },
+  { path: 'אודות', component: AboutComponent, data: { noLogin: true } },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' },
 ]
 

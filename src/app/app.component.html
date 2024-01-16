@@ -42,16 +42,16 @@
     <a routerLink="אודות">אודות אפליקצית חגי שינועים</a>
   </div>
 </div>
-<div
-  style="display: flex; flex-direction: column"
-  *ngIf="doesNotRequireLogin() && !remult.authenticated()"
->
-  <router-outlet></router-outlet>
-</div>
+<!--<div-->
+<!--  style="display: flex; flex-direction: column"-->
+<!--  *ngIf="doesNotRequireLogin() && !remult.authenticated()"-->
+<!--&gt;-->
+<!--  <router-outlet></router-outlet>-->
+<!--</div>-->
 
 <div
   style="height: 100%; display: flex; flex-direction: column"
-  *ngIf="remult.authenticated()"
+  *ngIf="remult.authenticated() || doesNotRequireLogin()"
 >
   <mat-toolbar color="primary" style="flex-shrink: 0">
     <div>
@@ -105,7 +105,7 @@
         >לסרטון הסבר קצר 📽</a
       >
       <mat-nav-list role="list">
-        <mat-list-item routerLinkActive="active-route">
+        <mat-list-item routerLinkActive="active-route" *ngIf="showTrips()">
           <a
             matLine
             [routerLink]="['/']"

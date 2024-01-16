@@ -133,6 +133,11 @@ export class AppComponent implements OnInit, OnDestroy {
   isTrainee() {
     return remult.isAllowed(Roles.trainee)
   }
+  showTrips() {
+    return (
+      remult.authenticated()
+    )
+  }
   showAddTrip() {
     return (
       remult.isAllowed(Roles.trainee) ||
@@ -143,8 +148,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   showDriverTrips() {
     return (
-      remult.isAllowed(Roles.trainee) ||
-      getSite().allowDriveTasks
+      getSite().allowDriveTasks &&
+      !remult.authenticated()
     )
   }
 
