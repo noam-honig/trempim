@@ -83,19 +83,23 @@ export class OrgEventsComponent implements OnInit {
   private loadEvents() {
     let date = new Date()
     date.setHours(date.getHours() - 2)
+
+    let orgOrFilter: EntityFilter<Task> = {}
+    let orgAndFilter: EntityFilter<Task> = {}
     let orgFilter: EntityFilter<Task> = {}
     if (remult.user?.showAllOrgs == null) { // If a user is unauthenticated, then show all (drive) tasks.
-      orgFilter = { $and: [getSite().tasksFilter()] }
+      orgAndFilter = { $and: [getSite().tasksFilter()] }
     } else if (remult.user!.showAllOrgs == false) {
       orgFilter = { org: getSite().org }
-    } else
-      orgFilter = {
+    } else {
+      orgOrFilter = {
         $or: remult.user?.orgs
           .filter((x) => !getSiteByOrg(x.org).showPastEvents)
           .map((x) => ({
             $or: [{ org: { '!=': x.org } }, { validUntil: { $gt: date } }],
-          })),
+          }))
       }
+    }
 
     let tabs = []
     if (this.isPublicView()) {
@@ -111,7 +115,7 @@ export class OrgEventsComponent implements OnInit {
         where:
           tabs[this.activeTab] == 0
             ? {
-                taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
+                taskStatus: [taskStatus.assigned, taskStatus.full, taskStatus.driverPickedUp],
                 driverId: remult.user!.orgs.map((x) => x.userId),
               }
             : // : document.location.host.includes('localhost') && false
@@ -123,9 +127,17 @@ export class OrgEventsComponent implements OnInit {
                     0) > 0
                     ? remult.user!.allowedCategories
                     : undefined,
+                $and: [
+                  orgAndFilter, // will be $and[$and] = {...}
+                  {
+                    $or: [
+                      { taskStatus: [taskStatus.active], isDrive: false },
+                      { taskStatus: [taskStatus.assigned], isDrive: true },
+                    ]
+                  }
+                ],
                 $or: [
-                  { taskStatus: [taskStatus.active], isDrive: false },
-                  { taskStatus: [taskStatus.assigned], isDrive: true },
+                  orgOrFilter, // will be $or[$or] = {...}
                 ],
                 validUntil: getSite().showPastEvents
                   ? undefined!
@@ -135,6 +147,7 @@ export class OrgEventsComponent implements OnInit {
             : {
                 taskStatus: [
                   taskStatus.assigned,
+                  taskStatus.full,
                   taskStatus.driverPickedUp,
                   taskStatus.otherProblem,
                 ],

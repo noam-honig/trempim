@@ -132,14 +132,35 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
       this.e.taskStatus != taskStatus.active &&
       this.e.taskStatus != taskStatus.assigned &&
       this.e.taskStatus != taskStatus.driverPickedUp &&
-      this.e.taskStatus != taskStatus.draft
+      this.e.taskStatus != taskStatus.draft &&
+      this.e.taskStatus != taskStatus.full
     )
   }
   isAssigned() {
     return (
       this.e.taskStatus == taskStatus.assigned ||
-      this.e.taskStatus == taskStatus.driverPickedUp
+      this.e.taskStatus == taskStatus.driverPickedUp ||
+      this.e.taskStatus == taskStatus.full
     )
+  }
+
+  isFull() {
+    return this.e.taskStatus == taskStatus.full
+  }
+
+  canModify() {
+    return this.isAuthenticated() && (
+      this.isDispatcher() ||
+      this.driver?.id == remult.user!.id
+    );
+  }
+
+  async setIsFull() {
+    this.isFull() ? await this.e.driverOpenedDriveTask() : await this.e.driverClosedDriveTask()
+  }
+
+  isDrive() {
+    return this.e.isDrive
   }
 
   showWillNotDo() {

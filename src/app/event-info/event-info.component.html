@@ -175,6 +175,15 @@
     </div>
   </div>
 </mat-dialog-content>
+<mat-slide-toggle
+  *ngIf="isDrive() && canModify()"
+  [matTooltip]="'הסתר נסיעה מהציבור'"
+  (toggleChange)="setIsFull()"
+  [checked]="isFull()"
+  style="margin-bottom: 16px"
+>
+  הנסיעה מלאה
+</mat-slide-toggle>
 <mat-dialog-actions
   *ngIf="!forExternalViewer"
   style="
@@ -185,6 +194,7 @@
     bottom: 0;
   "
 >
+
   <button
     [disabled]="inProgress"
     mat-raised-button
@@ -197,10 +207,10 @@
   <button
     mat-raised-button
     style="background-color: green; color: white"
-    *ngIf="isAssigned()"
+    *ngIf="canModify() && isAssigned()"
     (click)="completed()"
   >
-    {{e.isDrive ? 'נסיעה מלאה' : 'השלמתי בהצלחה'}}
+    השלמתי בהצלחה
   </button>
   <button
     mat-raised-button

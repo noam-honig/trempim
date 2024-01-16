@@ -855,6 +855,9 @@ ${this.getLink()}
     )
       throw new Error('נסיעה זו לא משוייכת לך')
   }
+  private assertIsDriveTask() {
+    if (!this.isDrive) throw new Error('נסיעה זו אינה נסיעת נהג')
+  }
 
   @BackendMethod({ allowed: Allow.authenticated })
   async noLongerRelevant(notes: string) {
@@ -957,6 +960,22 @@ ${this.getLink()}
     this.checkAssignedToDriverOrDispatcher()
     this.taskStatus = taskStatus.assigned
     await this.insertStatusChange('נאסף בהצלחה נלחץ בטעות')
+    await this.save()
+  }
+  @BackendMethod({ allowed: Allow.authenticated })
+  async driverClosedDriveTask() {
+    this.checkAssignedToDriverOrDispatcher()
+    this.assertIsDriveTask()
+    this.taskStatus = taskStatus.full
+    await this.insertStatusChange('נסיעה התמלאה')
+    await this.save()
+  }
+  @BackendMethod({ allowed: Allow.authenticated })
+  async driverOpenedDriveTask() {
+    this.checkAssignedToDriverOrDispatcher()
+    this.assertIsDriveTask()
+    this.taskStatus = taskStatus.assigned
+    await this.insertStatusChange('מקום נפתח בנסיעה')
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
