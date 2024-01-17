@@ -218,7 +218,7 @@
     *ngIf="showWillNotDo()"
     (click)="problem()"
   >
-    לא אבצע
+    {{e.isDrive ? 'בטל נסיעה' : 'לא אבצע'}}
   </button>
   <ng-container *ngIf="showCancel()">
     <strong>{{ e.taskStatus.caption }} </strong>

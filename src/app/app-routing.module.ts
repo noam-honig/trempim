@@ -93,7 +93,7 @@ const routes: Routes = [
   },
   { path: 'noam-test/:1', component: NoamTestComponent },
   {
-    path: 'מסיעים',
+    path: 'searchtasks',
     component: OrgEventsComponent,
     data: { hide: true, noLogin: true },
   },

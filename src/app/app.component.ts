@@ -227,4 +227,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showSideMenu() {
     return remult.authenticated()
   }
+  showTutorial() {
+    return remult.authenticated()
+  }
 }

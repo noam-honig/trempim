@@ -64,7 +64,7 @@
         matBadgePosition="below before"
         class="draft-badge"
       >
-        <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()" *ngIf="showSideMenu()">
+        <button mat-button class="sidenav-toggle" (click)="sidenav.toggle()">
           <mat-icon>menu</mat-icon>
         </button>
       </div>
@@ -89,14 +89,13 @@
       class="app-sidenav mat-elevation-z10 no-print"
       [opened]="!uiService.isScreenSmall()"
       [mode]="uiService.isScreenSmall() ? 'over' : 'side'"
-      *ngIf="showSideMenu()"
     >
       <div style="width: 100%; text-align: center"></div>
       <h4>{{ title }}</h4>
       <h4 *ngIf="remult.authenticated()">
         {{ terms.hello }} {{ remult.user!.name }}
       </h4>
-      <a href="https://youtu.be/VZa2jQiMYA0" target="_blank"
+      <a href="https://youtu.be/VZa2jQiMYA0" target="_blank" *ngIf="showTutorial()"
         >לסרטון הסבר קצר 📽</a
       >
       <mat-nav-list role="list">
@@ -161,17 +160,6 @@
             >עדכונים</a
           >
         </mat-list-item>
-        <ng-container *ngFor="let m of router.config">
-          <mat-list-item
-            *ngIf="shouldDisplayRoute(m)"
-            routerLinkActive="active-route"
-          >
-            <a matLine [routerLink]="m.path" (click)="routeClicked()">{{
-              routeName(m)
-            }}</a>
-          </mat-list-item>
-        </ng-container>
-
         <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">
           <a
             matLine
@@ -184,12 +172,22 @@
         <mat-list-item routerLinkActive="active-route" *ngIf="showDriverTrips()">
           <a
             matLine
-            [routerLink]="['/מסיעים']"
+            [routerLink]="['/searchtasks']"
             (click)="routeClicked()"
             class="alert-line-badge"
-            >מסיעים</a
+            >חיפוש נסיעה</a
           >
         </mat-list-item>
+        <ng-container *ngFor="let m of router.config">
+          <mat-list-item
+            *ngIf="shouldDisplayRoute(m)"
+            routerLinkActive="active-route"
+          >
+            <a matLine [routerLink]="m.path" (click)="routeClicked()">{{
+              routeName(m)
+            }}</a>
+          </mat-list-item>
+        </ng-container>
         <mat-list-item *ngIf="showCopyLink()" routerLinkActive="active-route">
           <a matLine (click)="copyAddLink()">העתק קישור לטופס</a>
         </mat-list-item>
