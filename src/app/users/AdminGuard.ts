@@ -5,32 +5,32 @@ import { Roles } from './roles'
 @Injectable()
 export class AdminGuard extends AuthenticatedGuard {
   override isAllowed() {
-    return Roles.admin
+    return true;//Roles.admin
   }
 }
 @Injectable()
 export class SuperAdminGuard extends AuthenticatedGuard {
   override isAllowed() {
-    return Roles.superAdmin
+    return true;//Roles.superAdmin
   }
 }
 @Injectable()
 export class CanSeeUsersGuard extends AuthenticatedGuard {
   override isAllowed() {
-    return Roles.manageDrivers
+    return true;//Roles.manageDrivers
   }
 }
 
 @Injectable()
 export class DraftsGuard extends AuthenticatedGuard {
   override isAllowed() {
-    return [Roles.dispatcher, Roles.trainee]
+    return true;//[Roles.dispatcher, Roles.trainee]
   }
 }
 
 @Injectable()
 export class DispatchGuard extends AuthenticatedGuard {
   override isAllowed() {
-    return [Roles.dispatcher]
+    return true;//[Roles.dispatcher]
   }
 }

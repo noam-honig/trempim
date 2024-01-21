@@ -162,12 +162,22 @@
       }"
     >
     </app-phone-details>
-    <div *ngIf="driver">
+    <div *ngIf="driver || e.isDrive">
       <hr />
       <app-phone-details
+        *ngIf="!isDrive() && driver"
         [args]="{
           phone: driver.phone,
           name: driver.name,
+          title: 'נהג',
+          messageContext: e.getShortDescription() + '\n' + e.getLink() + '\n'
+        }"
+      ></app-phone-details>
+      <app-phone-details
+        *ngIf="isDrive()"
+        [args]="{
+          phone: e.driverPhonePublic,
+          name: e.driverNamePublic,
           title: 'נהג',
           messageContext: e.getShortDescription() + '\n' + e.getLink() + '\n'
         }"

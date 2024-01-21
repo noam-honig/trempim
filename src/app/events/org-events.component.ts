@@ -193,6 +193,9 @@ export class OrgEventsComponent implements OnInit {
           if (this.events.length == 0) this.gotoSearchEvents()
         }
       })
+      .catch((e) => {
+        console.log('bp')
+      })
   }
 
   private gotoSearchEvents() {

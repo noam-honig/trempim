@@ -149,7 +149,7 @@
                   <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים' }}</a>
                   <strong *ngIf="isFull(e)">
                     {{ e.taskStatus.caption }}
-                    <span *ngIf="e.driver">, {{ e.driver.name }}</span> <!-- TODO bug: Why is e.driver null for same task on tab index 1 but not 2? -->
+                    <span *ngIf="!e.isDrive && e.driver">, {{ e.driver.name }}</span>
                   </strong>
                 </app-trip-subtitle>
               </div>

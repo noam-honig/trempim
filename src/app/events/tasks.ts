@@ -667,6 +667,29 @@ ${this.getLink()}
     }
   })
   spaceAvailable = null
+
+  @PhoneField<Task>({
+    caption: 'טלפון נהג',
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (!_.isDrive) {
+          throw Error('ערך חסר')
+        }
+      }
+    },
+  })
+  driverPhonePublic = ''
+  @Fields.string({
+    caption: 'שם נהג',
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (getSite().requireContactName && !_.isDrive) {
+          throw Error('ערך חסר')
+        }
+      }
+    },
+  })
+  driverNamePublic = ''
   /* Drive only fields end */
 
   @BackendMethod({ allowed: true })
@@ -801,6 +824,12 @@ ${this.getLink()}
     await this._.reload()
     if (this.driverId) throw Error('מתנדב אחר כבר לקח משימה זו')
     if (!assignUserId) throw Error('משהו לא הסתדר בשיוך, מזהה נהג ריק')
+    if (this.isDrive) {
+      if (!remult.user?.phone) throw Error('אין לך מספר טלפון')
+      if (!remult.user?.name) throw Error('אין לך שם')
+      this.driverPhonePublic = remult.user!.phone!
+      this.driverNamePublic = remult.user!.name!
+    }
     this.driverId = assignUserId
     this.taskStatus = taskStatus.assigned
     this.statusNotes = ''
