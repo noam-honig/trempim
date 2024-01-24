@@ -121,7 +121,7 @@ export class EventCardComponent implements OnInit {
     return remult.isAllowed(Roles.dispatcher)
   }
   isVolunteer() {
-    return remult.authenticated() // TODO How do you identify a volunteer+? Anyone that's authenticated? don't see role
+    return remult.authenticated()
   }
   urgencies: dateEvents[] = []
   regions: AreaFilterInfo[] = []
