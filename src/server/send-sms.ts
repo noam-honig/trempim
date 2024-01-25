@@ -120,7 +120,7 @@ export async function sendSms(
           h.append('Content-Type', 'text/xml; charset=utf-8')
           h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients')
           let r = await fetch.default(
-            'https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx',
+            'http://api.itnewsletter.co.il/webservices/wssms.asmx',
             {
               method: 'POST',
               headers: h,
