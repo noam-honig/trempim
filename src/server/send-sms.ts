@@ -17,15 +17,13 @@ export async function sendSms(
   }
   const fetch = await import('node-fetch')
   const FormData = await import('form-data')
-  let un = process.env['SMS_UN']
-  let pw = process.env['SMS_PW']
-  let accid = process.env['SMS_ACCID']
+  let gs_apikey = process.env['SMS_APIKEY']
   const inforuToken = process.env['INFORU_SMS_TOKEN']
   let useGlobalSms = !inforuToken
   var from = 'Hagai'
   const YEDIDIM_API_KEY = process.env['YEDIDIM_API_KEY']
   const useYedidim = getSite().urlPrefix === 'y' && YEDIDIM_API_KEY
-  if (!accid && !inforuToken && !YEDIDIM_API_KEY) return 'חשבון SMS לא הוגדר'
+  if (!gs_apikey && !inforuToken && !YEDIDIM_API_KEY) return 'חשבון SMS לא הוגדר'
   phone = phone.replace(/\D/g, '')
 
   var t = new Date()
@@ -95,15 +93,9 @@ export async function sendSms(
             '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">' +
             '<soap12:Body>' +
             '<sendSmsToRecipients xmlns="apiItnewsletter">' +
-            '<un>' +
-            un +
-            '</un>' +
-            '<pw>' +
-            pw +
-            '</pw>' +
-            '<accid>' +
-            accid +
-            '</accid>' +
+            '<ApiKey>' +
+            gs_apikey +
+            '</ApiKey>' +
             '<sysPW>' +
             'itnewslettrSMS' +
             '</sysPW>' +
