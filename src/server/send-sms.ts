@@ -18,6 +18,7 @@ export async function sendSms(
   const fetch = await import('node-fetch')
   const FormData = await import('form-data')
   let gs_apikey = process.env['SMS_APIKEY']
+  let gs_originator = process.env['SMS_PN']
   const inforuToken = process.env['INFORU_SMS_TOKEN']
   let useGlobalSms = !inforuToken
   var from = 'Hagai'
@@ -25,20 +26,6 @@ export async function sendSms(
   const useYedidim = getSite().urlPrefix === 'y' && YEDIDIM_API_KEY
   if (!gs_apikey && !inforuToken && !YEDIDIM_API_KEY) return 'חשבון SMS לא הוגדר'
   phone = phone.replace(/\D/g, '')
-
-  var t = new Date()
-  var date =
-    t.getFullYear() +
-    '/' +
-    (t.getMonth() + 1) +
-    '/' +
-    t.getDate() +
-    ' ' +
-    t.getHours() +
-    ':' +
-    t.getMinutes() +
-    ':' +
-    t.getSeconds()
 
   const send = async () => {
     try {
@@ -96,23 +83,17 @@ export async function sendSms(
             '<ApiKey>' +
             gs_apikey +
             '</ApiKey>' +
-            '<sysPW>' +
-            'itnewslettrSMS' +
-            '</sysPW>' +
-            '<t>' +
-            date +
-            '</t>' +
-            '<txtUserCellular>' +
-            from +
-            '</txtUserCellular>' +
-            '<destination>' +
+            '<txtOriginator>' +
+            gs_originator +
+            '</txtOriginator>' +
+            '<destinations>' +
             phone +
-            '</destination>' +
+            '</destinations>' +
             '<txtSMSmessage>' +
             message +
             '</txtSMSmessage>' +
             '<dteToDeliver></dteToDeliver>' +
-            '<txtAddInf>jsnodetest</txtAddInf>' +
+            '<txtAddInf></txtAddInf>' +
             '</sendSmsToRecipients>' +
             '</soap12:Body>' +
             '</soap12:Envelope>'
