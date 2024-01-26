@@ -99,7 +99,7 @@ export async function sendSms(
             '</soap12:Envelope>'
           let h = new fetch.Headers()
           h.append('Content-Type', 'text/xml; charset=utf-8')
-          h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients')
+          h.append('SOAPAction', 'apiGlobalSms/sendSmsToRecipients')
           let r = await fetch.default(
             'http://api.itnewsletter.co.il/webservices/wssms.asmx',
             {
