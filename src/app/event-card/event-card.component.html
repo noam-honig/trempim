@@ -116,7 +116,7 @@
           <ng-container *ngFor="let e of d.events; trackBy: trackBy">
             <mat-card
               transition-group-item
-              class="event-card"
+              class="event-card {{e.isDrive ? 'drive-event-card' : ''}}"
               [class.registered]="isRegisteredToEvent(e) && showingAllTasks"
               *ngIf="filter(e)"
             >
