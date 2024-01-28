@@ -656,7 +656,7 @@ ${this.getLink()}
   @Fields.integer({
     caption: 'מספר מקומות',
     validate: (_, c) => {
-      if (_.isNew() || c.valueChanged()) {
+      if (_.isDrive && (_.isNew() || c.valueChanged())) {
         if (+c.value > 10) {
           throw Error('ערך גדול מדי, נא להזין עד 10')
         }
