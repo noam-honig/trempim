@@ -128,7 +128,7 @@
                 "
               >
                 <strong (click)="eventDetails(e)">
-                  {{ e.isDrive ? "הצאה" : "בקשה"}}: {{ e.title }}
+                  {{ e.title }}
                 </strong>
                 <a (click)="eventDetails(e)" *ngIf="!isFull(e) && fromMap">{{
                   'לפרטים'
