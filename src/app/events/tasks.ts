@@ -647,8 +647,8 @@ ${this.getLink()}
   @Fields.boolean({ allowApiUpdate: false, dbName: 'publicVisibleBoolean' })
   publicVisible = false
 
-  @Fields.boolean({
-    allowApiUpdate: true, // TODO how to set this on task creation without this being true?
+  @Fields.boolean<Task>({
+    allowApiUpdate: task => task!._.isNew(), // TODO how to set this on task creation without this being true?
   })
   isDrive = false
 
