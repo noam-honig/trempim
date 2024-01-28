@@ -1064,10 +1064,10 @@ ${this.getLink()}
         }
       }
 
-    const cleanupCb = (success: boolean) => {
+    const cleanupCb = async (success: boolean) => {
       if (success) saved?.()
-      if (doLocks) Locks.unlock(this.id)
-      if (assign) this.assignToMe()
+      if (doLocks) await Locks.unlock(this.id)
+      if (assign) await this.assignToMe()
     }
 
     if (isDrive) {
@@ -1077,7 +1077,7 @@ ${this.getLink()}
     }
   }
 
-  private async openDriverEditDialog(ui: UITools, cleanupCb: (ok: boolean) => void) {
+  private async openDriverEditDialog(ui: UITools, cleanupCb: (ok: boolean) => Promise<void>) {
     const e = this.$
     ui.areaDialog({
       title: 'פרטי נסיעה',
@@ -1094,12 +1094,13 @@ ${this.getLink()}
         e.internalComments,
         e.externalId,
       ],
-      ok: () => {
-        this.save().then(() => cleanupCb(true)).then(() => { this.save(); })
+      ok: async () => {
+        await this.save()
+        await cleanupCb(true)
       },
-      cancel: () => {
+      cancel: async () => {
         this._.undoChanges()
-        cleanupCb(false)
+        await cleanupCb(false)
       },
       buttons: [],
     })
