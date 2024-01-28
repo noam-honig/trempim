@@ -677,7 +677,7 @@ ${this.getLink()}
     caption: 'טלפון נהג',
     validate: (_, c) => {
       if (_.isNew() || c.valueChanged()) {
-        if (!_.isDrive) {
+        if (_.isDrive) {
           throw Error('ערך חסר')
         }
       }
@@ -688,7 +688,7 @@ ${this.getLink()}
     caption: 'שם נהג',
     validate: (_, c) => {
       if (_.isNew() || c.valueChanged()) {
-        if (getSite().requireContactName && !_.isDrive) {
+        if (getSite().requireContactName && _.isDrive) {
           throw Error('ערך חסר')
         }
       }
