@@ -128,7 +128,7 @@ export class EventCardComponent implements OnInit {
   toRegions: AreaFilterInfo[] = []
   types: { id: string; count: number; caption: string }[] = []
   dates: { id: number; count: number; caption: string }[] = []
-  trackBy(i: number, e: Task): any {
+  trackBy(i: number, e: Task | any): any {
     return e.id as any
   }
 
