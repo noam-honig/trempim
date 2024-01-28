@@ -1056,7 +1056,7 @@ ${this.getLink()}
       if (assign) await this.assignToMe()
     }
 
-    if (isDrive) {
+    if (this.isDrive) {
       await this.openDriverEditDialog(ui, cleanupCb)
     } else {
       await this.openConsumerEditDialog(ui, cleanupCb)
