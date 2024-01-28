@@ -675,24 +675,10 @@ ${this.getLink()}
 
   @PhoneField<Task>({
     caption: 'טלפון נהג',
-    validate: (_, c) => {
-      if (_.isNew() || c.valueChanged()) {
-        if (_.isDrive) {
-          throw Error('ערך חסר')
-        }
-      }
-    },
   })
   driverPhonePublic = ''
   @Fields.string({
     caption: 'שם נהג',
-    validate: (_, c) => {
-      if (_.isNew() || c.valueChanged()) {
-        if (getSite().requireContactName && _.isDrive) {
-          throw Error('ערך חסר')
-        }
-      }
-    },
   })
   driverNamePublic = ''
   /* Drive only fields end */
