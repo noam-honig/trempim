@@ -164,6 +164,7 @@
     </app-phone-details>
     <div *ngIf="driver || e.isDrive">
       <hr />
+      <span *ngIf="e.isDrive">מספר מקומות: {{e.spaceAvailable}}</span>
       <app-phone-details
         *ngIf="!isDrive() && driver"
         [args]="{
