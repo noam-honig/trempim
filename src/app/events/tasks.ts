@@ -281,8 +281,12 @@ ${remult.context.origin + '/s/' + task.editLink}
     // Intentionally not checking site config. If drive tasks aren't enabled, this will show nothing.
     //  TODO but preferrably we error like we would if allowApiRead were auth-only like before.
     if (!remult.authenticated()) {
-      return {
-        isDrive: true
+      if (getSite().allowDriveTasks) {
+        return {
+          isDrive: true
+        }
+      } else {
+        throw Error("Forbidden")
       }
     }
 
@@ -521,9 +525,10 @@ ${this.getLink()}
     validate: (_, c) => {
       if (_.isNew() || c.valueChanged()) {
         if (!_.isDrive) {
-          throw Error('ערך חסר')
+          return requiredOnChange(() => true)
         }
       }
+      return
     },
   })
   phone1 = ''
