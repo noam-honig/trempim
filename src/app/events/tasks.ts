@@ -653,6 +653,7 @@ ${this.getLink()}
   publicVisible = false
 
   @Fields.boolean<Task>({
+    caption: 'הצעה?',
     displayValue: (_, v) => v ? 'הצעה' : 'בקשה',
     allowApiUpdate: task => task!._.isNew(),
   })
