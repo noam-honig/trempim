@@ -18,6 +18,15 @@
     >
       פרסם הצעת נסיעה
     </button>
+    <button
+      mat-raised-button
+      color="primary"
+      style="background-color: green;"
+      (click)="navigate('intake')"
+      *ngIf="allowDriveTasks() && !isVolunteer()"
+    >
+      פרסם בקשת נסיעה
+    </button>
     <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
     <data-area [settings]="area"></data-area>
     <div

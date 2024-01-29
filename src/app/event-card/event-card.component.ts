@@ -27,6 +27,7 @@ import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 import { getSite } from '../users/sites'
 import { YedidimBranchListComponent } from '../yedidim-branch-list/yedidim-branch-list.component'
 import { matchesCurrentUserId } from '../users/user'
+import { Router } from '@angular/router'
 
 @DialogConfig({ maxWidth: '95vw' })
 @Component({
@@ -35,7 +36,7 @@ import { matchesCurrentUserId } from '../users/user'
   styleUrls: ['./event-card.component.scss'],
 })
 export class EventCardComponent implements OnInit {
-  constructor(private tools: UIToolsService) {}
+  constructor(private tools: UIToolsService, private router: Router) {}
 
   menuOptions: RowButton<Task>[] = Task.rowButtons(this.tools, {
     taskAdded: (t) => {
@@ -870,6 +871,10 @@ export class EventCardComponent implements OnInit {
       this.urgencies.forEach((d) =>
         d.events.sort((a, b) => this.distanceToTask(a) - this.distanceToTask(b))
       )
+  }
+
+  navigate(path: string) {
+    this.router.navigate([path])
   }
 }
 
