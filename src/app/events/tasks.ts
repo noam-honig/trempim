@@ -226,6 +226,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
     }
     if (
       task.getSite().sendTextMessageOnApprove &&
+      !task.isDrive &&
       task.taskStatus == taskStatus.active &&
       (task.$.taskStatus.valueChanged() || isNew)
     ) {
