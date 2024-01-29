@@ -70,7 +70,7 @@ export class SignInController extends ControllerBase {
       this.phone,
       `הקוד לכניסה ל${getTitle()} הוא: ` + otp,
       true
-    ).then((x) => console.log('sent', x))
+    ).then((x) => console.log(`sent (code: ${otp}) ${x}`))
     otps.set(this.phone, { otp: otp, expire: d })
     this.askForOtp = true
     if (u && !u.name) this.askForName = true
