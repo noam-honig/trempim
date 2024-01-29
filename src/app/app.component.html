@@ -160,24 +160,24 @@
             >עדכונים</a
           >
         </mat-list-item>
-        <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">
-          <a
-            matLine
-            [routerLink]="['/intake']"
-            (click)="routeClicked()"
-            class="alert-line-badge"
-            >פרסום בקשת נסיעה</a
-          >
-        </mat-list-item>
-        <mat-list-item routerLinkActive="active-route" *ngIf="showDriverTrips()">
-          <a
-            matLine
-            [routerLink]="['/searchtasks']"
-            (click)="routeClicked()"
-            class="alert-line-badge"
-            >חיפוש נסיעה</a
-          >
-        </mat-list-item>
+<!--        <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">-->
+<!--          <a-->
+<!--            matLine-->
+<!--            [routerLink]="['/intake']"-->
+<!--            (click)="routeClicked()"-->
+<!--            class="alert-line-badge"-->
+<!--            >פרסום בקשת נסיעה</a-->
+<!--          >-->
+<!--        </mat-list-item>-->
+<!--        <mat-list-item routerLinkActive="active-route" *ngIf="showDriverTrips()">-->
+<!--          <a-->
+<!--            matLine-->
+<!--            [routerLink]="['/searchtasks']"-->
+<!--            (click)="routeClicked()"-->
+<!--            class="alert-line-badge"-->
+<!--            >חיפוש נסיעה</a-->
+<!--          >-->
+<!--        </mat-list-item>-->
         <ng-container *ngFor="let m of router.config">
           <mat-list-item
             *ngIf="shouldDisplayRoute(m)"
