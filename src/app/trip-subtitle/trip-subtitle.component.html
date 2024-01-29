@@ -27,7 +27,7 @@
       </div>
     </div>
   </div>
-  <span *ngIf="e.isDrive">מספר מקומות: {{e.spaceAvailable}}</span>
+  <div *ngIf="e.isDrive"><b>מספר מקומות</b>: {{e.spaceAvailable}}</div>
   <div style="margin-bottom: 10px">
     {{ e.displayDate() }}
   </div>
