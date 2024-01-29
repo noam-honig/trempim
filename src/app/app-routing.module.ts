@@ -89,13 +89,13 @@ const routes: Routes = [
   {
     path: 'request',
     component: IntakeComponent,
-    data: { name: 'פרסום בקשת נסיעה', noLogin: true },
+    data: { hide: true, name: 'פרסום בקשת נסיעה', noLogin: true },
   },
   { path: 'noam-test/:1', component: NoamTestComponent },
   {
     path: 'search',
     component: OrgEventsComponent,
-    data: { name: 'חיפוש נסיעה', noLogin: true },
+    data: { hide: true, name: 'חיפוש נסיעה', noLogin: true },
   },
   { path: 'אודות', component: AboutComponent, data: { noLogin: true } },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' },
