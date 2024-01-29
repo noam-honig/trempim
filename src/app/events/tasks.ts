@@ -278,8 +278,6 @@ ${remult.context.origin + '/s/' + task.editLink}
   },
   //@ts-ignore
   apiPrefilter: () => {
-    // Intentionally not checking site config. If drive tasks aren't enabled, this will show nothing.
-    //  TODO but preferrably we error like we would if allowApiRead were auth-only like before.
     if (!remult.authenticated()) {
       if (getSite().allowDriveTasks) {
         return {

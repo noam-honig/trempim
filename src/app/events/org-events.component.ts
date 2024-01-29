@@ -152,6 +152,7 @@ export class OrgEventsComponent implements OnInit {
                   taskStatus.otherProblem,
                 ],
                 $and: [getSite().tasksFilter()],
+                driverId: this.isVolunteer() ? remult.user!.id : undefined,
               },
         include:
           tabs[this.activeTab] == 2
@@ -204,5 +205,9 @@ export class OrgEventsComponent implements OnInit {
 
   public isPublicView() {
     return getSite().allowDriveTasks && !remult.authenticated()
+  }
+
+  private isVolunteer() {
+    return !remult.isAllowed(Roles.dispatcher) && !remult.isAllowed(Roles.manageDrivers) && !remult.isAllowed(Roles.admin) && !remult.isAllowed(Roles.superAdmin) && !remult.isAllowed(Roles.trainee)
   }
 }
