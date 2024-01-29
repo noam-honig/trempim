@@ -222,7 +222,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.uiService.info('הקישור הועתק')
   }
   showCopyLink() {
-    return getSite().showCopyLink
+    return remult.authenticated() && getSite().showCopyLink
   }
   showSideMenu() {
     return remult.authenticated()

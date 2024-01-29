@@ -89,7 +89,7 @@ const routes: Routes = [
   {
     path: 'intake',
     component: IntakeComponent,
-    data: { hide: true, name: 'בקשת נסיעה', noLogin: true },
+    data: { hide: true, name: 'פרסום בקשת נסיעה', noLogin: true },
   },
   { path: 'noam-test/:1', component: NoamTestComponent },
   {
