@@ -329,8 +329,6 @@ const civil = new Site('civil', {
 
 1) לחפש במערכת בקשות הסעה של נוסעים
 2) לפרסם לטרמפיסטים הצעות ומסלולי נסיעה
-
-<a href="https://youtu.be/VZa2jQiMYA0" target="_blank">לסרטון הסבר קצר לחצו כאן 📽</a>
 `
   },
   showCopyLink: true,
