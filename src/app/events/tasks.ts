@@ -431,8 +431,13 @@ ${this.getLink()}
       if (!c.value || c.value.getFullYear() < 2018) c.error = 'תאריך שגוי'
       var twoDaysAgo = new Date()
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
-      if ((s.isNew() || c.valueChanged()) && c.value < twoDaysAgo)
-        c.error = 'תאריך עבר'
+      var inThreeDays = new Date()
+      inThreeDays.setDate(inThreeDays.getDate() + 3)
+      if (s.isNew() || c.valueChanged())
+        if (c.value < twoDaysAgo)
+          c.error = 'תאריך עבר'
+        else if (c.value > inThreeDays)
+          c.error = 'תאריך עתידי'
     },
   })
   eventDate: Date = new Date()
