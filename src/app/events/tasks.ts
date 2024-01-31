@@ -1080,7 +1080,6 @@ ${this.getLink()}
         e.description,
         e.address,
         e.toAddress,
-        e.privateDriverNotes,
         [e.eventDate, e.startTime, e.relevantHours],
         e.imageId,
         e.internalComments,

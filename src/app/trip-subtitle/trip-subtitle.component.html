@@ -3,7 +3,7 @@
     <span *ngIf="onTheWayBack" style="font-weight: bold; color: red"
       >בדרך חזרה,
     </span>
-    <b>{{ e.isDrive && e.category ? "הצעה:" : "בקשה:"}}</b> {{ e.category || '' }}<span style="font-size: 12px"> {{ distance }}</span>
+    <b>{{ e.isDrive && e.category ? "הצעה מנהג: " + e.driverNamePublic  : "בקשה:"}}</b> {{ e.category || '' }}<span style="font-size: 12px"> {{ distance }}</span>
   </span>
 
   <div class="route-start-finish">

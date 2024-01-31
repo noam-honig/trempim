@@ -315,14 +315,23 @@ const civil = new Site('civil', {
   showValidUntil: true,
   requireValidUntil: true,
   getIntroText: () => {
-    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
+    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת המשודגרגת,
 
 אם טרם נרשמתם כנהגים, [אנא מלאו את הטופס פה](https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U)
 
-אם נרשמתם כבר, אמורים להתקשר אליכם לאימות נתונים.
+לאחר ההרשמה יתקשרו אליכם, תאושרו, ולאחר מכן פרטיכם יקלטו במערכת.
 
-מספר שעות לאחר האימות, פרטיכם יוזנו למערכת, ואז מסי הטלפון שלכם יוכר. מכאן ואילך, לאחר אימות SMS, תוכלו לחפש בקשות מתאימות, ולממש את רוח ההתנדבות שלכם.
-יש  בעיות? דווחו בקבוצת הוואטסאפ "טרמפים+ כלל הארץ". הצטרפות לקבוצה הנ"ל - https://bit.ly/3Q7HJ2R`
+בנוסף, תצורפו לקבוצת וואטסאפ של </u>נהגים בלבד<u>.
+
+<b style="color:red">החברות בקבוצה הנ"ל הינה חובה</b>
+
+מכאן ואילך תוכלו (אחרי אמות SMS):
+
+1) לחפש במערכת בקשות הסעה של נוסעים
+2) לפרסם לטרמפיסטים הצעות ומסלולי נסיעה
+
+<a href="https://youtu.be/VZa2jQiMYA0" target="_blank">לסרטון הסבר קצר לחצו כאן 📽</a>
+`
   },
   showCopyLink: true,
   allowAnyVolunteerToAdd: true,
