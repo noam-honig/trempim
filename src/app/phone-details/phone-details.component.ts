@@ -27,6 +27,15 @@ ${this.args.messageContext ? 'בקשר ל' + this.args.messageContext : ''}
 `
     )
   }
+  sendUserWhatsapp() {
+    sendWhatsappToPhone(
+      this.args.phone!,
+      `שלום ${this.args.name}
+אני מחפש הסעה במערכת מתדנבי הטרמפים.
+ ${this.args.messageContext ? 'בקשר ל' + this.args.messageContext : ''}
+`
+    )
+  }
   displayPhone() {
     return formatPhone(this.args.phone!)
   }
