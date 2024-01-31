@@ -315,15 +315,15 @@ const civil = new Site('civil', {
   showValidUntil: true,
   requireValidUntil: true,
   getIntroText: () => {
-    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת המשודגרגת,
+    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת המשודגרגת.
 
 אם טרם נרשמתם כנהגים, [אנא מלאו את הטופס פה](https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U)
 
 לאחר ההרשמה יתקשרו אליכם, תאושרו, ולאחר מכן פרטיכם יקלטו במערכת.
 
-בנוסף, תצורפו לקבוצת וואטסאפ של </u>נהגים בלבד<u>.
+בנוסף, תצורפו לקבוצת וואטסאפ של <u>נהגים בלבד</u>.
 
-<b style="color:red">החברות בקבוצה הנ"ל הינה חובה</b>
+<p style="color:red; font-weight: bold;">החברות בקבוצה הנ"ל הינה חובה</p>
 
 מכאן ואילך תוכלו (אחרי אמות SMS):
 
