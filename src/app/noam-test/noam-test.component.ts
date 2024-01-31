@@ -142,8 +142,8 @@ export class NoamTestComponent implements OnInit {
                         offset: '100%',
                       },
                     ],
-                    strokeColor: t.isDrive ? 'yellow' : undefined,
-                    // strokeWeight: 2,
+                    strokeColor: t.isDrive ? 'yellow' : 'gray',
+                    strokeWeight: 2,
                     map: this.map,
                   })
                 )
