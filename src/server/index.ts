@@ -69,6 +69,10 @@ async function startup() {
       res.redirect('/' + redirect + req.path)
       return
     }
+    if (sp[1] === 'civil') {
+      res.redirect('https://civil.tremp-project.org' + req.path)
+      return
+    }
     express.static('dist/angular-starter-project')(req, res, () => {
       const siteUrl = getSiteFromPath(req)
       if (
