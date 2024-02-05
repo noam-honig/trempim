@@ -336,10 +336,11 @@ const civil = new Site('civil', {
   useFillerInfo: true,
   allDeliveryRequestsAreApprovedAutomatically: true,
 
-  defaultCategory: 'הסעת חיילים',
+  defaultCategory: 'הכל',
   registerVolunteerLink:
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
   categories: [
+    'הסעת חיילים',
     'הסעת מפונים',
     'הסעות אחר',
     'שינוע ציוד',
