@@ -393,7 +393,7 @@ ${this.getLink()}
   }
 
   @Fields.string<Task>({
-    caption: 'מה משנעים *',
+    caption: 'כותרת / מה משנעים *',
     validate: (s, c) => {
       if (s.__disableValidation) return
       Validators.required(s, c)
@@ -1074,8 +1074,8 @@ ${this.getLink()}
     ui.areaDialog({
       title: 'פרטי נסיעה',
       fields: [
-        [e.category!],
         e.title,
+        [e.category!],
         e.spaceAvailable,
         e.description,
         e.address,
@@ -1102,8 +1102,8 @@ ${this.getLink()}
     ui.areaDialog({
       title: 'פרטי נסיעה',
       fields: [
-        [e.category!, e.urgency],
         e.title,
+        [e.category!, e.urgency],
         e.address,
         e.toAddress,
         e.description,
