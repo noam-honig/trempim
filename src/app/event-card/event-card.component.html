@@ -156,7 +156,7 @@
                   [e]="e"
                 >
                   <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים' }}</a>
-                  <strong *ngIf="isFull(e)">
+                  <strong *ngIf="isFull && (!e.isDrive || (e.isDrive && !isAssigned(e)))">
                     {{ e.taskStatus.caption }}
                     <span *ngIf="e.driver">, {{ e.driver.name }}</span>
                   </strong>

@@ -684,6 +684,10 @@ export class EventCardComponent implements OnInit {
     return e.taskStatus !== taskStatus.active
   }
 
+  isAssigned(e: Task) {
+    return e.taskStatus !== taskStatus.assigned
+  }
+
   distance(e: Task) {
     if (!this.volunteerLocation) return undefined
     return (
