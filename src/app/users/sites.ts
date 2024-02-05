@@ -340,12 +340,10 @@ const civil = new Site('civil', {
   registerVolunteerLink:
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
   categories: [
-    'הסעת חיילים',
-    'הסעת מפונים',
-    'הסעות אחר',
+    'חיילים',
+    'מפונים',
     'שינוע ציוד',
     'שינוע אוכל חם',
-    'אחר',
   ],
   showPastEvents: false,
   defaultLinkDescription: 'מתנדבי טרמפים, מערכת ניהול טרמפים',
