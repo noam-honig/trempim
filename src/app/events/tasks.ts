@@ -682,11 +682,11 @@ ${this.getLink()}
   @PhoneField<Task>({
     caption: 'טלפון הנהג',
   })
-  driverPhonePublic = ''
+  driverPhonePublic = remult.user?.phone?.trim()
   @Fields.string({
     caption: 'שם הנהג',
   })
-  driverNamePublic = ''
+  driverNamePublic = remult.user?.name?.trim()
   /* Drive only fields end */
 
   @BackendMethod({ allowed: true })
@@ -1080,8 +1080,8 @@ ${this.getLink()}
         e.toAddress,
         [e.eventDate, e.startTime, e.relevantHours],
         [
-          { field: e.driverNamePublic, getValue: (row, val) => row.driverNamePublic || remult.user?.name?.trim() },
-          { field: e.driverPhonePublic, getValue: (row, val) => row.driverPhonePublic || remult.user?.phone?.trim() },
+          { field: e.driverNamePublic },
+          { field: e.driverPhonePublic },
         ],
         // [
         //   { readonly: true, getValue: (row, val) => remult.user?.name, caption: 'שם ממלא הבקשה' },
