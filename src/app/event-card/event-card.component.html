@@ -155,8 +155,8 @@
                   [distance]="distance(e)"
                   [e]="e"
                 >
-                  <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים' }}</a>
-                  <strong *ngIf="isFull && (!e.isDrive || (e.isDrive && !isAssigned(e)))">
+                  <a *ngIf="(!isFull(e) || e.isDrive) && !fromMap">{{ 'לפרטים' }}</a>
+                  <strong *ngIf="isFull && !e.isDrive">
                     {{ e.taskStatus.caption }}
                     <span *ngIf="e.driver">, {{ e.driver.name }}</span>
                   </strong>

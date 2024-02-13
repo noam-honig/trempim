@@ -1083,10 +1083,6 @@ ${this.getLink()}
           { field: e.driverNamePublic },
           { field: e.driverPhonePublic },
         ],
-        // [
-        //   { readonly: true, getValue: (row, val) => remult.user?.name, caption: 'שם ממלא הבקשה' },
-        //   { readonly: true, getValue: (row, val) => remult.user?.phone, caption: 'טלפון ממלא הבקשה' },
-        // ],
         e.externalId,
       ],
       ok: async () => {
@@ -1177,9 +1173,9 @@ ${url + '/s/' + this.editLink}
         },
       },
       {
-        name: 'העתק הודעה לווטסאפ',
+        name: 'העתק קישור לכרטיס',
         icon: 'content_copy',
-        visible: (x) => x.taskStatus === taskStatus.active,
+        visible: (x) => (x.isDrive && x.taskStatus == taskStatus.assigned) || (!x.isDrive && x.taskStatus === taskStatus.active),
         click: (e) => {
           e.copyWhatsappMessage(ui)
         },
