@@ -680,11 +680,11 @@ ${this.getLink()}
   spaceAvailable = null
 
   @PhoneField<Task>({
-    caption: 'טלפון נהג',
+    caption: 'טלפון הנהג',
   })
   driverPhonePublic = ''
   @Fields.string({
-    caption: 'שם נהג',
+    caption: 'שם הנהג',
   })
   driverNamePublic = ''
   /* Drive only fields end */
@@ -824,8 +824,6 @@ ${this.getLink()}
     if (this.isDrive) {
       if (!remult.user?.phone) throw Error('אין לך מספר טלפון')
       if (!remult.user?.name) throw Error('אין לך שם')
-      this.driverPhonePublic = remult.user!.phone!
-      this.driverNamePublic = remult.user!.name!
     }
     this.driverId = assignUserId
     this.taskStatus = taskStatus.assigned
@@ -1081,7 +1079,10 @@ ${this.getLink()}
         e.address,
         e.toAddress,
         [e.eventDate, e.startTime, e.relevantHours],
-        e.imageId,
+        { field: e.driverPhonePublic, value: remult.user?.phone },
+        { field: e.driverNamePublic, value: remult.user?.name },
+        { readonly: true, value: remult.user?.name, caption: 'שם ממלא הבקשה' },
+        { readonly: true, value: remult.user?.phone, caption: 'טלפון ממלא הבקשה' },
         e.internalComments,
         e.externalId,
       ],
