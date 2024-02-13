@@ -1079,11 +1079,8 @@ ${this.getLink()}
         e.address,
         e.toAddress,
         [e.eventDate, e.startTime, e.relevantHours],
-        { field: e.driverPhonePublic, value: remult.user?.phone },
-        { field: e.driverNamePublic, value: remult.user?.name },
-        { readonly: true, value: remult.user?.name, caption: 'שם ממלא הבקשה' },
-        { readonly: true, value: remult.user?.phone, caption: 'טלפון ממלא הבקשה' },
-        e.internalComments,
+        [{ field: e.driverPhonePublic, value: remult.user?.phone }, { field: e.driverNamePublic, value: remult.user?.name }],
+        [{ readonly: true, value: remult.user?.name, caption: 'שם ממלא הבקשה' }, { readonly: true, value: remult.user?.phone, caption: 'טלפון ממלא הבקשה' }],
         e.externalId,
       ],
       ok: async () => {
