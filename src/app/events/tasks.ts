@@ -348,7 +348,7 @@ ${this.getLink()}`
   }
 
   getMessageForDriver() {
-    return `שלום ${this.driver?.name || ''} ,מופיע באפליקציה שלקחת את הנסיעה:
+    return `שלום ${this.driver?.name || ''} ,מופיע באפליקציה הצעת נסיעה שלך:
 ${this.getShortDescription()} של ארגון "${getTitle()}"
 והיא טרם הושלמה
 
@@ -656,6 +656,7 @@ ${this.getLink()}
   @Fields.boolean({ allowApiUpdate: false, dbName: 'publicVisibleBoolean' })
   publicVisible = false
 
+  @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
   @Fields.boolean<Task>({
     caption: 'הצעה?',
     displayValue: (_, v) => v ? 'הצעה' : 'בקשה',
