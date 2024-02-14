@@ -681,7 +681,7 @@ ${this.getLink()}
   spaceAvailable = null
 
   @PhoneField<Task>({
-    caption: 'טלפון הנהג (ניתן לערכיה)',
+    caption: 'טלפון הנהג (ניתן לעריכה)',
   })
   driverPhonePublic = remult.user?.phone?.trim()
   @Fields.string({
