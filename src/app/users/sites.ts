@@ -336,7 +336,7 @@ const civil = new Site('civil', {
   useFillerInfo: true,
   allDeliveryRequestsAreApprovedAutomatically: true,
 
-  defaultCategory: 'הכל',
+  defaultCategory: 'הכל הולך',
   registerVolunteerLink:
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
   categories: [
