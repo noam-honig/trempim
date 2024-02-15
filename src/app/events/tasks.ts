@@ -685,7 +685,7 @@ ${this.getLink()}
   })
   driverPhonePublic = remult.user?.phone?.trim()
   @Fields.string({
-    caption: 'שם הנהג',
+    caption: 'שם הנהג (ניתן לעריכה)',
   })
   driverNamePublic = remult.user?.name?.trim()
   /* Drive only fields end */
@@ -1376,33 +1376,33 @@ ${url + '/s/' + this.editLink}
           await e.markAsDraft()
         },
       },
-      {
-        name: 'שכפול נסיעה לכתובת אחרת',
-        icon: 'content_copy',
-        click: async (oldE) => {
-          const e = remult.repo(Task).create(oldE)
-          e.eventDate = new Date()
-          e.toAddress = ''
-          e.toAddressApiResult = null
-          e.toPhone1 = ''
-          e.toPhone2 = ''
-          e.tpPhone1Description = ''
-          e.tpPhone2Description = ''
-          ui.areaDialog({
-            title: 'שכפול נסיעה לכתובת אחרת',
-            fields: [
-              e.$.toAddress,
-              [e.$.toPhone1, e.$.tpPhone1Description],
-              [e.$.toPhone2, e.$.tpPhone2Description],
-              e.$.eventDate,
-            ],
-            ok: async () => {
-              await e.save()
-              args?.taskAdded?.(e)
-            },
-          })
-        },
-      },
+      // {
+      //   name: 'שכפול נסיעה לכתובת אחרת',
+      //   icon: 'content_copy',
+      //   click: async (oldE) => {
+      //     const e = remult.repo(Task).create(oldE)
+      //     e.eventDate = new Date()
+      //     e.toAddress = ''
+      //     e.toAddressApiResult = null
+      //     e.toPhone1 = ''
+      //     e.toPhone2 = ''
+      //     e.tpPhone1Description = ''
+      //     e.tpPhone2Description = ''
+      //     ui.areaDialog({
+      //       title: 'שכפול נסיעה לכתובת אחרת',
+      //       fields: [
+      //         e.$.toAddress,
+      //         [e.$.toPhone1, e.$.tpPhone1Description],
+      //         [e.$.toPhone2, e.$.tpPhone2Description],
+      //         e.$.eventDate,
+      //       ],
+      //       ok: async () => {
+      //         await e.save()
+      //         args?.taskAdded?.(e)
+      //       },
+      //     })
+      //   },
+      // },
       {
         name: 'פתח בMONDAY',
         visible: (e) => e.externalId.startsWith('m:'),
