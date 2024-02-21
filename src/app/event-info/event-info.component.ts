@@ -53,6 +53,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
 
   showContactInfoMessage() {
+    return false
     return (
       !this.e.isDrive &&
       !this.e.phone1 &&
