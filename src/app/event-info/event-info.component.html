@@ -220,7 +220,7 @@
     *ngIf="canModify() && isAssigned()"
     (click)="completed()"
   >
-    השלמתי בהצלחה
+    CM: {{canModify()}} ISA: {{isAssigned()}} השלמתי בהצלחה
   </button>
   <button
     mat-raised-button
