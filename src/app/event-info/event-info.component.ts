@@ -150,7 +150,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
 
   remultId() {
-    return remult.user!.id
+    return this.driver
   }
 
   canModify() {
