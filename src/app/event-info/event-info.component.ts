@@ -139,7 +139,6 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
   isAssigned() {
     return (
-      this.e.
       this.e.taskStatus == taskStatus.assigned ||
       this.e.taskStatus == taskStatus.driverPickedUp ||
       this.e.taskStatus == taskStatus.full
