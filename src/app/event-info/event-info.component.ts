@@ -149,14 +149,10 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return this.e.taskStatus == taskStatus.full
   }
 
-  remultId() {
-    return this.driver
-  }
-
   canModify() {
     return this.isAuthenticated() && (
       this.isDispatcher() ||
-      this.driver?.id == remult.user!.id
+      this.driverId == remult.user!.id
     );
   }
 
