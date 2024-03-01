@@ -139,6 +139,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
   isAssigned() {
     return (
+      this.e.
       this.e.taskStatus == taskStatus.assigned ||
       this.e.taskStatus == taskStatus.driverPickedUp ||
       this.e.taskStatus == taskStatus.full
@@ -147,6 +148,10 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
 
   isFull() {
     return this.e.taskStatus == taskStatus.full
+  }
+
+  remultId() {
+    return remult.user!.id
   }
 
   canModify() {
