@@ -42,16 +42,10 @@
     <a routerLink="אודות">אודות אפליקצית חגי שינועים</a>
   </div>
 </div>
-<div
-  style="display: flex; flex-direction: column"
-  *ngIf="doesNotRequireLogin() && !remult.authenticated()"
->
-  <router-outlet></router-outlet>
-</div>
 
 <div
   style="height: 100%; display: flex; flex-direction: column"
-  *ngIf="remult.authenticated()"
+  *ngIf="remult.authenticated() || doesNotRequireLogin()"
 >
   <mat-toolbar color="primary" style="flex-shrink: 0">
     <div>
@@ -101,11 +95,11 @@
       <h4 *ngIf="remult.authenticated()">
         {{ terms.hello }} {{ remult.user!.name }}
       </h4>
-      <a href="https://youtu.be/VZa2jQiMYA0" target="_blank"
+      <a href="https://youtu.be/VZa2jQiMYA0" target="_blank" *ngIf="showTutorial()"
         >לסרטון הסבר קצר 📽</a
       >
       <mat-nav-list role="list">
-        <mat-list-item routerLinkActive="active-route">
+        <mat-list-item routerLinkActive="active-route" *ngIf="showTrips()">
           <a
             matLine
             [routerLink]="['/']"
@@ -166,6 +160,24 @@
             >עדכונים</a
           >
         </mat-list-item>
+        <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">
+          <a
+            matLine
+            [routerLink]="['/request']"
+            (click)="routeClicked()"
+            class="alert-line-badge"
+            >פרסום בקשת נסיעה</a
+          >
+        </mat-list-item>
+        <mat-list-item routerLinkActive="active-route" *ngIf="showDriverTrips()">
+          <a
+            matLine
+            [routerLink]="['/search']"
+            (click)="routeClicked()"
+            class="alert-line-badge"
+            >חיפוש נסיעה</a
+          >
+        </mat-list-item>
         <ng-container *ngFor="let m of router.config">
           <mat-list-item
             *ngIf="shouldDisplayRoute(m)"
@@ -176,16 +188,6 @@
             }}</a>
           </mat-list-item>
         </ng-container>
-
-        <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">
-          <a
-            matLine
-            [routerLink]="['/intake']"
-            (click)="routeClicked()"
-            class="alert-line-badge"
-            >הוספת נסיעה</a
-          >
-        </mat-list-item>
         <mat-list-item *ngIf="showCopyLink()" routerLinkActive="active-route">
           <a matLine (click)="copyAddLink()">העתק קישור לטופס</a>
         </mat-list-item>

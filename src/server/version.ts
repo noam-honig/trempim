@@ -80,7 +80,7 @@ export async function versionUpdate() {
     const t = await dbNamesOf(Task)
     const s = await dbNamesOf(TaskStatusChanges)
     await db.execute(
-      `insert into ${s} (${s.id}, ${s.taskId},${s.what},${s.eventStatus},${s.driverId},${s.createUserId},${s.createdAt}) 
+      `insert into ${s} (${s.id}, ${s.taskId},${s.what},${s.eventStatus},${s.driverId},${s.createUserId},${s.createdAt})
       select ${t.id},${t.id},'יצירה',${t.taskStatus},${t.driverId},${t.createUserId},${t.createdAt} from ${t}`
     )
   })

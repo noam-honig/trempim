@@ -22,7 +22,7 @@ import { getImageUrl } from '../../events/getImageUrl'
     />
     <button mat-button>
       <label for="uploadImage" style="display: flex; align-items: center">
-        <mat-icon>photo_camera</mat-icon>&nbsp; תמונה של הציוד
+        <mat-icon>photo_camera</mat-icon>&nbsp; תמונה
       </label>
     </button>
     <img [src]="getImageSrc()" *ngIf="this.args.fieldRef.value" width="200" />

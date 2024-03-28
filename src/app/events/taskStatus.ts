@@ -9,6 +9,7 @@ export class taskStatus {
   static relevanceCheck = new taskStatus(-5, '❔ בדיקת רלוונטיות')
   static active = new taskStatus(0, ' פתוח לרישום')
   static assigned = new taskStatus(1, '🚘 שוייך לנהג')
+  static full = new taskStatus(2, 'מלא')
 
   static driverPickedUp = new taskStatus(4, '🚗 איסוף בוצע')
 

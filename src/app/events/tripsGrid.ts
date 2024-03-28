@@ -65,6 +65,7 @@ export function tripsGrid({
     ...gridOptions,
     columnSettings: (t) => [
       t.externalId,
+      t.isDrive,
       t.title,
       t.taskStatus,
       t.statusChangeDate,

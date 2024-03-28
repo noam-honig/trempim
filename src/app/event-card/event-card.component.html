@@ -1,12 +1,31 @@
 <div class="full-page">
   <div *ngIf="!isDialog() && !fromMap">
+
     <button
       mat-raised-button
       color="primary"
-      (click)="addTask()"
-      *ngIf="isDispatcher()"
+      (click)="addTask(false)"
+      *ngIf="!allowDriveTasks() && isDispatcher()"
     >
       הוספת נסיעה
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      style="background-color: green; margin: 5px;"
+      (click)="addTask(true)"
+      *ngIf="allowDriveTasks() && isVolunteer()"
+    >
+      פרסם הצעת נסיעה
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      style="background-color: green; margin: 5px;"
+      (click)="navigate('request')"
+      *ngIf="allowDriveTasks() && !isVolunteer()"
+    >
+      פרסם בקשת הסעה
     </button>
     <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
     <data-area [settings]="area"></data-area>
@@ -106,7 +125,7 @@
           <ng-container *ngFor="let e of d.events; trackBy: trackBy">
             <mat-card
               transition-group-item
-              class="event-card"
+              class="event-card {{e.isDrive ? 'drive-event-card' : ''}}"
               [class.registered]="isRegisteredToEvent(e) && showingAllTasks"
               *ngIf="filter(e)"
             >
@@ -136,8 +155,8 @@
                   [distance]="distance(e)"
                   [e]="e"
                 >
-                  <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים' }}</a>
-                  <strong *ngIf="isFull(e)">
+                  <a *ngIf="(!isFull(e) || e.isDrive) && !fromMap">{{ 'לפרטים' }}</a>
+                  <strong *ngIf="isFull && !e.isDrive">
                     {{ e.taskStatus.caption }}
                     <span *ngIf="e.driver">, {{ e.driver.name }}</span>
                   </strong>

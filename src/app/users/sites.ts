@@ -50,6 +50,7 @@ export class Site {
   showValidUntil = false
   requireValidUntil = false
   requireContactName = false
+  allowDriveTasks = false
   getVisibleOrgs = () => [
     this,
     ...this.getOtherVisibleOrgs().filter((x) => x != this),
@@ -142,7 +143,7 @@ const bikeIl: Site = new Site('bikeil', {
   getIntroTextImplementation: () => {
     return `ברוכים הבאים לאפליקציית השינועים של חמל אופנועים.
 
-האפליקציה מיועדת לשימוש מתנדבים הרוכבים על דו-גלגלי או רכב פרטי\\מסחרי ורוצים לסייע בשינוע של ציוד ללוחמים ולמשפחות הנפגעים, או בשינועים המוגדרים כדחופים, לפי שיקול דעתו של החמל. 
+האפליקציה מיועדת לשימוש מתנדבים הרוכבים על דו-גלגלי או רכב פרטי\\מסחרי ורוצים לסייע בשינוע של ציוד ללוחמים ולמשפחות הנפגעים, או בשינועים המוגדרים כדחופים, לפי שיקול דעתו של החמל.
 
 בכל בקשה בנושא אחר יש לפנות לאחד מהחמלים האחרים העוסקים במגוון נושאים כגון טרמפים, מלאי ציוד וכו.
 
@@ -267,23 +268,23 @@ function yedidimEnv(urlPrefix: string) {
     canSeeUrgency: () => remult.isAllowed(Roles.admin),
     getIntroTextImplementation: ({ registerVolunteerLink }) => {
       return `ברוכים הבאים למערכת השינועים של ידידים!
-  
+
   כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים לבסיסים, בשינוע ציוד לחיילים או בשינועים שונים הנדרשים לכוחות העורף.
-  
+
   המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
-  
+
   ${
     registerVolunteerLink
       ? `
-  
+
   עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](${registerVolunteerLink})
-  
+
   `
       : ''
   }
-  
+
   במידה ונתקלתם בבעיה בהתחברות למערכת יש לפנות למנהל הסניף, או להתקשר למוקד הכוננים במספר [077-600-1230](tel:077-600-1230) שלוחה 1.
-  
+
   צאו לעשות חסדים!`
     },
 
@@ -314,32 +315,39 @@ const civil = new Site('civil', {
   showValidUntil: true,
   requireValidUntil: true,
   getIntroText: () => {
-    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
+    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת המשודגרגת.
 
 אם טרם נרשמתם כנהגים, [אנא מלאו את הטופס פה](https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U)
 
-אם נרשמתם כבר, אמורים להתקשר אליכם לאימות נתונים.
+לאחר ההרשמה יתקשרו אליכם, תאושרו, ולאחר מכן פרטיכם יקלטו במערכת.
 
-מספר שעות לאחר האימות, פרטיכם יוזנו למערכת, ואז מסי הטלפון שלכם יוכר. מכאן ואילך, לאחר אימות SMS, תוכלו לחפש בקשות מתאימות, ולממש את רוח ההתנדבות שלכם.
-יש  בעיות? דווחו בקבוצת הוואטסאפ "טרמפים+ כלל הארץ". הצטרפות לקבוצה הנ"ל - https://bit.ly/3Q7HJ2R`
+בנוסף, תצורפו לקבוצת וואטסאפ של <u>נהגים בלבד</u>.
+
+<b>החברות בקבוצה הנ"ל הינה חובה</b>
+
+מכאן ואילך תוכלו (אחרי אמות SMS):
+
+1) לחפש במערכת בקשות הסעה של נוסעים
+2) לפרסם לטרמפיסטים הצעות ומסלולי נסיעה
+`
   },
   showCopyLink: true,
   allowAnyVolunteerToAdd: true,
   useFillerInfo: true,
   allDeliveryRequestsAreApprovedAutomatically: true,
 
-  defaultCategory: 'הסעת חיילים',
+  defaultCategory: 'הכל הולך',
   registerVolunteerLink:
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
   categories: [
-    'הסעת מפונים',
-    'הסעות אחר',
+    'חיילים',
+    'מפונים',
     'שינוע ציוד',
     'שינוע אוכל חם',
-    'אחר',
   ],
   showPastEvents: false,
   defaultLinkDescription: 'מתנדבי טרמפים, מערכת ניהול טרמפים',
+  allowDriveTasks: true,
 })
 
 const warRoom = new Site('wrc', {
@@ -379,6 +387,8 @@ const test1 = new Site('test1', {
   title: 'פיתוח',
   ignore: true,
   org: 'test1',
+  allowDriveTasks: true,
+  allowAnyVolunteerToAdd: true,
 })
 const test2 = new Site('test2', {
   showValidUntil: false,
@@ -494,23 +504,23 @@ export function getSiteFromPath(req: { path: string }) {
 
 /*
 insert into shinuim.users
-( id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories)  
-select id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories 
+( id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories)
+select id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories
 from bikeil.users;
 
 insert into shinuim.tasks (id, org, title, taskStatus, statusChangeDate, description, urgency, category, eventDate, startTime, relevantHours, validUntil, addressApiResult, address, toAddressApiResult, toAddress, distance, requesterPhone1, requesterPhone1Description, phone1, phone1Description, phone2, phone2Description, toPhone1, tpPhone1Description, toPhone2, tpPhone2Description, privateDriverNotes, createdAt, createUserId, driverId, statusNotes, externalId, internalComments, imageId, returnMondayStatus, publicVisible, responsibleDispatcherId)
 select id, org, title, taskStatus, statusChangeDate, description, urgency, category, eventDate, startTime, relevantHours, validUntil, addressApiResult, address, toAddressApiResult, toAddress, distance, requesterPhone1, requesterPhone1Description, phone1, phone1Description, phone2, phone2Description, toPhone1, tpPhone1Description, toPhone2, tpPhone2Description, privateDriverNotes, createdAt, createUserId, driverId, statusNotes, externalId, internalComments, imageId, returnMondayStatus, publicVisible, responsibleDispatcherId
 from bikeil.tasks;
 
-insert into shinuim.changelog (id, org, relatedId, relatedName, entity, appUrl, apiUrl, changeDate, userId, userName, changes, changedFields) 
+insert into shinuim.changelog (id, org, relatedId, relatedName, entity, appUrl, apiUrl, changeDate, userId, userName, changes, changedFields)
 select id, org, relatedId, relatedName, entity, appUrl, apiUrl, changeDate, userId, userName, changes, changedFields
 from bikeil.changelog;
 
 insert into shinuim.taskstatuschanges (id, org, taskId, what, eventStatus, notes, driverId, createUserId, session, createdAt)
-select id, org, taskId, what, eventStatus, notes, driverId, createUserId, session, createdAt 
+select id, org, taskId, what, eventStatus, notes, driverId, createUserId, session, createdAt
 from bikeil.taskstatuschanges;
 insert into shinuim.images select * from bikeil.images;
-insert into shinuim.session (id,createdat,headers,ip) 
+insert into shinuim.session (id,createdat,headers,ip)
 select id,createdat,headers,ip from bikeil.session;
 
 */
