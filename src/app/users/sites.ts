@@ -333,7 +333,7 @@ const civil = new Site('civil', {
   },
   showCopyLink: true,
   allowAnyVolunteerToAdd: true,
-  useFillerInfo: true,
+  useFillerInfo: false,
   allDeliveryRequestsAreApprovedAutomatically: true,
 
   defaultCategory: 'הכל הולך',

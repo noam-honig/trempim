@@ -1074,9 +1074,7 @@ ${this.getLink()}
       title: 'פרטי נסיעה',
       fields: [
         e.title,
-        [e.category!],
         e.spaceAvailable,
-        e.description,
         e.address,
         e.toAddress,
         [e.eventDate, e.startTime, e.relevantHours],
@@ -1084,6 +1082,7 @@ ${this.getLink()}
           { field: e.driverNamePublic },
           { field: e.driverPhonePublic },
         ],
+        e.description,
         e.externalId,
       ],
       ok: async () => {
@@ -1104,19 +1103,15 @@ ${this.getLink()}
       title: 'פרטי נסיעה',
       fields: [
         e.title,
-        [e.category!, e.urgency],
         e.address,
         e.toAddress,
-        e.description,
-        e.privateDriverNotes,
         [e.eventDate, e.startTime, e.relevantHours],
         ...(getSite().useFillerInfo
           ? [[e.requesterPhone1, e.requesterPhone1Description]]
           : []),
         [e.phone1, e.phone1Description],
-        [e.phone2, e.phone2Description],
-        [e.toPhone1, e.tpPhone1Description],
-        [e.toPhone2, e.tpPhone2Description],
+        e.description,
+        e.privateDriverNotes,
 
         e.imageId,
         e.internalComments,

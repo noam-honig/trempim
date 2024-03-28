@@ -60,7 +60,6 @@ export class IntakeComponent implements OnInit {
           field: e.toAddress,
           caption: getSite().toAddressName || e.toAddress.metadata.caption,
         },
-        e.description,
         [e.eventDate, e.startTime, e.relevantHours],
         ...(getSite().useFillerInfo
           ? [[e.requesterPhone1, e.requesterPhone1Description]]
@@ -69,12 +68,7 @@ export class IntakeComponent implements OnInit {
           field: y,
           visible: () => !getSite().onlyAskForSecondAddress,
         })),
-        [e.phone2, e.phone2Description].map((y) => ({
-          field: y,
-          visible: () => !getSite().onlyAskForSecondAddress,
-        })),
-        [e.toPhone1, e.tpPhone1Description],
-        [e.toPhone2, e.tpPhone2Description],
+        e.description,
         e.internalComments,
         e.imageId,
       ]
