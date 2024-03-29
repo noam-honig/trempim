@@ -668,7 +668,7 @@ ${this.getLink()}
 
   /* Drive only fields start */
   @Fields.integer({
-    caption: 'מספר מקומות',
+    caption: 'מספר מקומות *',
     validate: (_, c) => {
       if (_.isDrive && (_.isNew() || c.valueChanged())) {
         if (+c.value > 10) {
