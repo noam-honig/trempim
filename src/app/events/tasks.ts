@@ -536,12 +536,13 @@ ${this.getLink()}
     },
   })
   phone1 = ''
+
   @Fields.string({
     caption: 'שם *',
     validate: (_, c) => {
       if (_.isNew() || c.valueChanged()) {
         if (!_.isDrive) {
-          throw Error('ערך חסר')
+          return requiredOnChange(() => true)
         }
       }
     },
