@@ -545,6 +545,7 @@ ${this.getLink()}
           return requiredOnChange(() => true)
         }
       }
+      return
     },
 
     ...onlyDriverRules,
