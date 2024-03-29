@@ -6,11 +6,7 @@
       </div>
       <markdown [data]="introText"> </markdown>
 
-      <a href="https://youtu.be/VZa2jQiMYA0" target="_blank"
-        >לסרטון הסבר קצר לחצו כאן 📽</a
-      >
-
-      <h2>לכניסה</h2>
+      <h2>{{signIn.isSignup ? 'להרשמה' : 'לכניסה'}}</h2>
 
       <mat-form-field
         *ngIf="signIn.askForOtp"
@@ -35,12 +31,10 @@
       <data-area [settings]="area"> </data-area>
       <button mat-raised-button color="primary" (click)="doSignIn()">
         כניסה
+        {{signIn.isSignup ? 'הרשמה' : 'כניסה'}}
       </button>
     </div>
   </app-card-in-middle>
-  <div style="display: flex; justify-content: center">
-    <a routerLink="אודות">אודות אפליקצית חגי שינועים</a>
-  </div>
 </div>
 
 <div
