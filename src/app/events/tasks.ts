@@ -524,7 +524,7 @@ ${this.getLink()}
     : ''
 
   @PhoneField<Task>({
-    caption: 'טלפון מוצא *',
+    caption: 'טלפון *',
     ...onlyDriverRules,
     validate: (_, c) => {
       if (_.isNew() || c.valueChanged()) {
@@ -537,10 +537,10 @@ ${this.getLink()}
   })
   phone1 = ''
   @Fields.string({
-    caption: 'איש קשר מוצא',
+    caption: 'שם *',
     validate: (_, c) => {
       if (_.isNew() || c.valueChanged()) {
-        if (getSite().requireContactName && !_.isDrive) {
+        if (!_.isDrive) {
           throw Error('ערך חסר')
         }
       }
