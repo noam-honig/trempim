@@ -36,10 +36,6 @@ export class IntakeComponent implements OnInit {
     fields: () => {
       let e = this.r.$
       return [
-        {
-          field: e.category!,
-          visible: () => !getSite().onlyAskForSecondAddress,
-        },
         { field: e.title, caption: getSite().taskTitleCaption },
       ]
     },
