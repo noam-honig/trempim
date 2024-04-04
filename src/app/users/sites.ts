@@ -315,7 +315,7 @@ const civil = new Site('civil', {
   showValidUntil: true,
   requireValidUntil: true,
   getIntroText: () => {
-    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת המשודגרגת.
+    return `<u>מערכת ממוכנת לנהגים למחאה</u>
 
 אם טרם נרשמתם כנהגים, [אנא מלאו את הטופס פה](https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U)
 
