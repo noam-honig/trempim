@@ -1116,7 +1116,6 @@ ${this.getLink()}
         e.privateDriverNotes,
 
         e.imageId,
-        e.internalComments,
         e.externalId,
       ],
       ok: () =>
