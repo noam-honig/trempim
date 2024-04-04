@@ -1073,7 +1073,7 @@ ${this.getLink()}
   private async openDriverEditDialog(ui: UITools, cleanupCb: (ok: boolean) => Promise<void>) {
     const e = this.$
     ui.areaDialog({
-      title: 'פרטי נסיעה',
+      title: 'הצעת נסיעה',
       fields: [
         e.title,
         e.spaceAvailable,
