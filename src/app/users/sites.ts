@@ -326,7 +326,9 @@ const civil = new Site('civil', {
   <li>לפרסם <u>הצעות נסיעה</u> שלכם במגמה לצרף טרמפיסטים</li>
 </ul>
 
-הכניסה למערכת דרך: <a>http://civil.tremp-project.org/civil</a>
+הכניסה למערכת דרך:
+
+<a>http://civil.tremp-project.org/civil</a>
 
 הדרכה לשימוש במערכת ופרטים נוספים בדף נחיתה של מתנדבי הטרמפים:
 
