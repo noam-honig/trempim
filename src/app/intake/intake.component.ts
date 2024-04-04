@@ -65,7 +65,6 @@ export class IntakeComponent implements OnInit {
           visible: () => !getSite().onlyAskForSecondAddress,
         })),
         e.description,
-        e.internalComments,
         e.imageId,
       ]
     },
