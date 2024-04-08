@@ -72,7 +72,7 @@ export class Blacklist extends IdEntity {
     caption: 'תאריך האירוע המכונן',
     displayValue: (_, d) => formatDate(d),
   })
-  incidentDate = null
+  incidentDate = new Date()
 
   @DataControl({ readonly: (e) => !e?._.apiUpdateAllowed })
   @Fields.string({
