@@ -16,6 +16,7 @@ import { DataControl } from '../common-ui-elements/interfaces'
 import { CreatedAtField, DateField } from '../events/date-utils'
 import { recordChanges } from '../common/change-log/change-log'
 import { Roles } from '../users/roles'
+
 @Entity<Blacklist>('Blacklist', {
   allowApiRead: remult.isAllowed(Roles.admin),
   allowApiUpdate: (banned) => {
