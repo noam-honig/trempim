@@ -23,7 +23,7 @@ export class BlacklistComponent implements OnInit {
   }
 
   blacklist: GridSettings<Blacklist> = new GridSettings<Blacklist>(remult.repo(Blacklist), {
-    allowDelete: false,
+    allowDelete: true,
     allowInsert: false,
     allowUpdate: true,
     columnOrderStateKey: 'users',
