@@ -5,7 +5,7 @@ import {
   isBackend,
   Allow,
   Fields,
-  remult, BackendMethod
+  remult, BackendMethod, repo
 } from 'remult'
 import {
   OnlyAllowIsraeliPhones,
@@ -100,6 +100,12 @@ export class Blacklist extends IdEntity {
         onOk?.()
       },
     })
+  }
+
+  @BackendMethod({ allowed: [Roles.admin] })
+  static async delete(blacklistId: string) {
+    await repo(Blacklist).delete({ id: blacklistId })
+    return true
   }
 
 }

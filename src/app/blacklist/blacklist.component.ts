@@ -23,7 +23,7 @@ export class BlacklistComponent implements OnInit {
   }
 
   blacklist: GridSettings<Blacklist> = new GridSettings<Blacklist>(remult.repo(Blacklist), {
-    allowDelete: true,
+    allowDelete: false,
     allowInsert: false,
     allowUpdate: true,
     columnOrderStateKey: 'users',
@@ -56,6 +56,10 @@ export class BlacklistComponent implements OnInit {
       {
         name: 'פרטים',
         click: async (e) => e.editDialog(this.ui),
+      },
+      {
+        name: 'הסר',
+        click: async (e) => Blacklist.delete(e.id),
       },
     ],
     confirmDelete: async (h) => {
