@@ -13,7 +13,7 @@ import {
 } from '../events/phone'
 import { UITools } from '../common/UITools'
 import { DataControl } from '../common-ui-elements/interfaces'
-import { CreatedAtField, DateField } from '../events/date-utils'
+import { CreatedAtField, DateField, formatDate } from '../events/date-utils'
 import { recordChanges } from '../common/change-log/change-log'
 import { Roles } from '../users/roles'
 import { sendSms } from '../../server/send-sms'
@@ -71,7 +71,11 @@ export class Blacklist extends IdEntity {
   })
   addedBy = ''
 
-  @DateField({ caption: 'תאריך האירוע המכונן' })
+  @DataControl({ width: '240' })
+  @DateField({
+    caption: 'תאריך האירוע המכונן',
+    displayValue: (_, d) => formatDate(d),
+  })
   incidentDate = null
 
   @DataControl({ readonly: (e) => !e?._.apiUpdateAllowed })
@@ -91,7 +95,7 @@ export class Blacklist extends IdEntity {
   editDialog(ui: UITools, onOk?: () => void) {
     const v = this
     ui.areaDialog({
-      title: 'פרטי מתנדב',
+      title: 'ערוך',
       fields: [
         v.$.name,
         v.$.phone,
@@ -104,11 +108,6 @@ export class Blacklist extends IdEntity {
         onOk?.()
       },
     })
-  }
-
-  @BackendMethod({ allowed: Roles.admin })
-  async doNothing() {
-    return null
   }
 
 }
