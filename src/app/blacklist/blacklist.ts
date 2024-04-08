@@ -24,7 +24,7 @@ import { sendSms } from '../../server/send-sms'
     return remult.isAllowed(Roles.admin)
 
   },
-  allowApiDelete: false,
+  allowApiDelete: true,
   allowApiInsert: Roles.manageDrivers,
   defaultOrderBy: {
     name: 'asc',
