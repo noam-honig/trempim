@@ -18,6 +18,10 @@ export class BlacklistComponent implements OnInit {
   constructor(private ui: UIToolsService, private busyService: BusyService) {}
 
   searchString = ''
+  doSearch() {
+    this.blacklist.page = 1
+    this.busyService.donotWait(() => this.blacklist.reloadData())
+  }
 
   blacklist: GridSettings<Blacklist> = new GridSettings<Blacklist>(remult.repo(Blacklist), {
     allowDelete: false,

@@ -9,17 +9,11 @@
         (input)="doSearch()"
       />
     </mat-form-field>
-    <input
-      #fileInput
-      type="file"
-      (input)="onFileInput($event)"
-      style="display: none"
-    />
     <div style="align-self: center">
-      <button mat-raised-button color="primary" (click)="addVolunteer()">
-        הוסף מתנדב
+      <button mat-raised-button color="primary" (click)="addToBlacklist()">
+        הוסף לרשימה
       </button>
     </div>
   </div>
-  <data-grid [settings]="users" class="grow-item"></data-grid>
+  <data-grid [settings]="blacklist" class="grow-item"></data-grid>
 </div>
