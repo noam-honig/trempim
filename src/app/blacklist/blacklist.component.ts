@@ -59,11 +59,13 @@ export class BlacklistComponent implements OnInit {
       },
       {
         name: 'הסר',
-        click: async (e) => Blacklist.delete(e.id),
+        click: async (e) => {
+          Blacklist.delete(e.id).then(() => this.blacklist.reloadData())
+        },
       },
     ],
     confirmDelete: async (h) => {
-      return await this.ui.confirmDelete(h.name)
+      return await this.ui.confirmDelete(h.phone)
     },
   })
 
