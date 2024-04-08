@@ -59,7 +59,7 @@ export class BlacklistComponent implements OnInit {
       },
       {
         name: 'הסר',
-        click: async (e) => e.delete(),
+        click: async (e) => e._.delete(),
       },
     ],
     confirmDelete: async (h) => {
