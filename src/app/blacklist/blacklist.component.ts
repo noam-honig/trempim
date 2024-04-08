@@ -57,6 +57,10 @@ export class BlacklistComponent implements OnInit {
         name: 'פרטים',
         click: async (e) => e.editDialog(this.ui),
       },
+      {
+        name: 'הסר',
+        click: async (e) => e.delete(),
+      },
     ],
     confirmDelete: async (h) => {
       return await this.ui.confirmDelete(h.name)
