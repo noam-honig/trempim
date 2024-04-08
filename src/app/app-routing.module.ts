@@ -85,7 +85,7 @@ const routes: Routes = [
   {
     path: terms.blacklist,
     component: BlacklistComponent,
-    canActivate: [CanSeeUsersGuard],
+    canActivate: [AdminGuard],
   },
   {
     path: 'volunteer',
