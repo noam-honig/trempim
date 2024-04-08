@@ -5,7 +5,7 @@ import {
   isBackend,
   Allow,
   Fields,
-  remult,
+  remult, BackendMethod
 } from 'remult'
 import {
   OnlyAllowIsraeliPhones,
@@ -16,6 +16,7 @@ import { DataControl } from '../common-ui-elements/interfaces'
 import { CreatedAtField, DateField } from '../events/date-utils'
 import { recordChanges } from '../common/change-log/change-log'
 import { Roles } from '../users/roles'
+import { sendSms } from '../../server/send-sms'
 
 @Entity<Blacklist>('Blacklist', {
   allowApiRead: remult.isAllowed(Roles.admin),
@@ -103,6 +104,11 @@ export class Blacklist extends IdEntity {
         onOk?.()
       },
     })
+  }
+
+  @BackendMethod({ allowed: Roles.admin })
+  async doNothing() {
+    return null
   }
 
 }
