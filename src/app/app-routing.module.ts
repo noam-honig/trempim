@@ -23,6 +23,7 @@ import { AboutComponent } from './about/about.component'
 import { ShowPublicEventComponent } from './show-public-event/show-public-event.component'
 import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.component'
 import { MoreOrgsComponent } from './more-orgs/more-orgs.component'
+import { BlacklistComponent } from './blacklist/blacklist.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -83,7 +84,7 @@ const routes: Routes = [
   },
   {
     path: terms.blacklist,
-    component: UsersComponent,
+    component: BlacklistComponent,
     canActivate: [CanSeeUsersGuard],
   },
   {
