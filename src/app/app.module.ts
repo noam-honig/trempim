@@ -65,6 +65,7 @@ import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.com
 import { MoreOrgsComponent } from './more-orgs/more-orgs.component'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { BlacklistComponent } from './blacklist/blacklist.component'
 
 @NgModule({
   declarations: [
@@ -103,6 +104,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     TripSubtitleComponent,
     TaskSelfUpdateComponent,
     MoreOrgsComponent,
+    BlacklistComponent,
   ],
   imports: [
     NgApexchartsModule,

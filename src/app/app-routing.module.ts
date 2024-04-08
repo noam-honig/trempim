@@ -82,6 +82,11 @@ const routes: Routes = [
     canActivate: [CanSeeUsersGuard],
   },
   {
+    path: terms.blacklist,
+    component: UsersComponent,
+    canActivate: [CanSeeUsersGuard],
+  },
+  {
     path: 'volunteer',
     component: MoreOrgsComponent,
     data: { hide: true, noLogin: true, name: 'עוד ארגונים' },

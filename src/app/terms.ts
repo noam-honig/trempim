@@ -26,6 +26,7 @@ export const terms = {
   passwordDeleteConfirmOf: 'בטוח לאפס את הסיסמה של ',
   rememberOnThisDevice: 'זכור אותי במכשיר זה?',
   RTL: true,
+  blacklist: 'מספרים חסומים',
 }
 
 Validators.required.defaultMessage = 'ערך חסר'
