@@ -17,7 +17,7 @@ import { CreatedAtField, DateField } from '../events/date-utils'
 import { recordChanges } from '../common/change-log/change-log'
 import { Roles } from '../users/roles'
 @Entity<Blacklist>('Blacklist', {
-  allowApiRead: Allow.authenticated,
+  allowApiRead: remult.isAllowed(Roles.admin),
   allowApiUpdate: (banned) => {
     return remult.isAllowed(Roles.admin)
 
@@ -69,8 +69,8 @@ export class Blacklist extends IdEntity {
   })
   addedBy = ''
 
-  @DateField({ caption: 'צאריך האירוע המכונן' })
-  incidentDate = new Date()
+  @DateField({ caption: 'תאריך האירוע המכונן' })
+  incidentDate = null
 
   @DataControl({ readonly: (e) => !e?._.apiUpdateAllowed })
   @Fields.string({
