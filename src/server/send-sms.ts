@@ -1,6 +1,7 @@
 import { repo } from 'remult'
 import { getSite } from '../app/users/sites'
 import { BlockedPhone } from '../app/events/blockedPhone'
+import { Blacklist } from '../app/blacklist/blacklist'
 
 export async function sendSms(
   phone: string,
@@ -10,6 +11,10 @@ export async function sendSms(
   if ((await repo(BlockedPhone).count({ phone: phone })) > 0) {
     console.log('blocked phone', phone)
     return 'blocked phone'
+  }
+  if ((await repo(Blacklist).count({ phone: phone })) > 0) {
+    console.log('blocked phone', phone)
+    return 'המספר שלך נחסם'
   }
   if (process.env['disable_sms']) {
     console.log({ phone, message })
