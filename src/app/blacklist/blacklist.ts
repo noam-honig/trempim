@@ -19,7 +19,7 @@ import { Roles } from '../users/roles'
 import { sendSms } from '../../server/send-sms'
 
 @Entity<Blacklist>('Blacklist', {
-  allowApiRead: remult.isAllowed(Roles.admin),
+  allowApiRead: Roles.admin,
   allowApiUpdate: (banned) => {
     return remult.isAllowed(Roles.admin)
 
