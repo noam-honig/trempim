@@ -19,6 +19,7 @@ import { Roles } from '../users/roles'
 import { sendSms } from '../../server/send-sms'
 
 @Entity<Blacklist>('Blacklist', {
+  allowApiCrud: Roles.admin,
   allowApiRead: Roles.admin,
   allowApiUpdate: Roles.admin,
   allowApiDelete: Roles.admin,
@@ -57,7 +58,6 @@ export class Blacklist extends IdEntity {
   })
   phone = ''
 
-  @DataControl({ readonly: (e) => !e?._.apiUpdateAllowed })
   @Fields.string({
     caption: 'האדמין המטפל',
     includeInApi: Roles.admin,
@@ -71,7 +71,6 @@ export class Blacklist extends IdEntity {
   })
   incidentDate = new Date()
 
-  @DataControl({ readonly: (e) => !e?._.apiUpdateAllowed })
   @Fields.string({
     caption: 'תאור אירוע קצר',
     includeInApi: Roles.admin,
