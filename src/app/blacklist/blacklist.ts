@@ -25,14 +25,10 @@ import { sendSms } from '../../server/send-sms'
 
   },
   allowApiDelete: true,
-  allowApiInsert: Roles.manageDrivers,
+  allowApiInsert: Roles.admin,
   defaultOrderBy: {
     name: 'asc',
   },
-  apiPrefilter: () =>
-    !remult.isAllowed([Roles.dispatcher, Roles.manageDrivers])
-      ? { id: [remult.user?.id!] }
-      : {},
   saving: async (row) => {
     if (isBackend()) {
       if (row._.isNew()) {
@@ -72,7 +68,7 @@ export class Blacklist extends IdEntity {
   addedBy = ''
 
   @DataControl({ width: '240' })
-  @DateField({
+  @Fields.dateOnly<Blacklist>({
     caption: 'תאריך האירוע המכונן',
     displayValue: (_, d) => formatDate(d),
   })
