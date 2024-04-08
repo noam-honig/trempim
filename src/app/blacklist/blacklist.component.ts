@@ -6,8 +6,7 @@ import { GridSettings } from 'common-ui-elements/interfaces'
 import { EntityFilter, remult, repo } from 'remult'
 import { BusyService } from '../common-ui-elements'
 import { User } from '../users/user'
-import { getSite } from '../users/sites'
-import { fixPhoneInput, isPhoneValidForIsrael, sendWhatsappToPhone } from '../events/phone'
+import { fixPhoneInput, isPhoneValidForIsrael } from '../events/phone'
 
 @Component({
   selector: 'app-blacklist',
