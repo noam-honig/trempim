@@ -41,12 +41,12 @@ const routes: Routes = [
   {
     path: 'p/:id',
     component: ShowPublicEventComponent,
-    data: { hide: true, noLogin: true },
+    data: { hide: true },
   },
   {
     path: 's/:id',
     component: TaskSelfUpdateComponent,
-    data: { hide: true, noLogin: true },
+    data: { hide: true },
   },
   {
     path: 'מבט על',
@@ -90,18 +90,18 @@ const routes: Routes = [
   {
     path: 'volunteer',
     component: MoreOrgsComponent,
-    data: { hide: true, noLogin: true, name: 'עוד ארגונים' },
+    data: { hide: true, name: 'עוד ארגונים' },
   },
   {
     path: 'request',
     component: IntakeComponent,
-    data: { hide: true, name: 'פרסום בקשת נסיעה', noLogin: true },
+    data: { hide: true, name: 'פרסום בקשת נסיעה' },
   },
   { path: 'noam-test/:1', component: NoamTestComponent },
   {
     path: 'search',
     component: OrgEventsComponent,
-    data: { hide: true, name: 'חיפוש נסיעה', noLogin: true },
+    data: { hide: true, name: 'חיפוש נסיעה' },
   },
   { path: 'אודות', component: AboutComponent, data: { noLogin: true } },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' },
