@@ -35,15 +35,15 @@
       "target": "http://localhost:3002",
       "secure": false
    },
-   "/civil/api": {
+   "/protest/api": {
       "target": "http://localhost:3002",
       "secure": false
    },
-   "/civil/images": {
+   "/protest/images": {
       "target": "http://localhost:3002",
       "secure": false
    },
-   "/civil/assets": {
+   "/protest/assets": {
       "target": "http://localhost:3002",
       "secure": false
    }

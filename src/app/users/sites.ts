@@ -304,7 +304,7 @@ function yedidimEnv(urlPrefix: string) {
 }
 const yedidim = yedidimEnv('y')
 
-const civil = new Site('civil', {
+const civil = new Site('protest', {
   showComfortIntakeMessage: true,
   sendTextMessageToRequester: true,
   sendTextMessageOnlyForFutureEvents: true,
@@ -328,7 +328,7 @@ const civil = new Site('civil', {
 
 הכניסה למערכת דרך:
 
-<a>http://civil.tremp-project.org/civil</a>
+<a>http://civil.tremp-project.org/protest</a>
 
 הדרכה לשימוש במערכת ופרטים נוספים בדף נחיתה של מתנדבי הטרמפים:
 
