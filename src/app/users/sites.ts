@@ -304,7 +304,7 @@ function yedidimEnv(urlPrefix: string) {
 }
 const yedidim = yedidimEnv('y')
 
-const civil = new Site('protest', {
+const civil = new Site('civil', {
   showComfortIntakeMessage: true,
   sendTextMessageToRequester: true,
   sendTextMessageOnlyForFutureEvents: true,
