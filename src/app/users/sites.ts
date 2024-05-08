@@ -410,9 +410,6 @@ export function initSite(site?: string) {
       site = document.location.pathname.split('/')[1]
     }
   }
-  remult.context.site = backendSites.find((x) => x.urlPrefix == "civil")!!;
-
-  return;
 
   remult.context.site =
     backendSites.find((x) => x.urlPrefix === site) ||
@@ -507,6 +504,8 @@ export function getBackendSite(urlPrefix?: string) {
 }
 
 export function getSiteFromPath(req: { path: string }) {
+  return 'civil';
+
   return req.path.split('/')[1]
 }
 
