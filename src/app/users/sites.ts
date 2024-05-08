@@ -304,7 +304,7 @@ function yedidimEnv(urlPrefix: string) {
 }
 const yedidim = yedidimEnv('y')
 
-const civil = new Site('civil', {
+const civil = new Site('protest', {
   showComfortIntakeMessage: true,
   sendTextMessageToRequester: true,
   sendTextMessageOnlyForFutureEvents: true,
@@ -504,8 +504,6 @@ export function getBackendSite(urlPrefix?: string) {
 }
 
 export function getSiteFromPath(req: { path: string }) {
-  return 'civil';
-
   return req.path.split('/')[1]
 }
 
