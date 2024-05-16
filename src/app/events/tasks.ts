@@ -683,11 +683,11 @@ ${this.getLink()}
   spaceAvailable = null
 
   @PhoneField<Task>({
-    caption: 'טלפון הנהג (ניתן לעריכה)',
+    caption: 'טלפון הנהג',
   })
   driverPhonePublic = remult.user?.phone?.trim()
   @Fields.string({
-    caption: 'שם הנהג (ניתן לעריכה)',
+    caption: 'שם הנהג',
   })
   driverNamePublic = remult.user?.name?.trim()
   /* Drive only fields end */
@@ -1081,8 +1081,8 @@ ${this.getLink()}
         e.toAddress,
         [e.eventDate, e.startTime, e.relevantHours],
         [
-          { field: e.driverNamePublic },
-          { field: e.driverPhonePublic },
+          { field: e.driverNamePublic, readonly: true },
+          { field: e.driverPhonePublic, readonly: true },
         ],
         e.description,
         e.externalId,
@@ -1111,7 +1111,9 @@ ${this.getLink()}
         ...(getSite().useFillerInfo
           ? [[e.requesterPhone1, e.requesterPhone1Description]]
           : []),
-        [e.phone1, e.phone1Description],
+        [
+          { field: e.phone1, readonly: true}, { field: e.phone1Description, readonly: true},
+        ],
         e.description,
         e.privateDriverNotes,
 
