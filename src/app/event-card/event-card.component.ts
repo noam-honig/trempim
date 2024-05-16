@@ -47,7 +47,7 @@ export class EventCardComponent implements OnInit {
   addTask(isDrive: boolean) {
     const t = repo(Task).create({isDrive: isDrive})
     t.openEditDialog(this.tools, async () => {
-      this.tasks = [t, ...this.tasks]
+      //this.tasks = [t, ...this.tasks]
       if (await this.tools.yesNoQuestion('האם להעתיק הודעה לפרסום בווטסאפ?')) {
         t.copyWhatsappMessage(this.tools)
       }
