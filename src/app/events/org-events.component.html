@@ -16,7 +16,7 @@
   <div class="grow-item">
     <app-event-card
       [tasks]="events"
-      [showingAllTasks]="activeTab != 0"
+      [selectedTab]="getTabs()[activeTab]"
     ></app-event-card>
   </div>
 </div>

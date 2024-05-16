@@ -1,33 +1,32 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { Field, FieldRef, Fields, getFields, remult, repo } from 'remult'
+import { FieldRef, Fields, getFields, remult, repo } from 'remult'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces'
-import { BusyService, openDialog } from '../common-ui-elements'
+import { openDialog } from '../common-ui-elements'
 
 import { UIToolsService } from '../common/UIToolsService'
-import { Task, eventDisplayDate } from '../events/tasks'
+import { eventDisplayDate, Task } from '../events/tasks'
 
 import { taskStatus } from '../events/taskStatus'
 import { Roles } from '../users/roles'
 import {
-  Location,
-  GetDistanceBetween,
-  getCity,
-  getLongLat,
-  getLocation,
-  getCurrentLocation,
-  getRegion,
-  getDistrict,
   GeocodeResult,
+  getCurrentLocation,
+  GetDistanceBetween,
+  getDistrict,
+  getLocation,
+  getLongLat,
+  getRegion,
+  Location
 } from '../common/address-input/google-api-helpers'
 import { LocationErrorComponent } from '../location-error/location-error.component'
 import copy from 'copy-to-clipboard'
-import { displayTime } from '../events/date-utils'
 import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 import { getSite } from '../users/sites'
 import { YedidimBranchListComponent } from '../yedidim-branch-list/yedidim-branch-list.component'
 import { matchesCurrentUserId } from '../users/user'
 import { Router } from '@angular/router'
+import { DriveTabs } from '../events/org-events.component'
 
 @DialogConfig({ maxWidth: '95vw' })
 @Component({
@@ -147,10 +146,15 @@ export class EventCardComponent implements OnInit {
 
   _tasks!: Task[]
 
-  @Input()
-  showingAllTasks = false
+  get showingAllTasks() {
+    return this.selectedTab == DriveTabs.SEARCH_DRIVES
+  }
+
   @Input()
   fromMap = false
+  @Input()
+  selectedTab: DriveTabs = DriveTabs.MY_DRIVES
+
   @Input()
   set tasks(val: Task[]) {
     this._tasks = val
@@ -169,6 +173,14 @@ export class EventCardComponent implements OnInit {
         this.startLocation = await getCurrentLocation()
       } catch {}
     }
+  }
+
+  showDriveOfferButton() {
+    return this.selectedTab != DriveTabs.FOR_PICKUPEES && this.allowDriveTasks()
+  }
+
+  showPickupRequestButton() {
+    return this.selectedTab == DriveTabs.FOR_PICKUPEES
   }
 
   tasksForMap: Task[] = []

@@ -14,16 +14,17 @@
       color="primary"
       style="background-color: green; margin: 5px;"
       (click)="addTask(true)"
-      *ngIf="allowDriveTasks() && isVolunteer()"
+      *ngIf="showDriveOfferButton()"
     >
       פרסם הצעת נסיעה
     </button>
+
     <button
       mat-raised-button
       color="primary"
       style="background-color: green; margin: 5px;"
       (click)="navigate('request')"
-      *ngIf="allowDriveTasks() && !isVolunteer()"
+      *ngIf="showPickupRequestButton()"
     >
       פרסם בקשת הסעה
     </button>

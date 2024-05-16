@@ -17,7 +17,7 @@ import { getSite, getSiteByOrg } from '../users/sites'
 import { EventCardComponent } from '../event-card/event-card.component'
 import { User } from '../users/user'
 
-enum DriveTabs {
+export enum DriveTabs {
   MY_DRIVES,
   SEARCH_DRIVES,
   ACTIVE_DRIVES,
@@ -161,7 +161,7 @@ export class OrgEventsComponent implements OnInit {
       })
   }
 
-  private getTabs() {
+  getTabs() {
     if (remult.isAllowed(Roles.dispatcher)) {
       return [
         DriveTabs.FOR_PICKUPEES, DriveTabs.FOR_DRIVERS, DriveTabs.MY_DRIVES, DriveTabs.SEARCH_DRIVES, DriveTabs.ACTIVE_DRIVES
