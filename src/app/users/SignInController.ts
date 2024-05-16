@@ -25,7 +25,7 @@ const otp = '123456'
 @Controller('signIn')
 export class SignInController extends ControllerBase {
   @PhoneField({
-    caption: 'מספר טלפון נייד',
+    caption: 'מספר טלפון נייד*',
     validate: [Validators.required, OnlyAllowIsraeliPhones],
     inputType: 'tel',
   })

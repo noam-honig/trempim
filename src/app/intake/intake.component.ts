@@ -62,7 +62,6 @@ export class IntakeComponent implements OnInit {
           : []),
         [e.phone1, e.phone1Description].map((y) => ({
           field: y,
-          displayValue: 'test',
           readonly: true,
           visible: () => !getSite().onlyAskForSecondAddress,
         })),

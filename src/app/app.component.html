@@ -6,8 +6,6 @@
       </div>
       <markdown [data]="introText"> </markdown>
 
-      <h2>{{signIn.isSignup ? 'להרשמה' : 'לכניסה'}}</h2>
-
       <mat-form-field
         *ngIf="signIn.askForOtp"
         appearance="outline"
