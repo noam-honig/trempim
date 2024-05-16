@@ -315,7 +315,7 @@ const civil = new Site('protest', {
   showValidUntil: true,
   requireValidUntil: true,
   getIntroText: () => {
-    return `<u>מערכת ממוכנת לטרמפים למחאה</u>
+    return `<b>מערכת ממוכנת לטרמפים למחאה</b>
 
 אנא הרשמו למערכת. לאחר ההרשמה ואימות SMS:
 
