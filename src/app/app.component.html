@@ -114,32 +114,6 @@
             >בעיות</a
           >
         </mat-list-item>
-        <mat-list-item routerLinkActive="active-route" *ngIf="isTrainee()">
-          <a
-            matLine
-            [matBadge]="drafts"
-            [matBadgeHidden]="!drafts"
-            [routerLink]="['/טיוטות']"
-            (click)="routeClicked()"
-            class="draft-line-badge"
-            matBadgeColor="warn"
-            matBadgePosition="above after"
-            >טיוטות</a
-          >
-        </mat-list-item>
-        <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">
-          <a
-            matLine
-            [matBadge]="relevanceCheck"
-            [matBadgeHidden]="!relevanceCheck"
-            [routerLink]="['/בבדיקה']"
-            (click)="routeClicked()"
-            class="draft-line-badge"
-            matBadgeColor="warn"
-            matBadgePosition="above after"
-            >בדיקת רלוונטיות</a
-          >
-        </mat-list-item>
         <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">
           <a
             matLine
@@ -181,9 +155,6 @@
             }}</a>
           </mat-list-item>
         </ng-container>
-        <mat-list-item *ngIf="showCopyLink()" routerLinkActive="active-route">
-          <a matLine (click)="copyAddLink()">העתק קישור לטופס</a>
-        </mat-list-item>
       </mat-nav-list>
     </mat-sidenav>
     <div class="app-sidenav-content">
