@@ -507,7 +507,7 @@ ${this.getLink()}
     },
   })
   requesterPhone1 = !remult.isAllowed(Roles.dispatcher)
-    ? remult.user?.phone
+    ? (remult.user?.phone ?? "")
     : ''
   @Fields.string({
     caption: 'שם ממלא הבקשה',
@@ -520,37 +520,9 @@ ${this.getLink()}
     ),
   })
   requesterPhone1Description = !remult.isAllowed(Roles.dispatcher)
-    ? remult.user?.name
+    ? (remult.user?.name ?? "")
     : ''
 
-  @PhoneField<Task>({
-    caption: 'טלפון *',
-    ...onlyDriverRules,
-    validate: (_, c) => {
-      if (_.isNew() || c.valueChanged()) {
-        if (!_.isDrive) {
-          return requiredOnChange(() => true)
-        }
-      }
-      return
-    },
-  })
-  phone1 = ''
-
-  @Fields.string({
-    caption: 'שם *',
-    validate: (_, c) => {
-      if (_.isNew() || c.valueChanged()) {
-        if (!_.isDrive) {
-          return requiredOnChange(() => true)
-        }
-      }
-      return
-    },
-
-    ...onlyDriverRules,
-  })
-  phone1Description = ''
   @DataControl({ visible: () => getSite().showTwoContacts })
   @PhoneField<Task>({
     caption: 'טלפון מוצא 2',
@@ -681,6 +653,35 @@ ${this.getLink()}
     }
   })
   spaceAvailable = null
+
+  @PhoneField<Task>({
+    caption: 'טלפון *',
+    ...onlyDriverRules,
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (!_.isDrive) {
+          return requiredOnChange(() => true)
+        }
+      }
+      return
+    },
+  })
+  phone1 = !this.isDrive ? this.requesterPhone1 : ""
+
+  @Fields.string({
+    caption: 'שם *',
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (!_.isDrive) {
+          return requiredOnChange(() => true)
+        }
+      }
+      return
+    },
+
+    ...onlyDriverRules,
+  })
+  phone1Description = !this.isDrive ?  this.requesterPhone1Description : ""
 
   @PhoneField<Task>({
     caption: 'טלפון הנהג',
