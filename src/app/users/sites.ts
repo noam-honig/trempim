@@ -324,13 +324,13 @@ const civil = new Site('protest', {
   <li>טרמפיסטים יוכלו לחפש <u>הצעות מנהגים</u> ולפרסם <u>בקשות לטרמפים</u></li>
 </ul>
 
-הכניסה למערכת לנהגים::
+<!-- הכניסה למערכת לנהגים:
 
 <a>https://civil.tremp-project.org/protest</a>
 
 הכניסה למערכת לטרמפיסטים:
 
-<a>https://civil.tremp-project.org/protest/request</a>
+<a>https://civil.tremp-project.org/protest/request</a> -->
 
 הדרכה לשימוש במערכת ופרטים נוספים:<br />
 <a>https://bit.ly/3Q7HJ2R</a>
