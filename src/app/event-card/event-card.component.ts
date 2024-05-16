@@ -176,7 +176,7 @@ export class EventCardComponent implements OnInit {
   }
 
   showDriveOfferButton() {
-    return this.selectedTab != DriveTabs.FOR_PICKUPEES && this.allowDriveTasks()
+    return this.selectedTab == DriveTabs.FOR_DRIVERS
   }
 
   showPickupRequestButton() {

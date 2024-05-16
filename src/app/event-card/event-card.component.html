@@ -22,11 +22,11 @@
     <button
       mat-raised-button
       color="primary"
-      style="background-color: green; margin: 5px;"
+      style="background-color: #3f51b5; margin: 5px;"
       (click)="navigate('request')"
       *ngIf="showPickupRequestButton()"
     >
-      פרסם בקשת הסעה
+      פרסם בקשת טרמפ
     </button>
     <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
     <data-area [settings]="area"></data-area>
