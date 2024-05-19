@@ -28,8 +28,9 @@ export class Site {
       this.org = this.urlPrefix
     }
 
-    if (!this.categories.includes(this.defaultCategory))
-      this.categories = [this.defaultCategory, ...this.categories]
+    if (!this.defaultCategory) {
+      this.defaultCategory = this.categories[0]
+    }
   }
   dbSchema!: string
   ignore?: boolean
@@ -333,7 +334,7 @@ const civil = new Site('protest', {
 <a>https://civil.tremp-project.org/protest/request</a> -->
 
 הדרכה לשימוש במערכת ופרטים נוספים:<br />
-<a>https://bit.ly/3Q7HJ2R</a>
+<a>https://bit.ly/4dOBsEu</a>
 `
   },
   showCopyLink: true,
@@ -341,7 +342,7 @@ const civil = new Site('protest', {
   useFillerInfo: false,
   allDeliveryRequestsAreApprovedAutomatically: true,
 
-  defaultCategory: 'הכל הולך',
+  //defaultCategory: 'הכל הולך',
   registerVolunteerLink:
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
   categories: [
