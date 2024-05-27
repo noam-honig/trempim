@@ -101,7 +101,7 @@ ${
     return true
   }
 
-  soldiersDelivery = 'שינוע חיילים'
+  soldiersDelivery = 'הכל הולך'
   bikeDelivery = 'שינוע באופנוע'
 
   bikeCategoryCaption?: string
