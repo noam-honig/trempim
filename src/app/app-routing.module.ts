@@ -103,7 +103,6 @@ const routes: Routes = [
     component: OrgEventsComponent,
     data: { hide: true, name: 'חיפוש נסיעה' },
   },
-  { path: 'אודות', component: AboutComponent, data: { noLogin: true } },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' },
 ]
 

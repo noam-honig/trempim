@@ -125,10 +125,17 @@
         <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher() && showAddTrip()">
           <a
             matLine
-            [routerLink]="['/request']"
-            (click)="routeClicked()"
+            [href]="['https://bit.ly/4dOBsEu']"
             class="alert-line-badge"
-            >פרסום בקשת נסיעה</a
+            >מדריך למשתמש במערכת</a
+          >
+        </mat-list-item>
+        <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher() && showAddTrip()">
+          <a
+            matLine
+            [href]="['https://bit.ly/4aAHcP5']"
+            class="alert-line-badge"
+            >שלט לרכב להדפסה עצמית</a
           >
         </mat-list-item>
         <mat-list-item routerLinkActive="active-route" *ngIf="showDriverTrips()">
