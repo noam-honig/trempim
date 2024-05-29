@@ -105,7 +105,7 @@ ${
   bikeDelivery = 'שינוע באופנוע'
 
   bikeCategoryCaption?: string
-  defaultCategory?: string
+  defaultCategory: string = 'מפגינים'
   truckCategoryCaption?: string
   categories: string[] = [
     //this.soldiersDelivery,
