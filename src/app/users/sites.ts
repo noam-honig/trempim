@@ -101,14 +101,14 @@ ${
     return true
   }
 
-  soldiersDelivery = 'הכל הולך'
+  //soldiersDelivery = 'שינוע חיילים'
   bikeDelivery = 'שינוע באופנוע'
 
   bikeCategoryCaption?: string
-  defaultCategory = this.soldiersDelivery
+  defaultCategory?: string
   truckCategoryCaption?: string
   categories: string[] = [
-    this.soldiersDelivery,
+    //this.soldiersDelivery,
     'שינוע ציוד',
     'שינוע מזון',
     'שינוע ברכב מסחרי . נגרר',
@@ -342,7 +342,7 @@ const civil = new Site('protest', {
   useFillerInfo: false,
   allDeliveryRequestsAreApprovedAutomatically: true,
 
-  //defaultCategory: 'הכל הולך',
+  defaultCategory: 'מפונים',
   registerVolunteerLink:
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
   categories: [

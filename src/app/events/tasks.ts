@@ -393,7 +393,7 @@ ${this.getLink()}
   }
 
   @Fields.string<Task>({
-    caption: 'כותרת / מה משנעים *',
+    caption: 'שם המבצע / פעילות *',
     validate: (s, c) => {
       if (s.__disableValidation) return
       Validators.required(s, c)
