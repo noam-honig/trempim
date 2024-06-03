@@ -36,7 +36,7 @@ export async function SendVerifyRelevanceSms() {
         taskStatus: taskStatus.active,
         createdAt: { $lt: fourHoursAgo },
         org: getSite().org,
-        category: { $ne: 'שינוע רכב' },
+        // category: { $ne: 'שינוע רכב' },
         validUntil: getSite().sendTextMessageOnlyForFutureEvents
           ? { $gt: new Date() }
           : undefined,

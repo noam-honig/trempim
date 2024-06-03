@@ -177,11 +177,6 @@ export class OrgEventsComponent implements OnInit {
   ): EntityFilter<Task> | null {
     const buildSearchDrives = (withDriveOffers: boolean, withRequests: boolean): EntityFilter<Task> => {
       const q = {
-        category:
-          (remult.user?.allowedCategories?.filter((x) => x)?.length ||
-            0) > 0
-            ? remult.user!.allowedCategories
-            : undefined,
         $and: [
           orgAndFilter, // will be $and[$and] = {...}
           {

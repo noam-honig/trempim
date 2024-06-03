@@ -105,10 +105,11 @@ ${
   bikeDelivery = 'שינוע באופנוע'
 
   bikeCategoryCaption?: string
-  defaultCategory: string = 'מפגינים'
+  defaultCategory: string = ''
   truckCategoryCaption?: string
   categories: string[] = [
     //this.soldiersDelivery,
+    '',
     'שינוע ציוד',
     'שינוע מזון',
     'שינוע ברכב מסחרי . נגרר',
@@ -342,10 +343,11 @@ const civil = new Site('protest', {
   useFillerInfo: false,
   allDeliveryRequestsAreApprovedAutomatically: true,
 
-  defaultCategory: 'מפונים',
+  defaultCategory: '',
   registerVolunteerLink:
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
   categories: [
+    '',
     'חיילים',
     'מפונים',
     'שינוע ציוד',

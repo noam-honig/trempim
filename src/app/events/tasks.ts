@@ -338,7 +338,7 @@ ${this.getLink()}`
 
   getShortDescription(): string {
     let message = ''
-    if (this.category) message = this.category + ': '
+    //if (this.category) message = this.category + ': '
     if (this.title) message += this.title + ' '
     if (this.addressApiResult?.results?.length)
       message += 'מ' + getCity(this.addressApiResult!)
@@ -422,7 +422,7 @@ ${this.getLink()}
     valueList: () => getSite().categories.map((x) => ({ id: x, caption: x })),
   })
   @Fields.string({ caption: 'קטגוריה' })
-  category: string = getSite().defaultCategory
+  category: string = ''
   @Fields.dateOnly<Task>({
     caption: 'תאריך הסיוע המבוקש',
     displayValue: (e, v) => eventDisplayDate(e),

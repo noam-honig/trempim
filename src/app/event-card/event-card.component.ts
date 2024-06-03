@@ -66,7 +66,7 @@ export class EventCardComponent implements OnInit {
         let message = 'קריאות פתוחות'
 
         if (this.category) {
-          message += ` (${this.category})`
+          //message += ` (${this.category})`
         }
 
         if (this.region) {
@@ -108,7 +108,7 @@ export class EventCardComponent implements OnInit {
           (x) =>
             (x.args = {
               tasks: this._tasks.filter((x) => this.filter(x)),
-              category: this.category,
+              //category: this.category,
             })
         )
       },
@@ -250,7 +250,7 @@ export class EventCardComponent implements OnInit {
         JSON.stringify({
           region: this.region,
           toRegion: this.toRegion,
-          category: this.category,
+          //category: this.category,
           date: this.filterDate
             ? Math.round((this.filterDate - new Date().valueOf()) / 86400000)
             : undefined,
@@ -371,16 +371,16 @@ export class EventCardComponent implements OnInit {
         addToRegionFilter('toRegion', this.toRegions)
       }
 
-      if (this.filter(e, { category: '' })) {
-        let type = this.types.find((c) => c.id == e.category)
-        if (!type) {
-          this.types.push({
-            id: e.category,
-            count: 1,
-            caption: e.category || '',
-          })
-        } else type.count++
-      }
+      // if (this.filter(e, { category: '' })) {
+      //   let type = this.types.find((c) => c.id == e.category)
+      //   if (!type) {
+      //     this.types.push({
+      //       id: e.category,
+      //       count: 1,
+      //       caption: e.category || '',
+      //     })
+      //   } else type.count++
+      // }
       if (this.filter(e, { date: 0 })) {
         let d = this.dates.find((c) => c.id == e.eventDate.valueOf())
         if (!d) {
@@ -602,14 +602,14 @@ export class EventCardComponent implements OnInit {
     overrideSearch?: {
       region?: string
       toRegion?: string
-      category?: string
+      // category?: string
       date?: number
     }
   ) {
     const search: Required<typeof overrideSearch> = {
       region: this.region,
       toRegion: this.toRegion,
-      category: this.category,
+      // category: this.category,
       date: this.filterDate,
       ...overrideSearch,
     }
@@ -629,7 +629,7 @@ export class EventCardComponent implements OnInit {
           this.toRegion &&
           filterRegion(search.region, e.toAddressApiResult) &&
           filterRegion(search.toRegion, e.addressApiResult))) &&
-      (search.category == '' || e.category == search.category) &&
+      // (search.category == '' || e.category == search.category) &&
       (search.date == 0 || search.date == e.eventDate.valueOf())
     )
   }

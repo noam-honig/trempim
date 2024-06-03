@@ -81,7 +81,7 @@ export function tripsGrid({
       },
       t.statusNotes,
       t.org,
-      t.category!,
+      // t.category!,
       t.eventDate,
       t.startTime,
       t.relevantHours,
