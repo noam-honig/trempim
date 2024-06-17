@@ -307,6 +307,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
     //     Task.filterActiveTasks,
     //   ],
     // }
+    return {}; // is this the reason?
     return Task.filterActiveTasks()
   },
 })
