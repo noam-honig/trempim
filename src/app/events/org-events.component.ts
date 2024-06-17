@@ -65,7 +65,6 @@ export class OrgEventsComponent implements OnInit {
     this.events = []
     this.route.paramMap.subscribe((param) => {
       this.tripId = param.get('id')!
-      if (this.tripId) this.activeTab = this.isPublicView() ? 0 : 1
       this.loadEvents()
       if (remult.user && remult.user.showAllOrgs == null && remult.user!.orgs.length > 1) {
         this.tools
