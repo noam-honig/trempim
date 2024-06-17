@@ -90,19 +90,19 @@ export class OrgEventsComponent implements OnInit {
     let orgOrFilter: EntityFilter<Task> = {}
     let orgAndFilter: EntityFilter<Task> = {}
     let orgFilter: EntityFilter<Task> = {}
-    if (remult.user?.showAllOrgs == null) { // If a user is unauthenticated, then show all (drive) tasks.
-      orgAndFilter = { $and: [getSite().tasksFilter()] }
-    } else if (remult.user!.showAllOrgs == false) {
-      orgFilter = { org: getSite().org }
-    } else {
-      orgOrFilter = {
-        $or: remult.user?.orgs
-          .filter((x) => !getSiteByOrg(x.org).showPastEvents)
-          .map((x) => ({
-            $or: [{ org: { '!=': x.org } }, { validUntil: { $gt: date } }],
-          }))
-      }
-    }
+    // if (remult.user?.showAllOrgs == null) { // If a user is unauthenticated, then show all (drive) tasks.
+    //   orgAndFilter = { $and: [getSite().tasksFilter()] }
+    // } else if (remult.user!.showAllOrgs == false) {
+    //   orgFilter = { org: getSite().org }
+    // } else {
+    //   orgOrFilter = {
+    //     $or: remult.user?.orgs
+    //       .filter((x) => !getSiteByOrg(x.org).showPastEvents)
+    //       .map((x) => ({
+    //         $or: [{ org: { '!=': x.org } }, { validUntil: { $gt: date } }],
+    //       }))
+    //   }
+    // }
 
     const tabs = this.getTabs()
 
