@@ -280,14 +280,17 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   //@ts-ignore
   apiPrefilter: () => {
     if (!remult.authenticated()) {
-      if (getSite().allowDriveTasks) {
-        return {
-          isDrive: true
-        }
-      } else {
         throw Error("Forbidden")
-      }
+      // if (getSite().allowDriveTasks) {
+      //   return {
+      //     isDrive: true
+      //   }
+      // } else {
+      //   throw Error("Forbidden")
+      // }
     }
+
+    return {}
 
     if (remult.isAllowed(Roles.dispatcher)) return {}
     if (remult.isAllowed(Roles.trainee))
