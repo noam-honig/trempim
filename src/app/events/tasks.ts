@@ -279,6 +279,8 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   },
   //@ts-ignore
   apiPrefilter: () => {
+    return {};
+
     if (!remult.authenticated()) {
       if (getSite().allowDriveTasks) {
         return {
