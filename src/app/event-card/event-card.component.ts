@@ -896,6 +896,7 @@ export class EventCardComponent implements OnInit {
   }
 
   eventBelongsToMe(e: Task) {
+    console.log(`uid ${remult.user?.id} createUserId ${e.createUserId}`)
     return remult.user?.id == e.createUserId
   }
 }

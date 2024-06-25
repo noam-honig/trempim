@@ -1188,7 +1188,7 @@ ${url + '/s/' + this.editLink}
         name: 'שלח ווטסאפ לנהג',
         icon: 'sms',
         visible: (x) =>
-          [taskStatus.driverPickedUp, taskStatus.assigned].includes(
+          remult.isAllowed([Roles.dispatcher]) && [taskStatus.driverPickedUp, taskStatus.assigned].includes(
             x.taskStatus
           ),
         click: async (e) => {
@@ -1202,7 +1202,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'ווטסאפ למבקש הנסיעה',
         icon: 'sms',
-        visible: (x) => Boolean(x.requesterPhone1) && getSite().useFillerInfo,
+        visible: (x) => remult.isAllowed([Roles.dispatcher]) && Boolean(x.requesterPhone1) && getSite().useFillerInfo,
         click: async (e) => {
           if (!e.editLink) {
             e.editLink = createId()
@@ -1219,7 +1219,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'ווטסאפ לאיש קשר לאיסוף',
         icon: 'sms',
-        visible: (x) => Boolean(x.phone1) && x.phone1 != x.requesterPhone1,
+        visible: (x) => remult.isAllowed([Roles.dispatcher]) && Boolean(x.phone1) && x.phone1 != x.requesterPhone1,
         click: async (e) => {
           if (!e.editLink) {
             e.editLink = createId()
@@ -1234,7 +1234,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'בחר נהג',
         icon: 'directions_car',
-        visible: (x) => x.taskStatus === taskStatus.active,
+        visible: (x) => remult.isAllowed([Roles.dispatcher]) && x.taskStatus === taskStatus.active,
         click: async (e) => {
           ui.selectUser({
             onSelect: async (user) => {
@@ -1250,6 +1250,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'היסטוריה',
         icon: 'history_edu',
+        visible: (x) => remult.isAllowed([Roles.dispatcher]),
         click: async (e) => {
           ui.gridDialog({
             settings: new GridSettings(repo(TaskStatusChanges), {
@@ -1291,6 +1292,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'פרטי מוקדן',
         icon: 'contact_emergency',
+        visible: (x) => remult.isAllowed([Roles.dispatcher]),
         click: async (e) => {
           const s = await repo(TaskStatusChanges).findFirst(
             { taskId: e.id, createUserId: { $ne: '' } },
@@ -1307,13 +1309,13 @@ ${url + '/s/' + this.editLink}
       {
         name: 'פרטי נהג',
         icon: 'local_taxi',
-        visible: (e) => !!e.driverId,
+        visible: (e) => remult.isAllowed([Roles.dispatcher]) && !!e.driverId,
         click: (e) => ui.showUserInfo({ userId: e.driverId, title: 'נהג' }),
       },
       {
         name: 'העבר לבירור רלוונטיות',
         icon: 'question_mark',
-        visible: (e) => [taskStatus.active].includes(e.taskStatus),
+        visible: (e) => remult.isAllowed([Roles.dispatcher]) && [taskStatus.active].includes(e.taskStatus),
         click: async (e) => {
           await e.markForRelevanceCheck()
         },
@@ -1339,6 +1341,7 @@ ${url + '/s/' + this.editLink}
         name: 'החזר לנהג',
         icon: 'badge',
         visible: (e) =>
+          remult.isAllowed([Roles.dispatcher]) &&
           ![
             taskStatus.active,
             taskStatus.assigned,
@@ -1355,7 +1358,7 @@ ${url + '/s/' + this.editLink}
         icon: 'check_circle',
 
         visible: (e) =>
-          ![taskStatus.active, taskStatus.draft].includes(e.taskStatus),
+          remult.isAllowed([Roles.dispatcher]) && ![taskStatus.active, taskStatus.draft].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
         },
@@ -1364,7 +1367,7 @@ ${url + '/s/' + this.editLink}
         name: 'אשר טיוטא',
         icon: 'check_circle',
 
-        visible: (e) => [taskStatus.draft].includes(e.taskStatus),
+        visible: (e) => remult.isAllowed([Roles.dispatcher]) && [taskStatus.draft].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
         },
@@ -1372,9 +1375,11 @@ ${url + '/s/' + this.editLink}
       {
         name: 'סמן כטיוטא',
         visible: (e) =>
-          e.taskStatus == taskStatus.active ||
-          e.taskStatus === taskStatus.notRelevant ||
-          e.taskStatus == taskStatus.relevanceCheck,
+          remult.isAllowed([Roles.dispatcher]) && (
+            e.taskStatus == taskStatus.active ||
+            e.taskStatus === taskStatus.notRelevant ||
+            e.taskStatus == taskStatus.relevanceCheck
+          ),
         click: async (e) => {
           await e.markAsDraft()
         },
@@ -1408,7 +1413,7 @@ ${url + '/s/' + this.editLink}
       // },
       {
         name: 'פתח בMONDAY',
-        visible: (e) => e.externalId.startsWith('m:'),
+        visible: (e) => remult.isAllowed([Roles.dispatcher]) && e.externalId.startsWith('m:'),
         click: (t) => {
           window.open(
             `https://kanfi-barzel.monday.com/boards/1290250715/pulses/` +
