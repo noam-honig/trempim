@@ -1117,7 +1117,8 @@ ${this.getLink()}
           ? [[e.requesterPhone1, e.requesterPhone1Description]]
           : []),
         [
-          { field: e.phone1, readonly: true}, { field: e.phone1Description, readonly: true},
+          { field: e.phone1, readonly: !remult.isAllowed([Roles.dispatcher])},
+          { field: e.phone1Description, readonly: !remult.isAllowed([Roles.dispatcher])},
         ],
         e.description,
         e.privateDriverNotes,
