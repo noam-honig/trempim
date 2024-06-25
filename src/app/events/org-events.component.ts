@@ -213,7 +213,7 @@ export class OrgEventsComponent implements OnInit {
     switch (selectedTab) {
       case DriveTabs.MY_DRIVES: {
         return {
-          taskStatus: [taskStatus.assigned, taskStatus.full, taskStatus.driverPickedUp],
+          taskStatus: [taskStatus.active, taskStatus.assigned, taskStatus.full, taskStatus.driverPickedUp],
           $or: [
             {driverId: remult.user!.orgs.map((x) => x.userId) },
             {createUserId: remult.user!.id},
