@@ -96,8 +96,8 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       if (t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
         return true
       if (
-        t!.createUserId === remult.user?.id &&
-        remult.isAllowed(Roles.trainee)
+        t!.createUserId === remult.user?.id
+        // && remult.isAllowed(Roles.trainee)
       )
         return true
     }
