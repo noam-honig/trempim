@@ -582,7 +582,7 @@ ${this.getLink()}
   @CreatedAtField()
   createdAt = new Date()
   @Fields.string<Task>({
-    includeInApi: Roles.dispatcher,
+    includeInApi: true,
     allowApiUpdate: false,
     caption: 'משתמש מוסיף',
     displayValue: (u) => u.createUser?.name || '',
