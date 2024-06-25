@@ -1351,7 +1351,7 @@ ${url + '/s/' + this.editLink}
         },
       },
       {
-        name: 'החזר לפתוח לרישום',
+        name: 'החזר ללוח הנסיות',
         icon: 'check_circle',
 
         visible: (e) =>

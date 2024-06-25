@@ -894,6 +894,10 @@ export class EventCardComponent implements OnInit {
   navigate(path: string) {
     this.router.navigate([path])
   }
+
+  eventBelongsToMe(e: Task) {
+    return remult.user?.id == e.createUserId
+  }
 }
 
 interface dateEvents {
