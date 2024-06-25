@@ -12,6 +12,7 @@ import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
 import copy from 'copy-to-clipboard'
 import { Router } from '@angular/router'
+import { Roles } from '../users/roles'
 
 @Component({
   selector: 'app-intake',
@@ -62,7 +63,7 @@ export class IntakeComponent implements OnInit {
           : []),
         [e.phone1, e.phone1Description].map((y) => ({
           field: y,
-          readonly: true,
+          readonly: !remult.isAllowed([Roles.dispatcher]),
           visible: () => !getSite().onlyAskForSecondAddress,
         })),
         e.description,
