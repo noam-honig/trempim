@@ -1052,7 +1052,7 @@ ${this.getLink()}
       try {
         await Locks.lock(this.id, false)
       } catch (err: any) {
-        if (remult.isAllowed(Roles.admin)) {
+        if (remult.authenticated()) {
           if (await ui.yesNoQuestion(err.message + ', לפתוח בכל זאת?')) {
             await Locks.lock(this.id, true)
           } else return
