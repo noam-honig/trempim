@@ -111,7 +111,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   allowApiUpdate: (t) => {
     if (t!.taskStatus === taskStatus.draft)
       return Boolean(t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
-    return Boolean(t?.eventBelongToOrgUser(Roles.dispatcher))
+    return Boolean(t?.eventBelongToOrgUser())
   },
   allowApiRead: true,
   allowApiDelete: false,
