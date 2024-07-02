@@ -70,7 +70,9 @@ async function startup() {
       return
     }
     if (sp[1] === 'civil') {
-      res.redirect('https://civil.tremp-project.org' + req.path)
+      if (sp[2] === 'intake')
+        res.redirect('https://civil.tremp-project.org/civil/request')
+      else res.redirect('https://civil.tremp-project.org' + req.path)
       return
     }
     express.static('dist/angular-starter-project')(req, res, () => {
