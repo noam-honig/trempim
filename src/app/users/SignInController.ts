@@ -25,7 +25,7 @@ const otp = '123456'
 @Controller('signIn')
 export class SignInController extends ControllerBase {
   @PhoneField({
-    caption: 'מספר טלפון נייד',
+    caption: 'מספר טלפון נייד*',
     validate: [Validators.required, OnlyAllowIsraeliPhones],
     inputType: 'tel',
   })
@@ -40,6 +40,8 @@ export class SignInController extends ControllerBase {
   askForOtp = false
   @Fields.boolean()
   askForName = false
+  @Fields.boolean()
+  isSignup = false
 
   @Fields.string({ caption: 'שם ושם משפחה בבקשה' })
   name = ''
@@ -47,20 +49,19 @@ export class SignInController extends ControllerBase {
   @BackendMethod({ allowed: true })
   /**
    * This sign mechanism represents a simplistic sign in management utility with the following behaviors
-   * 1. The first user that signs in, is created as a user and is determined as admin.
+   * 1. If the phone is not in the database, the user is created.
    * 2. When a user that has no password signs in, that password that they've signed in with is set as the users password
    */
   async signIn() {
     let u = await this.findUserByPhone()
     if (!u) {
-      if ((await repo(User).count()) === 0) {
-        //first ever user is the admin
-        u = await repo(User).insert({
-          name: '',
-          phone: this.phone,
-          admin: true,
-        })
-      }
+      // create the user.
+      // TODO check blacklist.
+      this.isSignup = true
+      u = await repo(User).insert({
+        name: '',
+        phone: this.phone,
+      })
     }
     var d = new Date()
     d.setMinutes(d.getMinutes() + 5)
@@ -68,9 +69,9 @@ export class SignInController extends ControllerBase {
 
     await sendSms(
       this.phone,
-      `הקוד לכניסה ל${getTitle()} הוא: ` + otp + ' \n\n@sh.hagai.co #' + otp,
+      `הקוד לכניסה ל${getTitle()} הוא: ` + otp,
       true
-    ).then((x) => console.log('sent', x))
+    ).then((x) => console.log(`sent (code: ${otp}) ${x}`))
     otps.set(this.phone, { otp: otp, expire: d })
     this.askForOtp = true
     if (u && !u.name) this.askForName = true

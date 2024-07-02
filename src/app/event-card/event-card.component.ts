@@ -1,32 +1,32 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { Field, FieldRef, Fields, getFields, remult, repo } from 'remult'
+import { FieldRef, Fields, getFields, remult, repo } from 'remult'
 import { EventInfoComponent } from '../event-info/event-info.component'
 import { DataAreaSettings, RowButton } from '../common-ui-elements/interfaces'
-import { BusyService, openDialog } from '../common-ui-elements'
+import { openDialog } from '../common-ui-elements'
 
 import { UIToolsService } from '../common/UIToolsService'
-import { Task, eventDisplayDate } from '../events/tasks'
+import { eventDisplayDate, Task } from '../events/tasks'
 
 import { taskStatus } from '../events/taskStatus'
 import { Roles } from '../users/roles'
 import {
-  Location,
-  GetDistanceBetween,
-  getCity,
-  getLongLat,
-  getLocation,
-  getCurrentLocation,
-  getRegion,
-  getDistrict,
   GeocodeResult,
+  getCurrentLocation,
+  GetDistanceBetween,
+  getDistrict,
+  getLocation,
+  getLongLat,
+  getRegion,
+  Location
 } from '../common/address-input/google-api-helpers'
 import { LocationErrorComponent } from '../location-error/location-error.component'
 import copy from 'copy-to-clipboard'
-import { displayTime } from '../events/date-utils'
 import { DialogConfig } from '../common-ui-elements/src/angular/DialogConfig'
 import { getSite } from '../users/sites'
 import { YedidimBranchListComponent } from '../yedidim-branch-list/yedidim-branch-list.component'
 import { matchesCurrentUserId } from '../users/user'
+import { Router } from '@angular/router'
+import { DriveTabs } from '../events/org-events.component'
 
 @DialogConfig({ maxWidth: '95vw' })
 @Component({
@@ -35,7 +35,7 @@ import { matchesCurrentUserId } from '../users/user'
   styleUrls: ['./event-card.component.scss'],
 })
 export class EventCardComponent implements OnInit {
-  constructor(private tools: UIToolsService) {}
+  constructor(private tools: UIToolsService, private router: Router) {}
 
   menuOptions: RowButton<Task>[] = Task.rowButtons(this.tools, {
     taskAdded: (t) => {
@@ -44,14 +44,19 @@ export class EventCardComponent implements OnInit {
     },
     taskSaved: () => this.refreshFilters(false),
   })
-  addTask() {
-    const t = repo(Task).create()
+  addTask(isDrive: boolean) {
+    const t = repo(Task).create({isDrive: isDrive})
     t.openEditDialog(this.tools, async () => {
-      this.tasks = [t, ...this.tasks]
+      //this.tasks = [t, ...this.tasks]
+      /*
       if (await this.tools.yesNoQuestion('האם להעתיק הודעה לפרסום בווטסאפ?')) {
         t.copyWhatsappMessage(this.tools)
       }
-    })
+      */
+    }, isDrive, isDrive)
+  }
+  allowDriveTasks() {
+    return getSite().allowDriveTasks
   }
   buttons: RowButton<any>[] = [
     {
@@ -61,7 +66,7 @@ export class EventCardComponent implements OnInit {
         let message = 'קריאות פתוחות'
 
         if (this.category) {
-          message += ` (${this.category})`
+          //message += ` (${this.category})`
         }
 
         if (this.region) {
@@ -103,7 +108,7 @@ export class EventCardComponent implements OnInit {
           (x) =>
             (x.args = {
               tasks: this._tasks.filter((x) => this.filter(x)),
-              category: this.category,
+              //category: this.category,
             })
         )
       },
@@ -117,12 +122,15 @@ export class EventCardComponent implements OnInit {
   isDispatcher() {
     return remult.isAllowed(Roles.dispatcher)
   }
+  isVolunteer() {
+    return remult.authenticated()
+  }
   urgencies: dateEvents[] = []
   regions: AreaFilterInfo[] = []
   toRegions: AreaFilterInfo[] = []
   types: { id: string; count: number; caption: string }[] = []
   dates: { id: number; count: number; caption: string }[] = []
-  trackBy(i: number, e: { id: any }): any {
+  trackBy(i: number, e: Task | any): any {
     return e.id as any
   }
 
@@ -140,10 +148,15 @@ export class EventCardComponent implements OnInit {
 
   _tasks!: Task[]
 
-  @Input()
-  showingAllTasks = false
+  get showingAllTasks() {
+    return this.selectedTab == DriveTabs.SEARCH_DRIVES
+  }
+
   @Input()
   fromMap = false
+  @Input()
+  selectedTab: DriveTabs = DriveTabs.MY_DRIVES
+
   @Input()
   set tasks(val: Task[]) {
     this._tasks = val
@@ -162,6 +175,14 @@ export class EventCardComponent implements OnInit {
         this.startLocation = await getCurrentLocation()
       } catch {}
     }
+  }
+
+  showDriveOfferButton() {
+    return this.selectedTab == DriveTabs.FOR_DRIVERS
+  }
+
+  showPickupRequestButton() {
+    return this.selectedTab == DriveTabs.FOR_PICKUPEES
   }
 
   tasksForMap: Task[] = []
@@ -229,7 +250,7 @@ export class EventCardComponent implements OnInit {
         JSON.stringify({
           region: this.region,
           toRegion: this.toRegion,
-          category: this.category,
+          //category: this.category,
           date: this.filterDate
             ? Math.round((this.filterDate - new Date().valueOf()) / 86400000)
             : undefined,
@@ -350,16 +371,16 @@ export class EventCardComponent implements OnInit {
         addToRegionFilter('toRegion', this.toRegions)
       }
 
-      if (this.filter(e, { category: '' })) {
-        let type = this.types.find((c) => c.id == e.category)
-        if (!type) {
-          this.types.push({
-            id: e.category,
-            count: 1,
-            caption: e.category || '',
-          })
-        } else type.count++
-      }
+      // if (this.filter(e, { category: '' })) {
+      //   let type = this.types.find((c) => c.id == e.category)
+      //   if (!type) {
+      //     this.types.push({
+      //       id: e.category,
+      //       count: 1,
+      //       caption: e.category || '',
+      //     })
+      //   } else type.count++
+      // }
       if (this.filter(e, { date: 0 })) {
         let d = this.dates.find((c) => c.id == e.eventDate.valueOf())
         if (!d) {
@@ -581,14 +602,14 @@ export class EventCardComponent implements OnInit {
     overrideSearch?: {
       region?: string
       toRegion?: string
-      category?: string
+      // category?: string
       date?: number
     }
   ) {
     const search: Required<typeof overrideSearch> = {
       region: this.region,
       toRegion: this.toRegion,
-      category: this.category,
+      // category: this.category,
       date: this.filterDate,
       ...overrideSearch,
     }
@@ -608,7 +629,7 @@ export class EventCardComponent implements OnInit {
           this.toRegion &&
           filterRegion(search.region, e.toAddressApiResult) &&
           filterRegion(search.toRegion, e.addressApiResult))) &&
-      (search.category == '' || e.category == search.category) &&
+      // (search.category == '' || e.category == search.category) &&
       (search.date == 0 || search.date == e.eventDate.valueOf())
     )
   }
@@ -675,6 +696,10 @@ export class EventCardComponent implements OnInit {
   }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active
+  }
+
+  isAssigned(e: Task) {
+    return e.taskStatus !== taskStatus.assigned
   }
 
   distance(e: Task) {
@@ -864,6 +889,15 @@ export class EventCardComponent implements OnInit {
       this.urgencies.forEach((d) =>
         d.events.sort((a, b) => this.distanceToTask(a) - this.distanceToTask(b))
       )
+  }
+
+  navigate(path: string) {
+    this.router.navigate([path])
+  }
+
+  eventBelongsToMe(e: Task) {
+    console.log(`uid ${remult.user?.id} createUserId ${e.createUserId}`)
+    return remult.user?.id == e.createUserId
   }
 }
 

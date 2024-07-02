@@ -1,0 +1,19 @@
+<div class="full-page">
+  <div style="display: flex; justify-content: space-between">
+    <mat-form-field>
+      <input
+        matInput
+        [(ngModel)]="searchString"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="חיפוש שם או טלפון"
+        (input)="doSearch()"
+      />
+    </mat-form-field>
+    <div style="align-self: center">
+      <button mat-raised-button color="primary" (click)="addToBlacklist()">
+        הוסף לרשימה
+      </button>
+    </div>
+  </div>
+  <data-grid [settings]="blacklist" class="grow-item"></data-grid>
+</div>

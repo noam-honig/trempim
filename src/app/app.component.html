@@ -6,12 +6,6 @@
       </div>
       <markdown [data]="introText"> </markdown>
 
-      <a href="https://youtu.be/VZa2jQiMYA0" target="_blank"
-        >לסרטון הסבר קצר לחצו כאן 📽</a
-      >
-
-      <h2>לכניסה</h2>
-
       <mat-form-field
         *ngIf="signIn.askForOtp"
         appearance="outline"
@@ -34,24 +28,15 @@
       </mat-form-field>
       <data-area [settings]="area"> </data-area>
       <button mat-raised-button color="primary" (click)="doSignIn()">
-        כניסה
+        {{signIn.isSignup ? 'הרשמה' : 'כניסה'}}
       </button>
     </div>
   </app-card-in-middle>
-  <div style="display: flex; justify-content: center">
-    <a routerLink="אודות">אודות אפליקצית חגי שינועים</a>
-  </div>
-</div>
-<div
-  style="display: flex; flex-direction: column"
-  *ngIf="doesNotRequireLogin() && !remult.authenticated()"
->
-  <router-outlet></router-outlet>
 </div>
 
 <div
   style="height: 100%; display: flex; flex-direction: column"
-  *ngIf="remult.authenticated()"
+  *ngIf="remult.authenticated() || doesNotRequireLogin()"
 >
   <mat-toolbar color="primary" style="flex-shrink: 0">
     <div>
@@ -101,11 +86,8 @@
       <h4 *ngIf="remult.authenticated()">
         {{ terms.hello }} {{ remult.user!.name }}
       </h4>
-      <a href="https://youtu.be/VZa2jQiMYA0" target="_blank"
-        >לסרטון הסבר קצר 📽</a
-      >
       <mat-nav-list role="list">
-        <mat-list-item routerLinkActive="active-route">
+        <mat-list-item routerLinkActive="active-route" *ngIf="showTrips()">
           <a
             matLine
             [routerLink]="['/']"
@@ -127,32 +109,6 @@
             >בעיות</a
           >
         </mat-list-item>
-        <mat-list-item routerLinkActive="active-route" *ngIf="isTrainee()">
-          <a
-            matLine
-            [matBadge]="drafts"
-            [matBadgeHidden]="!drafts"
-            [routerLink]="['/טיוטות']"
-            (click)="routeClicked()"
-            class="draft-line-badge"
-            matBadgeColor="warn"
-            matBadgePosition="above after"
-            >טיוטות</a
-          >
-        </mat-list-item>
-        <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">
-          <a
-            matLine
-            [matBadge]="relevanceCheck"
-            [matBadgeHidden]="!relevanceCheck"
-            [routerLink]="['/בבדיקה']"
-            (click)="routeClicked()"
-            class="draft-line-badge"
-            matBadgeColor="warn"
-            matBadgePosition="above after"
-            >בדיקת רלוונטיות</a
-          >
-        </mat-list-item>
         <mat-list-item routerLinkActive="active-route" *ngIf="isDispatcher()">
           <a
             matLine
@@ -166,6 +122,23 @@
             >עדכונים</a
           >
         </mat-list-item>
+        <mat-list-item routerLinkActive="active-route">
+          <a
+            matLine
+            [href]="['https://sites.google.com/view/trempim']"
+            class="alert-line-badge"
+            >מידע וסירטוני הסבר</a
+          >
+        </mat-list-item>
+        <mat-list-item routerLinkActive="active-route" *ngIf="showDriverTrips()">
+          <a
+            matLine
+            [routerLink]="['/search']"
+            (click)="routeClicked()"
+            class="alert-line-badge"
+            >חיפוש נסיעה</a
+          >
+        </mat-list-item>
         <ng-container *ngFor="let m of router.config">
           <mat-list-item
             *ngIf="shouldDisplayRoute(m)"
@@ -176,19 +149,6 @@
             }}</a>
           </mat-list-item>
         </ng-container>
-
-        <mat-list-item routerLinkActive="active-route" *ngIf="showAddTrip()">
-          <a
-            matLine
-            [routerLink]="['/intake']"
-            (click)="routeClicked()"
-            class="alert-line-badge"
-            >הוספת נסיעה</a
-          >
-        </mat-list-item>
-        <mat-list-item *ngIf="showCopyLink()" routerLinkActive="active-route">
-          <a matLine (click)="copyAddLink()">העתק קישור לטופס</a>
-        </mat-list-item>
       </mat-nav-list>
     </mat-sidenav>
     <div class="app-sidenav-content">

@@ -5,8 +5,10 @@
       (selectedTabChange)="onTabChange($event)"
       [selectedIndex]="activeTab"
     >
+      <mat-tab label="לטרמפיסטים"></mat-tab>
+      <mat-tab label="לנהגים"></mat-tab>
       <mat-tab label="נסיעות שלי"></mat-tab>
-      <mat-tab label="חיפוש נסיעה"></mat-tab>
+      <mat-tab label="חיפוש נסיעה" *ngIf="isDispatcher()"></mat-tab>
       <mat-tab label="נסיעות פעילות" *ngIf="isDispatcher()"> </mat-tab>
     </mat-tab-group>
   </div>
@@ -14,7 +16,7 @@
   <div class="grow-item">
     <app-event-card
       [tasks]="events"
-      [showingAllTasks]="activeTab != 0"
+      [selectedTab]="getTabs()[activeTab]"
     ></app-event-card>
   </div>
 </div>

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 
-import { EntityFilter, remult, repo, Unsubscribe } from 'remult'
+import { EntityFilter, remult, repo, Unsubscribe, UserInfo } from 'remult'
 import { Roles } from '../users/roles'
 import { Task } from './tasks'
 import { taskStatus } from './taskStatus'
@@ -16,6 +16,14 @@ import { tripsGrid } from './tripsGrid'
 import { getSite, getSiteByOrg } from '../users/sites'
 import { EventCardComponent } from '../event-card/event-card.component'
 import { User } from '../users/user'
+
+export enum DriveTabs {
+  MY_DRIVES,
+  SEARCH_DRIVES,
+  ACTIVE_DRIVES,
+  FOR_DRIVERS,
+  FOR_PICKUPEES,
+}
 
 @Component({
   selector: 'app-org-events',
@@ -57,9 +65,8 @@ export class OrgEventsComponent implements OnInit {
     this.events = []
     this.route.paramMap.subscribe((param) => {
       this.tripId = param.get('id')!
-      if (this.tripId) this.activeTab = 1
       this.loadEvents()
-      if (remult.user?.showAllOrgs == null && remult.user!.orgs.length > 1) {
+      if (remult.user && remult.user.showAllOrgs == null && remult.user!.orgs.length > 1) {
         this.tools
           .yesNoQuestion(
             `הנך רשום במספר ארגונים, האם תרצה להציג את הנסיעות של כל הארגונים?\n תמיד תוכל לשנות הגדרה זו במסך עדכון פרטים`
@@ -78,53 +85,38 @@ export class OrgEventsComponent implements OnInit {
   private loadEvents() {
     let date = new Date()
     date.setHours(date.getHours() - 2)
-    let orgFilter: EntityFilter<Task> = {}
-    if (remult.user!.showAllOrgs == null) {
-      orgFilter = { $and: [getSite().tasksFilter()] }
-    } else if (remult.user!.showAllOrgs == false) {
-      orgFilter = { org: getSite().org }
-    } else
-      orgFilter = {
-        $or: remult.user?.orgs
-          .filter((x) => !getSiteByOrg(x.org).showPastEvents)
-          .map((x) => ({
-            $or: [{ org: { '!=': x.org } }, { validUntil: { $gt: date } }],
-          })),
-      }
 
+    let orgOrFilter: EntityFilter<Task> = {}
+    let orgAndFilter: EntityFilter<Task> = {}
+    let orgFilter: EntityFilter<Task> = {}
+    // if (remult.user?.showAllOrgs == null) { // If a user is unauthenticated, then show all (drive) tasks.
+    //   orgAndFilter = { $and: [getSite().tasksFilter()] }
+    // } else if (remult.user!.showAllOrgs == false) {
+    //   orgFilter = { org: getSite().org }
+    // } else {
+    //   orgOrFilter = {
+    //     $or: remult.user?.orgs
+    //       .filter((x) => !getSiteByOrg(x.org).showPastEvents)
+    //       .map((x) => ({
+    //         $or: [{ org: { '!=': x.org } }, { validUntil: { $gt: date } }],
+    //       }))
+    //   }
+    // }
+
+    const tabs = this.getTabs()
+
+    const whereSearch = this.getTabSearchLogic(tabs, date, orgFilter, orgAndFilter, orgOrFilter)
+    if (whereSearch === null) {
+      return
+    }
+
+    // Beware. API Prefilter is the only thing protecting this component from giving
+    //  access to all tasks to anonymous users. isDrive is forced back there already.
     repo(Task)
       .find({
-        where:
-          this.activeTab == 0
-            ? {
-                taskStatus: [taskStatus.assigned, taskStatus.driverPickedUp],
-                driverId: remult.user!.orgs.map((x) => x.userId),
-              }
-            : // : document.location.host.includes('localhost') && false
-            // ? {}
-            this.activeTab == 1
-            ? {
-                category:
-                  (remult.user?.allowedCategories?.filter((x) => x)?.length ||
-                    0) > 0
-                    ? remult.user!.allowedCategories
-                    : undefined,
-                taskStatus: [taskStatus.active],
-                validUntil: getSite().showPastEvents
-                  ? undefined!
-                  : { $gt: date },
-                ...orgFilter,
-              }
-            : {
-                taskStatus: [
-                  taskStatus.assigned,
-                  taskStatus.driverPickedUp,
-                  taskStatus.otherProblem,
-                ],
-                $and: [getSite().tasksFilter()],
-              },
+        where: whereSearch,
         include:
-          this.activeTab == 2
+          tabs[this.activeTab] == DriveTabs.ACTIVE_DRIVES
             ? {
                 driver: true,
               }
@@ -163,9 +155,106 @@ export class OrgEventsComponent implements OnInit {
           if (this.events.length == 0) this.gotoSearchEvents()
         }
       })
+      .catch((e) => {
+        console.log('bp')
+      })
+  }
+
+  getTabs() {
+    if (remult.isAllowed(Roles.dispatcher)) {
+      return [
+        DriveTabs.FOR_PICKUPEES, DriveTabs.FOR_DRIVERS, DriveTabs.MY_DRIVES, DriveTabs.SEARCH_DRIVES, DriveTabs.ACTIVE_DRIVES
+      ]
+    } else {
+      return [DriveTabs.FOR_PICKUPEES, DriveTabs.FOR_DRIVERS, DriveTabs.MY_DRIVES]
+    }
+  }
+
+  private getTabSearchLogic(
+    tabs: DriveTabs[], date: Date, orgFilter: EntityFilter<Task>,
+    orgAndFilter: EntityFilter<Task>, orgOrFilter: EntityFilter<Task>
+  ): EntityFilter<Task> | null {
+    const buildSearchDrives = (withDriveOffers: boolean, withRequests: boolean): EntityFilter<Task> => {
+      const q = {
+        $and: [
+          orgAndFilter, // will be $and[$and] = {...}
+          {
+            $or: [
+              { taskStatus: [taskStatus.active], isDrive: false },
+              { taskStatus: [taskStatus.assigned], isDrive: true },
+            ]
+          }
+        ],
+        $or: [
+          orgOrFilter, // will be $or[$or] = {...}
+        ],
+        validUntil: getSite().showPastEvents
+          ? undefined!
+          : { $gt: date },
+        ...orgFilter,
+      }
+
+      const orBlock = []
+      if (withDriveOffers) {
+        orBlock.push({ taskStatus: [taskStatus.assigned], isDrive: true})
+      }
+      if (withRequests) {
+        orBlock.push({ taskStatus: [taskStatus.active], isDrive: false })
+      }
+
+      if (withDriveOffers || withRequests) {
+        q["$and"].push({"$or": orBlock})
+      }
+
+      return q
+    }
+
+    const selectedTab = tabs[this.activeTab]
+    switch (selectedTab) {
+      case DriveTabs.MY_DRIVES: {
+        return {
+          taskStatus: [taskStatus.active, taskStatus.assigned, taskStatus.full, taskStatus.driverPickedUp],
+          $or: [
+            {driverId: remult.user!.orgs.map((x) => x.userId) },
+            {createUserId: remult.user!.id},
+          ]
+        }
+      }
+      case DriveTabs.SEARCH_DRIVES: {
+        return buildSearchDrives(true, true)
+      }
+      case DriveTabs.ACTIVE_DRIVES: {
+        return {
+          taskStatus: [
+            taskStatus.assigned,
+            taskStatus.full,
+            taskStatus.driverPickedUp,
+            taskStatus.otherProblem,
+          ],
+          $and: [getSite().tasksFilter()],
+          driverId: this.isVolunteer() ? remult.user!.id : undefined,
+        }
+      }
+      case DriveTabs.FOR_DRIVERS: {
+        return buildSearchDrives(false, true)
+      }
+      case DriveTabs.FOR_PICKUPEES: {
+        return buildSearchDrives(true, false)
+      }
+    }
+
+    return null
   }
 
   private gotoSearchEvents() {
     this.tabGroup.selectedIndex = 1
+  }
+
+  public isPublicView() {
+    return getSite().allowDriveTasks && !remult.authenticated()
+  }
+
+  private isVolunteer() {
+    return !remult.isAllowed(Roles.dispatcher) && !remult.isAllowed(Roles.manageDrivers) && !remult.isAllowed(Roles.admin) && !remult.isAllowed(Roles.superAdmin) && !remult.isAllowed(Roles.trainee)
   }
 }

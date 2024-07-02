@@ -3,21 +3,21 @@
     <span *ngIf="onTheWayBack" style="font-weight: bold; color: red"
       >בדרך חזרה,
     </span>
-    {{ e.category || '' }}<span style="font-size: 12px"> {{ distance }}</span>
+    <b>{{ e.isDrive ? "הצעה מנהג: " + e.driverNamePublic  : "בקשה מטרמפיסט:"}}</b> {{ e.category || '' }}<span style="font-size: 12px"> {{ distance }}</span>
   </span>
 
   <div class="route-start-finish">
     <div class="route-indicator-container">
       <div class="row" style="padding-left: 10px; padding-right: 10px">
-        <div class="dot right"></div>
-        <div class="line"></div>
+        <div class="dot right {{isDrive(e)}}"></div>
+        <div class="line {{isDrive(e)}}"></div>
         <div class="arrow-container">
           <div class="arrow"></div>
           <div class="distance-text" *ngIf="e.toAddressApiResult">
             {{ travelDistance(e) }}
           </div>
         </div>
-        <div class="dot left"></div>
+        <div class="dot left {{isDrive(e)}}"></div>
       </div>
       <div class="row" style="padding-top: 5px">
         <div class="text">{{ eventCity(e) }}</div>
@@ -27,6 +27,7 @@
       </div>
     </div>
   </div>
+  <div style="margin-top: 5px;" *ngIf="e.isDrive">מספר מקומות: {{e.spaceAvailable}}</div>
   <div style="margin-bottom: 10px">
     {{ e.displayDate() }}
   </div>

@@ -34,5 +34,17 @@
    "/hahatul/images": {
       "target": "http://localhost:3002",
       "secure": false
+   },
+   "/protest/api": {
+      "target": "http://localhost:3002",
+      "secure": false
+   },
+   "/protest/images": {
+      "target": "http://localhost:3002",
+      "secure": false
+   },
+   "/protest/assets": {
+      "target": "http://localhost:3002",
+      "secure": false
    }
 }

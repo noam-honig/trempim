@@ -12,6 +12,7 @@ import { UITools } from '../common/UITools'
 import { UIToolsService } from '../common/UIToolsService'
 import copy from 'copy-to-clipboard'
 import { Router } from '@angular/router'
+import { Roles } from '../users/roles'
 
 @Component({
   selector: 'app-intake',
@@ -36,10 +37,6 @@ export class IntakeComponent implements OnInit {
     fields: () => {
       let e = this.r.$
       return [
-        {
-          field: e.category!,
-          visible: () => !getSite().onlyAskForSecondAddress,
-        },
         { field: e.title, caption: getSite().taskTitleCaption },
       ]
     },
@@ -60,22 +57,16 @@ export class IntakeComponent implements OnInit {
           field: e.toAddress,
           caption: getSite().toAddressName || e.toAddress.metadata.caption,
         },
-        e.description,
         [e.eventDate, e.startTime, e.relevantHours],
         ...(getSite().useFillerInfo
           ? [[e.requesterPhone1, e.requesterPhone1Description]]
           : []),
         [e.phone1, e.phone1Description].map((y) => ({
           field: y,
+          readonly: !remult.isAllowed([Roles.dispatcher]),
           visible: () => !getSite().onlyAskForSecondAddress,
         })),
-        [e.phone2, e.phone2Description].map((y) => ({
-          field: y,
-          visible: () => !getSite().onlyAskForSecondAddress,
-        })),
-        [e.toPhone1, e.tpPhone1Description],
-        [e.toPhone2, e.tpPhone2Description],
-        e.internalComments,
+        e.description,
         e.imageId,
       ]
     },

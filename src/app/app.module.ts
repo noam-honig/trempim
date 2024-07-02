@@ -63,6 +63,9 @@ import { ShowPublicEventComponent } from './show-public-event/show-public-event.
 import { TripSubtitleComponent } from './trip-subtitle/trip-subtitle.component';
 import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.component';
 import { MoreOrgsComponent } from './more-orgs/more-orgs.component'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { BlacklistComponent } from './blacklist/blacklist.component'
 
 @NgModule({
   declarations: [
@@ -101,6 +104,7 @@ import { MoreOrgsComponent } from './more-orgs/more-orgs.component'
     TripSubtitleComponent,
     TaskSelfUpdateComponent,
     MoreOrgsComponent,
+    BlacklistComponent,
   ],
   imports: [
     NgApexchartsModule,
@@ -124,6 +128,8 @@ import { MoreOrgsComponent } from './more-orgs/more-orgs.component'
     MarkdownModule.forRoot(),
     MatTabsModule,
     MatBadgeModule,
+    MatSlideToggleModule,
+    MatTooltipModule
   ],
   providers: [
     UIToolsService,

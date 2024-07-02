@@ -1,6 +1,7 @@
 import { repo } from 'remult'
 import { getSite } from '../app/users/sites'
 import { BlockedPhone } from '../app/events/blockedPhone'
+import { Blacklist } from '../app/blacklist/blacklist'
 
 export async function sendSms(
   phone: string,
@@ -11,36 +12,25 @@ export async function sendSms(
     console.log('blocked phone', phone)
     return 'blocked phone'
   }
+  if ((await repo(Blacklist).count({ phone: phone })) > 0) {
+    console.log('blocked phone', phone)
+    return 'המספר שלך נחסם'
+  }
   if (process.env['disable_sms']) {
     console.log({ phone, message })
     return 'disable sms'
   }
   const fetch = await import('node-fetch')
   const FormData = await import('form-data')
-  let un = process.env['SMS_UN']
-  let pw = process.env['SMS_PW']
-  let accid = process.env['SMS_ACCID']
+  let gs_apikey = process.env['SMS_APIKEY']
+  let gs_originator = process.env['SMS_PN']
   const inforuToken = process.env['INFORU_SMS_TOKEN']
   let useGlobalSms = !inforuToken
   var from = 'Hagai'
   const YEDIDIM_API_KEY = process.env['YEDIDIM_API_KEY']
   const useYedidim = getSite().urlPrefix === 'y' && YEDIDIM_API_KEY
-  if (!accid && !inforuToken && !YEDIDIM_API_KEY) return 'חשבון SMS לא הוגדר'
+  if (!gs_apikey && !inforuToken && !YEDIDIM_API_KEY) return 'חשבון SMS לא הוגדר'
   phone = phone.replace(/\D/g, '')
-
-  var t = new Date()
-  var date =
-    t.getFullYear() +
-    '/' +
-    (t.getMonth() + 1) +
-    '/' +
-    t.getDate() +
-    ' ' +
-    t.getHours() +
-    ':' +
-    t.getMinutes() +
-    ':' +
-    t.getSeconds()
 
   const send = async () => {
     try {
@@ -94,41 +84,29 @@ export async function sendSms(
             '<?xml version="1.0" encoding="utf-8"?>' +
             '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">' +
             '<soap12:Body>' +
-            '<sendSmsToRecipients xmlns="apiItnewsletter">' +
-            '<un>' +
-            un +
-            '</un>' +
-            '<pw>' +
-            pw +
-            '</pw>' +
-            '<accid>' +
-            accid +
-            '</accid>' +
-            '<sysPW>' +
-            'itnewslettrSMS' +
-            '</sysPW>' +
-            '<t>' +
-            date +
-            '</t>' +
-            '<txtUserCellular>' +
-            from +
-            '</txtUserCellular>' +
-            '<destination>' +
+            '<sendSmsToRecipients xmlns="apiGlobalSms">' +
+            '<ApiKey>' +
+            gs_apikey +
+            '</ApiKey>' +
+            '<txtOriginator>' +
+            gs_originator +
+            '</txtOriginator>' +
+            '<destinations>' +
             phone +
-            '</destination>' +
+            '</destinations>' +
             '<txtSMSmessage>' +
             message +
             '</txtSMSmessage>' +
             '<dteToDeliver></dteToDeliver>' +
-            '<txtAddInf>jsnodetest</txtAddInf>' +
+            '<txtAddInf></txtAddInf>' +
             '</sendSmsToRecipients>' +
             '</soap12:Body>' +
             '</soap12:Envelope>'
           let h = new fetch.Headers()
           h.append('Content-Type', 'text/xml; charset=utf-8')
-          h.append('SOAPAction', 'apiItnewsletter/sendSmsToRecipients')
+          h.append('SOAPAction', 'apiGlobalSms/sendSmsToRecipients')
           let r = await fetch.default(
-            'https://sapi.itnewsletter.co.il/webservices/webservicesms.asmx',
+            'http://api.itnewsletter.co.il/webservices/wssms.asmx',
             {
               method: 'POST',
               headers: h,

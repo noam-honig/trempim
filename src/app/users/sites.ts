@@ -28,8 +28,9 @@ export class Site {
       this.org = this.urlPrefix
     }
 
-    if (!this.categories.includes(this.defaultCategory))
-      this.categories = [this.defaultCategory, ...this.categories]
+    if (!this.defaultCategory) {
+      this.defaultCategory = this.categories[0]
+    }
   }
   dbSchema!: string
   ignore?: boolean
@@ -50,6 +51,7 @@ export class Site {
   showValidUntil = false
   requireValidUntil = false
   requireContactName = false
+  allowDriveTasks = false
   getVisibleOrgs = () => [
     this,
     ...this.getOtherVisibleOrgs().filter((x) => x != this),
@@ -99,14 +101,15 @@ ${
     return true
   }
 
-  soldiersDelivery = 'שינוע חיילים'
+  //soldiersDelivery = 'שינוע חיילים'
   bikeDelivery = 'שינוע באופנוע'
 
   bikeCategoryCaption?: string
-  defaultCategory = this.soldiersDelivery
+  defaultCategory: string = ''
   truckCategoryCaption?: string
   categories: string[] = [
-    this.soldiersDelivery,
+    //this.soldiersDelivery,
+    '',
     'שינוע ציוד',
     'שינוע מזון',
     'שינוע ברכב מסחרי . נגרר',
@@ -142,7 +145,7 @@ const bikeIl: Site = new Site('bikeil', {
   getIntroTextImplementation: () => {
     return `ברוכים הבאים לאפליקציית השינועים של חמל אופנועים.
 
-האפליקציה מיועדת לשימוש מתנדבים הרוכבים על דו-גלגלי או רכב פרטי\\מסחרי ורוצים לסייע בשינוע של ציוד ללוחמים ולמשפחות הנפגעים, או בשינועים המוגדרים כדחופים, לפי שיקול דעתו של החמל. 
+האפליקציה מיועדת לשימוש מתנדבים הרוכבים על דו-גלגלי או רכב פרטי\\מסחרי ורוצים לסייע בשינוע של ציוד ללוחמים ולמשפחות הנפגעים, או בשינועים המוגדרים כדחופים, לפי שיקול דעתו של החמל.
 
 בכל בקשה בנושא אחר יש לפנות לאחד מהחמלים האחרים העוסקים במגוון נושאים כגון טרמפים, מלאי ציוד וכו.
 
@@ -295,23 +298,23 @@ function yedidimEnv(urlPrefix: string) {
     canSeeUrgency: () => remult.isAllowed(Roles.admin),
     getIntroTextImplementation: ({ registerVolunteerLink }) => {
       return `ברוכים הבאים למערכת השינועים של ידידים!
-  
+
   כאן תוכלו להתעדכן באירועי שינוע ולסייע בהסעת חיילים לבסיסים, בשינוע ציוד לחיילים או בשינועים שונים הנדרשים לכוחות העורף.
-  
+
   המענה שלכם יסייע באופן משמעותי למאמץ המלחמתי כעוגן האזרחי של ישראל.
-  
+
   ${
     registerVolunteerLink
       ? `
-  
+
   עוד לא נרשמתם? [לחצו כאן להרשמה ונאשר אתכם במהרה](${registerVolunteerLink})
-  
+
   `
       : ''
   }
-  
+
   במידה ונתקלתם בבעיה בהתחברות למערכת יש לפנות למנהל הסניף, או להתקשר למוקד הכוננים במספר [077-600-1230](tel:077-600-1230) שלוחה 1.
-  
+
   צאו לעשות חסדים!`
     },
 
@@ -331,7 +334,7 @@ function yedidimEnv(urlPrefix: string) {
 }
 const yedidim = yedidimEnv('y')
 
-const civil = new Site('civil', {
+const civil = new Site('protest', {
   showComfortIntakeMessage: true,
   sendTextMessageToRequester: true,
   sendTextMessageOnlyForFutureEvents: true,
@@ -342,32 +345,45 @@ const civil = new Site('civil', {
   showValidUntil: true,
   requireValidUntil: true,
   getIntroText: () => {
-    return `נהגים מתנדבי טרמפים, ברוכים הבאים למערכת החדשה,
+    return `<b>מערכת ממוכנת לטרמפים למחאה</b>
 
-אם טרם נרשמתם כנהגים, [אנא מלאו את הטופס פה](https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U)
+אנא הרשמו למערכת. לאחר ההרשמה ואימות SMS:
 
-אם נרשמתם כבר, אמורים להתקשר אליכם לאימות נתונים.
+<ul>
+  <li>נהגים יוכלו לחפש <u>בקשות מטרמפיסטים</u> ולפרסם <u>הצעות נסיעה</u></li>
+  <li>טרמפיסטים יוכלו לחפש <u>הצעות מנהגים</u> ולפרסם <u>בקשות לטרמפים</u></li>
+</ul>
 
-מספר שעות לאחר האימות, פרטיכם יוזנו למערכת, ואז מסי הטלפון שלכם יוכר. מכאן ואילך, לאחר אימות SMS, תוכלו לחפש בקשות מתאימות, ולממש את רוח ההתנדבות שלכם.
-יש  בעיות? דווחו בקבוצת הוואטסאפ "טרמפים+ כלל הארץ". הצטרפות לקבוצה הנ"ל - https://bit.ly/3Q7HJ2R`
+<!-- הכניסה למערכת לנהגים:
+
+<a>https://civil.tremp-project.org/protest</a>
+
+הכניסה למערכת לטרמפיסטים:
+
+<a>https://civil.tremp-project.org/protest/request</a> -->
+
+הדרכה לשימוש במערכת ופרטים נוספים:<br />
+<a>https://bit.ly/4dOBsEu</a>
+`
   },
   showCopyLink: true,
   allowAnyVolunteerToAdd: true,
-  useFillerInfo: true,
+  useFillerInfo: false,
   allDeliveryRequestsAreApprovedAutomatically: true,
 
-  defaultCategory: 'הסעת חיילים',
+  defaultCategory: '',
   registerVolunteerLink:
     'https://docs.google.com/forms/d/1tCBQchGqgjU7a604BduE-MFGWtiutdOTTfFW4TpKc2U',
   categories: [
-    'הסעת מפונים',
-    'הסעות אחר',
+    '',
+    'חיילים',
+    'מפונים',
     'שינוע ציוד',
     'שינוע אוכל חם',
-    'אחר',
   ],
   showPastEvents: false,
   defaultLinkDescription: 'מתנדבי טרמפים, מערכת ניהול טרמפים',
+  allowDriveTasks: true,
 })
 
 const warRoom = new Site('wrc', {
@@ -407,6 +423,8 @@ const test1 = new Site('test1', {
   title: 'פיתוח',
   ignore: true,
   org: 'test1',
+  allowDriveTasks: true,
+  allowAnyVolunteerToAdd: true,
 })
 const test2 = new Site('test2', {
   showValidUntil: false,
@@ -424,6 +442,7 @@ export function initSite(site?: string) {
       site = document.location.pathname.split('/')[1]
     }
   }
+
   remult.context.site =
     backendSites.find((x) => x.urlPrefix === site) ||
     new Site('error', { dbSchema: 'error', title: 'error' })
@@ -523,23 +542,23 @@ export function getSiteFromPath(req: { path: string }) {
 
 /*
 insert into shinuim.users
-( id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories)  
-select id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories 
+( id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories)
+select id, org, name, phone, adminNotes, createDate, createUserId, admin, dispatcher, trainee, manageDrivers, deleted, lastUpdateView, addressApiResult, address, okCategories
 from bikeil.users;
 
 insert into shinuim.tasks (id, org, title, taskStatus, statusChangeDate, description, urgency, category, eventDate, startTime, relevantHours, validUntil, addressApiResult, address, toAddressApiResult, toAddress, distance, requesterPhone1, requesterPhone1Description, phone1, phone1Description, phone2, phone2Description, toPhone1, tpPhone1Description, toPhone2, tpPhone2Description, privateDriverNotes, createdAt, createUserId, driverId, statusNotes, externalId, internalComments, imageId, returnMondayStatus, publicVisible, responsibleDispatcherId)
 select id, org, title, taskStatus, statusChangeDate, description, urgency, category, eventDate, startTime, relevantHours, validUntil, addressApiResult, address, toAddressApiResult, toAddress, distance, requesterPhone1, requesterPhone1Description, phone1, phone1Description, phone2, phone2Description, toPhone1, tpPhone1Description, toPhone2, tpPhone2Description, privateDriverNotes, createdAt, createUserId, driverId, statusNotes, externalId, internalComments, imageId, returnMondayStatus, publicVisible, responsibleDispatcherId
 from bikeil.tasks;
 
-insert into shinuim.changelog (id, org, relatedId, relatedName, entity, appUrl, apiUrl, changeDate, userId, userName, changes, changedFields) 
+insert into shinuim.changelog (id, org, relatedId, relatedName, entity, appUrl, apiUrl, changeDate, userId, userName, changes, changedFields)
 select id, org, relatedId, relatedName, entity, appUrl, apiUrl, changeDate, userId, userName, changes, changedFields
 from bikeil.changelog;
 
 insert into shinuim.taskstatuschanges (id, org, taskId, what, eventStatus, notes, driverId, createUserId, session, createdAt)
-select id, org, taskId, what, eventStatus, notes, driverId, createUserId, session, createdAt 
+select id, org, taskId, what, eventStatus, notes, driverId, createUserId, session, createdAt
 from bikeil.taskstatuschanges;
 insert into shinuim.images select * from bikeil.images;
-insert into shinuim.session (id,createdat,headers,ip) 
+insert into shinuim.session (id,createdat,headers,ip)
 select id,createdat,headers,ip from bikeil.session;
 
 */
