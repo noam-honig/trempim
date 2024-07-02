@@ -194,6 +194,34 @@ const hahatul: Site = new Site('hahatul', {
     ],
   }),
 })
+const harZion: Site = new Site('hz', {
+  sendTextMessageOnApprove: true,
+  sendTextMessageToRequester: true,
+  maxActiveTripsPerDriver: 20,
+  dbSchema: 'shinuim',
+  title: 'הר ציון 0710',
+  showCopyLink: true,
+  allowAnyVolunteerToAdd: true,
+  sendSmsOnNewDraft: true,
+  useFillerInfo: true,
+  registerVolunteerLink:
+    'https://wa.me/972545276812?text=' +
+    encodeURI('שלום, אני מעוניין להצטרף כנהג מתנדב - שמי הוא: '),
+  allowShareLink: true,
+  //getOtherVisibleOrgs: theBigGroup,
+  //signInFilter: () => ({ org: theBigGroup().map((x) => x.org) }),
+  // tasksFilter: () => ({
+  //   $or: [
+  //     {
+  //       org: theBigGroup().map((x) => x.org),
+  //     },
+  //     {
+  //       org: [bikeIl.org],
+  //       category: ['שינוע מסחרי או נגרר', 'רכב פרטי'],
+  //     },
+  //   ],
+  // }),
+})
 const ngim: Site = new Site('ngim', {
   sendTextMessageToRequester: true,
   dbSchema: 'shinuim',
@@ -419,6 +447,7 @@ export const backendSites = [
     useFillerInfo: true,
   }),
   hahatul,
+  harZion,
   lev1,
   lev1ms,
   lev1j,
