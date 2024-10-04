@@ -199,7 +199,7 @@ const harZion: Site = new Site('hz', {
   sendTextMessageToRequester: true,
   maxActiveTripsPerDriver: 20,
   dbSchema: 'shinuim',
-  title: 'הר ציון 0710',
+  title: 'קבוצת הר ציון 0710',
   showCopyLink: true,
   allowAnyVolunteerToAdd: true,
   sendSmsOnNewDraft: true,
