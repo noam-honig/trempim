@@ -1,12 +1,32 @@
 <div class="full-page">
   <div *ngIf="!isDialog() && !fromMap">
+
     <button
       mat-raised-button
       color="primary"
-      (click)="addTask()"
-      *ngIf="isDispatcher()"
+      (click)="addTask(false)"
+      *ngIf="!allowDriveTasks() && isDispatcher()"
     >
       הוספת נסיעה
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      style="background-color: green; margin: 5px;"
+      (click)="addTask(true)"
+      *ngIf="showDriveOfferButton()"
+    >
+      פרסם הצעת נסיעה
+    </button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      style="background-color: #3f51b5; margin: 5px;"
+      (click)="navigate('request')"
+      *ngIf="showPickupRequestButton()"
+    >
+      פרסם בקשת טרמפ
     </button>
     <app-dots-menu [buttons]="buttons" *ngIf="isDispatcher()"></app-dots-menu>
     <data-area [settings]="area"></data-area>
@@ -106,7 +126,7 @@
           <ng-container *ngFor="let e of d.events; trackBy: trackBy">
             <mat-card
               transition-group-item
-              class="event-card"
+              class="event-card {{e.isDrive ? 'drive-event-card' : ''}}"
               [class.registered]="isRegisteredToEvent(e) && showingAllTasks"
               *ngIf="filter(e)"
             >
@@ -126,7 +146,7 @@
                 <app-dots-menu
                   [item]="e"
                   [buttons]="menuOptions"
-                  *ngIf="e.isDispatcher() && !fromMap"
+                  *ngIf="(e.isDispatcher() || eventBelongsToMe(e)) && !fromMap"
                 ></app-dots-menu>
               </div>
               <div class="event-info" (click)="eventDetails(e)">
@@ -136,8 +156,8 @@
                   [distance]="distance(e)"
                   [e]="e"
                 >
-                  <a *ngIf="!isFull(e) && !fromMap">{{ 'לפרטים' }}</a>
-                  <strong *ngIf="isFull(e)">
+                  <a *ngIf="(!isFull(e) || e.isDrive) && !fromMap">{{ 'לפרטים' }}</a>
+                  <strong *ngIf="isFull && !e.isDrive">
                     {{ e.taskStatus.caption }}
                     <span *ngIf="e.driver">, {{ e.driver.name }}</span>
                   </strong>

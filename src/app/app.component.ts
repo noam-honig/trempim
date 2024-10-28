@@ -133,11 +133,23 @@ export class AppComponent implements OnInit, OnDestroy {
   isTrainee() {
     return remult.isAllowed(Roles.trainee)
   }
+  showTrips() {
+    return (
+      remult.authenticated()
+    )
+  }
   showAddTrip() {
     return (
       remult.isAllowed(Roles.trainee) ||
       getSite().allowAnyVolunteerToAdd ||
       this.showCopyLink()
+    )
+  }
+
+  showDriverTrips() {
+    return (
+      getSite().allowDriveTasks &&
+      !remult.authenticated()
     )
   }
 
@@ -210,6 +222,12 @@ export class AppComponent implements OnInit, OnDestroy {
     this.uiService.info('הקישור הועתק')
   }
   showCopyLink() {
-    return getSite().showCopyLink
+    return remult.authenticated() && getSite().showCopyLink
+  }
+  showSideMenu() {
+    return remult.authenticated()
+  }
+  showTutorial() {
+    return remult.authenticated()
   }
 }

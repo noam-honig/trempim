@@ -299,7 +299,7 @@ async function startup() {
     let title = (args?.title || getBackendSite().title).replace(/"/g, '&quot;')
     //if (title.length < 30) title += ' - אפליקציית שינועים'
     let result = fs
-      .readFileSync(process.cwd() + '/dist/angular-starter-project/index.html')
+      .readFileSync(process.cwd() + '/src/index.html')
       .toString()
       .replace(/!!!NAME!!!/g, title)
       .replace(/!!!ORG!!!/g, getBackendSite()!.urlPrefix)

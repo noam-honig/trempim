@@ -96,8 +96,8 @@ const onlyDriverRules: FieldOptions<Task, string> = {
       if (t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
         return true
       if (
-        t!.createUserId === remult.user?.id &&
-        remult.isAllowed(Roles.trainee)
+        t!.createUserId === remult.user?.id
+        // && remult.isAllowed(Roles.trainee)
       )
         return true
     }
@@ -111,9 +111,9 @@ const onlyDriverRules: FieldOptions<Task, string> = {
   allowApiUpdate: (t) => {
     if (t!.taskStatus === taskStatus.draft)
       return Boolean(t?.eventBelongToOrgUser([Roles.trainee, Roles.dispatcher]))
-    return Boolean(t?.eventBelongToOrgUser(Roles.dispatcher))
+    return Boolean(t?.eventBelongToOrgUser())
   },
-  allowApiRead: Allow.authenticated,
+  allowApiRead: true,
   allowApiDelete: false,
   saving: async (task) => {
     if (!remult.user && task.isNew()) {
@@ -226,6 +226,7 @@ const onlyDriverRules: FieldOptions<Task, string> = {
     }
     if (
       task.getSite().sendTextMessageOnApprove &&
+      !task.isDrive &&
       task.taskStatus == taskStatus.active &&
       (task.$.taskStatus.valueChanged() || isNew)
     ) {
@@ -245,13 +246,13 @@ const onlyDriverRules: FieldOptions<Task, string> = {
               phone.phone,
               `שלום ${phone.name},
 
-קיבלנו את פנייתך ${task.getShortDescription()}.
+קיבלנו את בקשתך לטרמפ ${task.getShortDescription()}.
 
-ברגע שמתנדב או מתנדבת שלנו יהיו זמינים לסייע לך, הם ייצרו איתך קשר בשיחת טלפון - נא זמינותך.
-במידה והסתדרת בכל דרך אחרת, נודה לעדכון בקישור הבא, בכדי שנוכל לייעל את השירות שלנו עבור פונים נוספים. לעדכון/הסרה יש להיכנס לקישור
-${remult.context.origin + '/s/' + task.editLink}
-שנדע ימים טובים יותר!
-תודה, ${getTitle()}`
+מקווים שנהג מתנדב יקים יתך קשר.
+
+במידה והסתדרת / החלטת לבטל — אנא הכנס.י לקישור ${remult.context.origin + '/s/' + task.editLink}
+
+תודה על ההשתתפות במחאה`
             ),
           })
         )
@@ -278,6 +279,19 @@ ${remult.context.origin + '/s/' + task.editLink}
   },
   //@ts-ignore
   apiPrefilter: () => {
+    if (!remult.authenticated()) {
+        throw Error("Forbidden")
+      // if (getSite().allowDriveTasks) {
+      //   return {
+      //     isDrive: true
+      //   }
+      // } else {
+      //   throw Error("Forbidden")
+      // }
+    }
+
+    return {}
+
     if (remult.isAllowed(Roles.dispatcher)) return {}
     if (remult.isAllowed(Roles.trainee))
       return {
@@ -296,6 +310,7 @@ ${remult.context.origin + '/s/' + task.editLink}
     //     Task.filterActiveTasks,
     //   ],
     // }
+
     return Task.filterActiveTasks()
   },
 })
@@ -327,7 +342,7 @@ ${this.getLink()}`
 
   getShortDescription(): string {
     let message = ''
-    if (this.category) message = this.category + ': '
+    //if (this.category) message = this.category + ': '
     if (this.title) message += this.title + ' '
     if (this.addressApiResult?.results?.length)
       message += 'מ' + getCity(this.addressApiResult!)
@@ -337,7 +352,7 @@ ${this.getLink()}`
   }
 
   getMessageForDriver() {
-    return `שלום ${this.driver?.name || ''} ,מופיע באפליקציה שלקחת את הנסיעה:
+    return `שלום ${this.driver?.name || ''} ,מופיע באפליקציה הצעת נסיעה שלך:
 ${this.getShortDescription()} של ארגון "${getTitle()}"
 והיא טרם הושלמה
 
@@ -382,7 +397,7 @@ ${this.getLink()}
   }
 
   @Fields.string<Task>({
-    caption: 'מה משנעים *',
+    caption: 'שם המבצע / פעילות *',
     validate: (s, c) => {
       if (s.__disableValidation) return
       Validators.required(s, c)
@@ -411,7 +426,7 @@ ${this.getLink()}
     valueList: () => getSite().categories.map((x) => ({ id: x, caption: x })),
   })
   @Fields.string({ caption: 'קטגוריה' })
-  category: string = getSite().defaultCategory
+  category: string = ''
   @Fields.dateOnly<Task>({
     caption: 'תאריך הסיוע המבוקש',
     displayValue: (e, v) => eventDisplayDate(e),
@@ -420,8 +435,13 @@ ${this.getLink()}
       if (!c.value || c.value.getFullYear() < 2018) c.error = 'תאריך שגוי'
       var twoDaysAgo = new Date()
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
-      if ((s.isNew() || c.valueChanged()) && c.value < twoDaysAgo)
-        c.error = 'תאריך עבר'
+      var inThreeDays = new Date()
+      inThreeDays.setDate(inThreeDays.getDate() + 3)
+      if (s.isNew() || c.valueChanged())
+        if (c.value < twoDaysAgo)
+          c.error = 'תאריך עבר'
+        else if (c.value > inThreeDays)
+          c.error = 'תאריך עתידי'
     },
   })
   eventDate: Date = new Date()
@@ -491,7 +511,7 @@ ${this.getLink()}
     },
   })
   requesterPhone1 = !remult.isAllowed(Roles.dispatcher)
-    ? remult.user?.phone
+    ? (remult.user?.phone ?? "")
     : ''
   @Fields.string({
     caption: 'שם ממלא הבקשה',
@@ -504,22 +524,9 @@ ${this.getLink()}
     ),
   })
   requesterPhone1Description = !remult.isAllowed(Roles.dispatcher)
-    ? remult.user?.name
+    ? (remult.user?.name ?? "")
     : ''
 
-  @PhoneField<Task>({
-    caption: 'טלפון מוצא *',
-    ...onlyDriverRules,
-    validate: requiredOnChange(() => true),
-  })
-  phone1 = ''
-  @Fields.string({
-    caption: 'איש קשר מוצא',
-    validate: requiredOnChange(() => getSite().requireContactName),
-
-    ...onlyDriverRules,
-  })
-  phone1Description = ''
   @DataControl({ visible: () => getSite().showTwoContacts })
   @PhoneField<Task>({
     caption: 'טלפון מוצא 2',
@@ -575,7 +582,7 @@ ${this.getLink()}
   @CreatedAtField()
   createdAt = new Date()
   @Fields.string<Task>({
-    includeInApi: Roles.dispatcher,
+    includeInApi: true,
     allowApiUpdate: false,
     caption: 'משתמש מוסיף',
     displayValue: (u) => u.createUser?.name || '',
@@ -626,6 +633,70 @@ ${this.getLink()}
   editLink = createId()
   @Fields.boolean({ allowApiUpdate: false, dbName: 'publicVisibleBoolean' })
   publicVisible = false
+
+  @DataControl<Task>({ visible: (t) => !t.isNew(), width: '70' })
+  @Fields.boolean<Task>({
+    caption: 'הצעה?',
+    displayValue: (_, v) => v ? 'הצעה' : 'בקשה',
+    allowApiUpdate: task => task!._.isNew(),
+  })
+  isDrive = false
+
+  /* Drive only fields start */
+  @Fields.integer({
+    caption: 'מספר מקומות *',
+    validate: (_, c) => {
+      if (_.isDrive && (_.isNew() || c.valueChanged())) {
+        if (+c.value > 10) {
+          throw Error('ערך גדול מדי, נא להזין עד 10')
+        }
+        if (!c.value) {
+          throw Error('ערך חייב להיות לפחות 1')
+        }
+      }
+    }
+  })
+  spaceAvailable = null
+
+  @PhoneField<Task>({
+    caption: 'טלפון *',
+    ...onlyDriverRules,
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (!_.isDrive) {
+          return requiredOnChange(() => true)
+        }
+      }
+      return
+    },
+  })
+  phone1 = !this.isDrive ? this.requesterPhone1 : ""
+
+  @Fields.string({
+    caption: 'שם *',
+    validate: (_, c) => {
+      if (_.isNew() || c.valueChanged()) {
+        if (!_.isDrive) {
+          return requiredOnChange(() => true)
+        }
+      }
+      return
+    },
+
+    ...onlyDriverRules,
+  })
+  phone1Description = !this.isDrive ?  this.requesterPhone1Description : ""
+
+  @PhoneField<Task>({
+    caption: 'טלפון הנהג',
+  })
+  driverPhonePublic = remult.user?.phone?.trim()
+  @Fields.string({
+    caption: 'שם הנהג',
+  })
+  driverNamePublic = remult.user?.name?.trim()
+  /* Drive only fields end */
+
   @BackendMethod({ allowed: true })
   static async makePublicVisible(id: string) {
     if (!remult.context.availableTaskIds.includes(id))
@@ -758,6 +829,10 @@ ${this.getLink()}
     await this._.reload()
     if (this.driverId) throw Error('מתנדב אחר כבר לקח משימה זו')
     if (!assignUserId) throw Error('משהו לא הסתדר בשיוך, מזהה נהג ריק')
+    if (this.isDrive) {
+      if (!remult.user?.phone) throw Error('אין לך מספר טלפון')
+      if (!remult.user?.name) throw Error('אין לך שם')
+    }
     this.driverId = assignUserId
     this.taskStatus = taskStatus.assigned
     this.statusNotes = ''
@@ -811,6 +886,9 @@ ${this.getLink()}
       !this.eventBelongToOrgUser(Roles.dispatcher)
     )
       throw new Error('נסיעה זו לא משוייכת לך')
+  }
+  private assertIsDriveTask() {
+    if (!this.isDrive) throw new Error('נסיעה זו אינה נסיעת נהג')
   }
 
   @BackendMethod({ allowed: Allow.authenticated })
@@ -917,6 +995,22 @@ ${this.getLink()}
     await this.save()
   }
   @BackendMethod({ allowed: Allow.authenticated })
+  async driverClosedDriveTask() {
+    this.checkAssignedToDriverOrDispatcher()
+    this.assertIsDriveTask()
+    this.taskStatus = taskStatus.full
+    await this.insertStatusChange('נסיעה התמלאה')
+    await this.save()
+  }
+  @BackendMethod({ allowed: Allow.authenticated })
+  async driverOpenedDriveTask() {
+    this.checkAssignedToDriverOrDispatcher()
+    this.assertIsDriveTask()
+    this.taskStatus = taskStatus.assigned
+    await this.insertStatusChange('מקום נפתח בנסיעה')
+    await this.save()
+  }
+  @BackendMethod({ allowed: Allow.authenticated })
   async getContactInfo(): Promise<TaskContactInfo> {
     if (Roles.dispatcher || matchesCurrentUserId(this.driverId, this.org))
       return {
@@ -952,13 +1046,13 @@ ${this.getLink()}
     }
   }
 
-  async openEditDialog(ui: UITools, saved?: VoidFunction) {
+  async openEditDialog(ui: UITools, saved?: VoidFunction, isDrive?: boolean, assign?: boolean) {
     const doLocks = !this.isNew()
     if (doLocks)
       try {
         await Locks.lock(this.id, false)
       } catch (err: any) {
-        if (remult.isAllowed(Roles.admin)) {
+        if (remult.authenticated()) {
           if (await ui.yesNoQuestion(err.message + ', לפתוח בכל זאת?')) {
             await Locks.lock(this.id, true)
           } else return
@@ -968,41 +1062,81 @@ ${this.getLink()}
         }
       }
 
+    const cleanupCb = async (success: boolean) => {
+      if (success) saved?.()
+      if (doLocks) await Locks.unlock(this.id)
+      if (assign) await this.assignToMe()
+    }
+
+    if (this.isDrive) {
+      await this.openDriverEditDialog(ui, cleanupCb)
+    } else {
+      await this.openConsumerEditDialog(ui, cleanupCb)
+    }
+  }
+
+  private async openDriverEditDialog(ui: UITools, cleanupCb: (ok: boolean) => Promise<void>) {
     const e = this.$
     ui.areaDialog({
-      title: 'פרטי נסיעה',
+      title: 'הצעת נסיעה',
       fields: [
-        [e.category!, e.urgency],
         e.title,
+        e.spaceAvailable,
         e.address,
         e.toAddress,
-        e.description,
-        e.privateDriverNotes,
         [e.eventDate, e.startTime, e.relevantHours],
-        ...(getSite().useFillerInfo
-          ? [[e.requesterPhone1, e.requesterPhone1Description]]
-          : []),
-        [e.phone1, e.phone1Description],
-        [e.phone2, e.phone2Description],
-        [e.toPhone1, e.tpPhone1Description],
-        [e.toPhone2, e.tpPhone2Description],
-
-        e.imageId,
-        e.internalComments,
+        [
+          { field: e.driverNamePublic, readonly: true },
+          { field: e.driverPhonePublic, readonly: true },
+        ],
+        e.description,
         e.externalId,
       ],
-      ok: () =>
-        this.save().then(() => {
-          saved?.()
-          if (doLocks) Locks.unlock(this.id)
-        }),
-      cancel: () => {
+      ok: async () => {
+        await this.save()
+        await cleanupCb(true)
+      },
+      cancel: async () => {
         this._.undoChanges()
-        if (doLocks) Locks.unlock(this.id)
+        await cleanupCb(false)
       },
       buttons: [],
     })
   }
+
+  private async openConsumerEditDialog(ui: UITools, cleanupCb: (ok: boolean) => void) {
+    const e = this.$
+    ui.areaDialog({
+      title: 'פרטי נסיעה',
+      fields: [
+        e.title,
+        e.address,
+        e.toAddress,
+        [e.eventDate, e.startTime, e.relevantHours],
+        ...(getSite().useFillerInfo
+          ? [[e.requesterPhone1, e.requesterPhone1Description]]
+          : []),
+        [
+          { field: e.phone1, readonly: !remult.isAllowed([Roles.dispatcher])},
+          { field: e.phone1Description, readonly: !remult.isAllowed([Roles.dispatcher])},
+        ],
+        e.description,
+        e.privateDriverNotes,
+
+        e.imageId,
+        e.externalId,
+      ],
+      ok: () =>
+        this.save().then(() => cleanupCb(true)),
+      cancel: () => {
+        this._.undoChanges()
+        cleanupCb(false)
+      },
+      buttons: [],
+    })
+  }
+
+
   verifyRelevanceMessage(name: string, replyToText: boolean) {
     const site = getSiteByOrg(this.org)
     const parts = remult.context.origin.split('/')
@@ -1017,11 +1151,11 @@ ${this.getLink()}
     }
 
     return `שלום ${name}, בהמשך לפנייתך ל"${site?.title}":
-${description} 
+${description}
 
 על מנת שנוכל לעזור ולסייע ואזרחים נוספים בצורה יעילה יותר, נשמח שתעדכן בקישור הבא ${
       replyToText ? 'או בהודעה חוזרת ' : ''
-    }אם הבקשה עדיין רלוונטית או הסתדרת כבר 
+    }אם הבקשה עדיין רלוונטית או הסתדרת כבר
 
 ${url + '/s/' + this.editLink}
 
@@ -1044,9 +1178,9 @@ ${url + '/s/' + this.editLink}
         },
       },
       {
-        name: 'העתק הודעה לווטסאפ',
+        name: 'העתק קישור לכרטיס',
         icon: 'content_copy',
-        visible: (x) => x.taskStatus === taskStatus.active,
+        visible: (x) => (x.isDrive && x.taskStatus == taskStatus.assigned) || (!x.isDrive && x.taskStatus === taskStatus.active),
         click: (e) => {
           e.copyWhatsappMessage(ui)
         },
@@ -1055,7 +1189,7 @@ ${url + '/s/' + this.editLink}
         name: 'שלח ווטסאפ לנהג',
         icon: 'sms',
         visible: (x) =>
-          [taskStatus.driverPickedUp, taskStatus.assigned].includes(
+          remult.isAllowed([Roles.dispatcher]) && [taskStatus.driverPickedUp, taskStatus.assigned].includes(
             x.taskStatus
           ),
         click: async (e) => {
@@ -1069,7 +1203,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'ווטסאפ למבקש הנסיעה',
         icon: 'sms',
-        visible: (x) => Boolean(x.requesterPhone1) && getSite().useFillerInfo,
+        visible: (x) => remult.isAllowed([Roles.dispatcher]) && Boolean(x.requesterPhone1) && getSite().useFillerInfo,
         click: async (e) => {
           if (!e.editLink) {
             e.editLink = createId()
@@ -1086,7 +1220,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'ווטסאפ לאיש קשר לאיסוף',
         icon: 'sms',
-        visible: (x) => Boolean(x.phone1) && x.phone1 != x.requesterPhone1,
+        visible: (x) => remult.isAllowed([Roles.dispatcher]) && Boolean(x.phone1) && x.phone1 != x.requesterPhone1,
         click: async (e) => {
           if (!e.editLink) {
             e.editLink = createId()
@@ -1101,7 +1235,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'בחר נהג',
         icon: 'directions_car',
-        visible: (x) => x.taskStatus === taskStatus.active,
+        visible: (x) => remult.isAllowed([Roles.dispatcher]) && x.taskStatus === taskStatus.active,
         click: async (e) => {
           ui.selectUser({
             onSelect: async (user) => {
@@ -1117,6 +1251,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'היסטוריה',
         icon: 'history_edu',
+        visible: (x) => remult.isAllowed([Roles.dispatcher]),
         click: async (e) => {
           ui.gridDialog({
             settings: new GridSettings(repo(TaskStatusChanges), {
@@ -1158,6 +1293,7 @@ ${url + '/s/' + this.editLink}
       {
         name: 'פרטי מוקדן',
         icon: 'contact_emergency',
+        visible: (x) => remult.isAllowed([Roles.dispatcher]),
         click: async (e) => {
           const s = await repo(TaskStatusChanges).findFirst(
             { taskId: e.id, createUserId: { $ne: '' } },
@@ -1174,13 +1310,13 @@ ${url + '/s/' + this.editLink}
       {
         name: 'פרטי נהג',
         icon: 'local_taxi',
-        visible: (e) => !!e.driverId,
+        visible: (e) => remult.isAllowed([Roles.dispatcher]) && !!e.driverId,
         click: (e) => ui.showUserInfo({ userId: e.driverId, title: 'נהג' }),
       },
       {
         name: 'העבר לבירור רלוונטיות',
         icon: 'question_mark',
-        visible: (e) => [taskStatus.active].includes(e.taskStatus),
+        visible: (e) => remult.isAllowed([Roles.dispatcher]) && [taskStatus.active].includes(e.taskStatus),
         click: async (e) => {
           await e.markForRelevanceCheck()
         },
@@ -1206,6 +1342,7 @@ ${url + '/s/' + this.editLink}
         name: 'החזר לנהג',
         icon: 'badge',
         visible: (e) =>
+          remult.isAllowed([Roles.dispatcher]) &&
           ![
             taskStatus.active,
             taskStatus.assigned,
@@ -1218,11 +1355,11 @@ ${url + '/s/' + this.editLink}
         },
       },
       {
-        name: 'החזר לפתוח לרישום',
+        name: 'החזר ללוח הנסיות',
         icon: 'check_circle',
 
         visible: (e) =>
-          ![taskStatus.active, taskStatus.draft].includes(e.taskStatus),
+          remult.isAllowed([Roles.dispatcher]) && ![taskStatus.active, taskStatus.draft].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
         },
@@ -1231,7 +1368,7 @@ ${url + '/s/' + this.editLink}
         name: 'אשר טיוטא',
         icon: 'check_circle',
 
-        visible: (e) => [taskStatus.draft].includes(e.taskStatus),
+        visible: (e) => remult.isAllowed([Roles.dispatcher]) && [taskStatus.draft].includes(e.taskStatus),
         click: async (e) => {
           await e.returnToActive()
         },
@@ -1239,43 +1376,45 @@ ${url + '/s/' + this.editLink}
       {
         name: 'סמן כטיוטא',
         visible: (e) =>
-          e.taskStatus == taskStatus.active ||
-          e.taskStatus === taskStatus.notRelevant ||
-          e.taskStatus == taskStatus.relevanceCheck,
+          remult.isAllowed([Roles.dispatcher]) && (
+            e.taskStatus == taskStatus.active ||
+            e.taskStatus === taskStatus.notRelevant ||
+            e.taskStatus == taskStatus.relevanceCheck
+          ),
         click: async (e) => {
           await e.markAsDraft()
         },
       },
-      {
-        name: 'שכפול נסיעה לכתובת אחרת',
-        icon: 'content_copy',
-        click: async (oldE) => {
-          const e = remult.repo(Task).create(oldE)
-          e.eventDate = new Date()
-          e.toAddress = ''
-          e.toAddressApiResult = null
-          e.toPhone1 = ''
-          e.toPhone2 = ''
-          e.tpPhone1Description = ''
-          e.tpPhone2Description = ''
-          ui.areaDialog({
-            title: 'שכפול נסיעה לכתובת אחרת',
-            fields: [
-              e.$.toAddress,
-              [e.$.toPhone1, e.$.tpPhone1Description],
-              [e.$.toPhone2, e.$.tpPhone2Description],
-              e.$.eventDate,
-            ],
-            ok: async () => {
-              await e.save()
-              args?.taskAdded?.(e)
-            },
-          })
-        },
-      },
+      // {
+      //   name: 'שכפול נסיעה לכתובת אחרת',
+      //   icon: 'content_copy',
+      //   click: async (oldE) => {
+      //     const e = remult.repo(Task).create(oldE)
+      //     e.eventDate = new Date()
+      //     e.toAddress = ''
+      //     e.toAddressApiResult = null
+      //     e.toPhone1 = ''
+      //     e.toPhone2 = ''
+      //     e.tpPhone1Description = ''
+      //     e.tpPhone2Description = ''
+      //     ui.areaDialog({
+      //       title: 'שכפול נסיעה לכתובת אחרת',
+      //       fields: [
+      //         e.$.toAddress,
+      //         [e.$.toPhone1, e.$.tpPhone1Description],
+      //         [e.$.toPhone2, e.$.tpPhone2Description],
+      //         e.$.eventDate,
+      //       ],
+      //       ok: async () => {
+      //         await e.save()
+      //         args?.taskAdded?.(e)
+      //       },
+      //     })
+      //   },
+      // },
       {
         name: 'פתח בMONDAY',
-        visible: (e) => e.externalId.startsWith('m:'),
+        visible: (e) => remult.isAllowed([Roles.dispatcher]) && e.externalId.startsWith('m:'),
         click: (t) => {
           window.open(
             `https://kanfi-barzel.monday.com/boards/1290250715/pulses/` +

@@ -1,4 +1,4 @@
-import { BackendMethod, Entity, Fields, Relations, remult, repo } from 'remult'
+import { Allow, BackendMethod, Entity, Fields, Relations, remult, repo } from 'remult'
 import { Roles } from '../users/roles'
 import { User } from '../users/user'
 import { CreatedAtField } from './date-utils'
@@ -16,7 +16,7 @@ export class Locks {
   lockUserId = ''
   @Relations.toOne<Locks, User>(() => User, 'lockUserId')
   lockUser?: User
-  @BackendMethod({ allowed: [Roles.trainee, Roles.dispatcher] })
+  @BackendMethod({ allowed: Allow.authenticated })
   static async lock(lockId: string, force: boolean) {
     let l = await repo(Locks).findFirst(
       { lockId },
@@ -30,7 +30,7 @@ export class Locks {
     l = await repo(Locks).insert({ lockId, lockUserId: remult.user!.id })
     return true
   }
-  @BackendMethod({ allowed: [Roles.trainee, Roles.dispatcher] })
+  @BackendMethod({ allowed: Allow.authenticated })
   static async unlock(lockId: string) {
     await repo(Locks).delete({ lockId })
     return true

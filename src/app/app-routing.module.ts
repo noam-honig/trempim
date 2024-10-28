@@ -23,6 +23,7 @@ import { AboutComponent } from './about/about.component'
 import { ShowPublicEventComponent } from './show-public-event/show-public-event.component'
 import { TaskSelfUpdateComponent } from './task-self-update/task-self-update.component'
 import { MoreOrgsComponent } from './more-orgs/more-orgs.component'
+import { BlacklistComponent } from './blacklist/blacklist.component'
 
 const defaultRoute = ''
 const routes: Routes = [
@@ -40,12 +41,12 @@ const routes: Routes = [
   {
     path: 'p/:id',
     component: ShowPublicEventComponent,
-    data: { hide: true, noLogin: true },
+    data: { hide: true },
   },
   {
     path: 's/:id',
     component: TaskSelfUpdateComponent,
-    data: { hide: true, noLogin: true },
+    data: { hide: true },
   },
   {
     path: 'מבט על',
@@ -82,17 +83,26 @@ const routes: Routes = [
     canActivate: [CanSeeUsersGuard],
   },
   {
-    path: 'volunteer',
-    component: MoreOrgsComponent,
-    data: { hide: true, noLogin: true, name: 'עוד ארגונים' },
+    path: terms.blacklist,
+    component: BlacklistComponent,
+    canActivate: [AdminGuard],
   },
   {
-    path: 'intake',
+    path: 'volunteer',
+    component: MoreOrgsComponent,
+    data: { hide: true, name: 'עוד ארגונים' },
+  },
+  {
+    path: 'request',
     component: IntakeComponent,
-    data: { hide: true, name: 'הוספת נסיעה', noLogin: true },
+    data: { hide: true, name: 'פרסום בקשת נסיעה' },
   },
   { path: 'noam-test/:1', component: NoamTestComponent },
-  { path: 'אודות', component: AboutComponent, data: { noLogin: true } },
+  {
+    path: 'search',
+    component: OrgEventsComponent,
+    data: { hide: true, name: 'חיפוש נסיעה' },
+  },
   { path: '**', redirectTo: '/' + defaultRoute, pathMatch: 'full' },
 ]
 

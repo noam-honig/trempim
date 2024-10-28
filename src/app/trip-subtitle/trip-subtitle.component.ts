@@ -38,6 +38,9 @@ export class TripSubtitleComponent implements OnInit {
   eventToCity(e: Task) {
     return getCity(e.toAddressApiResult)
   }
+  isDrive(e: Task)  {
+   return(e.isDrive ? 'grn' : '')
+  }
   isFull(e: Task) {
     return e.taskStatus !== taskStatus.active
   }

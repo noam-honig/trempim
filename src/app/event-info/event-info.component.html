@@ -162,9 +162,10 @@
       }"
     >
     </app-phone-details>
-    <div *ngIf="driver">
+    <div *ngIf="driver || e.isDrive">
       <hr />
       <app-phone-details
+        *ngIf="!isDrive() && driver"
         [args]="{
           phone: driver.phone,
           name: driver.name,
@@ -172,9 +173,27 @@
           messageContext: e.getShortDescription() + '\n' + e.getLink() + '\n'
         }"
       ></app-phone-details>
+      <app-phone-details
+        *ngIf="isDrive()"
+        [args]="{
+          phone: e.driverPhonePublic,
+          name: e.driverNamePublic,
+          title: 'נהג',
+          messageContext: e.getShortDescription() + '\n' + e.getLink() + '\n'
+        }"
+      ></app-phone-details>
     </div>
   </div>
 </mat-dialog-content>
+<mat-slide-toggle
+  *ngIf="isDrive() && canModify()"
+  [matTooltip]="'הסתר נסיעה מהציבור'"
+  (toggleChange)="setIsFull()"
+  [checked]="isFull()"
+  style="margin-bottom: 16px"
+>
+  הנסיעה מלאה
+</mat-slide-toggle>
 <mat-dialog-actions
   *ngIf="!forExternalViewer"
   style="
@@ -185,6 +204,7 @@
     bottom: 0;
   "
 >
+
   <button
     [disabled]="inProgress"
     mat-raised-button
@@ -197,7 +217,7 @@
   <button
     mat-raised-button
     style="background-color: green; color: white"
-    *ngIf="isAssigned()"
+    *ngIf="canModify() && isAssigned()"
     (click)="completed()"
   >
     השלמתי בהצלחה
@@ -208,7 +228,7 @@
     *ngIf="showWillNotDo()"
     (click)="problem()"
   >
-    לא אבצע
+    {{e.isDrive ? 'בטל נסיעה' : 'לא אבצע'}}
   </button>
   <ng-container *ngIf="showCancel()">
     <strong>{{ e.taskStatus.caption }} </strong>

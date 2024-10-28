@@ -23,7 +23,7 @@ function createGeo(region: string, district: string): GeocodeResult | null {
 }
 describe('event-card', () => {
   it('should filter regions correctly', () => {
-    const comp = new EventCardComponent({} as any)
+    const comp = new EventCardComponent({} as any, {} as any)
     const tasks = [
       ['s', 'n'],
       ['s', 's'],
@@ -100,7 +100,7 @@ c,1`
     )
   })
   it('should filter regions correctly with district', () => {
-    const comp = new EventCardComponent({} as any)
+    const comp = new EventCardComponent({} as any, {} as any)
     const tasks = [
       ['sa', 'na'],
       ['sa', 'sb'],

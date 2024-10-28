@@ -53,7 +53,9 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   }
 
   showContactInfoMessage() {
+    return false
     return (
+      !this.e.isDrive &&
       !this.e.phone1 &&
       !this.e.phone2 &&
       !this.e.toPhone1 &&
@@ -131,21 +133,45 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
       this.e.taskStatus != taskStatus.active &&
       this.e.taskStatus != taskStatus.assigned &&
       this.e.taskStatus != taskStatus.driverPickedUp &&
-      this.e.taskStatus != taskStatus.draft
+      this.e.taskStatus != taskStatus.draft &&
+      this.e.taskStatus != taskStatus.full
     )
   }
   isAssigned() {
     return (
       this.e.taskStatus == taskStatus.assigned ||
-      this.e.taskStatus == taskStatus.driverPickedUp
+      this.e.taskStatus == taskStatus.driverPickedUp ||
+      this.e.taskStatus == taskStatus.full
     )
+  }
+
+  isFull() {
+    return this.e.taskStatus == taskStatus.full
+  }
+
+  canModify() {
+    return this.isAuthenticated() && (
+      this.isDispatcher() ||
+      this.e.driverId == remult.user!.id
+    );
+  }
+
+  async setIsFull() {
+    this.isFull() ? await this.e.driverOpenedDriveTask() : await this.e.driverClosedDriveTask()
+  }
+
+  isDrive() {
+    return this.e.isDrive
   }
 
   showWillNotDo() {
     return (
-      this.isAssigned() ||
-      (this.e.getSite().showContactToAnyDriver &&
-        this.e.taskStatus == taskStatus.active)
+      this.isAuthenticated() &&
+      (
+        this.isAssigned() ||
+        (this.e.getSite().showContactToAnyDriver &&
+          this.e.taskStatus == taskStatus.active)
+      )
     )
   }
 
@@ -163,7 +189,7 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
     return matchesCurrentUserId(this.e.driverId, this.e.org)
   }
   showAssign() {
-    return this.e.taskStatus == taskStatus.active
+    return this.e.taskStatus == taskStatus.active && this.isAuthenticated()
   }
   driverAssignButtonText() {
     return this.e.getSite().driverAssignButtonText
@@ -200,10 +226,10 @@ export class EventInfoComponent implements OnInit, WantsToCloseDialog {
   closeDialog!: VoidFunction
 
   showPickedUp() {
-    return this.e.taskStatus === taskStatus.assigned
+    return this.e.taskStatus === taskStatus.assigned && !this.e.isDrive
   }
   showCancelPickedUp() {
-    return this.e.taskStatus === taskStatus.driverPickedUp
+    return this.e.taskStatus === taskStatus.driverPickedUp && !this.e.isDrive
   }
   showThumbsUpOnPickup() {
     return [taskStatus.driverPickedUp, taskStatus.completed].includes(

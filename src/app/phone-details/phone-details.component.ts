@@ -19,12 +19,22 @@ export class PhoneDetailsComponent implements OnInit {
     messageContext?: string
   }
   sendWhatsapp() {
-    sendWhatsappToPhone(
-      this.args.phone!,
-      `שלום ${this.args.name}
+    let text;
+    if (remult.authenticated()) {
+      text = `שלום ${this.args.name}
 זה ${remult.user?.name} מ${getTitle()}
 ${this.args.messageContext ? 'בקשר ל' + this.args.messageContext : ''}
+`;
+    }
+    else {
+      text = `שלום ${this.args.name}
+אני מחפש הסעה במערכת מתדנבי הטרמפים.
+ ${this.args.messageContext ? 'בקשר ל' + this.args.messageContext : ''}
 `
+    }
+    sendWhatsappToPhone(
+      this.args.phone!,
+      text
     )
   }
   displayPhone() {

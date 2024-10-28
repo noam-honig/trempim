@@ -44,6 +44,7 @@ import { OverviewController } from '../app/overview/overview.controller'
 import fetch from 'node-fetch'
 import { BlockedPhone } from '../app/events/blockedPhone'
 import { SendVerifyRelevanceSms } from '../app/events/send-verify-relevance-sms'
+import { Blacklist } from '../app/blacklist/blacklist'
 
 //import { readExcelVolunteers } from './read-excel'
 //import { readTripExcel } from './read-excel'
@@ -60,6 +61,7 @@ const entities = [
   ChangeLog,
   Session,
   BlockedPhone,
+  Blacklist,
 ]
 
 const postgres = getPostgresSchemaManager({
